@@ -182,6 +182,10 @@ boolean walkPath(char *filepath, SdFile& parentDir,
       return false;
     }
     
+    if (!moreComponents) {
+      break;
+    }
+    
     boolean exists = (*p_child).open(*p_parent, buffer, O_RDONLY);
 
     // If it's one we've created then we
@@ -204,14 +208,11 @@ boolean walkPath(char *filepath, SdFile& parentDir,
     } else {
       return false;
     }
-    
-    if (!moreComponents) {
-      // TODO: Check if this check should be earlier.
-      break;
-    }
   }
   
-  (*p_parent).close(); // TODO: Return/ handle different?
+  if (p_parent != &parentDir) {
+    (*p_parent).close(); // TODO: Return/ handle different?
+  }
 
   return true;
 }
@@ -294,11 +295,32 @@ boolean callback_openPath(SdFile& parentDir, char *filePathComponent,
 
   */
   if (isLastComponent) {
-    SDClass *p_MemoryCard = static_cast<SDClass*>(object);
-    p_MemoryCard->file.open(parentDir, filePathComponent,
-			    p_MemoryCard->fileOpenMode);
+    SDClass *p_SD = static_cast<SDClass*>(object);
+    p_SD->file.open(parentDir, filePathComponent, p_SD->fileOpenMode);
+    if (p_SD->fileOpenMode == FILE_WRITE) {
+      p_SD->file.seekSet(p_SD->file.fileSize());
+    }
     // TODO: Return file open result?
     return false;
+  }
+  return true;
+}
+
+
+boolean callback_remove(SdFile& parentDir, char *filePathComponent, 
+			boolean isLastComponent, void *object) {
+  if (isLastComponent) {
+    return SdFile::remove(parentDir, filePathComponent);
+  }
+  return true;
+}
+
+boolean callback_rmdir(SdFile& parentDir, char *filePathComponent, 
+			boolean isLastComponent, void *object) {
+  if (isLastComponent) {
+    SdFile f;
+    if (!f.open(parentDir, filePathComponent, O_READ)) return false;
+    return f.rmDir();
   }
   return true;
 }
@@ -309,26 +331,21 @@ boolean callback_openPath(SdFile& parentDir, char *filePathComponent,
 
 
 
-void SDClass::begin(uint8_t csPin) {
+boolean SDClass::begin(uint8_t csPin) {
   /*
 
     Performs the initialisation required by the sdfatlib library.
 
-    Does not return if initialisation fails.
+    Return true if initialization succeeds, false otherwise.
 
    */
-  // TODO: Allow chip select pin to be supplied?
-  if (!(card.init(SPI_HALF_SPEED, csPin) 
-	&& volume.init(card) && root.openRoot(volume))) {
-    while (true) {
-      // Bail
-    }
-  }
+  return card.init(SPI_HALF_SPEED, csPin) &&
+         volume.init(card) &&
+         root.openRoot(volume);
 }
 
 
-boolean SDClass::open(char *filepath,
-			       boolean write, boolean append) {
+File SDClass::open(char *filepath, uint8_t mode) {
   /*
 
      Open the supplied file path for reading or writing.
@@ -354,33 +371,22 @@ boolean SDClass::open(char *filepath,
 
   // TODO: Allow for read&write? (Possibly not, as it requires seek.)
 
-  uint8_t oflag = O_RDONLY;
-
-  if (write) {
-    oflag = O_CREAT | O_WRITE;
-    if (append) {
-      oflag |= O_APPEND;
-    } else {
-      oflag |= O_TRUNC;
-    }
-  }
-  
-  fileOpenMode = oflag;
+  fileOpenMode = mode;
   walkPath(filepath, root, callback_openPath, this);
 
-  // TODO: Actually return something useful.
+  return File();
 
 }
 
 
-boolean SDClass::close() {
-  /*
-
-    Closes the file opened by the `open` method.
-
-   */
-  file.close();
-}
+//boolean SDClass::close() {
+//  /*
+//
+//    Closes the file opened by the `open` method.
+//
+//   */
+//  file.close();
+//}
 
 
 boolean SDClass::exists(char *filepath) {
@@ -389,22 +395,22 @@ boolean SDClass::exists(char *filepath) {
      Returns true if the supplied file path exists.
 
    */
-  return exists(filepath, root);
+  return walkPath(filepath, root, callback_pathExists);
 }
 
 
-boolean SDClass::exists(char *filepath, SdFile& parentDir) {
-  /*
+//boolean SDClass::exists(char *filepath, SdFile& parentDir) {
+//  /*
+//
+//     Returns true if the supplied file path rooted at `parentDir`
+//     exists.
+//
+//   */
+//  return walkPath(filepath, parentDir, callback_pathExists);
+//}
 
-     Returns true if the supplied file path rooted at `parentDir`
-     exists.
 
-   */
-  return walkPath(filepath, parentDir, callback_pathExists);
-}
-
-
-boolean SDClass::makeDir(char *filepath) {
+boolean SDClass::mkdir(char *filepath) {
   /*
   
     Makes a single directory or a heirarchy of directories.
@@ -413,6 +419,21 @@ boolean SDClass::makeDir(char *filepath) {
   
    */
   return walkPath(filepath, root, callback_makeDirPath);
+}
+
+boolean SDClass::rmdir(char *filepath) {
+  /*
+  
+    Makes a single directory or a heirarchy of directories.
+
+    A rough equivalent to `mkdir -p`.
+  
+   */
+  return walkPath(filepath, root, callback_rmdir);
+}
+
+boolean SDClass::remove(char *filepath) {
+  return walkPath(filepath, root, callback_remove);
 }
 
 SDClass SD;

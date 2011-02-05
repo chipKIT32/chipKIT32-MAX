@@ -12,58 +12,75 @@
 
  */
 
-#ifndef __MEMORY_CARD_DEVICE_H__
-#define __MEMORY_CARD_DEVICE_H__
+#ifndef __SD_H__
+#define __SD_H__
 
 #include <WProgram.h>
 
 #include <utility/SdFat.h>
 #include <utility/SdFatUtil.h>
 
-// Use this to configure the chip select pin of the SD card.
-#define SD_CARD_CHIP_SELECT_PIN 4 // For use with Arduino Ethernet Shield
+#define FILE_READ O_READ
+#define FILE_WRITE (O_READ | O_WRITE | O_CREAT | O_SYNC)
+
+class File : public Stream {
+public:
+  virtual void write(uint8_t);
+  virtual void write(const char *str);
+  virtual void write(const uint8_t *buf, size_t size);
+  virtual int read();
+  virtual int peek();
+  virtual int available();
+  virtual void flush();
+  boolean seek(uint32_t pos);
+  uint32_t position();
+  uint32_t size();
+  void close();
+  operator bool();
+};
 
 class SDClass {
 
- private:
+private:
   // These are required for initialisation and use of sdfatlib
   Sd2Card card;
   SdVolume volume;
   SdFile root;
   
-  
- public:
-  // This needs to be called to set up the connection to the memory card
+public:
+  // This needs to be called to set up the connection to the SD card
   // before other methods are used.
-  void begin(uint8_t csPin = SD_CARD_CHIP_SELECT_PIN);
+  boolean begin(uint8_t csPin = SD_CHIP_SELECT_PIN);
   
   // Open the specified file/directory with the supplied mode (e.g. read or
-  // write, etc). Once opened the file can be accessed via the
-  // `MemoryCard.file` field which is a standard `sdfatlib` file object.
-  boolean open(char *filename, boolean write = false, boolean append = true);
-
-  // Close an opened file object.
-  boolean close();
+  // write, etc). Returns a File object for interacting with the file.
+  // Note that currently only one file can be open at a time.
+  File open(char *filename, uint8_t mode = FILE_READ);
 
   // Methods to determine if the requested file path exists.
   boolean exists(char *filepath);
-  boolean exists(char *filepath, SdFile& parentDir);
 
   // Create the requested directory heirarchy--if intermediate directories
   // do not exist they will be created.
-  boolean makeDir(char *filepath);
+  boolean mkdir(char *filepath);
+  
+  // Delete the file.
+  boolean remove(char *filepath);
+  
+  boolean rmdir(char *filepath);
 
-  // At the moment this is how a developer interacts with a file they've
-  // opened. It's unclear whether it would be better to make
-  // `MemoryCard` provide a `Stream` interface instead.
-  SdFile file; // TODO: Don't make this public?
+private:
+  SdFile file;
 
   // This is used to determine the mode used to open a file
   // it's here because it's the easiest place to pass the 
   // information through the directory walking function. But
   // it's probably not the best place for it.
   // It shouldn't be set directly--it is set via the parameters to `open`.
-  int fileOpenMode; // TODO: Don't make this public?
+  int fileOpenMode;
+  
+  friend class File;
+  friend boolean callback_openPath(SdFile&, char *, boolean, void *); 
 };
 
 extern SDClass SD;
