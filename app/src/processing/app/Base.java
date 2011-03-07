@@ -1524,7 +1524,24 @@ public class Base {
     return Base.targetsTable.get(Preferences.get("target"));
   }
   
-  
+ 
+static public Map<String, String> getPlatformPreferences() {
+    Target target = getTarget();
+    //if (target == null) return new LinkedHashMap();
+    Map map = target.getPlatforms();
+    /*
+    if (map == null)
+    {
+    	System.err.println("Error loading platforms preference from Target");
+    	System.exit(0);	
+    }
+    */
+    //if (map == null) return new LinkedHashMap();
+    map =  (Map) map.get(Preferences.get("platform"));
+    //if (map == null) return new LinkedHashMap();
+    return map;
+  }
+ 
   static public Map<String, String> getBoardPreferences() {
     Target target = getTarget();
     if (target == null) return new LinkedHashMap();
