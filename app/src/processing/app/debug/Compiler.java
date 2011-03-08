@@ -42,6 +42,8 @@ public class Compiler implements MessageConsumer {
 	Sketch sketch;
 	String buildPath;
 	String primaryClassName;
+	String platform;
+
 	boolean verbose;
 	String board;
 	//CommandRunner runner;
@@ -82,9 +84,18 @@ public class Compiler implements MessageConsumer {
 		// the pms object isn't used for anything but storage
 		MessageStream pms = new MessageStream(this);
 
-		this.boardPreferences = Base.getBoardPreferences();
-		this.platformPreferences = Base.getPlatformPreferences();
-		this.avrBasePath = platformPreferences.get("compiler.path");
+		boardPreferences = Base.getBoardPreferences();
+		//Check for null platform, and use system default if not found
+		platform = boardPreferences.get("platform");
+		if (platform == null)
+		{
+		      platformPreferences = Base.getPlatformPreferences();
+		}
+		else
+		{
+			platformPreferences = Base.getPlatformPreferences(platform);
+		}
+		avrBasePath = platformPreferences.get("compiler.path");
 		if (avrBasePath == "") 
 		{
 			avrBasePath = Base.getAvrBasePath();

@@ -1541,6 +1541,14 @@ static public Map<String, String> getPlatformPreferences() {
     //if (map == null) return new LinkedHashMap();
     return map;
   }
+
+  //Get a specific platform
+  static public Map<String, String> getPlatformPreferences(String platformname) {
+  	Target target = getTarget();
+  	Map map = target.getPlatforms();
+    map =  (Map) map.get(platformname);
+    return map;
+  }
  
   static public Map<String, String> getBoardPreferences() {
     Target target = getTarget();
