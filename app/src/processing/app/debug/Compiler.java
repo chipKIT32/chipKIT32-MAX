@@ -415,7 +415,8 @@ public class Compiler implements MessageConsumer {
 		{
 				avrBasePath + platformPreferences.get("compiler.c.cmd"),
 				platformPreferences.get("compiler.S.flags"),
-				"-mmcu=" + boardPreferences.get("build.mcu"),
+                                platformPreferences.get("compiler.cpudef"),
+				boardPreferences.get("build.mcu"),
 				"-DF_CPU=" + boardPreferences.get("build.f_cpu"),
 				"-DARDUINO=" + Base.REVISION, 
 		}));
