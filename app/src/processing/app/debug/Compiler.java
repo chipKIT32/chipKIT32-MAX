@@ -160,9 +160,13 @@ public class Compiler implements MessageConsumer {
 		return true;
 	}
 
-	private List<File> compileFiles(String avrBasePath, String buildPath,
-			List<File> includePaths, List<File> sSources, List<File> cSources,
-			List<File> cppSources, Map<String, String> boardPreferences,
+	private List<File> compileFiles(String avrBasePath, 
+			String buildPath,
+			List<File> includePaths, 
+			List<File> sSources, List<File> 
+			cSources,
+			List<File> cppSources, 
+			Map<String, String> boardPreferences,
 			Map<String, String> platformPreferences) throws RunnerException {
 
 		List<File> objectPaths = new ArrayList<File>();
@@ -273,6 +277,8 @@ public class Compiler implements MessageConsumer {
 	/**
 	 * Either succeeds or throws a RunnerException fit for public consumption.
 	 */
+	 
+	 /*
 	private void execAsynchronously(List commandList) throws RunnerException 
 	{
 		String[] command = new String[commandList.size()];
@@ -340,6 +346,7 @@ public class Compiler implements MessageConsumer {
 		}
 	}
 
+*/
 	/**
 	 * Part of the MessageConsumer interface, this is called whenever a piece
 	 * (usually a line) of error message is spewed out from the compiler. The
@@ -405,31 +412,38 @@ public class Compiler implements MessageConsumer {
 
 	// ///////////////////////////////////////////////////////////////////////////
 	//What conditions is getCommandCompilerS invoke from?
-	static private List getCommandCompilerS(String avrBasePath,
+	static private String getCommandCompilerS(String avrBasePath,
 			List includePaths, String sourceName, String objectName,
 			Map<String, String> boardPreferences,
 			Map<String, String> platformPreferences) 
 			{
 			
-		List baseCommandCompiler = new ArrayList(Arrays.asList(new String[] 
-		{
-				avrBasePath + platformPreferences.get("compiler.c.cmd"),
-				platformPreferences.get("compiler.S.flags"),
-                                platformPreferences.get("compiler.cpudef"),
-				boardPreferences.get("build.mcu"),
-				"-DF_CPU=" + boardPreferences.get("build.f_cpu"),
-				"-DARDUINO=" + Base.REVISION, 
-		}));
-
+		
+		String includes = "";
+		String baseCommandString = platformPreferences.get("recipe.cpp.o.pattern");
+		MessageFormat compileFormat = new MessageFormat(baseCommandString);	
+		//getIncludes to String
 		for (int i = 0; i < includePaths.size(); i++) 
 		{
-			baseCommandCompiler.add("-I" + (String) includePaths.get(i));
+			includes = includes + (" -I" + (String) includePaths.get(i));
 		}
+		Object[] Args = {
+				avrBasePath,
+				platformPreferences.get("compiler.cpp.cmd"),
+				platformPreferences.get("compiler.S.flags"),
+				platformPreferences.get("compiler.cpudef"),
+				boardPreferences.get("build.mcu"),				
+				boardPreferences.get("build.f_cpu"),
+				boardPreferences.get("board"),
+				Base.REVISION,
+				includes,
+				sourceName,
+				objectName
+		};
+						
+		return compileFormat.format(  Args );
+		
 
-		baseCommandCompiler.add(sourceName);
-		baseCommandCompiler.add("-o" + objectName);
-
-		return baseCommandCompiler;
 	}
 	//removed static
 	private String getCommandCompilerC(String avrBasePath,
