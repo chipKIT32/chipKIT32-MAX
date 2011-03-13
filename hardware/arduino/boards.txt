@@ -341,23 +341,3 @@ atmega8.bootloader.lock_bits=0x0F
 atmega8.build.mcu=atmega8
 atmega8.build.f_cpu=16000000L
 atmega8.build.core=arduino
-
-##############################################################
-zpuino_s3e_eval.name=ZPUino on S3E Eval board
-zpuino_s3e_eval.platform=zpu
-zpuino_s3e_eval.upload.protocol=zpuino-serial
-zpuino_s3e_eval.upload.maximum_size=27648
-zpuino_s3e_eval.upload.speed=115200
-zpuino_s3e_eval.build.f_cpu=100000000L
-zpuino_s3e_eval.build.core=zpuino
-zpuino_s3e_eval.build.extraCflags=-D__ZPUINO_S3E_EVAL__ -nostartfiles
-##############################################################
-zpuino_papilio_one.name=ZPUino on Papilio One board
-zpuino_papilio_one.platform=zpu
-zpuino_papilio_one.upload.protocol=zpuino-serial
-zpuino_papilio_one.upload.maximum_size=12160
-zpuino_papilio_one.upload.speed=1000000
-zpuino_papilio_one.build.f_cpu=96000000L
-zpuino_papilio_one.build.core=zpuino
-zpuino_papilio_one.build.extraCflags=-D__ZPUINO_PAPILIO_ONE__ -nostartfiles
-
