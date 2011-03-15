@@ -711,8 +711,8 @@ public class Compiler implements MessageConsumer {
 	
 		Object[] Args = {
 			avrBasePath,
-			platformPreferences.get("compiler.objcopy.cmd"),
-			platformPreferences.get("compiler.objcopy.elf.flags"),
+			platformPreferences.get("compiler.elf2hex.cmd"),
+			platformPreferences.get("compiler.elf2hex.flags"),
 			buildPath + File.separator + primaryClassName,
 			buildPath + File.separator + primaryClassName
 			};
