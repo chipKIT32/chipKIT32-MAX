@@ -52,6 +52,7 @@ avr.compiler.objcopy.cmd=avr-objcopy
 avr.compiler.objcopy.eep.flags= -O ihex -j .eeprom --set-section-flags=.eeprom=alloc,load --no-change-warnings --change-section-lma .eeprom=0
 avr.compiler.elf2hex.flags= -O ihex -R .eeprom
 avr.compiler.elf2hex.cmd=avr-objcopy
+avr.compiler.ldflags=
 avr.compiler.cpudef=-mmcu=
 avr.compiler.upload.cmd=
 avr.compiler.upload.flags=
