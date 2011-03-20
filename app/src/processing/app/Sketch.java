@@ -24,6 +24,7 @@
 package processing.app;
 
 import processing.app.debug.AvrdudeUploader;
+import processing.app.debug.PicdudeUploader;
 import processing.app.debug.Compiler;
 import processing.app.debug.RunnerException;
 import processing.app.debug.Sizer;
@@ -1599,7 +1600,15 @@ public class Sketch {
 
     // download the program
     //
-    uploader = new AvrdudeUploader();
+    
+    if (Base.getBoardPreferences().get("upload.using").equals("picdude")) 
+    {
+    	 uploader = new PicdudeUploader();
+    }
+    else
+    {	
+    	uploader = new AvrdudeUploader();
+    }
     boolean success = uploader.uploadUsingPreferences(buildPath,
                                                       suggestedClassName,
                                                       verbose);
