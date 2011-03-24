@@ -50,8 +50,9 @@ public class Compiler implements MessageConsumer {
 
 	RunnerException exception;
 
-	Map<String, String> boardPreferences;
-	Map<String, String> platformPreferences;
+	HashMap<String, String> configPreferences;
+	HashMap<String, String> boardPreferences;
+	HashMap<String, String> platformPreferences;
 
 	String avrBasePath;
 	String corePath;
@@ -84,16 +85,16 @@ public class Compiler implements MessageConsumer {
 		// the pms object isn't used for anything but storage
 		MessageStream pms = new MessageStream(this);
 
-		boardPreferences = Base.getBoardPreferences();
+		boardPreferences = new HashMap(Base.getBoardPreferences());
 		//Check for null platform, and use system default if not found
 		platform = boardPreferences.get("platform");
 		if (platform == null)
 		{
-		      platformPreferences = Base.getPlatformPreferences();
+		      platformPreferences = new HashMap(Base.getPlatformPreferences());
 		}
 		else
 		{
-			platformPreferences = Base.getPlatformPreferences(platform);
+			platformPreferences = new HashMap(Base.getPlatformPreferences(platform));
 		}
 		avrBasePath = platformPreferences.get("compiler.path");
 		if (avrBasePath == "") 
@@ -131,7 +132,10 @@ public class Compiler implements MessageConsumer {
 		}
 
 		this.objectFiles = new ArrayList<File>();
-
+		
+		//Put all the global preference configuration into one Master configpreferences
+	    configPreferences = mergePreferences( Preferences.getMap(), platformPreferences, boardPreferences);
+		
 		// 0. include paths for core + all libraries
 		this.includePaths = new ArrayList();
 		getIncludes(this.corePath);
@@ -154,7 +158,7 @@ public class Compiler implements MessageConsumer {
 		compileEep(avrBasePath, buildPath, includePaths, boardPreferences, platformPreferences);
 		
 		// 6. build the .hex file
-		compileHex(avrBasePath, buildPath, includePaths, boardPreferences, platformPreferences);
+		compileHex(avrBasePath, buildPath, includePaths, configPreferences);
 		
 		//done
 		return true;
@@ -700,19 +704,19 @@ public class Compiler implements MessageConsumer {
 	}
 	
 	// 6. build the .hex file
-	void compileHex (String avrBasePath, String buildPath, List includePaths, Map<String, String> boardPreferences, Map<String, String> platformPreferences) 
+	void compileHex (String avrBasePath, String buildPath, List includePaths, HashMap<String, String> configPreferences) 
 		throws RunnerException 
 	{
 		
-		String baseCommandString = platformPreferences.get("recipe.objcopy.hex.pattern");
+		String baseCommandString = configPreferences.get("recipe.objcopy.hex.pattern");
 		String commandString = "";
 		MessageFormat compileFormat = new MessageFormat(baseCommandString);	
 		String objectFileList = "";
 	
 		Object[] Args = {
 			avrBasePath,
-			platformPreferences.get("compiler.elf2hex.cmd"),
-			platformPreferences.get("compiler.elf2hex.flags"),
+			configPreferences.get("compiler.elf2hex.cmd"),
+			configPreferences.get("compiler.elf2hex.flags"),
 			buildPath + File.separator + primaryClassName,
 			buildPath + File.separator + primaryClassName
 			};
@@ -720,5 +724,67 @@ public class Compiler implements MessageConsumer {
 				
 		execAsynchronously(commandString);	
 		
+	}
+	//merge all the preferences file in the correct order of precedence
+	HashMap mergePreferences(Map Preferences,  Map platformPreferences, Map boardPreferences)
+	{
+		HashMap _map = new HashMap();
+		
+	    Iterator iterator = Preferences.entrySet().iterator();
+       
+        while(iterator.hasNext())
+  	    {
+  	    	Map.Entry pair = (Map.Entry)iterator.next();
+  	    	if (pair.getValue() == null)
+  	    	{
+  	    		_map.put(pair.getKey(), "");
+  	    	}
+  	    	else
+  	    	{
+  	    		_map.put(pair.getKey(), pair.getValue());
+  	    	}
+            System.out.println(pair.getKey() + " = " + pair.getValue());
+	    }
+	    
+		System.out.println("Done");
+		
+		iterator = platformPreferences.entrySet().iterator();
+       
+       while(iterator.hasNext())
+  	    {
+  	    	Map.Entry pair = (Map.Entry)iterator.next();
+  	    	
+  	    	if (pair.getValue() == null)
+  	    	{
+  	    		_map.put(pair.getKey(), "");
+  	    	}
+  	    	else
+  	    	{
+  	    		_map.put(pair.getKey(), pair.getValue());
+  	    	}
+            System.out.println(pair.getKey() + " = " + pair.getValue());
+	    }
+
+		System.out.println("Done");
+		boardPreferences.entrySet().iterator();
+       
+        while(iterator.hasNext())
+  	    {
+  	    	Map.Entry pair = (Map.Entry)iterator.next();
+  	    	
+  	    	if (pair.getValue() == null)
+  	    	{
+  	    		_map.put(pair.getKey(), "");
+  	    	}
+  	    	else
+  	    	{
+  	    		_map.put(pair.getKey(), pair.getValue());
+  	    	}
+            System.out.println(pair.getKey() + " = " + pair.getValue());
+	    }
+		System.out.println("Done");
+        
+
+	return _map;
 	}
 }
