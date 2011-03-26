@@ -134,7 +134,7 @@ public class Compiler implements MessageConsumer {
 		this.objectFiles = new ArrayList<File>();
 		
 		//Put all the global preference configuration into one Master configpreferences
-	    configPreferences = mergePreferences( Preferences.getMap(), platformPreferences, boardPreferences);
+	    configPreferences = mergePreferences( Preferences.getMap(), platformPreferences, this.boardPreferences);
 		
 		// 0. include paths for core + all libraries
 		this.includePaths = new ArrayList();
@@ -152,10 +152,10 @@ public class Compiler implements MessageConsumer {
  		compileCore(avrBasePath, buildPath, this.corePath, boardPreferences, platformPreferences);
 		
 		// 4. link it all together into the .elf file
-		compileLink(avrBasePath, buildPath, includePaths, boardPreferences, platformPreferences);
+		compileLink(avrBasePath, buildPath, includePaths, configPreferences);
 
 		// 5. extract EEPROM data (from EEMEM directive) to .eep file.			
-		compileEep(avrBasePath, buildPath, includePaths, boardPreferences, platformPreferences);
+		compileEep(avrBasePath, buildPath, includePaths, configPreferences);
 		
 		// 6. build the .hex file
 		compileHex(avrBasePath, buildPath, includePaths, configPreferences);
@@ -653,11 +653,11 @@ public class Compiler implements MessageConsumer {
 	}
 			
 	// 4. link it all together into the .elf file
-	void compileLink(String avrBasePath, String buildPath, List includePaths, Map<String, String> boardPreferences, Map<String, String> platformPreferences) 
+	void compileLink(String avrBasePath, String buildPath, List includePaths, HashMap<String, String> configPreferences) 
 		throws RunnerException 
 	{	
 		
-		String baseCommandString = platformPreferences.get("recipe.c.combine.pattern");
+		String baseCommandString = configPreferences.get("recipe.c.combine.pattern");
 		String commandString = "";
 		MessageFormat compileFormat = new MessageFormat(baseCommandString);	
 		String objectFileList = "";
@@ -668,10 +668,10 @@ public class Compiler implements MessageConsumer {
 
 			Object[] Args = {
 				avrBasePath,
-				platformPreferences.get("compiler.cpp.cmd"),
-				platformPreferences.get("compiler.c.elf.flags"),
-				platformPreferences.get("compiler.cpudef"),
-				boardPreferences.get("build.mcu"),				
+				configPreferences.get("compiler.cpp.cmd"),
+				configPreferences.get("compiler.c.elf.flags"),
+				configPreferences.get("compiler.cpudef"),
+				configPreferences.get("build.mcu"),				
 				buildPath + File.separator,
 				primaryClassName,
 				objectFileList,
@@ -683,18 +683,18 @@ public class Compiler implements MessageConsumer {
 	}
 
 	// 5. extract EEPROM data (from EEMEM directive) to .eep file.
-	void compileEep (String avrBasePath, String buildPath, List includePaths, Map<String, String> boardPreferences, Map<String, String> platformPreferences) 
+	void compileEep (String avrBasePath, String buildPath, List includePaths, HashMap<String, String> configPreferences) 
 		throws RunnerException 
 	{
-		String baseCommandString = platformPreferences.get("recipe.objcopy.eep.pattern");
+		String baseCommandString = configPreferences.get("recipe.objcopy.eep.pattern");
 		String commandString = "";
 		MessageFormat compileFormat = new MessageFormat(baseCommandString);	
 		String objectFileList = "";
 		
 		Object[] Args = {
 			avrBasePath,
-			platformPreferences.get("compiler.objcopy.cmd"),
-			platformPreferences.get("compiler.objcopy.eep.flags"),
+			configPreferences.get("compiler.objcopy.cmd"),
+			configPreferences.get("compiler.objcopy.eep.flags"),
 			buildPath + File.separator + primaryClassName,
 			buildPath + File.separator + primaryClassName
 			};
@@ -743,10 +743,9 @@ public class Compiler implements MessageConsumer {
   	    	{
   	    		_map.put(pair.getKey(), pair.getValue());
   	    	}
-            System.out.println(pair.getKey() + " = " + pair.getValue());
 	    }
 	    
-		System.out.println("Done");
+		System.out.println("Done: Preferences");
 		
 		iterator = platformPreferences.entrySet().iterator();
        
@@ -762,10 +761,10 @@ public class Compiler implements MessageConsumer {
   	    	{
   	    		_map.put(pair.getKey(), pair.getValue());
   	    	}
-            System.out.println(pair.getKey() + " = " + pair.getValue());
+            //System.out.println(pair.getKey() + " = " + pair.getValue());
 	    }
 
-		System.out.println("Done");
+		System.out.println("Done: platformPreferences");
 		boardPreferences.entrySet().iterator();
        
         while(iterator.hasNext())
@@ -782,7 +781,7 @@ public class Compiler implements MessageConsumer {
   	    	}
             System.out.println(pair.getKey() + " = " + pair.getValue());
 	    }
-		System.out.println("Done");
+		System.out.println("Done: boardPreferences");
         
 
 	return _map;
