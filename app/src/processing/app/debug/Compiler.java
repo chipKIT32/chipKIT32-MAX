@@ -134,22 +134,23 @@ public class Compiler implements MessageConsumer {
 		this.objectFiles = new ArrayList<File>();
 		
 		//Put all the global preference configuration into one Master configpreferences
-	    configPreferences = mergePreferences( Preferences.getMap(), platformPreferences, Base.getBoardPreferences());
+	    configPreferences = mergePreferences( Preferences.getMap(), platformPreferences, boardPreferences);
 		
 		// 0. include paths for core + all libraries
 		this.includePaths = new ArrayList();
 		getIncludes(this.corePath);
 		
 		// 1. compile the sketch (already in the buildPath)
-		compileSketch(avrBasePath, buildPath, includePaths, boardPreferences, platformPreferences);
+		compileSketch(avrBasePath, buildPath, includePaths, configPreferences);
 
 		// 2. compile the libraries, outputting .o files to:
 		// <buildPath>/<library>/
-		compileLibraries(avrBasePath, buildPath, includePaths, boardPreferences, platformPreferences);
+		//Doesn't really use configPreferences
+		compileLibraries(avrBasePath, buildPath, includePaths, configPreferences);
 
 		// 3. compile the core, outputting .o files to <buildPath> and then
 		// collecting them into the core.a library file.
- 		compileCore(avrBasePath, buildPath, this.corePath, boardPreferences, platformPreferences);
+ 		compileCore(avrBasePath, buildPath, this.corePath, configPreferences);
 		
 		// 4. link it all together into the .elf file
 		compileLink(avrBasePath, buildPath, includePaths, configPreferences);
@@ -170,8 +171,7 @@ public class Compiler implements MessageConsumer {
 			List<File> sSources, List<File> 
 			cSources,
 			List<File> cppSources, 
-			Map<String, String> boardPreferences,
-			Map<String, String> platformPreferences) throws RunnerException {
+			HashMap<String, String> configPreferences) throws RunnerException {
 
 		List<File> objectPaths = new ArrayList<File>();
 
@@ -180,8 +180,7 @@ public class Compiler implements MessageConsumer {
 					+ ".o";
 			objectPaths.add(new File(objectPath));
 			execAsynchronously(getCommandCompilerS(avrBasePath, includePaths,
-					file.getAbsolutePath(), objectPath, boardPreferences,
-					platformPreferences));
+					file.getAbsolutePath(), objectPath, configPreferences));
 		}
 
 		for (File file : cSources) {
@@ -189,8 +188,7 @@ public class Compiler implements MessageConsumer {
 					+ ".o";
 			objectPaths.add(new File(objectPath));
 			execAsynchronously(getCommandCompilerC(avrBasePath, includePaths,
-					file.getAbsolutePath(), objectPath, boardPreferences,
-					platformPreferences));
+					file.getAbsolutePath(), objectPath, configPreferences));
 		}
 
 		for (File file : cppSources) {
@@ -198,8 +196,7 @@ public class Compiler implements MessageConsumer {
 					+ ".o";
 			objectPaths.add(new File(objectPath));
 			execAsynchronously(getCommandCompilerCPP(avrBasePath, includePaths,
-					file.getAbsolutePath(), objectPath, boardPreferences,
-					platformPreferences));
+					file.getAbsolutePath(), objectPath, configPreferences));
 		}
 
 		return objectPaths;
@@ -207,6 +204,7 @@ public class Compiler implements MessageConsumer {
 
 	boolean firstErrorFound;
 	boolean secondErrorFound;
+
 /***
 * Exec as String instead of Array
 *
@@ -277,80 +275,6 @@ public class Compiler implements MessageConsumer {
 		}
 	}
 	
-
-	/**
-	 * Either succeeds or throws a RunnerException fit for public consumption.
-	 */
-	 
-	 /*
-	private void execAsynchronously(List commandList) throws RunnerException 
-	{
-		String[] command = new String[commandList.size()];
-		commandList.toArray(command);
-		int result = 0;
-
-		if (verbose || Preferences.getBoolean("build.verbose")) {
-			for (int j = 0; j < command.length; j++) {
-				System.out.print(command[j] + " ");
-			}
-			System.out.println();
-		}
-
-		firstErrorFound = false; // haven't found any errors yet
-		secondErrorFound = false;
-
-		Process process;
-
-		try {
-			process = Runtime.getRuntime().exec(command);
-		} catch (IOException e) {
-			RunnerException re = new RunnerException(e.getMessage());
-			re.hideStackTrace();
-			throw re;
-		}
-
-		MessageSiphon in = new MessageSiphon(process.getInputStream(), this);
-		MessageSiphon err = new MessageSiphon(process.getErrorStream(), this);
-
-		// wait for the process to finish. if interrupted
-		// before waitFor returns, continue waiting
-		boolean compiling = true;
-		while (compiling) {
-			try {
-				if (in.thread != null)
-					in.thread.join();
-				if (err.thread != null)
-					err.thread.join();
-				result = process.waitFor();
-				// System.out.println("result is " + result);
-				compiling = false;
-			} catch (InterruptedException ignored) {
-			}
-		}
-
-		// an error was queued up by message(), barf this back to compile(),
-		// which will barf it back to Editor. if you're having trouble
-		// discerning the imagery, consider how cows regurgitate their food
-		// to digest it, and the fact that they have five stomaches.
-		//
-		// System.out.println("throwing up " + exception);
-		if (exception != null) {
-			throw exception;
-		}
-
-		if (result > 1) {
-			// a failure in the tool (e.g. unable to locate a sub-executable)
-			System.err.println(command[0] + " returned " + result);
-		}
-
-		if (result != 0) {
-			RunnerException re = new RunnerException("Error compiling.");
-			re.hideStackTrace();
-			throw re;
-		}
-	}
-
-*/
 	/**
 	 * Part of the MessageConsumer interface, this is called whenever a piece
 	 * (usually a line) of error message is spewed out from the compiler. The
@@ -418,13 +342,12 @@ public class Compiler implements MessageConsumer {
 	//What conditions is getCommandCompilerS invoke from?
 	static private String getCommandCompilerS(String avrBasePath,
 			List includePaths, String sourceName, String objectName,
-			Map<String, String> boardPreferences,
-			Map<String, String> platformPreferences) 
+			HashMap<String, String> configPreferences) 
 			{
 			
 		
 		String includes = "";
-		String baseCommandString = platformPreferences.get("recipe.cpp.o.pattern");
+		String baseCommandString = configPreferences.get("recipe.cpp.o.pattern");
 		MessageFormat compileFormat = new MessageFormat(baseCommandString);	
 		//getIncludes to String
 		for (int i = 0; i < includePaths.size(); i++) 
@@ -433,12 +356,12 @@ public class Compiler implements MessageConsumer {
 		}
 		Object[] Args = {
 				avrBasePath,
-				platformPreferences.get("compiler.cpp.cmd"),
-				platformPreferences.get("compiler.S.flags"),
-				platformPreferences.get("compiler.cpudef"),
-				boardPreferences.get("build.mcu"),				
-				boardPreferences.get("build.f_cpu"),
-				boardPreferences.get("board"),
+				configPreferences.get("compiler.cpp.cmd"),
+				configPreferences.get("compiler.S.flags"),
+				configPreferences.get("compiler.cpudef"),
+				configPreferences.get("build.mcu"),				
+				configPreferences.get("build.f_cpu"),
+				configPreferences.get("board"),
 				Base.REVISION,
 				includes,
 				sourceName,
@@ -452,11 +375,10 @@ public class Compiler implements MessageConsumer {
 	//removed static
 	private String getCommandCompilerC(String avrBasePath,
 			List includePaths, String sourceName, String objectName,
-			Map<String, String> boardPreferences,
-			Map<String, String> platformPreferences) 
+			HashMap<String, String> configPreferences) 
 			{
 		String includes = "";
-		String baseCommandString = platformPreferences.get("recipe.c.o.pattern");
+		String baseCommandString = configPreferences.get("recipe.c.o.pattern");
 		MessageFormat compileFormat = new MessageFormat(baseCommandString);	
 		//getIncludes to String
 		for (int i = 0; i < includePaths.size(); i++) 
@@ -465,12 +387,12 @@ public class Compiler implements MessageConsumer {
 		}
 		Object[] Args = {
 				avrBasePath,
-				platformPreferences.get("compiler.c.cmd"),
-				platformPreferences.get("compiler.c.flags"),
-				platformPreferences.get("compiler.cpudef"),
-				boardPreferences.get("build.mcu"),				
-				boardPreferences.get("build.f_cpu"),
-				boardPreferences.get("board"),
+				configPreferences.get("compiler.c.cmd"),
+				configPreferences.get("compiler.c.flags"),
+				configPreferences.get("compiler.cpudef"),
+				configPreferences.get("build.mcu"),				
+				configPreferences.get("build.f_cpu"),
+				configPreferences.get("board"),
 				Base.REVISION,
 				includes,
 				sourceName,
@@ -482,12 +404,11 @@ public class Compiler implements MessageConsumer {
 
 	static private String getCommandCompilerCPP(String avrBasePath,
 			List includePaths, String sourceName, String objectName,
-			Map<String, String> boardPreferences,
-			Map<String, String> platformPreferences) 
+			HashMap<String, String> configPreferences) 
 			{
 
 	String includes = "";
-		String baseCommandString = platformPreferences.get("recipe.cpp.o.pattern");
+		String baseCommandString = configPreferences.get("recipe.cpp.o.pattern");
 		MessageFormat compileFormat = new MessageFormat(baseCommandString);	
 		//getIncludes to String
 		for (int i = 0; i < includePaths.size(); i++) 
@@ -496,12 +417,12 @@ public class Compiler implements MessageConsumer {
 		}
 		Object[] Args = {
 				avrBasePath,
-				platformPreferences.get("compiler.cpp.cmd"),
-				platformPreferences.get("compiler.cpp.flags"),
-				platformPreferences.get("compiler.cpudef"),
-				boardPreferences.get("build.mcu"),				
-				boardPreferences.get("build.f_cpu"),
-				boardPreferences.get("board"),
+				configPreferences.get("compiler.cpp.cmd"),
+				configPreferences.get("compiler.cpp.flags"),
+				configPreferences.get("compiler.cpudef"),
+				configPreferences.get("build.mcu"),				
+				configPreferences.get("build.f_cpu"),
+				configPreferences.get("board"),
 				Base.REVISION,
 				includes,
 				sourceName,
@@ -571,19 +492,19 @@ public class Compiler implements MessageConsumer {
 		}
 	}
 	// 1. compile the sketch (already in the buildPath)
-	void compileSketch(String avrBasePath, String buildPath, List includePaths, Map<String, String> boardPreferences, Map<String, String> platformPreferences)
+	void compileSketch(String avrBasePath, String buildPath, List includePaths, HashMap<String, String> configPreferences)
 	throws RunnerException 
 	{
 		this.objectFiles.addAll(compileFiles(avrBasePath, buildPath, includePaths,
 				findFilesInPath(buildPath, "S", false),
 				findFilesInPath(buildPath, "c", false),
-				findFilesInPath(buildPath, "cpp", false), boardPreferences,
-				platformPreferences));
+				findFilesInPath(buildPath, "cpp", false), 
+				configPreferences));
 	}
 	
 	// 2. compile the libraries, outputting .o files to:
 	// <buildPath>/<library>/
-	void compileLibraries (String avrBasePath, String buildPath, List includePaths, Map<String, String> boardPreferences, Map<String, String> platformPreferences) 
+	void compileLibraries (String avrBasePath, String buildPath, List includePaths, HashMap<String, String> configPreferences) 
 		throws RunnerException 
 	{
 		for (File libraryFolder : sketch.getImportedLibraries()) 
@@ -598,7 +519,7 @@ public class Compiler implements MessageConsumer {
 					findFilesInFolder(libraryFolder, "S", false),
 					findFilesInFolder(libraryFolder, "c", false),
 					findFilesInFolder(libraryFolder, "cpp", false),
-					boardPreferences, platformPreferences));
+					configPreferences));
 			outputFolder = new File(outputFolder, "utility");
 			createFolder(outputFolder);
 			this.objectFiles.addAll(compileFiles(avrBasePath,
@@ -606,7 +527,7 @@ public class Compiler implements MessageConsumer {
 					findFilesInFolder(utilityFolder, "S", false),
 					findFilesInFolder(utilityFolder, "c", false),
 					findFilesInFolder(utilityFolder, "cpp", false),
-					boardPreferences, platformPreferences));
+					configPreferences));
 			// other libraries should not see this library's utility/ folder
 			this.includePaths.remove(includePaths.size() - 1);
 		}
@@ -614,12 +535,12 @@ public class Compiler implements MessageConsumer {
 	
 	// 3. compile the core, outputting .o files to <buildPath> and then
 	// collecting them into the core.a library file.
-	void compileCore (String avrBasePath, String buildPath, String corePath, Map<String, String> boardPreferences, Map<String, String> platformPreferences) 
+	void compileCore (String avrBasePath, String buildPath, String corePath, HashMap<String, String> configPreferences) 
 		throws RunnerException 
 	{
 		List  includePaths =  new ArrayList();
 	    includePaths.add(corePath); //include core path only
-		String baseCommandString = platformPreferences.get("recipe.ar.pattern");
+		String baseCommandString = configPreferences.get("recipe.ar.pattern");
 		String commandString = "";
 		MessageFormat compileFormat = new MessageFormat(baseCommandString);	
 		
@@ -630,8 +551,7 @@ public class Compiler implements MessageConsumer {
 				findFilesInPath(corePath, "S", true),
 				findFilesInPath(corePath, "c", true),
 				findFilesInPath(corePath, "cpp", true), 
-				boardPreferences,
-				platformPreferences);
+				configPreferences);
 		
 		for (File file : coreObjectFiles) {
 			//List commandAR = new ArrayList(baseCommandAR);
@@ -639,8 +559,8 @@ public class Compiler implements MessageConsumer {
 		
 			Object[] Args = {
 				avrBasePath,
-				platformPreferences.get("compiler.ar.cmd"),
-				platformPreferences.get("compiler.ar.flags"),
+				configPreferences.get("compiler.ar.cmd"),
+				configPreferences.get("compiler.ar.flags"),
 				//corePath,
 				buildPath + File.separator,
 				"core.a",
