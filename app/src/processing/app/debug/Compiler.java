@@ -134,7 +134,7 @@ public class Compiler implements MessageConsumer {
 		this.objectFiles = new ArrayList<File>();
 		
 		//Put all the global preference configuration into one Master configpreferences
-	    configPreferences = mergePreferences( Preferences.getMap(), platformPreferences, this.boardPreferences);
+	    configPreferences = mergePreferences( Preferences.getMap(), platformPreferences, Base.getBoardPreferences());
 		
 		// 0. include paths for core + all libraries
 		this.includePaths = new ArrayList();
@@ -765,8 +765,8 @@ public class Compiler implements MessageConsumer {
 	    }
 
 		System.out.println("Done: platformPreferences");
-		boardPreferences.entrySet().iterator();
-       
+		iterator = boardPreferences.entrySet().iterator();
+
         while(iterator.hasNext())
   	    {
   	    	Map.Entry pair = (Map.Entry)iterator.next();
@@ -779,7 +779,7 @@ public class Compiler implements MessageConsumer {
   	    	{
   	    		_map.put(pair.getKey(), pair.getValue());
   	    	}
-            System.out.println(pair.getKey() + " = " + pair.getValue());
+            //System.out.println(pair.getKey() + " = " + pair.getValue());
 	    }
 		System.out.println("Done: boardPreferences");
         
