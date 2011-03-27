@@ -96,18 +96,23 @@ public class Compiler implements MessageConsumer {
 		{
 			platformPreferences = new HashMap(Base.getPlatformPreferences(platform));
 		}
-		avrBasePath = platformPreferences.get("compiler.path");
+
+		//Put all the global preference configuration into one Master configpreferences
+	    configPreferences = mergePreferences( Preferences.getMap(), platformPreferences, boardPreferences);
+
+		
+		avrBasePath = configPreferences.get("compiler.path");
 		if (avrBasePath == "") 
 		{
 			avrBasePath = Base.getAvrBasePath();
 		}
-		this.board = boardPreferences.get("board");
+		this.board = configPreferences.get("board");
 		if (this.board == "")
 		{
 			this.board = "_UNKNOWN";
 		}
 
-		String core = boardPreferences.get("build.core");
+		String core = configPreferences.get("build.core");
 		if (core == null) 
 		{
 			RunnerException re = new RunnerException(
@@ -132,10 +137,7 @@ public class Compiler implements MessageConsumer {
 		}
 
 		this.objectFiles = new ArrayList<File>();
-		
-		//Put all the global preference configuration into one Master configpreferences
-	    configPreferences = mergePreferences( Preferences.getMap(), platformPreferences, boardPreferences);
-		
+				
 		// 0. include paths for core + all libraries
 		this.includePaths = new ArrayList();
 		getIncludes(this.corePath);
