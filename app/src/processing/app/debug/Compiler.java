@@ -102,7 +102,7 @@ public class Compiler implements MessageConsumer {
 
 		
 		avrBasePath = configPreferences.get("compiler.path");
-		if (avrBasePath == "") 
+		if (avrBasePath == null) 
 		{
 			avrBasePath = Base.getAvrBasePath();
 		}
@@ -155,7 +155,7 @@ public class Compiler implements MessageConsumer {
  		compileCore(avrBasePath, buildPath, this.corePath, configPreferences);
 		
 		// 4. link it all together into the .elf file
-		compileLink(avrBasePath, buildPath, includePaths, configPreferences);
+		compileLink(avrBasePath, buildPath, this.corePath, includePaths, configPreferences);
 
 		// 5. extract EEPROM data (from EEMEM directive) to .eep file.			
 		compileEep(avrBasePath, buildPath, includePaths, configPreferences);
@@ -575,7 +575,7 @@ public class Compiler implements MessageConsumer {
 	}
 			
 	// 4. link it all together into the .elf file
-	void compileLink(String avrBasePath, String buildPath, List includePaths, HashMap<String, String> configPreferences) 
+	void compileLink(String avrBasePath, String buildPath, String corePath, List includePaths, HashMap<String, String> configPreferences) 
 		throws RunnerException 
 	{	
 		
@@ -598,7 +598,9 @@ public class Compiler implements MessageConsumer {
 				primaryClassName,
 				objectFileList,
 				buildPath + File.separator + "core.a",
-				buildPath
+				buildPath,
+				corePath,	
+				configPreferences.get("ldscript"),	
 			};
 			commandString = compileFormat.format(  Args );
 			execAsynchronously(commandString);
