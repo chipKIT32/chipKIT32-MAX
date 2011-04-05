@@ -1,0 +1,55 @@
+############################################################
+mega_pic32.name=Digilent Pic32 Mega
+
+# new items
+mega_pic32.platform=pic32
+mega_pic32.board=_BOARD_MEGA_
+mega_pic32.define=anything_you_want
+mega_pic32.ccflags=ffff
+mega_pic32.ldscript=chipKIT-application-mega-32MX795F512L.ld
+# end of new items
+
+mega_pic32.upload.protocol=stk500v2
+mega_pic32.upload.maximum_size=512000
+mega_pic32.upload.speed=115200
+
+mega_pic32.bootloader.low_fuses=0xff
+mega_pic32.bootloader.high_fuses=0xdd
+mega_pic32.bootloader.extended_fuses=0x00
+mega_pic32.bootloader.path=atmega
+mega_pic32.bootloader.file=ATmegaBOOT_168_ng.hex
+mega_pic32.bootloader.unlock_bits=0x3F
+mega_pic32.bootloader.lock_bits=0x0F
+
+mega_pic32.build.mcu=32MX795F512L
+mega_pic32.build.f_cpu=80000000L
+mega_pic32.build.core=pic32
+#mega_pic32.upload.using=
+
+############################################################
+uno_pic32.name=Digilent Pic32 Uno
+
+# new items
+uno_pic32.platform=pic32
+uno_pic32.board=_BOARD_UNO_
+uno_pic32.define=anything_you_want
+uno_pic32.ccflags=ffff
+uno_pic32.ldscript=chipKIT-application-uno-32MX320F128L.ld
+# end of new items
+
+uno_pic32.upload.protocol=stk500v2
+uno_pic32.upload.maximum_size=64000
+uno_pic32.upload.speed=115200
+
+uno_pic32.bootloader.low_fuses=0xff
+uno_pic32.bootloader.high_fuses=0xdd
+uno_pic32.bootloader.extended_fuses=0x00
+uno_pic32.bootloader.path=atmega
+uno_pic32.bootloader.file=ATmegaBOOT_168_ng.hex
+uno_pic32.bootloader.unlock_bits=0x3F
+uno_pic32.bootloader.lock_bits=0x0F
+
+uno_pic32.build.mcu=32MX320F064H
+uno_pic32.build.f_cpu=80000000L
+uno_pic32.build.core=pic32
+#uno_pic32.upload.using=
