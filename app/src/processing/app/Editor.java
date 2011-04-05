@@ -2402,12 +2402,12 @@ public class Editor extends JFrame implements RunnerListener {
       public void run() {
         try {
         	Uploader uploader = new AvrdudeUploader();
-        	
+        /*	
         	if (Base.getBoardPreferences().get("upload.using").equals("picdude")) 
     		{
     	 		uploader = new PicdudeUploader();
     		}
-          
+          */
           if (uploader.burnBootloader(target, programmer)) {
             statusNotice("Done burning bootloader.");
           } else {
