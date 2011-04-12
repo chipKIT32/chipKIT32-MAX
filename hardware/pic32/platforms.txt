@@ -9,7 +9,9 @@ pic32.recipe.objcopy.hex.pattern={0}{1} {2} {3}.elf
 
 ########################################################
 pic32.name=MicroChip PIC32
-pic32.compiler.path=/opt/local/pic32/install-image/bin/
+#pic32.compiler.path=/opt/local/pic32/install-image/bin/
+#pic32.compiler.path=/opt/pic32-tools/bin/
+pic32.compiler.path=C:\cygwin\opt\pic32-tools\bin\
 pic32.compiler.c.cmd=pic32-gcc
 pic32.compiler.c.flags= -O2 -g1 -c 
 pic32.compiler.cpp.cmd=pic32-g++
@@ -30,5 +32,6 @@ pic32.compiler.ldscript=chipKIT-BL.ld
 pic32.compiler.includepath=/opt/local/pic32/install-image/pic32mx/include
 pic32.compiler.upload.cmd=
 pic32.compiler.upload.flags=
-pic32.library.path=./Contents/Resources/Java/hardware/pic32/cores/pic32
+#pic32.library.path=./hardware/pic32/cores/pic32
+pic32.library.path=.\hardware\pic32\cores\pic32
 pic32.ldscript=chipKIT-BL-mega.ld

@@ -39,7 +39,7 @@ avr.recipe.objcopy.hex.pattern={0}{1} {2} {3}.elf {4}.hex
 
 ########################################################
 avr.name=Atmel AVR (ATmega/Xmega)
-avr.compiler.path=/usr/local/CrossPack-AVR/bin/	
+#avr.compiler.path=/usr/local/CrossPack-AVR/bin/	
 avr.compiler.c.cmd=avr-gcc
 avr.compiler.c.flags= -c -g -Os -w -ffunction-sections -fdata-sections 
 avr.compiler.c.elf.flags= -Os -Wl,--gc-sections

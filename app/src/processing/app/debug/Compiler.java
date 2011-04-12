@@ -490,7 +490,9 @@ public class Compiler implements MessageConsumer {
 		this.includePaths.add(corePath);
 		for (File file : sketch.getImportedLibraries()) 
 		{
+			//includePaths.add(file.getPath());
 			includePaths.add(file.getPath());
+
 		}
 	}
 	// 1. compile the sketch (already in the buildPath)
