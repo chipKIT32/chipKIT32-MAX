@@ -128,19 +128,21 @@ public class Compiler implements MessageConsumer {
 			File coreFolder = new File(new File(t.getFolder(), "cores"), core);
 			this.corePath = coreFolder.getAbsolutePath();
 		} else {
-			Target t = Base.targetsTable.get(core.substring(0,
-					core.indexOf(':')));
+			Target t = Base.targetsTable.get(core.substring(0, core.indexOf(':')));
 			File coresFolder = new File(t.getFolder(), "cores");
-			File coreFolder = new File(coresFolder, core.substring(core
-					.indexOf(':') + 1));
+			File coreFolder = new File(coresFolder, core.substring(core.indexOf(':') + 1));
 			this.corePath = coreFolder.getAbsolutePath();
 		}
 
+		/*
+		* Debug corePath, and includes
+		*/
+		System.out.println("corePath: " + this.corePath);
+		
 		this.objectFiles = new ArrayList<File>();
 				
 		// 0. include paths for core + all libraries
-		this.includePaths = new ArrayList();
-		getIncludes(this.corePath);
+		this.includePaths =	getIncludes(this.corePath);
 		
 		// 1. compile the sketch (already in the buildPath)
 		compileSketch(avrBasePath, buildPath, includePaths, configPreferences);
@@ -485,15 +487,17 @@ public class Compiler implements MessageConsumer {
 		return files;
 	}
 	// 0. include paths for core + all libraries
-	void getIncludes(String corePath) 
+	List getIncludes(String corePath) 
 	{
-		this.includePaths.add(corePath);
+		List includePaths = new ArrayList();
+		includePaths.add(corePath);
 		for (File file : sketch.getImportedLibraries()) 
 		{
 			//includePaths.add(file.getPath());
 			includePaths.add(file.getPath());
 
 		}
+		return includePaths;
 	}
 	// 1. compile the sketch (already in the buildPath)
 	void compileSketch(String avrBasePath, String buildPath, List includePaths, HashMap<String, String> configPreferences)
