@@ -135,14 +135,26 @@ public class Compiler implements MessageConsumer {
 		}
 
 		/*
-		* Debug corePath, and includes
+		* Debug corePath
 		*/
-		System.out.println("corePath: " + this.corePath);
+			System.out.println("corePaths: " + this.corePath);
+
 		
 		this.objectFiles = new ArrayList<File>();
 				
 		// 0. include paths for core + all libraries
 		this.includePaths =	getIncludes(this.corePath);
+
+		/*
+                * Debug what is the include path used
+                */
+ 		for (int i = 0; i < includePaths.size(); i++)
+                {
+                        System.out.println("includes: " + includePaths.get(i));
+                }
+
+
+
 		
 		// 1. compile the sketch (already in the buildPath)
 		compileSketch(avrBasePath, buildPath, includePaths, configPreferences);

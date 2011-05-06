@@ -1330,12 +1330,18 @@ public class Sketch {
     importedLibraries = new ArrayList<File>();
 
     for (String item : preprocessor.getExtraImports()) {
+    	//Debug print library filename 
+    	System.out.println("Library filename item: " + item);
       File libFolder = (File) Base.importToLibraryTable.get(item);
+      //Debug libraryPath
+        System.out.println("Base.importToLibraryTable.get(item): " + Base.importToLibraryTable.get(item));
 
       if (libFolder != null && !importedLibraries.contains(libFolder)) {
         importedLibraries.add(libFolder);
         //classPath += Compiler.contentsToClassPath(libFolder);
         libraryPath += File.pathSeparator + libFolder.getAbsolutePath();
+        //Debug libraryPath
+        System.out.println("libraryPath: " + libraryPath);
       }
     }
 

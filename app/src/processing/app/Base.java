@@ -239,7 +239,21 @@ public class Base {
     // Get paths for the libraries and examples in the Processing folder
     //String workingDirectory = System.getProperty("user.dir");
     examplesFolder = getContentFile("examples");
+  
+    //Debug
+    //librariesFolder is defined here.
+    //Check if preference has been overiden.
+    /*Map<String, String> platformPrefs = getPlatformPreferences(Preferences.get("platform"));
+    if () {
+   		librariesFolder = 
+    }
+    else {
+    	librariesFolder = getContentFile("libraries");
+    }
+    */
+    
     librariesFolder = getContentFile("libraries");
+
     toolsFolder = getContentFile("tools");
 
     // Get the sketchbook path, and make sure it's set properly
@@ -1193,7 +1207,15 @@ public class Base {
 //        // need to associate each import with a library folder
 //        String packages[] =
 //          Compiler.packageListFromClassPath(libraryClassPath);
+
+		/*
+		* Debug right here is where a default core libraries needs to be checked for.
+		*/
+		
         libraries.add(subfolder);
+        //Debug subfolder
+        System.out.println("Base.subfolder: " + subfolder);
+
         String packages[] =
           Compiler.headerListFromIncludePath(subfolder.getAbsolutePath());
         for (String pkg : packages) {

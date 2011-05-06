@@ -36,5 +36,5 @@ pic32.compiler.upload.flags=
 #pic32.library.path=./hardware/pic32/cores/pic32
 pic32.library.path=.\hardware\pic32\cores\pic32
 pic32.ldscript=chipKIT-BL-mega.ld
-pic32.library.arduino.core.path=.\hardware\pic32\libraries
+pic32.library.core.path=.\hardware\pic32\libraries
 
