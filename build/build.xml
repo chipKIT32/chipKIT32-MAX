@@ -203,17 +203,20 @@
       <arg value="macosx/work/Arduino.app/Contents/Resources/Java/hardware" />
       <arg value="macosx/dist/tools-universal.zip" />
     </exec>
-<!--
-     <exec executable="unzip">
+     
+<!--   <exec executable="unzip">
       <arg value="-q" />
       <arg value="-n" />
       <arg value="-d" />
       <arg value="macosx/work/Arduino.app/Contents/Resources/Java/hardware/pic32/compiler" />
       <arg value="macosx/dist/cpp-chipKIT-Mac-20110426.zip" />
     </exec>
-/-->
+-->
 
 <unzip dest="macosx/work/Arduino.app/Contents/Resources/Java/hardware/pic32/compiler" src="macosx/dist/cpp-chipKIT-Mac-20110426.zip" overwrite="false"/>
+<chmod perm="+x">
+      <fileset dir="macosx/work/Arduino.app/Contents/Resources/Java/hardware/pic32/compiler" includes="**/*" />
+</chmod>
 
     <copy todir="macosx/work/Arduino.app/Contents/Resources/Java/hardware/tools/avr/avr/include/avr">    
       <fileset file="macosx/dist/eeprom.h" />
@@ -247,6 +250,7 @@
     <!-- The ant copy command does not preserve permissions. -->
     <chmod file="macosx/working_dir/Arduino.app/Contents/MacOS/JavaApplicationStub" perm="+x" />
     <chmod perm="+x">
+      <fileset dir="macosx/working_dir/Arduino.app/Contents/Resources/Java/hardware/pic32/compiler" includes="**/*" />
       <fileset dir="macosx/working_dir/Arduino.app/Contents/Resources/Java/hardware/tools/avr/bin" includes="**/*" />
       <fileset dir="macosx/working_dir/Arduino.app/Contents/Resources/Java/hardware/tools/avr/avr/bin" includes="**/*" />
       <fileset dir="macosx/working_dir/Arduino.app/Contents/Resources/Java/hardware/tools/avr/avr-3/bin" includes="**/*" />

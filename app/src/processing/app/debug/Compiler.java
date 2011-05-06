@@ -102,6 +102,15 @@ public class Compiler implements MessageConsumer {
 
 		
 		avrBasePath = configPreferences.get("compiler.path");
+		//Put in the system path in the compiler path if available
+		MessageFormat compileFormat = new MessageFormat(avrBasePath);	
+		String basePath = System.getProperty("user.dir");
+		if (Base.isMacOS()) {
+			basePath += "/Arduino.app/Contents/Resources/Java";
+		}
+		Object[] Args = {basePath};
+		avrBasePath = compileFormat.format(  Args );
+		System.out.println("avrBasePath: " + avrBasePath);
 		if (avrBasePath == null) 
 		{
 			avrBasePath = Base.getAvrBasePath();
