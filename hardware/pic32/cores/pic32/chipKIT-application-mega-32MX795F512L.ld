@@ -30,6 +30,7 @@ _ebase_address  = 0x9D000000;
  * Memory Address Equates
  *************************************************************************/
 _RESET_ADDR              = 0x9D001000;
+_EEPROM_ADDR             = 0x9D07C000;
 _BEV_EXCPT_ADDR          = 0xBFC00380;
 _DBG_EXCPT_ADDR          = 0xBFC00480;
 _DBG_CODE_ADDR           = 0xBFC02000;
@@ -42,25 +43,22 @@ _GEN_EXCPT_ADDR          = _ebase_address + 0x180;
  * Only sections specifically assigned to these regions can be allocated
  * into these regions.
  *************************************************************************/
-
 MEMORY
 {
-  kseg0_program_mem    (rx)  : ORIGIN = 0x9D001000, LENGTH = 0x20000-0x1000 /* Length set for Uno or Mega */
-  kseg0_boot_mem             : ORIGIN = 0x9FC00490, LENGTH = 0 /* Don't use boot memory */
+  kseg0_program_mem    (rx)  : ORIGIN = 0x9D001000, LENGTH = 0x7B000
+  kseg0_eeprom_mem           : ORIGIN = 0x9D07F000, LENGTH = 0x4000
+  kseg0_boot_mem             : ORIGIN = 0x9FC00490, LENGTH = 0
   exception_mem              : ORIGIN = 0x9D000000, LENGTH = 0x1000
-  kseg1_boot_mem             : ORIGIN = 0xBFC00000, LENGTH = 0 /* Don't use boot memory */
+  kseg1_boot_mem             : ORIGIN = 0xBFC00000, LENGTH = 0 
   debug_exec_mem             : ORIGIN = 0xBFC02000, LENGTH = 0
-  config3                    : ORIGIN = 0xBFC02FF0, LENGTH = 0 /* Disallow setting config fuses from the application */
+  config3                    : ORIGIN = 0xBFC02FF0, LENGTH = 0 
   config2                    : ORIGIN = 0xBFC02FF4, LENGTH = 0
   config1                    : ORIGIN = 0xBFC02FF8, LENGTH = 0
   config0                    : ORIGIN = 0xBFC02FFC, LENGTH = 0
-  kseg1_data_mem       (w!x) : ORIGIN = 0xA0000000, LENGTH = 0x4000 /* Set for Uno or Mega */
+  kseg1_data_mem       (w!x) : ORIGIN = 0xA0000000, LENGTH = 0x20000
   sfrs                       : ORIGIN = 0xBF800000, LENGTH = 0x100000
   configsfrs                 : ORIGIN = 0xBFC02FF0, LENGTH = 0x10
-
-
 }
-
 
 SECTIONS
 {
@@ -69,6 +67,11 @@ SECTIONS
   {
     KEEP(*(.reset))
   } > kseg0_program_mem
+  
+  .eeprom_pic32 _EEPROM_ADDR :
+  { 
+    . += 0x4000;
+  } > kseg0_eeprom_mem =0xFF
 
   /DISCARD/ : { *(.bev_handler) }
 
@@ -524,9 +527,10 @@ SECTIONS
   {
     _persist_begin = .;
     *(.persist .persist.*)
+    . = ALIGN(4);
     _persist_end = .;
   } >kseg1_data_mem
-  .data   :
+  .data  ALIGN(4)  :
   {
     _data_begin = . ;
     *(.data .data.* .gnu.linkonce.d.*)
@@ -572,7 +576,7 @@ SECTIONS
     *(.scommon)
     _sbss_end = . ;
   } >kseg1_data_mem
-  .bss   :
+  .bss ALIGN(4)  :
   {
     *(.dynbss)
     *(.bss .bss.* .gnu.linkonce.b.*)
@@ -659,10 +663,10 @@ SECTIONS
   /* DWARF 2 */
   .debug_info     0 : { *(.debug_info .gnu.linkonce.wi.*) }
   .debug_abbrev   0 : { *(.debug_abbrev) }
-  .debug_line     0 : { *(.debug_line) }
+  /DISCARD/         : { *(.debug_line) }
   .debug_frame    0 : { *(.debug_frame) }
   .debug_str      0 : { *(.debug_str) }
-  .debug_loc      0 : { *(.debug_loc) }
+  /DISCARD/         : { *(.debug_loc) }
   .debug_macinfo  0 : { *(.debug_macinfo) }
   /* SGI/MIPS DWARF 2 extensions */
   .debug_weaknames 0 : { *(.debug_weaknames) }
