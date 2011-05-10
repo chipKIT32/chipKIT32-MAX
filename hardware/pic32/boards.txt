@@ -1,5 +1,5 @@
 ############################################################
-mega_pic32.name=Digilent Pic32 Mega
+mega_pic32.name=chipKIT MAX32
 
 # new items
 mega_pic32.platform=pic32
@@ -27,7 +27,7 @@ mega_pic32.build.core=pic32
 #mega_pic32.upload.using=
 
 ############################################################
-uno_pic32.name=Digilent Pic32 Uno
+uno_pic32.name=chipKIT UNO32
 
 # new items
 uno_pic32.platform=pic32
