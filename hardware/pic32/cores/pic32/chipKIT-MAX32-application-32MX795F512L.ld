@@ -71,7 +71,7 @@ SECTIONS
   .eeprom_pic32 _EEPROM_ADDR :
   { 
     . += 0x4000;
-  } > kseg0_eeprom_mem =0xFF
+  } > kseg0_eeprom_mem
 
   /DISCARD/ : { *(.bev_handler) }
 
