@@ -1072,9 +1072,7 @@ public class Base {
               Preferences.set("board", (String) getValue("board"));
               logger.debug("DEBUG: rebuildBoardsMenu: inside rebuildImportMenu" );
           	  //Debug: created new imports menu based on board
-              JMenu emptyMenu = new JMenu();
-              rebuildImportMenu(emptyMenu);
-
+              rebuildImportMenu(activeEditor.importMenu);
             }
           };
         action.putValue("target", target.getName());
