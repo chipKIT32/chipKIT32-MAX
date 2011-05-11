@@ -8,7 +8,7 @@
  * published by the Free Software Foundation.
  */
 
-#include "pins_arduino.h"
+#include <plib.h>
 #include "SPI.h"
 
 SPIClass SPI;
@@ -31,31 +31,25 @@ void SPIClass::begin() {
   // Warning: if the SS pin ever becomes a LOW INPUT then SPI 
   // automatically switches to Slave, so the data direction of 
   // the SS pin MUST be kept as OUTPUT.
-  SPCR |= _BV(MSTR);
-  SPCR |= _BV(SPE);
+  SPI1CONSET = ( 1 << bnOn) | ( 1 << bnMsten );
 }
 
 void SPIClass::end() {
-  SPCR &= ~_BV(SPE);
+  SPI1CONCLR = ( 1 << bnOn );
 }
 
 void SPIClass::setBitOrder(uint8_t bitOrder)
 {
-  if(bitOrder == LSBFIRST) {
-    SPCR |= _BV(DORD);
-  } else {
-    SPCR &= ~(_BV(DORD));
-  }
+	//Bit order is not implemented on the PIC parts
 }
 
-void SPIClass::setDataMode(uint8_t mode)
+void SPIClass::setDataMode(uint16_t mode)
 {
-  SPCR = (SPCR & ~SPI_MODE_MASK) | mode;
+  SP1CONSET = mode;
 }
 
 void SPIClass::setClockDivider(uint8_t rate)
 {
-  SPCR = (SPCR & ~SPI_CLOCK_MASK) | (rate & SPI_CLOCK_MASK);
-  SPSR = (SPSR & ~SPI_2XCLOCK_MASK) | ((rate >> 2) & SPI_2XCLOCK_MASK);
+  SPI1BRGSET = rate;
 }
 
