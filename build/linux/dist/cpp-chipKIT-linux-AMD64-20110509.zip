@@ -1,0 +1,746 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <script type="text/javascript">window.ST=new Date().getTime();</script>
+    <meta content="text/html; charset=UTF-8" http-equiv="content-type" />
+    <meta http-equiv="X-UA-Compatible" content="IE=7" />
+    <meta name="description" content="Dropbox is a free service that lets you bring your photos, docs, and videos anywhere and share them easily. Never email yourself a file again!"/>
+    <meta name="keywords" content="online storage, free storage, file sharing, share files, awesome, cloud storage, online backup, cross platform, sync, sharing, mac, windows, os x, linux, backup, collaboration, file versioning, file revisions, remote access, undelete"/>
+    <meta name="google-site-verification" content="TnuSyOnBMNmtugbpL1ZvW2PbSF9LKvoTzrvOGS9h-b0" />
+    <meta name="google-site-verification" content="EZKIczQcM1-DVUMz8heu1dIhNtxNbLqbaA9-HbOnCQ4" />
+    <meta name="norton-safeweb-site-verification" content="tz8iotmk-pkhui406y41y5bfmfxdwmaa4a-yc0hm6r0fga7s6j0j27qmgqkmc7oovihzghbzhbdjk-uiyrz438nxsjdbj3fggwgl8oq2nf4ko8gi7j4z7t78kegbidl4" />
+    <title>Dropbox 
+                - cpp-chipKIT-linux-AMD64-20110509.zip
+        - Simplify your life
+    </title>
+
+    <link rel="shortcut icon" href="/static/16612/images/favicon.ico"/>
+
+    <link href="/static/16612/css/main.css" rel="stylesheet" type="text/css"/>
+    <link href="/static/16612/css/lib.css" rel="stylesheet" type="text/css" media="screen"/>
+    <link href="/static/16612/css/sprites.css" rel="stylesheet" type="text/css" media="screen"/>
+
+    <link rel="apple-touch-icon" href="/static/16612/images/dropbox_webclip.png"/>
+    <link rel="P3Pv1" href="/w3c/p3p.xml"/>
+    
+
+
+<script type="text/javascript">
+var Constants = {
+  BLOCK_CLUSTER: 'dl-web.dropbox.com',
+  PUBSERVER: 'dl.dropbox.com',
+  WEBSERVER: 'www.dropbox.com',
+  block: 'dl-web.dropbox.com',
+  protocol: 'https',
+  uid: '',
+  root_ns: '',
+  SVN_REV: '16612',
+  TOKEN: '',
+  IS_PROD: 1,
+  WIT_ENABLED: 0,
+  upload_debug: false,
+  tcn: 'touch',
+  date_format: 'M/d/yyyy',
+  referrer: 'https://www.dropbox.com/s/ap94d0my0gmeq80/chipKIT-Compilers', 
+  TWO_ITEM_LIST: '%(x)s and %(y)s',
+  THREE_ITEM_LIST: '%(x)s, %(y)s and %(z)s',
+  LOCALES: [["en", "English"], ["es", "Espa\u00f1ol"], ["fr", "Fran\u00e7ais"], ["de", "Deutsch"], ["ja", "\u65e5\u672c\u8a9e"]],
+  USER_LOCALE: 'en'
+};
+</script>
+    <script type="text/javascript" src="/static/16612/javascript/lib-mini.js"></script>
+    <script type="text/javascript">
+        function global_report_exception (e, f, l, tb, force) {
+            if (!window.reported_exception || force) {
+                var stack_str = "";
+                try {
+                    if (!tb) {
+                        var stack = get_stack_rep();
+                        stack.pop(); // remove global_report_exception
+                        stack.pop(); // remove onerror handler
+                        stack_str = stack.join("\n");
+                    }
+                } catch (e) { }
+                var dbr = new Ajax.Request("/jse", {parameters: {'e': e, 'f': f || window.location.href, 'l': l, 'loc': window.location.href, 'ref': Constants.referrer, 'tb': tb || stack_str }});
+                window.reported_exception = true;
+           }
+        }
+        window.LoadedJsSuccessfully = false; // this constant gets set to true at the bottom of dropbox.js
+        Event.observe(window, "load", function () {
+            if (!window.LoadedJsSuccessfully) {
+                global_report_exception("Failed to load javascript!");
+            }
+        });
+        window.onerror = function (e, f, l) {
+            global_report_exception(e, f, l);
+        };
+    </script>
+    <script type="text/javascript" src="/static/16612/javascript/dropbox-mini.js"></script>
+
+    <style type="text/css">
+      .hny-nhtc { display: none; }
+    </style>
+    <style type="text/css" media="screen">
+    #full-content, #main-container, body, html {
+        padding-top: 0 !important;
+        margin-top: 0;
+    }
+    #post-progress {
+        margin: 0;
+        margin-top: 2em;
+    }
+        #code { font-family: inherit !important; }
+
+    
+    #tabs-container { display: none; }
+    #footer { display: none; }
+    
+    #code .syntaxhighlighter { overflow-y: hidden !important; margin: 0 !important; }
+    #code-loading { margin-top: 1em; }   
+    #code-wrapper .syntaxhighlighter .gutter .line {
+        border-right: 2px solid #fff !important;
+    } 
+    .loadingbox { display:inline-block; position: relative; background: #fff; border: 1px solid #ace; padding:10px; }
+    
+    #hotbox { border-collapse: collapse; }
+    #kill_dl { background: #fff; position: absolute; width: 60px; height: 20px; z-index: 10;}
+    #scribd_viewer { position: relative; margin-top: 1em; }
+    
+    #logo { width: auto; }
+    #crocodoc_viewer, #microsoft_viewer { border: 1px solid #ace; }
+    iframe { border: 0; }
+</style>
+
+
+<script type="text/javascript" charset="utf-8">
+    FacebookOAuth.has_authed = 0;
+    Twitter.has_authed = 0;
+    Twitter.progress_container = "post-progress";
+    FacebookOAuth.progress_container = "post-progress";
+    
+    var token = '{"link": "http://db.tt/MpfBY06", "path": "/Public", "user_id": 2073138, "name": "cpp-chipKIT-linux-AMD64-20110509.zip", "key": "ap94d0my0gmeq80"}'.evalJSON();    
+
+    document.observe("dom:loaded", function () {
+        $("share-link").setValue(token.link);
+        $("share-link").select(); 
+
+        Util.copy_to_clipboard_swf(token.link, 'copy_link', 'copy_done');
+    });
+
+function copy_done () {
+    Sprite.replace($("copy_link"), 'link', 'tick');
+}
+
+function c2d () {
+    var url = '/sm/c2d/ap94d0my0gmeq80/chipKIT-Compilers/cpp-chipKIT-linux-AMD64-20110509.zip';
+    SM.r('ap94d0my0gmeq80', 14, '', '/chipKIT-Compilers/cpp-chipKIT-linux-AMD64-20110509.zip');        
+    SharingModel.copy_to_dropbox('cpp-chipKIT-linux-AMD64-20110509.zip', 'ap94d0my0gmeq80', '/chipKIT-Compilers/cpp-chipKIT-linux-AMD64-20110509.zip');
+}    
+
+function twitter_auth_complete () {
+    AMC.log('shmodel_share', {
+        'type': 'twitter',
+        'action': 'auth_complete'
+    });
+    Twitter.has_authed=1;
+    FacebookOAuth.deferred=1;
+    Twitter.onLoginSuccessCallback && Twitter.onLoginSuccessCallback();
+}
+
+function facebook_auth_complete () {
+    AMC.log('shmodel_share', {
+        'type': 'facebook',
+        'action': 'auth_complete'
+    });
+    FacebookOAuth.has_authed=1;
+    FacebookOAuth.onLoginSuccessCallback && FacebookOAuth.onLoginSuccessCallback();
+}
+</script>
+
+</head>
+
+<body class="en">
+
+    
+
+    <div id="modal-behind" style="display: none;"></div>
+
+    <div id="modal" style="display: none;">
+        <div id="modal-box">
+            <a onclick="javascript: Modal.hide(); Event.stop(event); return false;" href="#" style="float: right;"><img src="/static/images/icons/icon_spacer.gif" alt="" border="0" class="sprite s_x" /></a>
+            <h2 id="modal-title"></h2>
+            <div id="modal-content">
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-overlay" style="display: none;" onclick="Modal.hide(); Event.stop(event); return false;"></div>
+    <div id="floaters"></div><div id="trash-can" style="display:none"></div><div id="grave-yard" style="display:none"></div>
+
+
+    <div id="feedback-div" style="display: none">
+        <div id="feedback">
+            <form method="post" action="/feedback">
+                Suggestions, ideas, bug reports, and comments are always welcome. If you'd like to interact with other Dropbox users, check out our <a id="forums_link">forums</a>.
+                <script type="text/javascript">
+                   Util.jag('forums_link', 'href', 'http://forums.dropbox.com');
+                </script>
+                <br/><br/>
+
+                Email Address (optional)<br />
+                <input type="text" name="feedback_email" value="" class="textinput act_as_block" id="feedback_email" /><br /><br />
+                <textarea class="textinput act_as_block" name="content" id="feedback_textarea" rows="1" cols="1"></textarea>
+
+                <div align="right">
+                    <input type="text" name="email" class="hny-nhtc"/> 
+                    <input type="submit" value="Send feedback" class="button" />
+                </div>
+            </form>
+        </div>
+    </div>
+    <div id="translate-div" style="display:none; margin-bottom: -10px">
+        <form id="translation-suggest-form" onsubmit="TranslationSuggest.submit_suggest(event); return false;" action='/translation_suggest' method="POST">
+            <input type="hidden" name="locale" value="en" />
+            <input type="hidden" name="locale_url" value="https://www.dropbox.com/s/ap94d0my0gmeq80/chipKIT-Compilers/cpp-chipKIT-linux-AMD64-20110509.zip" />
+            <input type="hidden" id="translation-msg-id" name="msg_id" value="" />
+            <p class="clean">Please paste or type the improper translation</p>
+            <div id="part-one">
+                <p>
+                    <span class="error-message" id="bad-i18n-text-error" style="display: none">We couldn't find that string on this page.</span>
+                    <textarea name="bad_text" id="bad-i18n-text" class="act_as_block textinput" rows='3' cols='40'></textarea>
+                </p>
+                <div id="bad-i18n-text-complete" class="autocomplete"></div>
+            </div>
+            <div id="part-two">
+                                    <div class="emo hotbox" id="translation-msg-display" style="margin-bottom: 10px"></div>
+                  <p class="clean">Original English text</p>
+                  <div class="green-hotbox" id="translation-orig-msg-display" style="margin-bottom: 10px"></div>
+                  <p class="clean">Suggested translation</p>
+                  <p><textarea name="suggested_text" class="textinput act_as_block" rows='3' cols='40'></textarea></p>
+                  <p class="clean">Explanation of the problem</p>
+                  <p><textarea name="explanation" class="textinput act_as_block" rows='3' cols='40'></textarea></p>
+                  <p style="text-align: right; margin-bottom:0;">
+                      <input type="button" class="button grayed" onclick="TranslationSuggest.start_wizard(event);return false;" value="Back" id="translation-back-button"/>
+                      <input type="submit" class="button" onclick="TranslationSuggest.submit_suggest(event); return false;" value="Suggest Translation" />
+                  </p>
+            </div>
+        </form>
+    </div>
+
+    <div id="server-error" class="notify server-er" style="display: none;">
+        <table cellpadding="0" cellspacing="0">
+            <tr>
+                <td class="msg-td">
+                    <span class="msg-span">There was a problem completing this request.</span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <b class="rbottom"><b class="r0"></b><b class="r1"></b></b>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div id="server-success" class="notify server-ok" style="display: none;">
+        <table cellpadding="0" cellspacing="0">
+            <tr>
+                <td class="msg-td">
+                    <span>Request completed successfully.</span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <b class="rbottom"><b class="r0"></b><b class="r1"></b></b>
+                </td>
+            </tr>
+        </table>
+    </div>
+<div id="main-container">
+
+
+
+        <div name="main tabs" id="tabs-container" class="wit_group clearfix">
+        </div>
+
+    <div id="content" style='background:#fff;'  class="clearfix">
+        
+        <div id="full-content">
+            
+
+
+<div id="social-share">
+    <span id="social-share-content">
+        <table>
+            <tr>
+                <td><img src="/static/images/icons/icon_spacer.gif" style="margin-right: 2px;" id="copy_link" alt="" class="sprite s_link" /></td>
+                <td><input type="text" class="textinput" id="share-link" style="padding: 5px; margin-top: 0; vertical-align: top;" readonly/></td>
+                
+                <td>
+                  <a onclick="SharingModel.show_post_options(token);SM.r('ap94d0my0gmeq80', 15, '', '/chipKIT-Compilers/cpp-chipKIT-linux-AMD64-20110509.zip'); return false;" style="margin: 0 3px" class="hotbutton" href="#" onmouseup="AMC.log('shmodel_share', {'type': false, 'action': 'button_click'})" id="share-this-link"><span class="hotbutton-content"><span class="shadow"></span><img src="/static/images/icons/icon_spacer.gif" alt="" class="sprite s_twitter hotbutton-icon" /><span class='icon-hotbutton-content'><img src="/static/images/icons/icon_spacer.gif" alt="" class="sprite s_facebook" />Share this link</span></span></a><script type="text/javascript">document.observe("dom:loaded", function () {HotButton.register($("share-this-link")); } );</script>
+                </td>
+                <td>
+                  <a class="hotbutton" href="#" id="copy-to-dropbox-button" onclick="c2d(); return false;"><span class="hotbutton-content"><span class="shadow"></span><img src="/static/images/icons/icon_spacer.gif" alt="" class="sprite s_dropbox hotbutton-icon" /><span class='icon-hotbutton-content'>Copy to my Dropbox</span></span></a><script type="text/javascript">document.observe("dom:loaded", function () {HotButton.register($("copy-to-dropbox-button")); } );</script>
+                </td>
+            </tr>
+        </table>
+    </span>
+</div>
+
+<div id="interstitial-content">
+    <a id="logo" href="/"><img src="/static/images/logo_sharing_model.png" alt="Dropbox"/></a>
+    <div id="post-progress"></div>
+    <div id="emo-wrapper" class="clearfix">
+        <div class="emo" style="position: relative;">
+            <p id="file" class="clearfix">
+                <img src="/static/images/icons/icon_spacer.gif" alt="" class="sprite s_download_arrow" />
+                <a title="cpp-chipKIT-linux-AMD64-20110509.zip" href="https://dl.dropbox.com/s/ap94d0my0gmeq80/chipKIT-Compilers/cpp-chipKIT-linux-AMD64-20110509.zip?dl=1" onmouseup="SM.r('ap94d0my0gmeq80', 5, '', '/chipKIT-Compilers/cpp-chipKIT-linux-AMD64-20110509.zip');; return false">
+                    Download cpp-chipKIT-linux-AMD...0110509.zip
+                </a>
+            </p>
+            
+            <div class="clearfix" style="position: relative;">
+            </div>
+    </div>
+    </div>
+    <p class="center" style="margin-top: 2em;">
+    Hi there! Jason K. used Dropbox to share this file (and <a id="sharing_link">you can too</a>).
+    </p>
+    <script type="text/javascript">
+      var subpath = encodeURI('/chipKIT-Compilers/cpp-chipKIT-linux-AMD64-20110509.zip');
+      var base_url = "/shmodel_register/ap94d0my0gmeq80" + subpath; 
+      Util.jag('sharing_link', 'href', base_url);
+      Util.jag('sharing_link', 'onmouseup', "SM.r('ap94d0my0gmeq80', 3, '', '/chipKIT-Compilers/cpp-chipKIT-linux-AMD64-20110509.zip');");
+    </script>
+</div>
+
+<div id="facebook-connect-modal" style="display: none;">
+    <p style="margin-bottom: 1.5em;">
+        Before you can share this link, we need to connect with your Facebook account.
+    </p>
+    <a href="#" onclick="return Facebook.connect();" class="fbconnect_login_button" id="RES_ID_fb_login"><img id="RES_ID_fb_login_image" src="/static/images/connect_light_large_long.gif" alt="Connect"/></a>
+</div>
+
+<div id="facebook-post-modal" style="display: none;">
+    <p>
+        <a href="">
+            <span class="facebook-fname"></span>
+            <span class="facebook-lname"></span>
+        </a>
+    </p>
+    <p class="facebook-message-preview">
+        <span class="facebook-fname">&nbsp;</span> shared a file on Dropbox.
+    </p>
+    <p class="facebook-dropbox-plug">
+        Dropbox is the best way to backup and share your stuff online.
+    </p>
+    <br class="clear"/>
+    <textarea id="facebook-post-msg" rows="4" cols="20" class="textinput act_as_block"></textarea>
+    <p style="text-align:right; margin-bottom: 0;">
+        <input type="button" value="Post on your Facebook Wall" onclick="Facebook.post($F('facebook-post-msg'))" class="button"/>
+        <input type="button" value="Back" onclick="Modal.hide();" class="button grayed"/>
+    </p>
+</div>
+
+
+<div id="twitter-login" style="display:none;">
+    <form action="#" onsubmit="Twitter.login(); return false">
+        <div class="center">
+            <img src="/static/images/twitter_logo.jpg" alt="twitter"/>
+            <p id="twitter-status" style="margin-top:1.5em;">Before you can tweet this link, we need to connect to your Twitter account.</p>
+            <p style="margin: 1.5em 0 3.5em 0;">
+                <a href="#" onclick="Twitter.do_auth(); return false;">
+                    <img src="/static/images/twitter_signin.png" alt=""/>
+                </a>
+            </p>
+            <p style="margin-bottom: 0; text-align: right;">
+                I've finished signing in to Twitter 
+                <input  style="margin-left: 0.5em;margin-bottom: -1px;" type="button" class="button" onclick="Twitter.onLoginSuccessCallback();" value="Tweet my message"/>
+            </p>
+        </div>
+    </form>
+</div>
+
+<div id="facebook-auth" style="display:none;">
+    <div class="center">
+        <img src="/static/images/facebook_logo.jpg" alt="facebook"/>
+        <p id="facebook-status" style="margin-top:1.5em;">Before you can post this link, we need to connect to your Facebook account.</p>
+        <p style="margin: 1.5em 0 3.5em 0;">
+            <a href="#" onclick="FacebookOAuth.do_auth(); return false;">
+                <img src="/static/images/facebook_signin.png" alt=""/>
+            </a>
+        </p>
+        <p style="margin-bottom: 0; text-align: right;">
+            I've finished signing in to Facebook <input  style="margin-left: 0.5em;margin-bottom: -1px;" type="button" class="button" onclick="Modal.vars.action();" value="Post my message"/>
+        </p>
+    </div>
+</div>
+
+<div id="twitter-posting" style="display:none;">
+    <div class="center">
+        <img src="/static/images/twitter_logo.jpg" alt="Twitter"/>
+        <h3 style="margin-top: 3em;"><img src="/static/images/icons/ajax-loading-small.gif" class="h2-img" alt=""/>Tweeting</h3>
+    </div>
+</div>
+<div id="facebook-posting" style="display:none;">
+    <div class="center">
+        <br /><br />
+        <img src="/static/images/facebook_logo.jpg" alt="Facebook"/>
+        <br /><br />
+        <h3><img src="/static/images/icons/ajax-loading-small.gif" class="h2-img" alt=""/>Posting to Facebook</h3>
+        <br />
+    </div>
+</div>
+<div id="twitter-prompt" style="display:none;">
+    <form action="#" onsubmit="Twitter.custom_post(); return false;">
+        <table style="width:100%; margin-bottom: 1em;">
+            <tr>
+                <td style="width:48px;"><img src="/static/images/twitter_default_profile.png" id='twitter-profile-image' alt=""/></td>
+                <td><textarea id="twitter-msg" rows="4" maxlength="140" cols="20" style="height: 38px;" class="textinput act_as_block"></textarea></td>
+            </tr>
+        </table>
+        <p style="text-align:right;margin-bottom:0;">
+            <input type="submit" class="button" value="Tweet on Twitter" />
+            <input type="button" class="button grayed" value="Cancel" onclick="Modal.hide();"/>
+        </p>
+    </form>
+</div>
+
+<div id="post-options" style="display:none;">
+    <div class="hotbox dark" style="padding: 15px 10px;">
+        <table style="border-collapse:collapse; font-size: 14px; color:#095db2; margin: 0 auto;">
+            <tr>
+                <td colspan="2">
+                <td style="padding-right: 50px;">
+                    <input type="checkbox" name="facebook-checkbox" id="facebook-checkbox" checked="checked"/>
+                    <label for="facebook-checkbox"><img src="/static/images/icons/icon_spacer.gif" alt="" class="sprite s_facebook text-img" />Post to Facebook</label>
+                </td>
+                <td>
+                    <input type="checkbox" name="twitter-checkbox" id="twitter-checkbox" checked="checked"/>
+                    <label for="twitter-checkbox"><img src="/static/images/icons/icon_spacer.gif" alt="" class="sprite s_twitter text-img" />Tweet on Twitter</label>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="clearfix" style="margin-top: 1.75em">
+        <span id="message-status" class="error-message"></span>
+        <span id="twitter-chars-left">140</span>
+        <textarea id="post-message" name="post-message" rows="4" cols="20" class="act_as_block textinput"></textarea>
+    </div>
+    <div style="text-align: right; margin-top: 1em;">
+        <input type="button" class="button" id="share-this-message" value="Share this message" style="width: 120px;" />
+    </div>
+</div>
+
+<div id="disable-token-modal" style="display:none;">
+    <p>Are you sure you want to remove this link? Once the link is removed, nobody else will be able to view these files.</p>
+    <p style="text-align: right; margin-bottom: 0;">
+        <input type="button" value="Remove this link" onclick="SharingModel.do_remove(Modal.vars);" class="button" />
+        <input type="button" value="Cancel" onclick="Modal.hide();" class="button grayed" />
+    </p>
+</div>
+
+<div id="unavailable_preview" style="display:none;">
+    <p>A preview is currently unavailable for the video selected. This could be due to one of the following reasons:</p>
+    <ul>
+        <li>The video is being converted into a web friendly format</li>
+        <li>The video is an unsupported format and cannot be converted to a web friendly format</li>
+        <li>The video is larger than the maximum file size of 250MB or longer than the 10 minute limit</li>
+    </ul>
+    <p>
+        Don't worry, you can still download the video by clicking the download icon.
+    </p>
+    <p style="text-align:right;margin-bottom: 0;">
+        <input type="button" class="button" value="Okay" onclick="Modal.hide();" />
+    </p>
+</div>
+<style type="text/css" media="screen">
+    #c2d-modal .textinput {
+        width: 200px;
+    }
+</style>
+
+
+<div id="c2d-modal" style="display: none;">
+    <ul id="c2d-modal-tabs" class="modal-tabs clearfix">        
+        <li><a href="#" class="selected" id="create-account">Create an account</a></li>
+        <li><a href="#" id="login-account">Log in</a></li>
+    </ul>
+    <div id="create-account-content">
+        <p>
+  Dropbox is the best way for you to share and sync your files online. It's really simple to make a link to any file on your computer, like Jason K. did to share this file with you.
+        </p>
+        <p>
+            Once you register for Dropbox, this file will be copied into your Dropbox folder.
+        </p>
+        <br />
+        <div>
+            <form action="/sm/c2d_register" method="post" onsubmit="SharingModel.c2d_submit(event, this); return false;">
+                <table style="margin: 0 auto;">
+<tr>
+    <td class="clean"></td>
+    <td class="clean"><form:error name="fname"/></td>
+</tr>
+
+
+
+<tr>
+    <td style="width: 65px;">
+        <div id="fname_l" class="force-no-break label">
+            First name
+        </div>
+    </td>
+    <td style="width: 172px">
+        <div id="fname_r">
+            <input type="text" class="textinput" name="fname" id="fname" tabindex="11"/>
+        </div>
+    </td>
+</tr>
+<tr>
+    <td class="clean"></td>
+    <td class="clean"><form:error name="lname"/></td>
+</tr>
+
+<tr>
+    <td>
+        <div id="lname_l" class="force-no-break label">
+            Last name
+        </div>
+    </td>
+    <td>
+        <div id="lname_r">
+            <input type="text" class="textinput" id="lname" name="lname" tabindex="12"/>
+        </div>
+    </td>
+</tr>
+<tr>
+    <td colspan="2" class="spacer">
+        &nbsp;
+    </td>
+</tr>
+<tr>
+    <td class="clean"></td>
+    <td class="clean"><form:error name="email"/></td>
+</tr>
+
+
+<tr>
+   <td class="label force-no-break">Email</td> 
+   <td>
+        <input id="email" type="text"  class="textinput" name="email" tabindex="13" value="" />
+    </td>
+</tr>
+<tr>
+    <td class="clean"></td>
+    <td class="clean"><form:error name="password"/></td>
+</tr>
+<tr>
+    <td class="label force-no-break">
+        <div id="choose_pwd">
+            Password
+        </div>
+    </td> 
+    <td>
+        <input class="textinput" type="password" name="password" tabindex="14"/>
+    </td>
+</tr>
+                </table>
+                <br />
+                <p style="text-align: right; margin-bottom: 0;">
+                    <input type="submit" class="button" value="Create Account" />            
+                </p>
+            </form>
+        </div>
+    </div>
+    <div id="login-account-content" style="display:none;">
+        <p>
+            Once you log in to Dropbox, these files will be copied into your Dropbox folder and downloaded to all the computers linked to your account.
+        </p>
+        <br />
+        <div>
+            <form action="/sm/c2d_login" method="post" onsubmit="SharingModel.c2d_submit(event, this); return false;">
+                <table id="login-table" style="margin: 0 auto;">
+                    <tr>
+                        <td style="width: 55px;">Email</td>
+                        <td style="width: 210px;">
+                            <input type="text" id="email" class="textinput" name="login_email" autocomplete="off" tabindex="3" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Password</td>
+                        <td>
+                            <input class="textinput" type="password" name="login_password" autocomplete="off" tabindex="4"/>
+                        </td>
+                    </tr>
+                </table>
+                <br />
+                <p style="text-align: right; margin-bottom: 0;">
+                      <input type="submit" id="login_submit" name="login_submit" class="button" value="Log in" tabindex="9" />
+                </p>
+            </form>
+        </div>
+    </div>
+    <script type="text/javascript" charset="utf-8">
+        document.observe("dom:loaded", function () {
+            window.c2d_tabs = new TabController("c2d-modal-tabs", {
+               hash_prefix: false 
+            });
+        });
+    </script>
+</div>
+
+<div id="sharing-progress" style="display: none;">
+    <div class="orange-hotbox">
+        <img src="/static/images/icons/ajax-loader-trans.gif" alt=""/>
+        Sharing...
+    </div>
+</div>
+<div id="sharing-posted" style="display: none;">
+    <div class="green-hotbox">
+        <table>
+            <tr>
+                <td>Message Shared!</td>
+                <td style="width: 5px;"></td>
+                <td><a target="_blank" id="view-post"></a></td>
+            </tr>
+        </table>
+    </div>
+</div>
+<div id="sharing-posted-both" style="display: none;">
+    <div class="green-hotbox">
+        <table>
+            <tbody>
+                <tr>
+                    <td>Link shared!</td>
+                    <td style="width: 5px;"></td>
+                    <td><a target="_blank" id="view-post" href="http://www.twitter.com/"><img src="/static/images/icons/icon_spacer.gif" alt="" class="sprite s_twitter" />View Tweet</a></td>
+                    <td style="width: 5px;"></td>
+                    <td><a target="_blank" id="view-post" href="http://www.facebook.com/profile.php?v=wall"><img src="/static/images/icons/icon_spacer.gif" alt="" class="sprite s_facebook" />View Post</a></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<div id="inline-facebook-auth" style="display:none;">
+    <div class="orange-hotbox">
+        You need to <a id="connect-with-facebook">Connect with Facebook</a> first.
+    </div>
+</div>
+<div id="inline-twitter-auth" style="display:none;">
+    <div class="orange-hotbox">
+        You need to <a id="connect-with-twitter">Connect with Twitter</a> first.
+    </div>
+</div>
+
+<script>
+    Util.live_jag('inline-facebook-auth', 'connect-with-facebook', 'onclick', "FacebookOAuth.do_auth(); return false;");
+    Util.live_jag('inline-twitter-auth', 'connect-with-twitter', 'onclick', "Twitter.do_auth(); return false;");
+</script>
+
+        </div>
+        <br class="clear"/>
+    </div>
+
+
+    <div id="ghost-icons" style="cursor: move; height: 0; width:0;"></div>
+    <br class="clear"/>
+
+
+    <!-- Footer -->
+    <div name="footer" class="wit_group" id="footer">
+        <div style="margin: 0 auto">
+            <p id="copyright">
+                 <img src="/static/images/icons/icon_spacer.gif" alt="" class="sprite s_gray_logo text-img" />&copy; 2011 Dropbox<br/>
+            </p>
+            <div id="locale_selector_cont">
+                <div id="locale_selector"></div>
+            </div>
+            <div class="footer-col">
+                <ul>
+                    <li class="header">Dropbox</li>
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/install">Install</a></li>
+                    <li><a href="/anywhere">Mobile</a></li>
+                    <li><a href="/pricing">Pricing</a></li>
+                    <li><a href="/features">Features</a></li>
+                    <li><a href="/tour">Tour</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <ul>
+                    <li class="header">Community</li>
+                    <li><a href="/referrals" onmouseup="javascript: MCLog.log('referrals_via_footer');">Referrals</a></li>
+                    <li><a href="http://twitter.com/dropbox" target="_blank">Twitter</a></li>
+                    <li><a href="http://facebook.com/Dropbox" target="_blank">Facebook</a></li>
+                    <li><a href="http://wiki.dropbox.com/">Wiki</a></li>
+                    <li><a href="/developers">Developers</a></li>
+                    <li><a href="/anywhere/apps">Partners</a></li>
+
+            </ul>
+            </div>
+            <div class="footer-col">
+                <ul>
+                    <li class="header">About Us</li>
+                    <li><a href="http://blog.dropbox.com/">Dropbox Blog</a></li>
+                    <li><a href="/about">Our Team</a></li>
+                    <li><a href="/press">Press</a></li>
+                    <li><a href="/terms">Policies</a></li>
+                    <li><a href="/dmca">Copyright</a></li>
+                    <li><a href="http://www.dropbox.com/jobs">Jobs</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <ul>
+                    <li class="header">Support</li>
+                    <li><a href="/help">Help Center</a></li>
+                    <li><a href="http://forums.dropbox.com/">Forums</a></li>
+                    <li><a href="/votebox">Votebox</a></li>
+                    <li><a href="#" onclick="return Home.showFeedback();">Feedback</a></li>
+                    <li><a href="/contact">Contact Us</a></li>
+                </ul>
+            </div>
+           <div class="clear"></div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    document.observe("dom:loaded", function() {
+        e = $("feedback-link");
+        if (e) {
+            new Effect.Highlight(e , {duration: 0.5});
+        }
+
+        Tabs.init();
+        Tabs.check_interval = setInterval("Tabs.check_url('');", 300);
+        Dropdown.init();
+        TranslationSuggest.attach_autocomplete();
+    });
+</script>
+
+<script type="text/javascript">
+if (_gat) {
+    GA.pageTracker = _gat._getTracker("UA-279179-2");
+    Element.observe(window, 'load', function() {
+      GA.pageTracker._trackPageview()
+      GA.setPendingVars();
+    });
+}
+</script>
+<!--[if IE]>
+<iframe id="hashkeeper" name='hashkeeper' width="1" height="1" style="display: none" src="/blank" onload="HashKeeper.reloading=false;"></iframe>
+<![endif]-->
+
+<div id="ieconsole" style="position: absolute; top: 0; left: 0; font-family: Courier"></div>
+<div id="FB_HiddenContainer"  style="position:absolute; top:-10000px;width:0px; height:0px; left: 0;"></div>
+<script>
+TranslationSuggest.update_i18n_messages({});
+</script>
+
+
+
+<div id="notice-container" class="clearfix" style='display:none;'>
+</div>
+
+</body>
+</html>

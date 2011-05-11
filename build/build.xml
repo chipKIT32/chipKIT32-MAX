@@ -331,13 +331,19 @@
     <copy todir="linux/work" file="linux/dist/arduino" />
     <chmod perm="755" file="linux/work/arduino" />
 
-    <unzip dest="linux/work/hardware/pic32/compiler" src="linux/dist/cpp-chipKIT-linux-x86-20110426.zip" overwrite="false"/>
+    <unzip dest="linux/work/hardware/pic32/compiler" src="linux/dist/cpp-chipKIT-linux-x86-20110509.zip" overwrite="false"/>
 
   </target>
 
   <target name="linux64-build" depends="linux-build" description="Build linux (64-bit) version">
     <copy tofile="linux/work/hardware/tools/avrdude" file="linux/dist/tools/avrdude64" overwrite="true" />
-    <copy tofile="linux/work/lib/librxtxSerial.so" file="linux/dist/lib/librxtxSerial64.so" overwrite="true" />
+    <copy tofile="linux/work/lib/librxtxSerial.so" file="linux/dist/lib/librxtxSerial64.so" overwrite="true" />   
+    
+    <delete includeemptydirs="true">
+      <fileset dir="linux/work/hardware/pic32/compiler" includes="**/*"/>
+    </delete>  
+    <unzip dest="linux/work/hardware/pic32/compiler" src="linux/dist/cpp-chipKIT-linux-AMD64-20110509.zip" overwrite="false"/>
+
   </target>
   
   <target name="linux-run" depends="linux-build" 
