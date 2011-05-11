@@ -28,6 +28,8 @@
     <include name="app/lib/RXTXcomm.jar" />
     <include name="app/lib/ant.jar" />
     <include name="app/lib/ant-launcher.jar" />
+    <include name="app/lib/log4j-1.2.16.jar" />
+    <include name="app/lib/log4j.properties" />
   </fileset>
 
   <target name="build" description="Build Arduino.">
@@ -219,7 +221,7 @@
   </target>
 
   <target name="macosx-run" depends="macosx-build" description="Run Mac OS X version">
-    <exec executable="macosx/work/Arduino.app/Contents/MacOS/JavaApplicationStub" spawn="true"/>
+    <exec executable="macosx/work/Arduino.app/Contents/MacOS/JavaApplicationStub" spawn="false"/>
   </target>
 
   <target name="macosx-dist" if="macosx" depends="macosx-build" description="Create a .dmg of the Mac OS X version">

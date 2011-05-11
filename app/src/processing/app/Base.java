@@ -29,6 +29,13 @@ import java.util.*;
 
 import javax.swing.*;
 
+import org.apache.log4j.BasicConfigurator;
+//import org.apache.log4j.PropertyConfigurator;
+import org.apache.log4j.Logger;
+import org.apache.log4j.Level;
+
+
+
 import processing.app.debug.Compiler;
 import processing.app.debug.Target;
 import processing.core.*;
@@ -41,12 +48,18 @@ import processing.core.*;
  * files and images, etc) that comes from that.
  */
 public class Base {
+	
+  //private static Logger logger = Logger.getLogger(Base.class.getName());
+  static Logger logger = Logger.getLogger(Base.class.getName());
+
+	
   public static final int REVISION = 22;
   /** This might be replaced by main() if there's a lib/version.txt file. */
   static String VERSION_NAME = "0022";
   /** Set true if this a proper release rather than a numbered revision. */
   static public boolean RELEASE = false;
-
+  
+  
   static HashMap<Integer, String> platformNames = new HashMap<Integer, String>();
   static {
     platformNames.put(PConstants.WINDOWS, "windows");
@@ -107,6 +120,11 @@ public class Base {
 
   static public void main(String args[]) {
     try {
+    	  BasicConfigurator.configure();
+    	  Logger.getRootLogger().setLevel(Level.DEBUG);
+    	  logger.debug("DEBUG: Logging enabled.");
+
+
       File versionFile = getContentFile("lib/version.txt");
       if (versionFile.exists()) {
         String version = PApplet.loadStrings(versionFile)[0];
@@ -188,6 +206,7 @@ public class Base {
     untitledFolder.deleteOnExit();
 
     new Base(args);
+    
   }
 
 
@@ -926,7 +945,8 @@ public class Base {
     } catch (IOException e) {
       e.printStackTrace();
     }
-
+        
+    
     //System.out.println("rebuilding examples menu");
     // Add each of the subfolders of examples directly to the menu
     try {
@@ -938,8 +958,21 @@ public class Base {
     } catch (IOException e) {
       e.printStackTrace();
     }
+  
+/*
+  //System.out.println("rebuilding examples menu");
+    // Add each of the subfolders of examples directly to the menu
+    try {
+      
+      boolean found = addSketches(menu, getPic32CoreLibraries(), true);
+      if (found) menu.addSeparator();
+      addSketches(menu, librariesFolder, true);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
   }
-
+*/
+ }
 
   protected void rebuildSketchbookMenu(JMenu menu) {
     //System.out.println("rebuilding sketchbook menu");
@@ -955,7 +988,8 @@ public class Base {
 
 
   public void rebuildImportMenu(JMenu importMenu) {
-    //System.out.println("rebuilding import menu");
+    logger.debug("DEBUG:start: rebuilding import menu");
+    
     importMenu.removeAll();
 
     // reset the set of libraries
@@ -965,8 +999,28 @@ public class Base {
     importToLibraryTable = new HashMap<String, File>();
 
     // Add from the "libraries" subfolder in the Processing directory
+    //Choose which library to add by chip platform
+    
     try {
-      addLibraries(importMenu, librariesFolder);
+    	Target t = getTarget();
+    	logger.debug("DEBUG:  target=" + t.getName());
+    	if ( !t.getName().equals("pic32")) {	
+    		 logger.debug("DEBUG:  add avr libraries.");
+		     JMenuItem platformItem = new JMenuItem("Arduino");
+		     platformItem.setEnabled(false);
+		     importMenu.add(platformItem);
+		     importMenu.addSeparator();
+		     addLibraries(importMenu, librariesFolder);
+    	}
+    	else
+    {	  
+    	logger.debug("DEBUG: add pic32 libraries.");
+	     JMenuItem platformItem = new JMenuItem("chipKit");
+	     platformItem.setEnabled(false);
+	     importMenu.add(platformItem);
+		 importMenu.addSeparator();
+	     addLibraries(importMenu, getPic32CoreLibraries());
+  }
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -1003,17 +1057,24 @@ public class Base {
   
   
   public void rebuildBoardsMenu(JMenu menu) {
-    //System.out.println("rebuilding boards menu");
+    logger.debug("DEBUG: start: rebuilding boards menu.");
+  
     menu.removeAll();      
     ButtonGroup group = new ButtonGroup();
     for (Target target : targetsTable.values()) {
       for (String board : target.getBoards().keySet()) {
+
         AbstractAction action = 
           new AbstractAction(target.getBoards().get(board).get("name")) {
             public void actionPerformed(ActionEvent actionevent) {
-              //System.out.println("Switching to " + target + ":" + board);
+              logger.debug("DEBUG: start: " + "Switching to " + (String) getValue("target") + ":" + (String) getValue("board"));
               Preferences.set("target", (String) getValue("target"));
               Preferences.set("board", (String) getValue("board"));
+              logger.debug("DEBUG: rebuildBoardsMenu: inside rebuildImportMenu" );
+          	  //Debug: created new imports menu based on board
+              JMenu emptyMenu = new JMenu();
+              rebuildImportMenu(emptyMenu);
+
             }
           };
         action.putValue("target", target.getName());
@@ -1022,11 +1083,14 @@ public class Base {
         if (target.getName().equals(Preferences.get("target")) &&
             board.equals(Preferences.get("board"))) {
           item.setSelected(true);
-        }
+                 }
         group.add(item);
         menu.add(item);
       }
     }
+  
+    logger.debug("DEBUG: end: rebuilding boards menu.");
+
   }
   
   
@@ -1154,6 +1218,8 @@ public class Base {
 
 
   protected boolean addLibraries(JMenu menu, File folder) throws IOException {
+  	 logger.debug("DEBUG: start: addLibraries.");
+
     if (!folder.isDirectory()) return false;
 
     String list[] = folder.list(new FilenameFilter() {
@@ -1526,6 +1592,10 @@ public class Base {
     return getContentFile("hardware");
   }
   
+  //Get the pci32  core libraries from folder
+  static public File getPic32CoreLibraries() {
+  	return	getContentFile("hardware/pic32/libraries");
+  }
   
   static public String getHardwarePath() {
     return getHardwareFolder().getAbsolutePath();

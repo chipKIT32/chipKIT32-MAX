@@ -628,10 +628,10 @@ public class Editor extends JFrame implements RunnerListener {
 
     sketchMenu.addSeparator();
 
-    if (importMenu == null) {
-      importMenu = new JMenu("Import Library...");
+   if (importMenu == null) {
+      importMenu = new JMenu("Import Library...");     
       base.rebuildImportMenu(importMenu);
-    }
+  }
     sketchMenu.add(importMenu);
 
     item = newJMenuItem("Show Sketch Folder", 'K');
@@ -684,6 +684,9 @@ public class Editor extends JFrame implements RunnerListener {
     if (boardsMenu == null) {
       boardsMenu = new JMenu("Board");
       base.rebuildBoardsMenu(boardsMenu);
+      //Debug: rebuild imports
+      importMenu.removeAll();
+      base.rebuildImportMenu(importMenu);
     }
     menu.add(boardsMenu);
     

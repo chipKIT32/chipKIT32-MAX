@@ -1,12 +1,12 @@
 ############################################################
-mega_pic32.name=Digilent Pic32 Mega
+mega_pic32.name=chipKIT MAX32
 
 # new items
 mega_pic32.platform=pic32
 mega_pic32.board=_BOARD_MEGA_
 mega_pic32.define=anything_you_want
 mega_pic32.ccflags=ffff
-mega_pic32.ldscript=chipKIT-application-mega-32MX795F512L.ld
+mega_pic32.ldscript=chipKIT-MAX32-application-32MX795F512L.ld
 # end of new items
 
 mega_pic32.upload.protocol=stk500v2
@@ -27,14 +27,14 @@ mega_pic32.build.core=pic32
 #mega_pic32.upload.using=
 
 ############################################################
-uno_pic32.name=Digilent Pic32 Uno
+uno_pic32.name=chipKIT UNO32
 
 # new items
 uno_pic32.platform=pic32
 uno_pic32.board=_BOARD_UNO_
 uno_pic32.define=anything_you_want
 uno_pic32.ccflags=ffff
-uno_pic32.ldscript=chipKIT-application-uno-32MX320F128L.ld
+uno_pic32.ldscript=chipKIT-UNO32-application-32MX320F128L.ld
 # end of new items
 
 uno_pic32.upload.protocol=stk500v2

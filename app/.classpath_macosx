@@ -15,6 +15,7 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/video"/>
 	<classpathentry kind="lib" path="lib/antlr.jar"/>
 	<classpathentry kind="lib" path="lib/jna.jar"/>
-	<classpathentry kind="lib" path="lib/ecj.jar"/>
 	<classpathentry kind="output" path="bin"/>
+	<classpathentry kind="lib" path="lib/log4j-1.2.16.jar"/>
+	<classpathentry kind="lib" path="lib/log4j.properties"/>
 </classpath>
