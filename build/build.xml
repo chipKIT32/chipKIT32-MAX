@@ -378,7 +378,7 @@
     <tar compression="gzip" basedir="linux/work" 
 	 destfile="linux/arduino-${version}.tgz" />
 -->
-    <tar compression="gzip" destfile="linux/arduino-${version}.tgz">
+    <tar compression="gzip"  longfile="gnu"  destfile="linux/arduino-${version}.tgz">
       <tarfileset dir="linux/work" 
 		  prefix="arduino-${version}" 
 		  excludes="arduino, 
@@ -541,7 +541,7 @@
 	   addproperty="version"
 	   defaultvalue="${revision}" />
 
-    <tar compression="gzip" destfile="arduino-${version}-src.tar.gz">
+    <tar compression="gzip" longfile="gnu" destfile="arduino-${version}-src.tar.gz">
       <tarfileset dir="../" 
 		  prefix="arduino-${version}" 
 		  excludes="**/*.tgz,
