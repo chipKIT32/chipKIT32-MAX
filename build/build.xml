@@ -454,7 +454,7 @@
     <!-- Unzip AVR tools -->
     <unzip dest="windows/work/hardware" src="windows/avr_tools.zip" overwrite="false"/>
     <!-- pic32 compiler -->
-   <unzip dest="windows/work/hardware/pic32/compiler" src="windows/dist/cpp-chipKIT-win32-2011011.zip" overwrite="false"/>
+   <unzip dest="windows/work/hardware/pic32/compiler" src="windows/dist/cpp-chipKIT-win32-20110511.zip" overwrite="false"/>
     <chmod perm="+x">
       <fileset dir="windows/work/hardware/pic32/compiler" includes="**/*" />
     </chmod>
