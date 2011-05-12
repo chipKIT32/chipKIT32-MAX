@@ -20,6 +20,9 @@
     <cp>lib/jna.jar</cp>
     <cp>lib/ecj.jar</cp>
     <cp>lib/RXTXcomm.jar</cp>
+    <cp>lib/log4j-1.2.16.jar</cp>
+    <cp>lib/log4j.properties</cp>
+
   </classPath>
   <jre>
     <path>java</path>

@@ -471,7 +471,7 @@
     <property name="launch4j.dir" value="windows/launcher/launch4j/" />
     <taskdef name="launch4j" 
 	     classname="net.sf.launch4j.ant.Launch4jTask" 
-	     classpath="${launch4j.dir}/launch4j.jar; ${launch4j.dir}/lib/xstream.jar" />
+	     classpath="${launch4j.dir}/launch4j.jar; ${launch4j.dir}/lib/xstream.jar; " />
 
     <copy todir="windows/work">
       <fileset dir="windows/launcher" 
