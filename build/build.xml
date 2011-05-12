@@ -383,11 +383,14 @@
 		  prefix="arduino-${version}" 
 		  excludes="arduino, 
 			    hardware/tools/avrdude,
-			    java/**"
+			    java/**,
+			    hardware/pic32/compiler/pic32-tools/**"
 		  /> 
+      <tarfileset dir="linux/work/hardware/pic32/compiler/pic32-tools/" dirmode="755" prefix="arduino-${version}/hardware/pic32/compiler/pic32-tools" />
+      <tarfileset file="linux/work/hardware/pic32/compiler/pic32-tools/**" filemode="755" prefix="arduino-${version}/hardware/pic32/compiler/pic32-tools" />
+
       <tarfileset file="linux/work/arduino" filemode="755" prefix="arduino-${version}" />
-      <tarfileset file="linux/work/hardware/tools/avrdude" filemode="755" 
-		  prefix="arduino-${version}/hardware/tools" />
+      <tarfileset file="linux/work/hardware/tools/avrdude" filemode="755" prefix="arduino-${version}/hardware/tools" />
     </tar>
 
     <echo>
