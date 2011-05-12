@@ -67,9 +67,14 @@ unsigned int	__PIC32_pbClk;
 #define FRACT_INC ((MICROSECONDS_PER_TIMER0_OVERFLOW % 1000) >> 3)
 #define FRACT_MAX (1000 >> 3)
 
-//volatile unsigned long timer0_overflow_count = 0;
+// Number of CoreTimer ticks per microsecond, for micros() function
+#define CORETIMER_TICKS_PER_MICROSECOND		(F_CPU / 2 / 1000000UL)
+
+volatile unsigned long core_timer_last_val = 0;
 volatile unsigned long timer0_millis = 0;
-//static unsigned char timer0_fract = 0;
+volatile unsigned long core_timer_micros = 0;
+volatile unsigned long micros_overflows = 0;
+volatile unsigned long core_timer_first_val = 0;
 
 //************************************************************************
 unsigned long millis()
@@ -78,10 +83,40 @@ unsigned long millis()
 }
 
 //************************************************************************
+// Read the CoreTimer register, which counts up at a rate of 40MHz
+// (CPU clock/2). Each microsecond will be 40 of these counts.
+// We keep track of the total number of microseconds since the PIC
+// was powered on, as an int. Which means that this value will
+// overflow every 71.58 minutes. We have to keep track of the CoreTimer
+// overflows. The first value of CoreTimer after an overflow is recorded,
+// and all micros() calls after that (until the next overflow) are 
+// referenced from that value. This insures accuracy and that micros()
+// lines up perfectly with millis().
 unsigned long micros()
 {
-//*	not finished
-	return(timer0_millis);
+	unsigned int cur_timer_val = ReadCoreTimer();
+	unsigned int micros_delta = 0;
+	
+	// Check for overflow
+	if (cur_timer_val >= core_timer_last_val)
+	{
+		// Note - core_timer_micros is not added to here (just a =, not a +=)
+		// so we don't accumulate any errors.
+		micros_delta = (cur_timer_val - core_timer_first_val) / CORETIMER_TICKS_PER_MICROSECOND;
+		core_timer_micros = micros_overflows + micros_delta;
+	}
+	else
+	{
+		// We have an overflow
+		core_timer_micros += ((0xFFFFFFFF - core_timer_last_val) + cur_timer_val) / CORETIMER_TICKS_PER_MICROSECOND;
+		// Store off the current counter value for use in all future micros() calls
+		core_timer_first_val = cur_timer_val;
+		// And store off current micros count for future micros() calls
+		micros_overflows = core_timer_micros;
+	}
+	// Always record the current counter value and remember it for next time
+	core_timer_last_val = cur_timer_val;
+	return(core_timer_micros);
 }
 
 
@@ -90,9 +125,10 @@ unsigned long micros()
 //#define mCTGetIntFlag()					 (IFS0bits.CTIF)
 //#define GetSystemClock() (80000000ul)
 //************************************************************************
+// Delay for a given number of milliseconds.
 void delay(unsigned long ms)
 {
-unsigned long	startMillis;
+	unsigned long	startMillis;
 
 	startMillis	=	timer0_millis;
 	while ((timer0_millis - startMillis) < ms)
@@ -102,25 +138,16 @@ unsigned long	startMillis;
 }
 
 //************************************************************************
-/* Delay for the given number of microseconds. Assumes a 8 or 16 MHz clock. */
+/* Delay for the given number of microseconds. Will fail on micros()
+rollover every 71 minutes */
 void delayMicroseconds(unsigned int us)
 {
-	delay(1);
-/*
-long	ii;
-long	qq;
+	unsigned long	startMicros = micros();
 
-	//*	for now
-	qq	=	0;
-	for (ii=0; ii<10000; ii++)
+	while ((micros() - startMicros) < us)
 	{
-		qq	+=	ii;
-		if (qq > 100000)
-		{
-			ii	+=	2;
-		}
+		//*	do nothing
 	}
-*/
 }
 
 
@@ -179,15 +206,34 @@ void init()
 //************************************************************************
 void __ISR(_CORE_TIMER_VECTOR, ipl2) CoreTimerHandler(void)
 {
+	unsigned int cur_timer_val = ReadCoreTimer();	
+	unsigned int micros_delta = 0;
+
 	// clear the interrupt flag
 	mCTClearIntFlag();
-
-	// .. things to do
 
 	// update the period
 	UpdateCoreTimer(CORE_TICK_RATE);
 
+	// .. things to do
+	
+	// Check for CoreTimer overflows, record for micros() function
+	// If micros() is not called more often than every 107 seconds (the
+	// period of overflow for CoreTimer) then overflows to CoreTimer
+	// will be lost. So we put code here to check for this condition
+	// and record it so that the next call to micros() will be accurate.
+	if (cur_timer_val > core_timer_last_val)
+	{
+		// We have an overflow
+		core_timer_micros += ((0xFFFFFFFF - core_timer_last_val) + cur_timer_val) / CORETIMER_TICKS_PER_MICROSECOND;
+		core_timer_first_val = cur_timer_val;
+		micros_overflows = core_timer_micros;
+	}
+	core_timer_last_val = cur_timer_val;
+
+	// Count this millisecond
 	timer0_millis++;
+
 }
 
 
