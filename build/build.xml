@@ -332,6 +332,9 @@
     <chmod perm="755" file="linux/work/arduino" />
 
     <unzip dest="linux/work/hardware/pic32/compiler" src="linux/dist/cpp-chipKIT-linux-x86-20110509.zip" overwrite="false"/>
+    <chmod perm="+x">
+      <fileset dir="linux/work/hardware/pic32/compiler" includes="**/*" />
+    </chmod>
 
   </target>
 
@@ -343,6 +346,10 @@
       <fileset dir="linux/work/hardware/pic32/compiler" includes="**/*"/>
     </delete>  
     <unzip dest="linux/work/hardware/pic32/compiler" src="linux/dist/cpp-chipKIT-linux-AMD64-20110509.zip" overwrite="false"/>
+    <chmod perm="+x">
+      <fileset dir="linux/work/hardware/pic32/compiler" includes="**/*" />
+    </chmod>
+
 
   </target>
   
@@ -445,6 +452,9 @@
     <unzip dest="windows/work/hardware" src="windows/avr_tools.zip" overwrite="false"/>
     <!-- pic32 compiler -->
    <unzip dest="windows/work/hardware/pic32/compiler" src="windows/dist/cpp-chipKIT-win32-20110426.zip" overwrite="false"/>
+    <chmod perm="+x">
+      <fileset dir="windows/work/hardware/pic32/compiler" includes="**/*" />
+    </chmod>
 
 
     <copy todir="windows/work/hardware/tools/avr/avr/include/avr">
