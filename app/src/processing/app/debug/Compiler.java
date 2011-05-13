@@ -34,7 +34,16 @@ import java.util.*;
 import java.util.zip.*;
 import java.text.MessageFormat;
 
+import org.apache.log4j.BasicConfigurator;
+//import org.apache.log4j.PropertyConfigurator;
+import org.apache.log4j.Logger;
+import org.apache.log4j.Level;
+
+
 public class Compiler implements MessageConsumer {
+	
+	 static Logger logger = Logger.getLogger(Compiler.class.getName());
+
 	static final String BUGS_URL = "http://code.google.com/p/arduino/issues/list";
 	static final String SUPER_BADNESS = "Compiler error, please submit this code to "
 			+ BUGS_URL;
@@ -58,9 +67,13 @@ public class Compiler implements MessageConsumer {
 	String corePath;
 	
 	List<File> objectFiles;
-	List includePaths;
+	ArrayList<String> includePaths;
 
 	public Compiler() {
+		//BasicConfigurator.configure();
+    	//Logger.getRootLogger().setLevel(Level.DEBUG);
+    	//logger.debug("DEBUG: Compiler.java: Logging enabled.");
+		
 	}
 
 	/**
@@ -158,17 +171,6 @@ public class Compiler implements MessageConsumer {
 				
 		// 0. include paths for core + all libraries
 		this.includePaths =	getIncludes(this.corePath);
-
-		/*
-                * Debug what is the include path used
-                */
- 		for (int i = 0; i < includePaths.size(); i++)
-                {
-                        System.out.println("includes: " + includePaths.get(i));
-                }
-
-
-
 		
 		// 1. compile the sketch (already in the buildPath)
 		compileSketch(avrBasePath, buildPath, includePaths, configPreferences);
@@ -197,7 +199,7 @@ public class Compiler implements MessageConsumer {
 
 	private List<File> compileFiles(String avrBasePath, 
 			String buildPath,
-			List<File> includePaths, 
+			ArrayList<String> includePaths, 
 			List<File> sSources, List<File> 
 			cSources,
 			List<File> cppSources, 
@@ -243,14 +245,36 @@ public class Compiler implements MessageConsumer {
 	private void execAsynchronously(String command) throws RunnerException 
 	{
 		{
+	//logger.debug("execAsynchronously: start");
+    String[] commandArray = command.split("::");	
+  
+    List<String> stringList = new ArrayList<String>();
 
-   String commandString = command;	
+    for(String string : commandArray) {
+  	 string = string.trim();
+     if(string != null && string.length() > 0) {
+       stringList.add(string);
+    }
+   }
+   commandArray = stringList.toArray(new String[stringList.size()]);
+
+    
     int result = 0;
     
     if (verbose || Preferences.getBoolean("build.verbose")) 
 	{
-        System.out.print(commandString);
-      System.out.println();
+      //System.out.print(command);
+      //System.out.println();
+     // if(logger.isDebugEnabled()) {
+     	/*
+ 		for (int i = 0; i < commandArray.length; i++)
+                {
+                        logger.debug("commandArray: " + commandArray[i]);
+              }
+         
+         logger.debug("Command: " + command.replace(":"," "));
+         */
+       // }
     }
 
     firstErrorFound = false;  // haven't found any errors yet
@@ -259,7 +283,7 @@ public class Compiler implements MessageConsumer {
     Process process;
     
     try {
-      process = Runtime.getRuntime().exec(commandString);
+      process = Runtime.getRuntime().exec(commandArray);
     } catch (IOException e) {
       RunnerException re = new RunnerException(e.getMessage());
       re.hideStackTrace();
@@ -294,7 +318,7 @@ public class Compiler implements MessageConsumer {
 
     if (result > 1) {
       // a failure in the tool (e.g. unable to locate a sub-executable)
-      System.err.println(commandString + " returned " + result);
+      System.err.println(command + " returned " + result);
     }
 
     if (result != 0) {
@@ -371,19 +395,16 @@ public class Compiler implements MessageConsumer {
 	// ///////////////////////////////////////////////////////////////////////////
 	//What conditions is getCommandCompilerS invoke from?
 	static private String getCommandCompilerS(String avrBasePath,
-			List includePaths, String sourceName, String objectName,
+			ArrayList<String> includePaths, String sourceName, String objectName,
 			HashMap<String, String> configPreferences) 
 			{
 			
-		
-		String includes = "";
 		String baseCommandString = configPreferences.get("recipe.cpp.o.pattern");
 		MessageFormat compileFormat = new MessageFormat(baseCommandString);	
 		//getIncludes to String
-		for (int i = 0; i < includePaths.size(); i++) 
-		{
-			includes = includes + (" -I" + (String) includePaths.get(i));
-		}
+		
+		String includes = preparePaths(includePaths);
+		
 		Object[] Args = {
 				avrBasePath,
 				configPreferences.get("compiler.cpp.cmd"),
@@ -404,17 +425,14 @@ public class Compiler implements MessageConsumer {
 	}
 	//removed static
 	private String getCommandCompilerC(String avrBasePath,
-			List includePaths, String sourceName, String objectName,
+			ArrayList<String> includePaths, String sourceName, String objectName,
 			HashMap<String, String> configPreferences) 
 			{
-		String includes = "";
 		String baseCommandString = configPreferences.get("recipe.c.o.pattern");
 		MessageFormat compileFormat = new MessageFormat(baseCommandString);	
 		//getIncludes to String
-		for (int i = 0; i < includePaths.size(); i++) 
-		{
-			includes = includes + (" -I" + (String) includePaths.get(i));
-		}
+		String includes = preparePaths(includePaths);
+
 		Object[] Args = {
 				avrBasePath,
 				configPreferences.get("compiler.c.cmd"),
@@ -433,18 +451,15 @@ public class Compiler implements MessageConsumer {
 	}
 
 	static private String getCommandCompilerCPP(String avrBasePath,
-			List includePaths, String sourceName, String objectName,
+			ArrayList<String> includePaths, String sourceName, String objectName,
 			HashMap<String, String> configPreferences) 
 			{
 
-	String includes = "";
 		String baseCommandString = configPreferences.get("recipe.cpp.o.pattern");
 		MessageFormat compileFormat = new MessageFormat(baseCommandString);	
 		//getIncludes to String
-		for (int i = 0; i < includePaths.size(); i++) 
-		{
-			includes = includes + (" -I" + (String) includePaths.get(i));
-		}
+		String includes = preparePaths(includePaths);
+
 		Object[] Args = {
 				avrBasePath,
 				configPreferences.get("compiler.cpp.cmd"),
@@ -513,9 +528,9 @@ public class Compiler implements MessageConsumer {
 		return files;
 	}
 	// 0. include paths for core + all libraries
-	List getIncludes(String corePath) 
+	ArrayList<String> getIncludes(String corePath) 
 	{
-		List includePaths = new ArrayList();
+		ArrayList<String> includePaths = new ArrayList();
 		includePaths.add(corePath);
 		for (File file : sketch.getImportedLibraries()) 
 		{
@@ -526,7 +541,7 @@ public class Compiler implements MessageConsumer {
 		return includePaths;
 	}
 	// 1. compile the sketch (already in the buildPath)
-	void compileSketch(String avrBasePath, String buildPath, List includePaths, HashMap<String, String> configPreferences)
+	void compileSketch(String avrBasePath, String buildPath, ArrayList<String> includePaths, HashMap<String, String> configPreferences)
 	throws RunnerException 
 	{
 		this.objectFiles.addAll(compileFiles(avrBasePath, buildPath, includePaths,
@@ -538,7 +553,7 @@ public class Compiler implements MessageConsumer {
 	
 	// 2. compile the libraries, outputting .o files to:
 	// <buildPath>/<library>/
-	void compileLibraries (String avrBasePath, String buildPath, List includePaths, HashMap<String, String> configPreferences) 
+	void compileLibraries (String avrBasePath, String buildPath, ArrayList<String> includePaths, HashMap<String, String> configPreferences) 
 		throws RunnerException 
 	{
 		for (File libraryFolder : sketch.getImportedLibraries()) 
@@ -572,7 +587,7 @@ public class Compiler implements MessageConsumer {
 	void compileCore (String avrBasePath, String buildPath, String corePath, HashMap<String, String> configPreferences) 
 		throws RunnerException 
 	{
-		List  includePaths =  new ArrayList();
+		ArrayList<String>  includePaths =  new ArrayList();
 	    includePaths.add(corePath); //include core path only
 		String baseCommandString = configPreferences.get("recipe.ar.pattern");
 		String commandString = "";
@@ -607,7 +622,7 @@ public class Compiler implements MessageConsumer {
 	}
 			
 	// 4. link it all together into the .elf file
-	void compileLink(String avrBasePath, String buildPath, String corePath, List includePaths, HashMap<String, String> configPreferences) 
+	void compileLink(String avrBasePath, String buildPath, String corePath, ArrayList<String> includePaths, HashMap<String, String> configPreferences) 
 		throws RunnerException 
 	{	
 		
@@ -639,7 +654,7 @@ public class Compiler implements MessageConsumer {
 	}
 
 	// 5. extract EEPROM data (from EEMEM directive) to .eep file.
-	void compileEep (String avrBasePath, String buildPath, List includePaths, HashMap<String, String> configPreferences) 
+	void compileEep (String avrBasePath, String buildPath, ArrayList<String> includePaths, HashMap<String, String> configPreferences) 
 		throws RunnerException 
 	{
 		String baseCommandString = configPreferences.get("recipe.objcopy.eep.pattern");
@@ -660,7 +675,7 @@ public class Compiler implements MessageConsumer {
 	}
 	
 	// 6. build the .hex file
-	void compileHex (String avrBasePath, String buildPath, List includePaths, HashMap<String, String> configPreferences) 
+	void compileHex (String avrBasePath, String buildPath, ArrayList<String> includePaths, HashMap<String, String> configPreferences) 
 		throws RunnerException 
 	{
 		
@@ -742,4 +757,17 @@ public class Compiler implements MessageConsumer {
 
 	return _map;
 	}
+	
+	private static String preparePaths(ArrayList<String> includePaths) {
+	//getIncludes to String
+		//logger.debug("Start: Prepare paths");
+		String includes = "";
+		for (int i = 0; i < includePaths.size(); i++) 
+		{
+			includes = includes + (" -I" + (String) includePaths.get(i)) + "::";
+		}
+		//logger.debug("Paths prepared: " + includes);
+		return includes;
+	}
+	
 }

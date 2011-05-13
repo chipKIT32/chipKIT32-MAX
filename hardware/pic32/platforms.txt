@@ -1,10 +1,10 @@
 ##############################################################
-pic32.recipe.c.o.pattern={0}{1} {2} {3}{4} -DF_CPU={5} -D{6}   {8} {9} -o {10}
-pic32.recipe.cpp.o.pattern={0}{1} {2} {3}{4} -DF_CPU={5} -D{6}  {8} {9} -o {10}
-pic32.recipe.ar.pattern={0}{1} {2} {3}{4} {5}
-pic32.recipe.c.combine.pattern={0}{1} {2} {3}{4} -o {5}{6}.elf {7} {8} -L{9} -lm -T {10}/{11}
-pic32.recipe.objcopy.eep.pattern={0}{1} {2} {3}.elf {4}.eep
-pic32.recipe.objcopy.hex.pattern={0}{1} {2} {3}.elf
+pic32.recipe.c.o.pattern={0}{1}::{2}::{3}{4}::-DF_CPU={5}::-D{6}::{8}::{9}::-o::{10}
+pic32.recipe.cpp.o.pattern={0}{1}::{2}::{3}{4}::-DF_CPU={5}::-D{6}::{8}::{9}::-o::{10}
+pic32.recipe.ar.pattern={0}{1}::{2}::{3}{4}::{5}
+pic32.recipe.c.combine.pattern={0}{1}::{2}::{3}{4}::-o::{5}{6}.elf::{7}::{8}::-L{9}::-lm::-T::{10}/{11}
+pic32.recipe.objcopy.eep.pattern={0}{1}::{2}::{3}.elf::{4}.eep
+pic32.recipe.objcopy.hex.pattern={0}{1}::{2}::{3}.elf
 
 
 ########################################################
@@ -15,19 +15,19 @@ pic32.name=MicroChip PIC32
 #pic32.compiler.path=/opt/mac-pic32/bin/
 pic32.compiler.c.cmd=pic32-gcc
 pic32.compiler.path={0}/hardware/pic32/compiler/pic32-tools/bin/
-pic32.compiler.c.flags= -O2 -c  -mno-smart-io 
+pic32.compiler.c.flags=-O2::-c::-mno-smart-io 
 pic32.compiler.cpp.cmd=pic32-g++
-pic32.compiler.cpp.flags= -O2 -c  -mno-smart-io
-pic32.compiler.S.flags= -O2 -g1 -c
+pic32.compiler.cpp.flags=-O2::-c::-mno-smart-io
+pic32.compiler.S.flags=-O2::-g1::-c
 pic32.compiler.ar.cmd=pic32-ar
 pic32.compiler.ar.flags=rcs
 pic32.compiler.objcopy.cmd=pic32-objcopy
-pic32.compiler.objcopy.eep.flags= -O ihex -j .eeprom --set-section-flags=.eeprom=alloc,load --no-change-warnings --change-section-lma .eeprom=0
-pic32.compiler.elf2hex.flags= -a
+pic32.compiler.objcopy.eep.flags=-O::ihex::-j::.eeprom::--set-section-flags=.eeprom=alloc,load::--no-change-warnings::--change-section-lma::.eeprom=0
+pic32.compiler.elf2hex.flags=-a
 pic32.compiler.elf2hex.cmd=pic32-bin2hex
-#pic32.compiler.elf2hex.flags= -O ihex -R .eeprom
+#pic32.compiler.elf2hex.flags=-O::ihex::-R::.eeprom
 #pic32.compiler.elf2hex.cmd=pic32-objcopy
-pic32.compiler.c.elf.flags= -Os -Wl,--gc-sections
+pic32.compiler.c.elf.flags=-Os::-Wl,--gc-sections
 pic32.compiler.cpudef=-mprocessor=
 #pic32.compiler.ldflags=
 pic32.compiler.ldscript=chipKIT-BL.ld
