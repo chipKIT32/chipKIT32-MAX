@@ -84,6 +84,7 @@ mega2560.build.core=arduino
 ##############################################################
 
 mega.name=Arduino Mega (ATmega1280)
+mega.platform=avr
 
 mega.upload.protocol=stk500
 mega.upload.maximum_size=126976
@@ -104,6 +105,7 @@ mega.build.core=arduino
 ##############################################################
 
 mini.name=Arduino Mini
+mini.platform=avr
 
 mini.upload.protocol=stk500
 mini.upload.maximum_size=14336
@@ -124,6 +126,7 @@ mini.build.core=arduino
 ##############################################################
 
 fio.name=Arduino Fio
+fio.platform=avr
 
 fio.upload.protocol=stk500
 fio.upload.maximum_size=30720
@@ -144,6 +147,7 @@ fio.build.core=arduino:arduino
 ##############################################################
 
 bt328.name=Arduino BT w/ ATmega328
+bt328.platform=avr
 
 bt328.upload.protocol=stk500
 bt328.upload.maximum_size=28672
@@ -165,6 +169,7 @@ bt328.build.core=arduino
 ##############################################################
 
 bt.name=Arduino BT w/ ATmega168
+bt.platform=avr
 
 bt.upload.protocol=stk500
 bt.upload.maximum_size=14336
@@ -186,6 +191,7 @@ bt.build.core=arduino
 ##############################################################
 
 lilypad328.name=LilyPad Arduino w/ ATmega328
+lilypad328.platform=avr
 
 lilypad328.upload.protocol=stk500
 lilypad328.upload.maximum_size=30720
@@ -206,6 +212,7 @@ lilypad328.build.core=arduino
 ##############################################################
 
 lilypad.name=LilyPad Arduino w/ ATmega168
+lilypad.platform=avr
 
 lilypad.upload.protocol=stk500
 lilypad.upload.maximum_size=14336
@@ -226,6 +233,7 @@ lilypad.build.core=arduino
 ##############################################################
 
 pro5v328.name=Arduino Pro or Pro Mini (5V, 16 MHz) w/ ATmega328
+pro5v328.platform=avr
 
 pro5v328.upload.protocol=stk500
 pro5v328.upload.maximum_size=30720
@@ -246,7 +254,7 @@ pro5v328.build.core=arduino
 ##############################################################
 
 pro5v.name=Arduino Pro or Pro Mini (5V, 16 MHz) w/ ATmega168
-
+pro5v.platform=avr
 pro5v.upload.protocol=stk500
 pro5v.upload.maximum_size=14336
 pro5v.upload.speed=19200
@@ -266,6 +274,7 @@ pro5v.build.core=arduino
 ##############################################################
 
 pro328.name=Arduino Pro or Pro Mini (3.3V, 8 MHz) w/ ATmega328
+pro328.platform=avr
 
 pro328.upload.protocol=stk500
 pro328.upload.maximum_size=30720
@@ -286,6 +295,7 @@ pro328.build.core=arduino
 ##############################################################
 
 pro.name=Arduino Pro or Pro Mini (3.3V, 8 MHz) w/ ATmega168
+pro.platform=avr
 
 pro.upload.protocol=stk500
 pro.upload.maximum_size=14336
@@ -306,6 +316,7 @@ pro.build.core=arduino
 ##############################################################
 
 atmega168.name=Arduino NG or older w/ ATmega168
+atmega168.platform=avr
 
 atmega168.upload.protocol=stk500
 atmega168.upload.maximum_size=14336
@@ -326,6 +337,7 @@ atmega168.build.core=arduino
 ##############################################################
 
 atmega8.name=Arduino NG or older w/ ATmega8
+atmega8.platform=avr
 
 atmega8.upload.protocol=stk500
 atmega8.upload.maximum_size=7168
