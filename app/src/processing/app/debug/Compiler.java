@@ -245,7 +245,7 @@ public class Compiler implements MessageConsumer {
 	private void execAsynchronously(String command) throws RunnerException 
 	{
 		{
-	//logger.debug("execAsynchronously: start");
+	logger.debug("execAsynchronously: start");
     String[] commandArray = command.split("::");	
   
     List<String> stringList = new ArrayList<String>();
@@ -265,16 +265,12 @@ public class Compiler implements MessageConsumer {
 	{
       //System.out.print(command);
       //System.out.println();
-     // if(logger.isDebugEnabled()) {
-     	/*
- 		for (int i = 0; i < commandArray.length; i++)
-                {
-                        logger.debug("commandArray: " + commandArray[i]);
+      if(logger.isDebugEnabled()) {     
+ 		for (int i = 0; i < commandArray.length; i++) {
+                        logger.debug("commandArray[" + i + "]: " + commandArray[i]);
               }
-         
          logger.debug("Command: " + command.replace(":"," "));
-         */
-       // }
+      }
     }
 
     firstErrorFound = false;  // haven't found any errors yet
@@ -398,7 +394,7 @@ public class Compiler implements MessageConsumer {
 			ArrayList<String> includePaths, String sourceName, String objectName,
 			HashMap<String, String> configPreferences) 
 			{
-			
+		logger.debug("getCommandCompilerS: start");	
 		String baseCommandString = configPreferences.get("recipe.cpp.o.pattern");
 		MessageFormat compileFormat = new MessageFormat(baseCommandString);	
 		//getIncludes to String
@@ -420,14 +416,14 @@ public class Compiler implements MessageConsumer {
 		};
 						
 		return compileFormat.format(  Args );
-		
-
 	}
+	
 	//removed static
 	private String getCommandCompilerC(String avrBasePath,
 			ArrayList<String> includePaths, String sourceName, String objectName,
 			HashMap<String, String> configPreferences) 
 			{
+		logger.debug("getCommandCompilerC: start");	
 		String baseCommandString = configPreferences.get("recipe.c.o.pattern");
 		MessageFormat compileFormat = new MessageFormat(baseCommandString);	
 		//getIncludes to String
@@ -454,7 +450,7 @@ public class Compiler implements MessageConsumer {
 			ArrayList<String> includePaths, String sourceName, String objectName,
 			HashMap<String, String> configPreferences) 
 			{
-
+		logger.debug("getCommandCompilerCPP: start");	
 		String baseCommandString = configPreferences.get("recipe.cpp.o.pattern");
 		MessageFormat compileFormat = new MessageFormat(baseCommandString);	
 		//getIncludes to String
@@ -542,6 +538,7 @@ public class Compiler implements MessageConsumer {
 	void compileSketch(String avrBasePath, String buildPath, ArrayList<String> includePaths, HashMap<String, String> configPreferences)
 	throws RunnerException 
 	{
+		logger.debug("compileSketch: start");	
 		this.objectFiles.addAll(compileFiles(avrBasePath, buildPath, includePaths,
 				findFilesInPath(buildPath, "S", false),
 				findFilesInPath(buildPath, "c", false),
@@ -554,6 +551,7 @@ public class Compiler implements MessageConsumer {
 	void compileLibraries (String avrBasePath, String buildPath, ArrayList<String> includePaths, HashMap<String, String> configPreferences) 
 		throws RunnerException 
 	{
+		logger.debug("compileLibraries: start");
 		for (File libraryFolder : sketch.getImportedLibraries()) 
 		{
 			File outputFolder = new File(buildPath, libraryFolder.getName());
@@ -585,6 +583,8 @@ public class Compiler implements MessageConsumer {
 	void compileCore (String avrBasePath, String buildPath, String corePath, HashMap<String, String> configPreferences) 
 		throws RunnerException 
 	{
+		logger.debug("compileCore(...) start");
+
 		ArrayList<String>  includePaths =  new ArrayList();
 	    includePaths.add(corePath); //include core path only
 		String baseCommandString = configPreferences.get("recipe.ar.pattern");
@@ -623,14 +623,14 @@ public class Compiler implements MessageConsumer {
 	void compileLink(String avrBasePath, String buildPath, String corePath, ArrayList<String> includePaths, HashMap<String, String> configPreferences) 
 		throws RunnerException 
 	{	
-		
+		logger.debug("compileLink: start");
 		String baseCommandString = configPreferences.get("recipe.c.combine.pattern");
 		String commandString = "";
 		MessageFormat compileFormat = new MessageFormat(baseCommandString);	
 		String objectFileList = "";
 		
 		for (File file : objectFiles) {
-			objectFileList = objectFileList + file.getAbsolutePath() + " ";
+			objectFileList = objectFileList + file.getAbsolutePath() + "::";
 		}
 
 			Object[] Args = {
@@ -655,6 +655,7 @@ public class Compiler implements MessageConsumer {
 	void compileEep (String avrBasePath, String buildPath, ArrayList<String> includePaths, HashMap<String, String> configPreferences) 
 		throws RunnerException 
 	{
+		logger.debug("compileEep: start");
 		String baseCommandString = configPreferences.get("recipe.objcopy.eep.pattern");
 		String commandString = "";
 		MessageFormat compileFormat = new MessageFormat(baseCommandString);	
@@ -676,7 +677,7 @@ public class Compiler implements MessageConsumer {
 	void compileHex (String avrBasePath, String buildPath, ArrayList<String> includePaths, HashMap<String, String> configPreferences) 
 		throws RunnerException 
 	{
-		
+		logger.debug("compileHex: start");
 		String baseCommandString = configPreferences.get("recipe.objcopy.hex.pattern");
 		String commandString = "";
 		MessageFormat compileFormat = new MessageFormat(baseCommandString);	
