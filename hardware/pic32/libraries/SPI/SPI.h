@@ -1,6 +1,6 @@
 /*
- * Copyright (c) 2010 by Cristian Maglie <c.maglie@bug.st>
- * SPI Master library for arduino.
+ * Copyright (c) 2011 Digilent
+ * SPI Master library for the PIC arduino.
  *
  * This file is free software; you can redistribute it and/or modify
  * it under the terms of either the GNU General Public License version 2
@@ -10,6 +10,8 @@
 
 #ifndef _SPI_H_INCLUDED
 #define _SPI_H_INCLUDED
+
+#define __LANGUAGE_C__
 
 #include <plib.h>
 #include <stdio.h>
@@ -23,12 +25,32 @@
 
 /*	SPIxSTAT
 */
-#define bnTbf	1
+#define bnTbe	3
+#define bnRbf	0
 
 /*	IEC0
 */
-#define bnSPI1RXIE	25
-#define bnSPI1TXIE	24
+#define bnSPI2RXIE	7
+#define bnSPI2TXIE	6
+
+/* SPI Connection
+*/
+#define trisSS				TRISG
+#define latSS				LATG
+#define	bnSS				9
+
+#define	trisSDO				TRISG
+#define	latSDO				LATG
+#define	bnSDO				8
+
+#define trisSDI				TRISG
+#define	latSDI				LATG
+#define bnSDI				7
+
+#define trisSCK				TRISG
+#define latSCK				LATG
+#define bnSCK				6
+/********************************/
 
 #define SPI_CLOCK_DIV4 0x01
 #define SPI_CLOCK_DIV16 0x7
@@ -38,14 +60,14 @@
 #define SPI_CLOCK_DIV8 0x03
 #define SPI_CLOCK_DIV32 0x0F
 
-#define SPI_MODE0 0x00
-#define SPI_MODE1 0x200
-#define SPI_MODE2 0x40
-#define SPI_MODE3 0x240
+#define SPI_MODE0 0x00  // CKP = 0 CKE = 0
+#define SPI_MODE1 0x100 // CKP = 0 CKE = 1
+#define SPI_MODE2 0x40  // CKP = 1 CKE = 0
+#define SPI_MODE3 0x140 // CKP = 1 CKE = 1 
 
 class SPIClass {
 public:
-  inline static byte transfer(byte _data);
+  inline static BYTE transfer(BYTE _data);
 
   // SPI Configuration methods
 
@@ -55,26 +77,26 @@ public:
   static void begin(); // Default
   static void end();
 
-  static void setBitOrder(uint8_t);
-  static void setDataMode(uint8_t);
-  static void setClockDivider(uint8_t);
+  static void setBitOrder(BYTE);
+  static void setDataMode(WORD);
+  static void setClockDivider(BYTE);
 };
 
 extern SPIClass SPI;
 
-byte SPIClass::transfer(byte _data) {
-  SPI1BUF = _data;
-  while (SPITBF & ( 1 << bnTbf )
-    ;
-  return SPI1BUF;
+BYTE SPIClass::transfer(BYTE _data) {
+  while( ((1 << bnTbe) & SPI2STAT) == 0 );
+  SPI2BUF = _data;
+  while( ((1 << bnRbf) & SPI2STAT) == 0 );
+  return SPI2BUF;
 }
 
 void SPIClass::attachInterrupt() {
-  IECOSET = ( 1 << bnSPI1RXIE ) | ( 1 << bnSPI1TXIE ); // Setting Interupt Enable
+  IEC1SET = ( 1 << bnSPI2RXIE ) | ( 1 << bnSPI2TXIE ); // Setting Interupt Enable
 }
 
 void SPIClass::detachInterrupt() {
-  IECOCLR = ( 1 << bnSPI1RXIE ) | ( 1 << bnSPI1TXIE ); // Setting Interrupt Disable
+  IEC1CLR = ( 1 << bnSPI2RXIE ) | ( 1 << bnSPI2TXIE ); // Setting Interrupt Disable
 }
 
 #endif
