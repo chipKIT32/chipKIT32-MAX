@@ -70,11 +70,15 @@ unsigned int	__PIC32_pbClk;
 // Number of CoreTimer ticks per microsecond, for micros() function
 #define CORETIMER_TICKS_PER_MICROSECOND		(F_CPU / 2 / 1000000UL)
 
-volatile unsigned long core_timer_last_val = 0;
+// Stores the current millisecond count (from power on)
 volatile unsigned long timer0_millis = 0;
+
+// Variable used to track the microsecond count (from power on)
+volatile unsigned long core_timer_last_val = 0;
 volatile unsigned long core_timer_micros = 0;
 volatile unsigned long micros_overflows = 0;
 volatile unsigned long core_timer_first_val = 0;
+volatile unsigned long micros_calculating = 0;
 
 //************************************************************************
 unsigned long millis()
@@ -94,8 +98,12 @@ unsigned long millis()
 // lines up perfectly with millis().
 unsigned long micros()
 {
-	unsigned int cur_timer_val = ReadCoreTimer();
+	unsigned int cur_timer_val = 0;
 	unsigned int micros_delta = 0;
+	
+	// Use this as a flag to tell the ISR not to touch anything
+	micros_calculating = 1;
+	cur_timer_val = ReadCoreTimer();
 	
 	// Check for overflow
 	if (cur_timer_val >= core_timer_last_val)
@@ -116,6 +124,8 @@ unsigned long micros()
 	}
 	// Always record the current counter value and remember it for next time
 	core_timer_last_val = cur_timer_val;
+	micros_calculating = 0;
+
 	return(core_timer_micros);
 }
 
@@ -207,8 +217,7 @@ void init()
 void __ISR(_CORE_TIMER_VECTOR, ipl2) CoreTimerHandler(void)
 {
 	unsigned int cur_timer_val = ReadCoreTimer();	
-	unsigned int micros_delta = 0;
-
+	
 	// clear the interrupt flag
 	mCTClearIntFlag();
 
@@ -222,18 +231,20 @@ void __ISR(_CORE_TIMER_VECTOR, ipl2) CoreTimerHandler(void)
 	// period of overflow for CoreTimer) then overflows to CoreTimer
 	// will be lost. So we put code here to check for this condition
 	// and record it so that the next call to micros() will be accurate.
-	if (cur_timer_val > core_timer_last_val)
+	if (!micros_calculating)
 	{
-		// We have an overflow
-		core_timer_micros += ((0xFFFFFFFF - core_timer_last_val) + cur_timer_val) / CORETIMER_TICKS_PER_MICROSECOND;
-		core_timer_first_val = cur_timer_val;
-		micros_overflows = core_timer_micros;
+		if (cur_timer_val < core_timer_last_val)
+		{
+			// We have an overflow
+			core_timer_micros += ((0xFFFFFFFF - core_timer_last_val) + cur_timer_val) / CORETIMER_TICKS_PER_MICROSECOND;
+			core_timer_first_val = cur_timer_val;
+			micros_overflows = core_timer_micros;
+		}
+		core_timer_last_val = cur_timer_val;
 	}
-	core_timer_last_val = cur_timer_val;
-
+	
 	// Count this millisecond
 	timer0_millis++;
-
 }
 
 
