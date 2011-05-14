@@ -42,7 +42,7 @@ import org.apache.log4j.Level;
 
 public class Compiler implements MessageConsumer {
 	
-	 static Logger logger = Logger.getLogger(Compiler.class.getName());
+	 static Logger logger = Logger.getLogger(Base.class.getName());
 
 	static final String BUGS_URL = "http://code.google.com/p/arduino/issues/list";
 	static final String SUPER_BADNESS = "Compiler error, please submit this code to "
@@ -70,9 +70,7 @@ public class Compiler implements MessageConsumer {
 	ArrayList<String> includePaths;
 
 	public Compiler() {
-		//BasicConfigurator.configure();
-    	//Logger.getRootLogger().setLevel(Level.DEBUG);
-    	//logger.debug("DEBUG: Compiler.java: Logging enabled.");
+    	logger.debug("DEBUG: Compiler.java: Logging on.");
 		
 	}
 
@@ -90,6 +88,8 @@ public class Compiler implements MessageConsumer {
 	 *             Only if there's a problem. Only then.
 	 */
 	public boolean compile(Sketch sketch, String buildPath,String primaryClassName, boolean verbose) throws RunnerException {
+		 logger.debug("DEBUG: Compiler.java: Start Compile(...).");
+
 		this.sketch = sketch;
 		this.buildPath = buildPath;
 		this.primaryClassName = primaryClassName;
@@ -534,9 +534,7 @@ public class Compiler implements MessageConsumer {
 		includePaths.add(corePath);
 		for (File file : sketch.getImportedLibraries()) 
 		{
-			//includePaths.add(file.getPath());
 			includePaths.add(file.getPath());
-
 		}
 		return includePaths;
 	}

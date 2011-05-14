@@ -122,7 +122,7 @@ public class Base {
     try {
     	  BasicConfigurator.configure();
     	  Logger.getRootLogger().setLevel(Level.DEBUG);
-    	  logger.debug("DEBUG: Logging enabled.");
+    	  logger.debug("DEBUG: Logging enabled." + Base.class.getName());
 
 
       File versionFile = getContentFile("lib/version.txt");
