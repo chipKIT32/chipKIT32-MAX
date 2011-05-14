@@ -206,7 +206,7 @@
       <arg value="macosx/dist/tools-universal.zip" />
     </exec>
      
-<unzip dest="macosx/work/Arduino.app/Contents/Resources/Java/hardware/pic32/compiler" src="macosx/dist/cpp-chipKIT-Mac-20110506.zip" overwrite="false"/>
+<unzip dest="macosx/work/Arduino.app/Contents/Resources/Java/hardware/pic32/compiler" src="macosx/dist/cpp-chipKIT-Mac-20110511.zip" overwrite="false"/>
 <chmod perm="+x">
       <fileset dir="macosx/work/Arduino.app/Contents/Resources/Java/hardware/pic32/compiler" includes="**/*" />
 </chmod>
@@ -331,7 +331,7 @@
     <copy todir="linux/work" file="linux/dist/arduino" />
     <chmod perm="755" file="linux/work/arduino" />
 
-    <unzip dest="linux/work/hardware/pic32/compiler" src="linux/dist/cpp-chipKIT-linux-x86-20110509.zip" overwrite="false"/>
+    <unzip dest="linux/work/hardware/pic32/compiler" src="linux/dist/cpp-chipKIT-linux-x86-20110511.zip" overwrite="false"/>
     <chmod perm="+x">
       <fileset dir="linux/work/hardware/pic32/compiler" includes="**/*" />
     </chmod>
@@ -345,7 +345,7 @@
     <delete includeemptydirs="true">
       <fileset dir="linux/work/hardware/pic32/compiler" includes="**/*"/>
     </delete>  
-    <unzip dest="linux/work/hardware/pic32/compiler" src="linux/dist/cpp-chipKIT-linux-AMD64-20110509.zip" overwrite="false"/>
+    <unzip dest="linux/work/hardware/pic32/compiler" src="linux/dist/cpp-chipKIT-linux-AMD64-20110511.zip" overwrite="false"/>
     <chmod perm="+x">
       <fileset dir="linux/work/hardware/pic32/compiler" includes="**/*" />
     </chmod>
