@@ -2,7 +2,7 @@
 //*	Tone.cpp
 //*	
 //*	Arduino core files for PIC32
-//*		Copyright (c) 2010 by Mark Sproul
+//*		Copyright (c) 2010, 2011 by Mark Sproul
 //*	
 //*	
 //************************************************************************
@@ -91,7 +91,7 @@ uint8_t			port;
 
 	timer1_pin_mask		=	digitalPinToBitMask(_pin);
 
-	//*	just to get things goin
+	//*	just to get things going
 int	ii;
 unsigned long	startTime;
 

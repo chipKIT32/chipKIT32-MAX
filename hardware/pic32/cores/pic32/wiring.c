@@ -2,7 +2,7 @@
 //*	wiring.c
 //*	
 //*	Arduino core files for PIC32
-//*		Copyright (c) 2010 by Mark Sproul
+//*		Copyright (c) 2010, 2011 by Mark Sproul
 //*	
 //*	
 //************************************************************************
@@ -28,11 +28,14 @@
 //*	Edit History
 //************************************************************************
 //*	Oct 15,	2010	<MLS> Master interrupts working to generate millis()
+//*	May 18,	2011	<MLS> merged in Brian Schmalz work on microseconds timer
 //************************************************************************
 #include <plib.h>
 #include <p32xxxx.h>
 
 #include "wiring_private.h"
+//#define _ENABLE_PIC_RTC_
+
 
 //*	as per Al.Rodriguez@microchip.com, Jan 7, 2011
 //*	Add the following so the secondary oscillator is disabled and the port can be used as an IO PORT.
@@ -43,9 +46,19 @@
 //#pragma config FPBDIV=DIV_2, FWDTEN=OFF, CP=OFF, BWP=OFF
 
 
-#pragma config FPLLODIV = DIV_1, FPLLMUL = MUL_20, FPLLIDIV = DIV_2, FWDTEN = OFF, FCKSM = CSECME, FPBDIV = DIV_1
-#pragma config OSCIOFNC = ON, POSCMOD = XT, FSOSCEN = OFF, FNOSC = PRIPLL
-#pragma config CP = OFF, BWP = OFF, PWP = OFF
+#pragma config FPLLODIV	=	DIV_1
+#pragma config FPLLMUL	=	MUL_20
+#pragma config FPLLIDIV	=	DIV_2
+#pragma config FWDTEN	=	OFF
+#pragma config FCKSM	=	CSECME
+#pragma config FPBDIV	=	DIV_1
+#pragma config OSCIOFNC	=	ON
+#pragma config POSCMOD	=	XT
+#pragma config FSOSCEN	=	OFF
+#pragma config FNOSC	=	PRIPLL
+#pragma config CP		=	OFF
+#pragma config BWP		=	OFF
+#pragma config PWP		=	OFF
 
 
 //************************************************************************
@@ -70,20 +83,22 @@ unsigned int	__PIC32_pbClk;
 // Number of CoreTimer ticks per microsecond, for micros() function
 #define CORETIMER_TICKS_PER_MICROSECOND		(F_CPU / 2 / 1000000UL)
 
+
+//*	the "g" prefix means global variable
 // Stores the current millisecond count (from power on)
-volatile unsigned long timer0_millis = 0;
+volatile unsigned long gTimer0_millis	=	0;
 
 // Variable used to track the microsecond count (from power on)
-volatile unsigned long core_timer_last_val = 0;
-volatile unsigned long core_timer_micros = 0;
-volatile unsigned long micros_overflows = 0;
-volatile unsigned long core_timer_first_val = 0;
-volatile unsigned long micros_calculating = 0;
+volatile unsigned long gCore_timer_last_val		=	0;
+volatile unsigned long gCore_timer_micros		=	0;
+volatile unsigned long gMicros_overflows		=	0;
+volatile unsigned long gCore_timer_first_val	=	0;
+volatile unsigned long gMicros_calculating		=	0;
 
 //************************************************************************
 unsigned long millis()
 {
-	return(timer0_millis);
+	return(gTimer0_millis);
 }
 
 //************************************************************************
@@ -96,37 +111,38 @@ unsigned long millis()
 // and all micros() calls after that (until the next overflow) are 
 // referenced from that value. This insures accuracy and that micros()
 // lines up perfectly with millis().
+//************************************************************************
 unsigned long micros()
 {
-	unsigned int cur_timer_val = 0;
-	unsigned int micros_delta = 0;
-	
+unsigned int cur_timer_val	=	0;
+unsigned int micros_delta	=	0;
+
 	// Use this as a flag to tell the ISR not to touch anything
-	micros_calculating = 1;
-	cur_timer_val = ReadCoreTimer();
-	
+	gMicros_calculating	=	1;
+	cur_timer_val	=	ReadCoreTimer();
+
 	// Check for overflow
-	if (cur_timer_val >= core_timer_last_val)
+	if (cur_timer_val >= gCore_timer_last_val)
 	{
-		// Note - core_timer_micros is not added to here (just a =, not a +=)
+		// Note - gCore_timer_micros is not added to here (just a =, not a +=)
 		// so we don't accumulate any errors.
-		micros_delta = (cur_timer_val - core_timer_first_val) / CORETIMER_TICKS_PER_MICROSECOND;
-		core_timer_micros = micros_overflows + micros_delta;
+		micros_delta	=	(cur_timer_val - gCore_timer_first_val) / CORETIMER_TICKS_PER_MICROSECOND;
+		gCore_timer_micros	=	gMicros_overflows + micros_delta;
 	}
 	else
 	{
 		// We have an overflow
-		core_timer_micros += ((0xFFFFFFFF - core_timer_last_val) + cur_timer_val) / CORETIMER_TICKS_PER_MICROSECOND;
+		gCore_timer_micros		+=	((0xFFFFFFFF - gCore_timer_last_val) + cur_timer_val) / CORETIMER_TICKS_PER_MICROSECOND;
 		// Store off the current counter value for use in all future micros() calls
-		core_timer_first_val = cur_timer_val;
+		gCore_timer_first_val	=	cur_timer_val;
 		// And store off current micros count for future micros() calls
-		micros_overflows = core_timer_micros;
+		gMicros_overflows		=	gCore_timer_micros;
 	}
 	// Always record the current counter value and remember it for next time
-	core_timer_last_val = cur_timer_val;
-	micros_calculating = 0;
+	gCore_timer_last_val	=	cur_timer_val;
+	gMicros_calculating		=	0;
 
-	return(core_timer_micros);
+	return(gCore_timer_micros);
 }
 
 
@@ -138,21 +154,21 @@ unsigned long micros()
 // Delay for a given number of milliseconds.
 void delay(unsigned long ms)
 {
-	unsigned long	startMillis;
+unsigned long	startMillis;
 
-	startMillis	=	timer0_millis;
-	while ((timer0_millis - startMillis) < ms)
+	startMillis	=	gTimer0_millis;
+	while ((gTimer0_millis - startMillis) < ms)
 	{
 		//*	do nothing
 	}
 }
 
 //************************************************************************
-/* Delay for the given number of microseconds. Will fail on micros()
-rollover every 71 minutes */
+//*	Delay for the given number of microseconds. Will fail on micros()
+//*	rollover every 71 minutes
 void delayMicroseconds(unsigned int us)
 {
-	unsigned long	startMicros = micros();
+unsigned long	startMicros	=	micros();
 
 	while ((micros() - startMicros) < us)
 	{
@@ -199,8 +215,8 @@ void init()
 
 	delay(50);
 	// time is MSb: hour, min, sec, rsvd. date is MSb: year, mon, mday, wday.
-	RtccOpen(0x10073000, 0x11010901, 0);	
-	RtccSetTimeDate(0x10073000, 0x10101701);	
+	RtccOpen(0x10073000, 0x11010901, 0);
+	RtccSetTimeDate(0x10073000, 0x10101701);
 	// please note that the rsvd field has to be 0 in the time field!
 #endif
 
@@ -216,8 +232,10 @@ void init()
 //************************************************************************
 void __ISR(_CORE_TIMER_VECTOR, ipl2) CoreTimerHandler(void)
 {
-	unsigned int cur_timer_val = ReadCoreTimer();	
+unsigned int cur_timer_val;
 	
+
+	cur_timer_val	=	ReadCoreTimer();
 	// clear the interrupt flag
 	mCTClearIntFlag();
 
@@ -231,20 +249,20 @@ void __ISR(_CORE_TIMER_VECTOR, ipl2) CoreTimerHandler(void)
 	// period of overflow for CoreTimer) then overflows to CoreTimer
 	// will be lost. So we put code here to check for this condition
 	// and record it so that the next call to micros() will be accurate.
-	if (!micros_calculating)
+	if (!gMicros_calculating)
 	{
-		if (cur_timer_val < core_timer_last_val)
+		if (cur_timer_val < gCore_timer_last_val)
 		{
 			// We have an overflow
-			core_timer_micros += ((0xFFFFFFFF - core_timer_last_val) + cur_timer_val) / CORETIMER_TICKS_PER_MICROSECOND;
-			core_timer_first_val = cur_timer_val;
-			micros_overflows = core_timer_micros;
+			gCore_timer_micros		+=	((0xFFFFFFFF - gCore_timer_last_val) + cur_timer_val) / CORETIMER_TICKS_PER_MICROSECOND;
+			gCore_timer_first_val	=	cur_timer_val;
+			gMicros_overflows	=	gCore_timer_micros;
 		}
-		core_timer_last_val = cur_timer_val;
+		gCore_timer_last_val	=	cur_timer_val;
 	}
 	
 	// Count this millisecond
-	timer0_millis++;
+	gTimer0_millis++;
 }
 
 

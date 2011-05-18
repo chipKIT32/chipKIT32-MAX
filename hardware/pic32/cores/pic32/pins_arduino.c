@@ -2,7 +2,7 @@
 //*	Pins_arduino_pic32.c
 //*
 //*	Arduino core files for PIC32
-//*		Copyright (c) 2010 by Mark Sproul
+//*		Copyright (c) 2010, 2011 by Mark Sproul
 //*	
 //*	pins_arduino.c - pin definitions for the Arduino board
 //*	Part of Arduino / Wiring libraries

@@ -2,7 +2,7 @@
 //*	Pins_arduinohc
 //*
 //*	Arduino core files for PIC32
-//*		Copyright (c) 2010 by Mark Sproul
+//*		Copyright (c) 2010, 2011 by Mark Sproul
 //*	
 //*	
 //************************************************************************
@@ -26,6 +26,10 @@
 //*	Public License along with this library; if not, write to the
 //*	Free Software Foundation, Inc., 59 Temple Place, Suite 330,
 //*	Boston, MA  02111-1307  USA
+//************************************************************************
+//*	Edit History
+//************************************************************************
+//*	May  5,	2011	<MLS> added analog_pin_to_channel_PGM
 //************************************************************************
 
 #ifndef Pins_Arduino_h
@@ -81,6 +85,7 @@
 extern const uint32_t	port_to_mode_PGM[];
 extern const uint32_t	port_to_input_PGM[];
 extern const uint32_t	port_to_output_PGM[];
+extern const uint8_t	analog_pin_to_channel_PGM[];
 
 extern const uint8_t	digital_pin_to_port_PGM[];
 
@@ -96,7 +101,7 @@ extern const uint8_t	digital_pin_to_timer_PGM[];
 #define digitalPinToPort(P) ( digital_pin_to_port_PGM[P]  )
 #define digitalPinToBitMask(P) ( digital_pin_to_bit_mask_PGM[P]  )
 #define digitalPinToTimer(P) ( digital_pin_to_timer_PGM[P]  )
-#define analogInPinToBit(P) (P)
+#define analogInPinToBit(P) ( analog_pin_to_channel_PGM[P]  )
 #define portOutputRegister(P) ( (volatile uint32_t *)(  port_to_output_PGM[P]) )
 #define portInputRegister(P) ( (volatile uint32_t *)(  port_to_input_PGM[P]) )
 #define portModeRegister(P) ( (volatile uint32_t *)(  port_to_mode_PGM[P]) )

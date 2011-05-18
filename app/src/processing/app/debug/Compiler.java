@@ -170,9 +170,11 @@ public class Compiler implements MessageConsumer {
 		this.objectFiles = new ArrayList<File>();
 				
 		// 0. include paths for core + all libraries
+		logger.debug("0. getIncludes");
 		this.includePaths =	getIncludes(this.corePath);
 		
 		// 1. compile the sketch (already in the buildPath)
+		logger.debug("1. compileSketch");
 		compileSketch(avrBasePath, buildPath, includePaths, configPreferences);
 
 		// 2. compile the libraries, outputting .o files to:
@@ -526,10 +528,12 @@ public class Compiler implements MessageConsumer {
 	// 0. include paths for core + all libraries
 	ArrayList<String> getIncludes(String corePath) 
 	{
+		logger.debug("corePath: " + corePath);
 		ArrayList<String> includePaths = new ArrayList();
 		includePaths.add(corePath);
 		for (File file : sketch.getImportedLibraries()) 
 		{
+			logger.debug("getImportedLibraries: " + file.getPath());
 			includePaths.add(file.getPath());
 		}
 		return includePaths;

@@ -1,3 +1,35 @@
+//************************************************************************
+//*	wiring.h
+//*	
+//*	Arduino core files for PIC32
+//*		Copyright (c) 2010,2011 by Mark Sproul
+//*	
+//*	
+//************************************************************************
+//*	this code is based on code Copyright (c) 2005-2006 David A. Mellis
+//*	
+//*	This library is free software; you can redistribute it and/or
+//*	modify it under the terms of the GNU Lesser General Public
+//*	License as published by the Free Software Foundation; either
+//*	version 2.1 of the License, or (at your option) any later version.
+//*	
+//*	This library is distributed in the hope that it will be useful,
+//*	but WITHOUT ANY WARRANTY; without even the implied warranty of
+//*	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.//*	See the GNU
+//*	Lesser General Public License for more details.
+//*	
+//*	You should have received a copy of the GNU Lesser General
+//*	Public License along with this library; if not, write to the
+//*	Free Software Foundation, Inc., 59 Temple Place, Suite 330,
+//*	Boston, MA	02111-1307	USA
+//*	
+//*	
+//************************************************************************
+//*	Edit History
+//************************************************************************
+//*	May  ?,	2011	Brian Schmalz worked on micros timers
+//*	May 18,	2011	<MLS> Added prog_xxx defs because there is no "pgmspace.h" file for pic32
+//************************************************************************
 
 #ifndef Wiring_h
 #define Wiring_h
@@ -5,6 +37,9 @@
 //#include <avr/io.h>
 #include <inttypes.h>
 #include "binary.h"
+
+#include "cpudefs.h"	//*		This file is designed to provide some of the cpu specific definitions
+						//*		that are available for avr chips and not for other chips (i.e. pic32)
 
 #ifdef __cplusplus
 extern "C"{
@@ -110,6 +145,17 @@ void loop(void);
 } // extern "C"
 #endif
 
+#define	prog_void		const void
+#define	prog_char		const char
+#define	prog_uchar		const unsigned char
+#define	prog_int8_t		const int8_t
+#define	prog_uint8_t	const uint8_t
+#define	prog_int16_t	const int16_t
+#define	prog_uint16_t	const uint16_t
+#define	prog_int32_t	const int32_t
+#define	prog_uint32_t	const uint32_t
+#define	prog_int64_t	const int64_t
+#define	prog_uint64_t	const uint64_t
 
 extern unsigned int	__PIC32_pbClk;
 

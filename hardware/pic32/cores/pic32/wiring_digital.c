@@ -2,7 +2,7 @@
 //*	Wiring_digital.c
 //*
 //*	Arduino core files for PIC32
-//*		(C) 2010 by Mark Sproul
+//*		Copyright (c) 2010, 2011 by Mark Sproul
 //*	
 //*	
 //************************************************************************
@@ -93,6 +93,13 @@ volatile uint32_t	*tris_reg;
 
 	if (mode == INPUT) 
 	{
+		//*	May  1,	2011
+		//*	according to item #26 in PIC32MX5XX-6XX-7XX Errata.pdf 
+		//*	if we are setting to input, set the data bit to zero first
+		//*	PORTxCLR	=	bitMask;
+		*(tris_reg + 5)	=	bitMask;
+		
+		
 		//*	TRISxSET
 		*(tris_reg + 2)	=	bitMask;
 	}

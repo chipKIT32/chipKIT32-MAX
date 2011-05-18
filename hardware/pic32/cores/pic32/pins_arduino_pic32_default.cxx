@@ -2,7 +2,7 @@
 //*	pins_arduino_pic32_default.cxx
 //*
 //*	Arduino core files for PIC32
-//*		Copyright (c) 2010 by Mark Sproul
+//*		Copyright (c) 2010, 2011 by Mark Sproul
 //*	
 //*	pins_arduino.c - pin definitions for the Arduino board
 //*	Part of Arduino / Wiring libraries
@@ -31,6 +31,7 @@
 //************************************************************************
 //*	Oct 12,	2010	<MLS> Got MPLAB X working on MacOSX 1.6 for the first time
 //*	Oct 20,	2010	<MLS> First phase of Arduino port working
+//*	May  5,	2011	<MLS> added analog_pin_to_channel_PGM
 //************************************************************************
 
 //************************************************************************
@@ -452,3 +453,28 @@ const uint8_t PROGMEM digital_pin_to_timer_PGM[] = {
 #endif
 };
 
+
+//************************************************************************
+//*	the UNO board does not have a 1 to 1 mapping of analog pins, therefore we need
+//*	a mpping table, this is the default, 1 to 1 mapping
+//************************************************************************
+const uint8_t PROGMEM analog_pin_to_channel_PGM[] = {
+			//*	Arduino Pin		PIC32 Analog channel
+	0,		//*	A0				1 to 1 mapping
+	1,		//*	A1
+	2,		//*	A2
+	3,		//*	A3
+	4,		//*	A4
+	5,		//*	A5
+	6,		//*	A6
+	7,		//*	A7
+	8,		//*	A8
+	9,		//*	A9
+	10,		//*	A10
+	11,		//*	A11
+	12,		//*	A12
+	13,		//*	A13
+	14,		//*	A14
+	15,		//*	A15
+
+};

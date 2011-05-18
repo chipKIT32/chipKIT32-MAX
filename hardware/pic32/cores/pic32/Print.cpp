@@ -2,7 +2,7 @@
 //*	Print.cpp
 //*	
 //*	Arduino core files for PIC32
-//*		Copyright (c) 2010 by Mark Sproul
+//*		Copyright (c) 2010, 2011 by Mark Sproul
 //*	
 //*	This file has very little modifcation from the standard Arduino Print.cpp
 //************************************************************************

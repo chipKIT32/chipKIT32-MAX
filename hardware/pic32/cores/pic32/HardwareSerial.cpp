@@ -2,7 +2,7 @@
 //*	HardwareSerial.cpp
 //*	
 //*	Arduino core files for PIC32
-//*		Copyright (c) 2010 by Mark Sproul
+//*		Copyright (c) 2010, 2011 by Mark Sproul
 //*	
 //*	
 //************************************************************************
@@ -41,10 +41,11 @@
 //*	Jan 22,	2011	<MLS> Working on testing serial1 -> 3
 //*	Feb  6,	2011	<MLS> Uart2 working pin Pic32 starterKit (32MX360F512L)
 //*	Feb  6,	2011	<MLS> Uart1B, Uart3A, Uart3B working pin Digilent MEGA (32MX795F512L)
+//*	Apr 10,	2011	<MLS> Added defs for UNO board
+//*	Apr 13,	2011	<MLS> Support for UART4 is NOT finished
 //************************************************************************
 #define __LANGUAGE_C__
 
-#define _DEBUG_SERIAL_CODE
 
 #include <stdio.h>
 #include <string.h>
@@ -123,6 +124,17 @@ void HardwareSerial::begin(long baudRate)
 {
 int	configValue;
 
+#if 0
+//*	this is to debug the lack of constructors being called
+//	_uartNumber	=	kSerialPort_1A;
+//	_rx_buffer	=	&rx_buffer1A;
+//	_UxBRG		=	&U1ABRG;
+//	_UxMODE		=	&U1AMODE;
+//	_UxSTA		=	&U1ASTA;
+//	_UxTXREG	=	&U1ATXREG;
+#endif
+
+
 	*_UxMODE	=	(UART_EN);
 	*_UxSTA		=	(UART_RX_ENABLE | UART_TX_ENABLE);
 	*_UxBRG		=	(__PIC32_pbClk / 16 / (baudRate - 1));	// calculate actual BAUD generate value.
@@ -163,9 +175,6 @@ int	configValue;
 
 	#if defined(_UART1B)
 		case kSerialPort_1B:
-		#ifdef _DEBUG_SERIAL_CODE
-			Serial.println("Uart 1B init");
-		#endif
 			U1BMODEbits.UARTEN	=	0x01;
 			U1BSTAbits.UTXEN	=	0x01;
 
@@ -184,9 +193,6 @@ int	configValue;
 
 	#if defined(_UART2) && !defined(_UART2A)
 		case kSerialPort_2:
-		#ifdef _DEBUG_SERIAL_CODE
-			Serial.println("Uart 2 init");
-		#endif
 			U2MODEbits.UARTEN	=	0x01;
 			U2STAbits.UTXEN		=	0x01;
 
@@ -203,9 +209,6 @@ int	configValue;
 
 	#if defined (_UART3) && !defined(_UART3A)
 		case kSerialPort_3:
-		#ifdef _DEBUG_SERIAL_CODE
-			Serial.println("Uart 3 init");
-		#endif
 			U3MODEbits.UARTEN	=	0x01;
 			U3STAbits.UTXEN		=	0x01;
 
@@ -224,9 +227,6 @@ int	configValue;
 
 	#if defined(_UART3A)
 		case kSerialPort_3A:
-		#ifdef _DEBUG_SERIAL_CODE
-			Serial.println("Uart 3A init");
-		#endif
 			U3AMODEbits.UARTEN	=	0x01;
 			U3ASTAbits.UTXEN	=	0x01;
 
@@ -244,9 +244,6 @@ int	configValue;
 
 	#if defined(_UART3B)
 		case kSerialPort_3B:
-		#ifdef _DEBUG_SERIAL_CODE
-			Serial.println("Uart 3B init");
-		#endif
 			U3BMODEbits.UARTEN	=	0x01;
 			U3BSTAbits.UTXEN	=	0x01;
 
@@ -264,21 +261,18 @@ int	configValue;
 
 	#if defined(_UART4)
 		case kSerialPort_4:
-		#ifdef _DEBUG_SERIAL_CODE
-			Serial.println("Uart 4 init");
-		#endif
-	//+		U4MODEbits.UARTEN	=	0x01;
-	//+		U4STAbits.UTXEN		=	0x01;
+			U4MODEbits.UARTEN	=	0x01;
+			U4STAbits.UTXEN		=	0x01;
 
-	//+		mU4ClearAllIntFlags();
+		//+	mU4ClearAllIntFlags();
 
-	//+		configValue	=	UART_INT_PR1 | UART_RX_INT_EN;
+		//+	configValue	=	UART_INT_PR1 | UART_RX_INT_EN;
 
-	//+		mU4SetIntPriority((configValue & 0x7));
+		//+	mU4SetIntPriority((configValue & 0x7));
 
-	//+		mU4SetIntSubPriority((((configValue) >> 4) & 3));
+		//+	mU4SetIntSubPriority((((configValue) >> 4) & 3));
 			
-	//+		mU4SetIntEnable((((configValue) >> 6) & 7)) ;
+		//+	mU4SetIntEnable((((configValue) >> 6) & 7)) ;
 			break;
 	#endif
 	}
@@ -286,14 +280,6 @@ int	configValue;
 	// Must enable glocal interrupts - in this case, we are using multi-vector mode
     INTEnableSystemMultiVectoredInt();
 
-#ifdef _DEBUG_SERIAL_CODE
-	if (_uartNumber != 1)
-	{
-		Serial.print("Uart #");
-		Serial.print(_uartNumber, HEX);
-		Serial.print(" open");
-	}
-#endif
 
 }
 
@@ -707,12 +693,12 @@ unsigned char theChar;
 #endif
 
 
-#ifdef _UART4_
+#ifdef _UART4_notFinished
 //*******************************************************************************************
 // UART 4 interrupt handler
 // it is set at priority level 2
 //*******************************************************************************************
-void __ISR(_UART4_VECTOR, ipl2) IntUart4Handler(void)
+void __ISR(_UART_4_VECTOR, ipl2) IntUart4Handler(void)
 {
 unsigned char theChar;
 
@@ -751,6 +737,9 @@ unsigned char theChar;
 		HardwareSerial Serial2(	kSerialPort_3A,	&rx_buffer3A,	&U3ABRG,	&U3AMODE,	&U3ASTA,	&U3ATXREG);
 		HardwareSerial Serial3(	kSerialPort_3B,	&rx_buffer3B,	&U3BBRG,	&U3BMODE,	&U3BSTA,	&U3BTXREG);
 
+//*******************************************************************************************
+#elif defined(_BOARD_UNO_)
+		HardwareSerial Serial(	kSerialPort_1,		&rx_buffer1,	&U1BRG,		&U1MODE,	&U1STA,		&U1TXREG);
 
 //*******************************************************************************************
 #elif defined(_BOARD_EXPLORER16_)

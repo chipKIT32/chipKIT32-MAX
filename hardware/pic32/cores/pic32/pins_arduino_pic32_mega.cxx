@@ -2,7 +2,7 @@
 //*	pins_arduino_pic32_mega.cxx
 //*
 //*	Arduino core files for PIC32
-//*		Copyright (c) 2010 by Mark Sproul
+//*		Copyright (c) 2010, 2011 by Mark Sproul
 //*	
 //*	pins_arduino.c - pin definitions for the Arduino board
 //*	Part of Arduino / Wiring libraries
@@ -33,7 +33,15 @@
 //*	Oct 20,	2010	<MLS> First phase of Arduino port working
 //*	Dec 17,	2010	<MLS> Working on pin mapping
 //*	Jan  2,	2011	<MLS> First pass at Pic32-mega pin map working
+//*	May  5,	2011	<MLS> added analog_pin_to_channel_PGM
 //************************************************************************
+
+//	Pin 50 = G7 with JP3 in Master position
+//	Pin 50 = G8 with JP3 in Slave position
+//	Pin 51 = G8 with JP4 in Master position
+//	Pin 51 = G7 with JP4 in Slave position
+
+
 
 //************************************************************************
 const uint8_t	digital_pin_to_port_PGM[] = {
@@ -67,7 +75,8 @@ const uint8_t	digital_pin_to_port_PGM[] = {
 	PF,		//	25 RF3	USBID/RF3
 	PG,		//	26 RG3	D-/RG3
 	PG,		//	27 RG2	D+/RG2
-	PA,		//	28 RA9	VREF-/CVREF0/AERXD2/PMA7/RA9
+//-	PA,		//	28 RA9	VREF-/CVREF0/AERXD2/PMA7/RA9
+	PG,		//	28 RG15
 	PG,		//	29 RG7	????
 	PE,		//	30 RE7	PMD7/RE7
 	PE,		//	31 RE6	PMD6/RE6
@@ -90,7 +99,7 @@ const uint8_t	digital_pin_to_port_PGM[] = {
 	PD,		//	48 RD8	PTCC/EMDIO/AEMDIO/IC1/RD8
 	PD,		//	49 RD11	EMDC/AEMDC/IC4/PMCS1/PMA14/RD11
 	PG,		//	50 RG7	ECRX/SDA2/SDI2A/U2ARX/PMA4/CN9/RG7
-	PG,		//	51 RG7	ECRX/SDA2/SDI2A/U2ARX/PMA4/CN9/RG7
+	PG,		//	51 RG8
 	PG,		//	52 RG6	ECOL/SCK2A/U2BTX/U2ARTS/PMA5/CN8/RG6
 	PG,		//	53 RG9	ERXCLK/AERXCLK/EREFCLK/AEREFCLK/SS2A/U2BRX/U2ACTS/PMA2/CN11/RG9
 	//*	the analog ports start with 54
@@ -127,7 +136,8 @@ const uint8_t	digital_pin_to_port_PGM[] = {
 	PG,		//	82 RG14	TRD2/RG14
 	PG,		//	83 RG12	TRD1/RG12
 	PG,		//	84 RG13	TRD0/RG13
-	PG,		//	85 RG15 AERXERR/RG15
+//-	PA,		//	85 RA9	VREF-/CVREF0/AERXD2/PMA7/RA9
+	PA,		//	85 RA9
 	
 };
 
@@ -164,7 +174,8 @@ const uint16_t PROGMEM digital_pin_to_bit_mask_PGM[] =
 	_BV( 3 ),		//	25 RF3	USBID/RF3
 	_BV( 3 ),		//	26 RG3	D-/RG3
 	_BV( 2 ),		//	27 RG2	D+/RG2
-	_BV( 9 ),		//	28 RA9	VREF-/CVREF0/AERXD2/PMA7/RA9
+//-	_BV( 9 ),		//	28 RA9	VREF-/CVREF0/AERXD2/PMA7/RA9
+	_BV( 15 ),		//	28 RG15
 	_BV( 7 ),		//	29 RG7	?
 	_BV( 7 ),		//	30 RE7	PMD7/RE7
 	_BV( 6 ),		//	31 RE6	PMD6/RE6
@@ -187,7 +198,7 @@ const uint16_t PROGMEM digital_pin_to_bit_mask_PGM[] =
 	_BV( 8 ),		//	48 RD8	RTCC/EMDIO/AEMDIO/IC1/RD8
 	_BV( 11 ),		//	49 RD11	EMDC/AEMDC/IC4/PMCS1/PMA14/RD11
 	_BV( 7 ),		//	50 RG7	ECRX/SDA2/SDI2A/U2ARX/PMA4/CN9/RG7
-	_BV( 7 ),		//	51 RG7	ECRX/SDA2/SDI2A/U2ARX/PMA4/CN9/RG7
+	_BV( 8 ),		//	51 RG8
 	_BV( 6 ),		//	52 RG6	ECOL/SCK2A/U2BTX/U2ARTS/PMA5/CN8/RG6
 	_BV( 9 ),		//	53 RG9	ERXCLK/AERXCLK/EREFCLK/AEREFCLK/SS2A/U2BRX/U2ACTS/PMA2/CN11/RG9
 
@@ -226,7 +237,7 @@ const uint16_t PROGMEM digital_pin_to_bit_mask_PGM[] =
 	_BV( 14 ),		//	82 RG14	TRD2/RG14
 	_BV( 12 ),		//	83 RG12	TRD1/RG12
 	_BV( 13 ),		//	84 RG13	TRD0/RG13
-	_BV( 15 ),		//	85 RG15 AERXERR/RG15
+	_BV( 9 ),		//	85 RA9
 
 
 
@@ -236,8 +247,6 @@ const uint16_t PROGMEM digital_pin_to_bit_mask_PGM[] =
 //* TODO implement for PIC32
 const uint8_t PROGMEM digital_pin_to_timer_PGM[] = {
 	// TIMERS
-	// -------------------------------------------
-
 	// -------------------------------------------
 	NOT_ON_TIMER,		//	0 RF2	SDA1A/SDI1A/U1ARX/RF2
 	NOT_ON_TIMER,		//	1 RF8	SCL1A/SDO1A/U1ATX/RF8
@@ -267,7 +276,7 @@ const uint8_t PROGMEM digital_pin_to_timer_PGM[] = {
 	NOT_ON_TIMER,		//	25 RF3	USBID/RF3
 	NOT_ON_TIMER,		//	26 RG3	D-/RG3
 	NOT_ON_TIMER,		//	27 RG2	D+/RG2
-	NOT_ON_TIMER,		//	28 RA9	VREF-/CVREF0/AERXD2/PMA7/RA9
+	NOT_ON_TIMER,		//	28 RG15
 	NOT_ON_TIMER,		//	29 RG7	????
 	NOT_ON_TIMER,		//	30 RE7	PMD7/RE7
 	NOT_ON_TIMER,		//	31 RE6	PMD6/RE6
@@ -290,7 +299,7 @@ const uint8_t PROGMEM digital_pin_to_timer_PGM[] = {
 	NOT_ON_TIMER,		//	48 RD8	PTCC/EMDIO/AEMDIO/IC1/RD8
 	NOT_ON_TIMER,		//	49 RD11	EMDC/AEMDC/IC4/PMCS1/PMA14/RD11
 	NOT_ON_TIMER,		//	50 RG7	ECRX/SDA2/SDI2A/U2ARX/PMA4/CN9/RG7
-	NOT_ON_TIMER,		//	51 RG7	ECRX/SDA2/SDI2A/U2ARX/PMA4/CN9/RG7
+	NOT_ON_TIMER,		//	51 RG8
 	NOT_ON_TIMER,		//	52 RG6	ECOL/SCK2A/U2BTX/U2ARTS/PMA5/CN8/RG6
 	NOT_ON_TIMER,		//	53 RG9	ERXCLK/AERXCLK/EREFCLK/AEREFCLK/SS2A/U2BRX/U2ACTS/PMA2/CN11/RG9
 	//*	the analog ports start with 54
@@ -327,7 +336,31 @@ const uint8_t PROGMEM digital_pin_to_timer_PGM[] = {
 	NOT_ON_TIMER,		//	82 RG14	TRD2/RG14
 	NOT_ON_TIMER,		//	83 RG12	TRD1/RG12
 	NOT_ON_TIMER,		//	84 RG13	TRD0/RG13
-	NOT_ON_TIMER,		//	85 RG15 AERXERR/RG15
+	NOT_ON_TIMER,		//	85 RA9
 
 };
 
+//************************************************************************
+//*	the UNO board does not have a 1 to 1 mapping of analog pins, therefore we need
+//*	a mpping table, this is the default, 1 to 1 mapping
+//************************************************************************
+const uint8_t PROGMEM analog_pin_to_channel_PGM[] = {
+			//*	Arduino Pin		PIC32 Analog channel
+	0,		//*	A0				1 to 1 mapping
+	1,		//*	A1
+	2,		//*	A2
+	3,		//*	A3
+	4,		//*	A4
+	5,		//*	A5
+	6,		//*	A6
+	7,		//*	A7
+	8,		//*	A8
+	9,		//*	A9
+	10,		//*	A10
+	11,		//*	A11
+	12,		//*	A12
+	13,		//*	A13
+	14,		//*	A14
+	15,		//*	A15
+
+};

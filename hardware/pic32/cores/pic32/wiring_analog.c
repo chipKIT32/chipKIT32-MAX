@@ -2,7 +2,7 @@
 //*	wiring_analog.c
 //*
 //*	Arduino core files for PIC32
-//*		Copyright (c) 2010 by Mark Sproul
+//*		Copyright (c) 2010, 2011 by Mark Sproul
 //*	
 //*	
 //************************************************************************
@@ -31,6 +31,8 @@
 //*	Oct 17,	2010	<MLS> analogRead working
 //*	Oct 19,	2010	<MLS> analogWrite (PWM) working
 //*	Oct 19,	2010	<MLS> turnOffPWM moved to wiring_analog.c from wiring_digital.c
+//*	Apr 26,	2011	<MLS> Errata sheet PIC32MX5XX-6XX-7XX Errata.pdf item #26
+//*	May  5,	2011	<MLS> Uno board does not have 1 to 1 pin mapping for analog, added analogInPinToBit
 //************************************************************************
 
 // Master header file for all peripheral library includes
@@ -57,7 +59,20 @@ int analogRead(uint8_t pin)
 int				analogValue;
 unsigned int	offset;	// buffer offset to point to the base of the idle buffer
 unsigned int	param4;
+uint8_t			channelNumber;
 
+	//*	in most cases (except the uno board) this will be a 1 to 1 mapping
+	channelNumber	=	analogInPinToBit(pin);
+
+
+	//*	May 1, 2011	Gene Apperson of Digitlent sent me PIC32MX5XX-6XX-7XX Errata.pdf
+	//*	item #26 documents a condition that I/O pins take time if previously set to outputs
+	
+	
+
+
+	//*	first attempt, set all to 0
+//	AD1PCFG	=	0;
 
 	// configure and enable the ADC
 	CloseADC10();	// ensure the ADC is off before setting the configuration
@@ -77,7 +92,7 @@ unsigned int	param4;
 
 	// define setup parameters for OpenADC10
 	//				set AN4 and AN5 as analog inputs
-	param4	=	pin;
+	param4	=	channelNumber;
 	
 	// define setup parameters for OpenADC10
 	// do not assign channels to scan
@@ -89,7 +104,7 @@ unsigned int	param4;
 //	SetChanADC10( ADC_CH0_NEG_SAMPLEA_NVREF | ADC_CH0_POS_SAMPLEA_AN0 |  ADC_CH0_NEG_SAMPLEB_NVREF | ADC_CH0_POS_SAMPLEB_AN1); // configure to sample AN4 & AN5
 //	OpenADC10( PARAM1, PARAM2, PARAM3, PARAM4, PARAM5 ); // configure ADC using the parameters defined above
 
-	switch(pin)
+	switch(channelNumber)
 	{
 		case 0:
 			SetChanADC10( ADC_CH0_NEG_SAMPLEA_NVREF | ADC_CH0_POS_SAMPLEA_AN0);
@@ -156,11 +171,18 @@ unsigned int	param4;
 			break;
 	}
 
-
-	// configure to sample what ever pin was specifiedﬂ	
+	
+	// configure to sample what ever pin was specified
+	
 	OpenADC10( PARAM1, PARAM2, PARAM3, param4, PARAM5 ); // configure ADC using the parameters defined above
 
 	EnableADC10(); // Enable the ADC
+
+	//*	A delay is needed for the the ADC start up time
+	//*	this value started out at 1 millisecond, I dont know how long it needs to be
+	//*	99 uSecs will give us the same approximate sampling rate as the AVR chip
+//	delay(1);	
+	delayMicroseconds(99);
 
 	while ( ! mAD1GetIntFlag() ) 
 	{ 
@@ -204,9 +226,9 @@ void analogWrite(uint8_t pin, int val)
 		#ifdef _OCMP1
 			case TIMER_OC1:
 				//* Open Timer2 with Period register value
-//				OpenTimer2(T2_ON, 0x550);
 				OpenTimer2(T2_ON | T2_PS_1_256, PWM_TIMER_PERIOD);
 				OpenOC1( OC_ON | OC_TIMER_MODE32 | OC_TIMER2_SRC | OC_CONTINUE_PULSE | OC_LOW_HIGH, 256, (256 - val) );
+				
 				break;
 		#endif
 
@@ -215,6 +237,7 @@ void analogWrite(uint8_t pin, int val)
 				//* Open Timer2 with Period register value
 				OpenTimer2(T2_ON | T2_PS_1_256, PWM_TIMER_PERIOD);
 				OpenOC2( OC_ON | OC_TIMER_MODE32 | OC_TIMER2_SRC | OC_CONTINUE_PULSE | OC_LOW_HIGH, 256, (256 - val) );
+
 				break;
 		#endif
 
@@ -223,6 +246,7 @@ void analogWrite(uint8_t pin, int val)
 				//* Open Timer2 with Period register value
 				OpenTimer2(T2_ON | T2_PS_1_256, PWM_TIMER_PERIOD);
 				OpenOC3( OC_ON | OC_TIMER_MODE32 | OC_TIMER2_SRC | OC_CONTINUE_PULSE | OC_LOW_HIGH, 256, (256 - val) );
+
 				break;
 		#endif
 
@@ -231,6 +255,7 @@ void analogWrite(uint8_t pin, int val)
 				//* Open Timer2 with Period register value
 				OpenTimer2(T2_ON | T2_PS_1_256, PWM_TIMER_PERIOD);
 				OpenOC4( OC_ON | OC_TIMER_MODE32 | OC_TIMER2_SRC | OC_CONTINUE_PULSE | OC_LOW_HIGH, 256, (256 - val) );
+
 				break;
 		#endif
 
@@ -239,6 +264,7 @@ void analogWrite(uint8_t pin, int val)
 				//* Open Timer2 with Period register value
 				OpenTimer2(T2_ON | T2_PS_1_256, PWM_TIMER_PERIOD);
 				OpenOC5( OC_ON | OC_TIMER_MODE32 | OC_TIMER2_SRC | OC_CONTINUE_PULSE | OC_LOW_HIGH, 256, (256 - val) );
+
 				break;
 		#endif
 
