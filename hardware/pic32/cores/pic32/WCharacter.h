@@ -40,13 +40,6 @@ inline int toAscii(int c) __attribute__((always_inline));
 inline int toLowerCase(int c) __attribute__((always_inline));
 inline int toUpperCase(int c)__attribute__((always_inline));
 
-#if defined(__PIC32MX__)
-//************************************************************************
-inline boolean isblank(int c)
-{
-  return ( (c == 0x20) ||  (c == 0x09));
-}
-#endif
 
 // Checks for an alphanumeric character. 
 // It is equivalent to (isalpha(c) || isdigit(c)).
