@@ -116,7 +116,7 @@ public class Compiler implements MessageConsumer {
 
 		avrBasePath = configPreferences.get("compiler.path");
 		
-		System.out.println("avrBasePath: " + avrBasePath);
+		logger.debug("avrBasePath: " + avrBasePath);
 		if (avrBasePath == null) 
 		{
 			avrBasePath = Base.getAvrBasePath();
@@ -164,7 +164,7 @@ public class Compiler implements MessageConsumer {
 		/*
 		* Debug corePath
 		*/
-			System.out.println("corePaths: " + this.corePath);
+			logger.debug("corePaths: " + this.corePath);
 
 		
 		this.objectFiles = new ArrayList<File>();
@@ -266,14 +266,15 @@ public class Compiler implements MessageConsumer {
     
     if (verbose || Preferences.getBoolean("build.verbose")) 
 	{
-      //System.out.print(command);
-      //System.out.println();
-      if(logger.isDebugEnabled()) {     
+      System.out.print(command.replace(":"," "));
+      System.out.println();
+      /*if(logger.isDebugEnabled()) {     
  		for (int i = 0; i < commandArray.length; i++) {
                         logger.debug("commandArray[" + i + "]: " + commandArray[i]);
               }
          logger.debug("Command: " + command.replace(":"," "));
-      }
+       
+      }*/
     }
 
     firstErrorFound = false;  // haven't found any errors yet
@@ -720,7 +721,7 @@ public class Compiler implements MessageConsumer {
   	    	}
 	    }
 	    
-		System.out.println("Done: Preferences");
+		//logger.debug("Done: Preferences");
 		
 		iterator = platformPreferences.entrySet().iterator();
        
@@ -739,7 +740,7 @@ public class Compiler implements MessageConsumer {
             //System.out.println(pair.getKey() + " = " + pair.getValue());
 	    }
 
-		System.out.println("Done: platformPreferences");
+		//System.out.println("Done: platformPreferences");
 		iterator = boardPreferences.entrySet().iterator();
 
         while(iterator.hasNext())
@@ -756,7 +757,7 @@ public class Compiler implements MessageConsumer {
   	    	}
             //System.out.println(pair.getKey() + " = " + pair.getValue());
 	    }
-		System.out.println("Done: boardPreferences");
+		//System.out.println("Done: boardPreferences");
         
 
 	return _map;

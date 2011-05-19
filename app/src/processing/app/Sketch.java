@@ -42,11 +42,18 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 
+import org.apache.log4j.BasicConfigurator;
+//import org.apache.log4j.PropertyConfigurator;
+import org.apache.log4j.Logger;
+import org.apache.log4j.Level;
 
 /**
  * Stores information about files in the current sketch
  */
 public class Sketch {
+	
+  static Logger logger = Logger.getLogger(Base.class.getName());
+	
   static private File tempBuildFolder;
 
   private Editor editor;
@@ -1328,20 +1335,22 @@ public class Sketch {
     // grab the imports from the code just preproc'd
 
     importedLibraries = new ArrayList<File>();
+    //Remember to clear library path before building it.
+    libraryPath = "";
 
     for (String item : preprocessor.getExtraImports()) {
     	//Debug print library filename 
-    	System.out.println("Library filename item: " + item);
+    	logger.debug("Library filename item: " + item);
       File libFolder = (File) Base.importToLibraryTable.get(item);
       //Debug libraryPath
-        System.out.println("Base.importToLibraryTable.get(item): " + Base.importToLibraryTable.get(item));
+        logger.debug("Base.importToLibraryTable.get(item): " + Base.importToLibraryTable.get(item));
 
       if (libFolder != null && !importedLibraries.contains(libFolder)) {
         importedLibraries.add(libFolder);
         //classPath += Compiler.contentsToClassPath(libFolder);
         libraryPath += File.pathSeparator + libFolder.getAbsolutePath();
         //Debug libraryPath
-        System.out.println("libraryPath: " + libraryPath);
+        logger.debug("libraryPath: " + libraryPath);
       }
     }
 

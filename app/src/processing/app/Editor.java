@@ -41,12 +41,19 @@ import javax.swing.event.*;
 import javax.swing.text.*;
 import javax.swing.undo.*;
 
+import org.apache.log4j.BasicConfigurator;
+//import org.apache.log4j.PropertyConfigurator;
+import org.apache.log4j.Logger;
+import org.apache.log4j.Level;
+
 import gnu.io.*;
 
 /**
  * Main editor panel for the Processing Development Environment.
  */
 public class Editor extends JFrame implements RunnerListener {
+
+static Logger logger = Logger.getLogger(Base.class.getName());
 
   Base base;
 

@@ -1278,7 +1278,7 @@ public class Base {
 		
         libraries.add(subfolder);
         //Debug subfolder
-        System.out.println("Base.subfolder: " + subfolder);
+        logger.debug("Base.subfolder: " + subfolder);
 
         String packages[] =
           Compiler.headerListFromIncludePath(subfolder.getAbsolutePath());
