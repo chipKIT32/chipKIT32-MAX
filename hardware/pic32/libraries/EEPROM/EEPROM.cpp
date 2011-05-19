@@ -21,8 +21,10 @@
  * Includes
  ******************************************************************************/
 
-#include <avr/eeprom.h>
-#include "WConstants.h"
+extern "C" {
+#include "dee_emulation_pic32.h"
+}
+
 #include "EEPROM.h"
 
 /******************************************************************************
@@ -32,19 +34,24 @@
 /******************************************************************************
  * Constructors
  ******************************************************************************/
-
+EEPROMClass::EEPROMClass()
+{
+	DataEEInit();
+}
 /******************************************************************************
  * User API
  ******************************************************************************/
 
-uint8_t EEPROMClass::read(int address)
+unsigned int EEPROMClass::read(unsigned int address)
 {
-	return eeprom_read_byte((unsigned char *) address);
+	unsigned int data;
+	DataEERead(&data,address);
+	return data;
 }
 
-void EEPROMClass::write(int address, uint8_t value)
+void EEPROMClass::write(unsigned int address, unsigned int value)
 {
-	eeprom_write_byte((unsigned char *) address, value);
+	DataEEWrite(value,address);
 }
 
 EEPROMClass EEPROM;
