@@ -180,6 +180,7 @@ public class Compiler implements MessageConsumer {
 		// 2. compile the libraries, outputting .o files to:
 		// <buildPath>/<library>/
 		//Doesn't really use configPreferences
+		logger.debug("2. compileLibraries");
 		compileLibraries(avrBasePath, buildPath, includePaths, configPreferences);
 
 		// 3. compile the core, outputting .o files to <buildPath> and then
