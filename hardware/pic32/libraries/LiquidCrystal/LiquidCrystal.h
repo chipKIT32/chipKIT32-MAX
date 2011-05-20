@@ -1,6 +1,11 @@
 #ifndef LiquidCrystal_h
 #define LiquidCrystal_h
 
+#ifndef WProgram_h
+	#include	"WProgram.h"
+#endif
+
+
 #include <inttypes.h>
 #include "Print.h"
 

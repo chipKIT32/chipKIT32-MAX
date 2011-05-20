@@ -45,6 +45,10 @@
 #ifndef Servo_h
 #define Servo_h
 
+#ifndef WProgram_h
+	#include	"WProgram.h"
+#endif
+
 #include <inttypes.h>
 
 /* 

@@ -36,6 +36,8 @@
  
  */
 
+#include	"WProgram.h"
+
 // include the library code:
 #include <LiquidCrystal.h>
 

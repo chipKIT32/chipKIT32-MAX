@@ -42,7 +42,9 @@
  
 */
 
-#include <avr/interrupt.h>
+#if defined(__AVR__)
+	#include <avr/interrupt.h>
+#endif
 #include <WProgram.h> 
 
 #include "Servo.h"
