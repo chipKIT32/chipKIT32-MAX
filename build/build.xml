@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<project name="Arduino" default="build">
+<project name="mpide" default="build">
   <!--echo message="os.name = ${os.name}" /-->
   <!--echo message="os.arch = ${os.arch}" /-->
   <!--echo message="os.version = ${os.version}" /-->
@@ -19,7 +19,7 @@
   <condition property="platform" 
 	     value="linux64"><os family="unix" arch="amd64" /></condition>
 
-  <!-- Libraries required for running arduino -->
+  <!-- Libraries required for running mpide -->
   <fileset dir=".." id="runtime.jars">
     <include name="core/core.jar" />
     <include name="app/pde.jar" />
@@ -32,16 +32,16 @@
     <include name="app/lib/log4j.properties" />
   </fileset>
 
-  <target name="build" description="Build Arduino.">
+  <target name="build" description="Build mpide.">
     <antcall target="${platform}-build" />
   </target>
 
-  <target name="run" description="Run Arduino.">
+  <target name="run" description="Run mpide.">
     <antcall target="${platform}-run" />
   </target>
 
   <target name="dist" depends="revision-check"
-	  description="Build Arduino for distribution.">
+	  description="Build mpide for distribution.">
     <input message="Enter version number:" 
 	   addproperty="version"
 	   defaultvalue="${revision}" />
@@ -157,13 +157,13 @@
     <delete dir="macosx/work" />
     <delete dir="macosx/working_dir" />
     <delete dir="macosx/working.dmg" />
-    <delete file="macosx/arduino-*.dmg" />
+    <delete file="macosx/mpide-*.dmg" />
   </target>
   
   <target name="macosx-checkos" unless="macosx">
     <echo>
       =======================================================
-      Arduino for Mac OS X can only be built on Mac OS X.
+      mpide for Mac OS X can only be built on Mac OS X.
       
       Bye. 
       =======================================================
@@ -180,52 +180,52 @@
     </copy>
     
 <!--    <rename src="macosx/work/template.app" 
-	    dest="macosx/work/Arduino.app" />-->
+	    dest="macosx/work/mpide.app" />-->
     <move file="macosx/work/template.app" 
-	  tofile="macosx/work/Arduino.app" />
+	  tofile="macosx/work/mpide.app" />
 
-    <chmod file="macosx/work/Arduino.app/Contents/MacOS/JavaApplicationStub" perm="755" />
+    <chmod file="macosx/work/mpide.app/Contents/MacOS/JavaApplicationStub" perm="755" />
     
-    <copy todir="macosx/work/Arduino.app/Contents/Resources/Java" flatten="true">
+    <copy todir="macosx/work/mpide.app/Contents/Resources/Java" flatten="true">
       <fileset refid="runtime.jars"/>
     </copy>
     
-    <copy todir="macosx/work/Arduino.app/Contents/Resources/Java">
+    <copy todir="macosx/work/mpide.app/Contents/Resources/Java">
       <fileset dir="shared" includes="lib/**" />
       <fileset file="shared/revisions.txt" />
     </copy>
 
     <!-- Unzip AVR tools -->
-    <!-- <unzip dest="macosx/work/Arduino.app/Contents/Resources/Java/hardware" src="macosx/dist/tools-universal.zip" overwrite="false"/> -->
+    <!-- <unzip dest="macosx/work/mpide.app/Contents/Resources/Java/hardware" src="macosx/dist/tools-universal.zip" overwrite="false"/> -->
 
     <exec executable="unzip">
       <arg value="-q" />
       <arg value="-n" />
       <arg value="-d" />
-      <arg value="macosx/work/Arduino.app/Contents/Resources/Java/hardware" />
+      <arg value="macosx/work/mpide.app/Contents/Resources/Java/hardware" />
       <arg value="macosx/dist/tools-universal.zip" />
     </exec>
      
-<unzip dest="macosx/work/Arduino.app/Contents/Resources/Java/hardware/pic32/compiler" src="macosx/dist/cpp-chipKIT-Mac-20110511.zip" overwrite="false"/>
+<unzip dest="macosx/work/mpide.app/Contents/Resources/Java/hardware/pic32/compiler" src="macosx/dist/cpp-chipKIT-Mac-20110511.zip" overwrite="false"/>
 <chmod perm="+x">
-      <fileset dir="macosx/work/Arduino.app/Contents/Resources/Java/hardware/pic32/compiler" includes="**/*" />
+      <fileset dir="macosx/work/mpide.app/Contents/Resources/Java/hardware/pic32/compiler" includes="**/*" />
 </chmod>
 
-    <copy todir="macosx/work/Arduino.app/Contents/Resources/Java/hardware/tools/avr/avr/include/avr">    
+    <copy todir="macosx/work/mpide.app/Contents/Resources/Java/hardware/tools/avr/avr/include/avr">    
       <fileset file="macosx/dist/eeprom.h" />
     </copy>
 
     <antcall target="assemble">
-      <param name="target.path" value="macosx/work/Arduino.app/Contents/Resources/Java" />
+      <param name="target.path" value="macosx/work/mpide.app/Contents/Resources/Java" />
     </antcall>
   </target>
 
   <target name="macosx-run" depends="macosx-build" description="Run Mac OS X version">
-    <exec executable="macosx/work/Arduino.app/Contents/MacOS/JavaApplicationStub" spawn="true"/>
+    <exec executable="macosx/work/mpide.app/Contents/MacOS/JavaApplicationStub" spawn="true"/>
   </target>
 
   <target name="macosx-debug" depends="macosx-build" description="Run Mac OS X version">
-    <exec executable="macosx/work/Arduino.app/Contents/MacOS/JavaApplicationStub" spawn="false"/>
+    <exec executable="macosx/work/mpide.app/Contents/MacOS/JavaApplicationStub" spawn="false"/>
   </target>
 
 
@@ -241,20 +241,20 @@
     
     <copy todir="macosx/working_dir">
       <fileset dir="macosx/work">
-        <exclude name="**/ArduinoTestSuite/**" />
+        <exclude name="**/mpideTestSuite/**" />
       </fileset>
     </copy>
 
     <!-- The ant copy command does not preserve permissions. -->
-    <chmod file="macosx/working_dir/Arduino.app/Contents/MacOS/JavaApplicationStub" perm="+x" />
+    <chmod file="macosx/working_dir/mpide.app/Contents/MacOS/JavaApplicationStub" perm="+x" />
     <chmod perm="+x">
-      <fileset dir="macosx/working_dir/Arduino.app/Contents/Resources/Java/hardware/pic32/compiler" includes="**/*" />
-      <fileset dir="macosx/working_dir/Arduino.app/Contents/Resources/Java/hardware/tools/avr/bin" includes="**/*" />
-      <fileset dir="macosx/working_dir/Arduino.app/Contents/Resources/Java/hardware/tools/avr/avr/bin" includes="**/*" />
-      <fileset dir="macosx/working_dir/Arduino.app/Contents/Resources/Java/hardware/tools/avr/avr-3/bin" includes="**/*" />
-      <fileset dir="macosx/working_dir/Arduino.app/Contents/Resources/Java/hardware/tools/avr/avr-4/bin" includes="**/*" />
-      <fileset dir="macosx/working_dir/Arduino.app/Contents/Resources/Java/hardware/tools/avr/libexec/gcc/avr/3.4.6/" includes="**/cc1*" />
-      <fileset dir="macosx/working_dir/Arduino.app/Contents/Resources/Java/hardware/tools/avr/libexec/gcc/avr/4.3.2/" includes="**/cc1*" />
+      <fileset dir="macosx/working_dir/mpide.app/Contents/Resources/Java/hardware/pic32/compiler" includes="**/*" />
+      <fileset dir="macosx/working_dir/mpide.app/Contents/Resources/Java/hardware/tools/avr/bin" includes="**/*" />
+      <fileset dir="macosx/working_dir/mpide.app/Contents/Resources/Java/hardware/tools/avr/avr/bin" includes="**/*" />
+      <fileset dir="macosx/working_dir/mpide.app/Contents/Resources/Java/hardware/tools/avr/avr-3/bin" includes="**/*" />
+      <fileset dir="macosx/working_dir/mpide.app/Contents/Resources/Java/hardware/tools/avr/avr-4/bin" includes="**/*" />
+      <fileset dir="macosx/working_dir/mpide.app/Contents/Resources/Java/hardware/tools/avr/libexec/gcc/avr/3.4.6/" includes="**/cc1*" />
+      <fileset dir="macosx/working_dir/mpide.app/Contents/Resources/Java/hardware/tools/avr/libexec/gcc/avr/4.3.2/" includes="**/cc1*" />
     </chmod>
 
     <!-- Pause briefly for the OS to catch up with the DMG changes. 
@@ -268,9 +268,9 @@
       <arg line="detach macosx/working_dir" />
     </exec>
   
-    <delete file="macosx/arduino-*.dmg" />
+    <delete file="macosx/mpide-*.dmg" />
     <exec executable="hdiutil">
-      <arg line="convert macosx/working.dmg -quiet -format UDZO -imagekey zlib-level=9 -o macosx/arduino-${version}.dmg" />
+      <arg line="convert macosx/working.dmg -quiet -format UDZO -imagekey zlib-level=9 -o macosx/mpide-${version}.dmg" />
     </exec>
 
     <!-- Clean up the interim files. -->
@@ -279,9 +279,9 @@
     
     <echo>
       =======================================================
-      Arduino for Mac OS X was built. Grab the image from   
+      mpide for Mac OS X was built. Grab the image from   
       
-      macosx/arduino-${version}.dmg
+      macosx/mpide-${version}.dmg
       =======================================================
     </echo>
   </target>
@@ -298,7 +298,7 @@
   <target name="linux-checkos" unless="linux">
     <echo>
       =======================================================
-      Arduino for Linux can only be built on on unix systems.
+      mpide for Linux can only be built on on unix systems.
       
       Bye. 
       =======================================================
@@ -333,8 +333,8 @@
 
     <chmod perm="755" file="linux/work/hardware/tools/avrdude" />
 
-    <copy todir="linux/work" file="linux/dist/arduino" />
-    <chmod perm="755" file="linux/work/arduino" />
+    <copy todir="linux/work" file="linux/dist/mpide" />
+    <chmod perm="755" file="linux/work/mpide" />
 
     <unzip dest="linux/work/hardware/pic32/compiler" src="linux/dist/cpp-chipKIT-linux-x86-20110511.zip" overwrite="false"/>
     <chmod perm="+x">
@@ -360,12 +360,12 @@
   
   <target name="linux-run" depends="linux-build" 
 	  description="Run Linux (32-bit) version">
-    <exec executable="./linux/work/arduino" spawn="false"/>
+    <exec executable="./linux/work/mpide" spawn="false"/>
   </target>
   
   <target name="linux64-run" depends="linux64-build" 
 	  description="Run Linux (64-bit) version">
-    <exec executable="./linux/work/arduino" spawn="false"/>
+    <exec executable="./linux/work/mpide" spawn="false"/>
   </target>
 
   <target name="linux-dist" depends="build" 
@@ -381,28 +381,28 @@
 
 <!--
     <tar compression="gzip" basedir="linux/work" 
-	 destfile="linux/arduino-${version}.tgz" />
+	 destfile="linux/mpide-${version}.tgz" />
 -->
-    <tar compression="gzip"  longfile="gnu"  destfile="linux/arduino-${version}.tgz">
+    <tar compression="gzip"  longfile="gnu"  destfile="linux/mpide-${version}.tgz">
       <tarfileset dir="linux/work" 
-		  prefix="arduino-${version}" 
-		  excludes="arduino, 
+		  prefix="mpide-${version}" 
+		  excludes="mpide, 
 			    hardware/tools/avrdude,
 			    java/**,
 			    hardware/pic32/compiler/pic32-tools/**"
 		  /> 
-      <tarfileset dir="linux/work/hardware/pic32/compiler/pic32-tools/" dirmode="755" prefix="arduino-${version}/hardware/pic32/compiler/pic32-tools" />
-      <tarfileset file="linux/work/hardware/pic32/compiler/pic32-tools/**" filemode="755" prefix="arduino-${version}/hardware/pic32/compiler/pic32-tools" />
+      <tarfileset dir="linux/work/hardware/pic32/compiler/pic32-tools/" dirmode="755" prefix="mpide-${version}/hardware/pic32/compiler/pic32-tools" />
+      <tarfileset file="linux/work/hardware/pic32/compiler/pic32-tools/**" filemode="755" prefix="mpide-${version}/hardware/pic32/compiler/pic32-tools" />
 
-      <tarfileset file="linux/work/arduino" filemode="755" prefix="arduino-${version}" />
-      <tarfileset file="linux/work/hardware/tools/avrdude" filemode="755" prefix="arduino-${version}/hardware/tools" />
+      <tarfileset file="linux/work/mpide" filemode="755" prefix="mpide-${version}" />
+      <tarfileset file="linux/work/hardware/tools/avrdude" filemode="755" prefix="mpide-${version}/hardware/tools" />
     </tar>
 
     <echo>
       =======================================================
-      Arduino for Linux was built. Grab the archive from   
+      mpide for Linux was built. Grab the archive from   
       
-      build/linux/arduino-${version}.tgz
+      build/linux/mpide-${version}.tgz
       =======================================================
     </echo>
   </target>
@@ -423,7 +423,7 @@
   <target name="windows-checkos" unless="windows">
     <echo>
       =======================================================
-      Arduino for Windows can only be built on windows.
+      mpide for Windows can only be built on windows.
       
       Bye. 
       =======================================================
@@ -494,7 +494,7 @@
   
   <target name="windows-run" depends="windows-build" 
 	  description="Run windows version">
-    <exec executable="windows/work/arduino.exe" 
+    <exec executable="windows/work/mpide.exe" 
 	  dir="windows/work" spawn="true"/>
   </target>
 
@@ -509,31 +509,31 @@
 
     <!--
     <zip basedir="windows/work" 
-	 prefix="arduino-${version}"
-	 destfile="windows/arduino-${version}.zip" />
+	 prefix="mpide-${version}"
+	 destfile="windows/mpide-${version}.zip" />
     <zip basedir="windows/work" 
-	 prefix="arduino-${version}"
-	 destfile="windows/arduino-${version}-expert.zip" 
+	 prefix="mpide-${version}"
+	 destfile="windows/mpide-${version}-expert.zip" 
 	 excludes="java/**" />
     -->
 
-    <zip destfile="windows/arduino-${version}.zip">
+    <zip destfile="windows/mpide-${version}.zip">
       <zipfileset dir="windows/work" 
-		  prefix="arduino-${version}" />
+		  prefix="mpide-${version}" />
     </zip>
 
-    <zip destfile="windows/arduino-${version}-expert.zip">
+    <zip destfile="windows/mpide-${version}-expert.zip">
       <zipfileset dir="windows/work" 
-		  prefix="arduino-${version}" 
+		  prefix="mpide-${version}" 
 		  excludes="java/**" />
     </zip>
     
     <echo>
       =======================================================
-      Arduino for Windows was built. Grab the archive from   
+      mpide for Windows was built. Grab the archive from   
       
-      windows/arduino-${version}.zip
-      windows/arduino-${version}-expert.zip
+      windows/mpide-${version}.zip
+      windows/mpide-${version}-expert.zip
       =======================================================
     </echo>
   </target>
@@ -549,9 +549,9 @@
 	   addproperty="version"
 	   defaultvalue="${revision}" />
 
-    <tar compression="gzip" longfile="gnu" destfile="arduino-${version}-src.tar.gz">
+    <tar compression="gzip" longfile="gnu" destfile="mpide-${version}-src.tar.gz">
       <tarfileset dir="../" 
-		  prefix="arduino-${version}" 
+		  prefix="mpide-${version}" 
 		  excludes="**/*.tgz,
 			     **/macosx/,
 			     **/windows/,
@@ -563,9 +563,9 @@
 
     <echo>
       =======================================================
-      Arduino source distribution was built. Grab the archive from   
+      mpide source distribution was built. Grab the archive from   
       
-      arduino-${version}-src.tar.gz
+      mpide-${version}-src.tar.gz
       =======================================================
     </echo>
   </target>

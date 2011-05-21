@@ -127,7 +127,8 @@ public class Compiler implements MessageConsumer {
 			MessageFormat compileFormat = new MessageFormat(avrBasePath);	
 			String basePath = System.getProperty("user.dir");
 			if (Base.isMacOS()) {
-				basePath += "/Arduino.app/Contents/Resources/Java";
+				logger.debug("basePath: " + basePath);
+				basePath += "/mpide.app/Contents/Resources/Java";
 			}
 			Object[] Args = {basePath};
 			avrBasePath = compileFormat.format(  Args );
