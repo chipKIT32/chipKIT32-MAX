@@ -1101,6 +1101,14 @@ static Logger logger = Logger.getLogger(Base.class.getName());
       });
     menu.add(item);
 
+    item = new JMenuItem("Visit ChipKit.cc");
+    item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          Base.openURL("http://chipkit.cc/");
+        }
+      });
+    menu.add(item);
+
     // macosx already has its own about menu
     if (!Base.isMacOS()) {
       menu.addSeparator();
