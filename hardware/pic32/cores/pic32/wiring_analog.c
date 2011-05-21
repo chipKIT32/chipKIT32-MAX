@@ -197,7 +197,9 @@ uint8_t			channelNumber;
 	return (analogValue);
 }
 
-#define	PWM_TIMER_PERIOD	((F_CPU / 256) / 2 / 440)
+//#define	PWM_TIMER_PERIOD	((F_CPU / 256) / 2 / 440)
+#define	PWM_TIMER_PERIOD	((F_CPU / 256) / 490)
+
 //*********************************************************************
 //*	PWM output only works on the pins with hardware support. 
 //*	These are defined in the appropriate pins_*.c file.
@@ -228,8 +230,61 @@ void analogWrite(uint8_t pin, int val)
 			case TIMER_OC1:
 				//* Open Timer2 with Period register value
 				OpenTimer2(T2_ON | T2_PS_1_256, PWM_TIMER_PERIOD);
+				OpenOC1( OC_ON | OC_TIMER2_SRC | OC_PWM_FAULT_PIN_DISABLE, (PWM_TIMER_PERIOD*val)/256, (PWM_TIMER_PERIOD*val)/256  );
+				//Set duty cycle on fly
+				SetDCOC1PWM((PWM_TIMER_PERIOD*val)/256);
+				break;
+		#endif
+
+		#ifdef _OCMP2
+			case TIMER_OC2:
+				//* Open Timer2 with Period register value
+				OpenTimer2(T2_ON | T2_PS_1_256, PWM_TIMER_PERIOD);
+				OpenOC2( OC_ON | OC_TIMER2_SRC | OC_PWM_FAULT_PIN_DISABLE, (PWM_TIMER_PERIOD*val)/256, (PWM_TIMER_PERIOD*val)/256  );
+				//Set duty cycle on fly
+				SetDCOC2PWM((PWM_TIMER_PERIOD*val)/256);
+				break;
+		#endif
+
+		#ifdef _OCMP3
+			case TIMER_OC3:
+				//* Open Timer2 with Period register value
+				OpenTimer2(T2_ON | T2_PS_1_256, PWM_TIMER_PERIOD);
+				OpenOC3( OC_ON | OC_TIMER2_SRC | OC_PWM_FAULT_PIN_DISABLE, (PWM_TIMER_PERIOD*val)/256, (PWM_TIMER_PERIOD*val)/256  );
+				//Set duty cycle on fly
+				SetDCOC3PWM((PWM_TIMER_PERIOD*val)/256);
+				break;
+		#endif
+
+		#ifdef _OCMP4
+			case TIMER_OC4:
+				//* Open Timer2 with Period register value
+				OpenTimer2(T2_ON | T2_PS_1_256, PWM_TIMER_PERIOD);
+				OpenOC4( OC_ON | OC_TIMER2_SRC | OC_PWM_FAULT_PIN_DISABLE, (PWM_TIMER_PERIOD*val)/256, (PWM_TIMER_PERIOD*val)/256  );
+				//Set duty cycle on fly
+				SetDCOC4PWM((PWM_TIMER_PERIOD*val)/256);
+				break;
+		#endif
+
+		#ifdef _OCMP5
+			case TIMER_OC5:
+				//* Open Timer2 with Period register value
+				OpenTimer2(T2_ON | T2_PS_1_256, PWM_TIMER_PERIOD);
+				OpenOC5( OC_ON | OC_TIMER2_SRC | OC_PWM_FAULT_PIN_DISABLE, (PWM_TIMER_PERIOD*val)/256, (PWM_TIMER_PERIOD*val)/256  );
+				//Set duty cycle on fly
+				SetDCOC5PWM((PWM_TIMER_PERIOD*val)/256);
+				break;
+		#endif
+
+#if 0
+//*	this is the original code, I want to keep it around for refernce for a bit longer
+		#ifdef _OCMP1
+			case TIMER_OC1:
+				//* Open Timer2 with Period register value
+				OpenTimer2(T2_ON | T2_PS_1_256, PWM_TIMER_PERIOD);
 				OpenOC1( OC_ON | OC_TIMER_MODE32 | OC_TIMER2_SRC | OC_CONTINUE_PULSE | OC_LOW_HIGH, 256, (256 - val) );
-				
+
+//			    SetDCOC1PWM((PWM_TIMER_PERIOD * val) / 256);
 				break;
 		#endif
 
@@ -239,6 +294,7 @@ void analogWrite(uint8_t pin, int val)
 				OpenTimer2(T2_ON | T2_PS_1_256, PWM_TIMER_PERIOD);
 				OpenOC2( OC_ON | OC_TIMER_MODE32 | OC_TIMER2_SRC | OC_CONTINUE_PULSE | OC_LOW_HIGH, 256, (256 - val) );
 
+//			    SetDCOC2PWM((PWM_TIMER_PERIOD * val) / 256);
 				break;
 		#endif
 
@@ -248,6 +304,7 @@ void analogWrite(uint8_t pin, int val)
 				OpenTimer2(T2_ON | T2_PS_1_256, PWM_TIMER_PERIOD);
 				OpenOC3( OC_ON | OC_TIMER_MODE32 | OC_TIMER2_SRC | OC_CONTINUE_PULSE | OC_LOW_HIGH, 256, (256 - val) );
 
+//			    SetDCOC3PWM((PWM_TIMER_PERIOD * val) / 256);
 				break;
 		#endif
 
@@ -257,6 +314,7 @@ void analogWrite(uint8_t pin, int val)
 				OpenTimer2(T2_ON | T2_PS_1_256, PWM_TIMER_PERIOD);
 				OpenOC4( OC_ON | OC_TIMER_MODE32 | OC_TIMER2_SRC | OC_CONTINUE_PULSE | OC_LOW_HIGH, 256, (256 - val) );
 
+//			    SetDCOC4PWM((PWM_TIMER_PERIOD * val) / 256);
 				break;
 		#endif
 
@@ -266,9 +324,10 @@ void analogWrite(uint8_t pin, int val)
 				OpenTimer2(T2_ON | T2_PS_1_256, PWM_TIMER_PERIOD);
 				OpenOC5( OC_ON | OC_TIMER_MODE32 | OC_TIMER2_SRC | OC_CONTINUE_PULSE | OC_LOW_HIGH, 256, (256 - val) );
 
+//			    SetDCOC5PWM((PWM_TIMER_PERIOD * val) / 256);
 				break;
 		#endif
-
+#endif
 
 			case NOT_ON_TIMER:
 			default:

@@ -20,8 +20,12 @@
 #ifndef Print_h
 #define Print_h
 
-#include <inttypes.h>
-#include <stdio.h> // for size_t
+#ifndef _SYS_INTTYPES_H_
+	#include <inttypes.h>
+#endif
+#ifndef	_STDIO_H_
+	#include <stdio.h> // for size_t
+#endif
 
 #define PRINT_DEC 10
 #define PRINT_HEX 16

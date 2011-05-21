@@ -29,6 +29,7 @@
 //************************************************************************
 //*	Oct 15,	2010	<MLS> Master interrupts working to generate millis()
 //*	May 18,	2011	<MLS> merged in Brian Schmalz work on microseconds timer
+//*	May 20,	2011	<MLS> For mega board, disabling secondary oscillator
 //************************************************************************
 #include <plib.h>
 #include <p32xxxx.h>
@@ -225,6 +226,24 @@ void init()
 	//*	Disable the JTAG interface.
 	DDPCONbits.JTAGEN	=	0;
 
+
+#if defined (_BOARD_MEGA_)
+	//*	Turn Secondary oscillator off
+	//*	this is only needed on the mega board because the mega uses secondary ocsilator pins
+	//*	as general I/O
+	{
+	unsigned int dma_status;
+	unsigned int int_status;
+	
+		mSYSTEMUnlock(int_status, dma_status);
+
+		OSCCONCLR	=	_OSCCON_SOSCEN_MASK;
+
+
+		mSYSTEMLock(int_status, dma_status);
+	}
+	
+#endif
 
 }
 
