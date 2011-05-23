@@ -36,7 +36,7 @@ pic32.compiler.upload.cmd=
 pic32.compiler.includepath={0}/hardware/pic32/compiler/pic32-tools/pic32mx/include
 pic32.compiler.upload.flags=
 #pic32.library.path=./hardware/pic32/cores/pic32
-pic32.library.path=.\hardware\pic32\cores\pic32
+pic32.library.path=./hardware/pic32/cores/pic32
 pic32.ldscript=chipKIT-BL-mega.ld
-pic32.library.core.path=.\hardware\pic32\libraries
+pic32.library.core.path=./hardware/pic32/libraries
 
