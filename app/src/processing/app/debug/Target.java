@@ -29,6 +29,15 @@ import java.io.*;
 import java.util.*;
 
 import processing.app.Preferences;
+import processing.app.Base;
+
+
+
+import org.apache.log4j.BasicConfigurator;
+//import org.apache.log4j.PropertyConfigurator;
+import org.apache.log4j.Logger;
+import org.apache.log4j.Level;
+
 
 public class Target {
   private String name;
@@ -36,8 +45,13 @@ public class Target {
   private Map boards;
   private Map programmers;
   private Map platforms;
+
+  static Logger logger = Logger.getLogger(Base.class.getName());
   
   public Target(String name, File folder) {
+  	logger.debug("Target initiated: name = " + name + " folder= " + folder.getName());
+
+  
     this.name = name;
     this.folder = folder;
     this.boards = new LinkedHashMap();
@@ -107,12 +121,15 @@ public class Target {
   public String getName() { return name; }
   public File getFolder() { return folder; }
   public Map<String, Map<String, String>> getBoards() {
+  	logger.debug("Get boards for: " + this.name);
     return boards;
   }
   public Map<String, Map<String, String>> getProgrammers() {
+  	logger.debug("Get programmers for: " + this.name);
     return programmers;
   }
   public Map<String, Map<String, String>> getPlatforms() {
+  	logger.debug("Get platformsfor: " + this.name);
     return platforms;
   }
 

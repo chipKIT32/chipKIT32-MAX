@@ -837,7 +837,7 @@ public class Base {
       editor.dispose();
 //      for (int i = 0; i < editorCount; i++) {
 //        if (editor == editors[i]) {
-//          for (int j = i; j < editorCount-1; j++) {
+//          for (int j = i; j < editorCount-1; j++) {[ic
 //            editors[j] = editors[j+1];
 //          }
 //          editorCount--;
@@ -1002,25 +1002,22 @@ public class Base {
     //Choose which library to add by chip platform
     
     try {
-    	Target t = getTarget();
-    	logger.debug("DEBUG:  target=" + t.getName());
-    	if ( !t.getName().equals("pic32")) {	
-    		 logger.debug("DEBUG:  add avr libraries.");
-		     JMenuItem platformItem = new JMenuItem("Arduino");
-		     platformItem.setEnabled(false);
-		     importMenu.add(platformItem);
-		     importMenu.addSeparator();
-		     addLibraries(importMenu, librariesFolder);
-    	}
-    	else
-    {	  
-    	logger.debug("DEBUG: add pic32 libraries.");
-	     JMenuItem platformItem = new JMenuItem("chipKit");
-	     platformItem.setEnabled(false);
-	     importMenu.add(platformItem);
-		 importMenu.addSeparator();
-	     addLibraries(importMenu, getPic32CoreLibraries());
-  }
+	    	Target tt = getTarget();
+	    	String targetname = tt.getName();
+	    	String platformname = this.getBoardPreferences().get("platform");
+	    	logger.debug("DEBUG: target getName()=" + targetname);
+	    	logger.debug("DEBUG: boardPreferences(platform) = " + platformname);
+	    	    	
+	        Map platformPreferences = tt.getPlatforms();
+	        String libraryPath = this.getPlatformPreferences(platformname).get("library.core.path");
+	        logger.debug("library.core.path  = " + libraryPath);
+	    	logger.debug("DEBUG: add libraries.");
+		    JMenuItem platformItem = new JMenuItem(targetname);
+		    platformItem.setEnabled(false);
+		    importMenu.add(platformItem);
+			importMenu.addSeparator();
+		    addLibraries(importMenu, getCoreLibraries(libraryPath));
+    	
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -1588,6 +1585,11 @@ public class Base {
     // the boards.txt and programmers.txt preferences files (which happens
     // before the other folders / paths get cached).
     return getContentFile("hardware");
+  }
+  
+  //Get the core libraries
+  static public File getCoreLibraries(String path) {
+  	return getContentFile(path);	
   }
   
   //Get the pci32  core libraries from folder
