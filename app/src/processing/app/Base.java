@@ -1002,14 +1002,11 @@ public class Base {
     //Choose which library to add by chip platform
     
     try {
-	    	Target tt = getTarget();
-	    	String targetname = tt.getName();
+			//Find the current target. Get the platform, and then select the correct name and core path.
 	    	String platformname = this.getBoardPreferences().get("platform");
-	    	logger.debug("DEBUG: target getName()=" + targetname);
-	    	logger.debug("DEBUG: boardPreferences(platform) = " + platformname);
-	    	    	
-	        Map platformPreferences = tt.getPlatforms();
+	    	String targetname = this.getPlatformPreferences(platformname).get("name");
 	        String libraryPath = this.getPlatformPreferences(platformname).get("library.core.path");
+
 	        logger.debug("library.core.path  = " + libraryPath);
 	    	logger.debug("DEBUG: add libraries.");
 		    JMenuItem platformItem = new JMenuItem(targetname);

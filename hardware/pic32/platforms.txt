@@ -8,7 +8,7 @@ pic32.recipe.objcopy.hex.pattern={0}{1}::{2}::{3}.elf
 
 
 ########################################################
-pic32.name=MicroChip PIC32
+pic32.name=chipKit
 #pic32.compiler.path=/opt/local/pic32/install-image/bin/
 #pic32.compiler.path=/opt/pic32-tools/bin/
 #pic32.compiler.path=C:\pic32-tools\bin\
