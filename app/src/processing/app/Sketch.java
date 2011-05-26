@@ -1341,8 +1341,8 @@ public class Sketch {
     for (String item : preprocessor.getExtraImports()) {
     	//Debug print library filename 
     	logger.debug("Library filename item: " + item);
-      File libFolder = (File) Base.importToLibraryTable.get(item);
-      //Debug libraryPath
+        File libFolder = (File) Base.importToLibraryTable.get(item);
+        //Debug libraryPath
         logger.debug("Base.importToLibraryTable.get(item): " + Base.importToLibraryTable.get(item));
 
       if (libFolder != null && !importedLibraries.contains(libFolder)) {
@@ -1478,6 +1478,7 @@ public class Sketch {
       SketchCode code = getCode(i);
 
       if (code.isExtension(getDefaultExtension())) {
+      	logger.debug("preproc offset is " + code.getPreprocOffset());
 //        System.out.println("preproc offset is " + code.getPreprocOffset());
 //        System.out.println("looking for line " + dotJavaLine);
         if (code.getPreprocOffset() <= dotJavaLine) {

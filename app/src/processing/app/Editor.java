@@ -2535,7 +2535,10 @@ static Logger logger = Logger.getLogger(Base.class.getName());
             line--;
           }
         }
+        logger.debug("Editor: line: " + line);
+        logger.debug("Editor: textarea.getLineCount()" + textarea.getLineCount());
         if (line < 0 || line >= textarea.getLineCount()) {
+
           System.err.println("Bad error line: " + line);
         } else {
           textarea.select(textarea.getLineStartOffset(line),
