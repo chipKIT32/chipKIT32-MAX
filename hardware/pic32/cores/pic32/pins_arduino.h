@@ -78,7 +78,6 @@
 #define TIMER5B 15
 #define TIMER5C 16
 
-#define PROGMEM
 
 // On the ATmega1280, the addresses of some of the port registers are
 // greater than 255, so we can't store them in uint8_t's.

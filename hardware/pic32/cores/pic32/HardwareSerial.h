@@ -7,6 +7,7 @@
 //*	Edit History
 //************************************************************************
 //*	Oct 12,	2010	Got MPLAB X working on MacOSX 1.6 for the first time
+//*	May 25, 2011	<MLS> Added support for Uart2 on UNO32
 //************************************************************************
 /*
   HardwareSerial.h - Hardware serial library for Wiring

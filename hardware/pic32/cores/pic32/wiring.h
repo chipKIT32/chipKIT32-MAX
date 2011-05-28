@@ -29,6 +29,7 @@
 //************************************************************************
 //*	May  ?,	2011	Brian Schmalz worked on micros timers
 //*	May 18,	2011	<MLS> Added prog_xxx defs because there is no "pgmspace.h" file for pic32
+//*	May 23,	2011	<MLS> Added definitions for PROGMEM,  pgm_read_byte_near, pgm_read_byte_far
 //************************************************************************
 
 #ifndef Wiring_h
@@ -120,12 +121,6 @@ int		analogRead(uint8_t);
 void	analogReference(uint8_t mode);
 void	analogWrite(uint8_t, int);
 
-//*	depricated
-//-void		beginSerial(long);
-//-void		serialWrite(unsigned char);
-//-int		serialAvailable(void);
-//-int		serialRead(void);
-//-void		serialFlush(void);
 
 unsigned long	millis(void);
 unsigned long	micros(void);
@@ -144,6 +139,13 @@ void loop(void);
 #ifdef __cplusplus
 } // extern "C"
 #endif
+
+#define PROGMEM
+#define pgm_read_byte_near(x)	(*((char *)x))
+#define pgm_read_byte_far(x)	(*((char *)x))
+#define pgm_read_word_near(x)	(*((short *)x))
+#define pgm_read_workd_far(x)	(*((short *)x))
+
 
 #define	prog_void		const void
 #define	prog_char		const char
