@@ -17,7 +17,7 @@ mega_pic32.bootloader.low_fuses=0xff
 mega_pic32.bootloader.high_fuses=0xdd
 mega_pic32.bootloader.extended_fuses=0x00
 mega_pic32.bootloader.path=atmega
-mega_pic32.bootloader.file=ATmegaBOOT_168_ng.hex
+mega_pic32.bootloader.file=not-supported
 mega_pic32.bootloader.unlock_bits=0x3F
 mega_pic32.bootloader.lock_bits=0x0F
 
@@ -45,7 +45,7 @@ uno_pic32.bootloader.low_fuses=0xff
 uno_pic32.bootloader.high_fuses=0xdd
 uno_pic32.bootloader.extended_fuses=0x00
 uno_pic32.bootloader.path=atmega
-uno_pic32.bootloader.file=ATmegaBOOT_168_ng.hex
+uno_pic32.bootloader.file=not-supported
 uno_pic32.bootloader.unlock_bits=0x3F
 uno_pic32.bootloader.lock_bits=0x0F
 
@@ -53,3 +53,61 @@ uno_pic32.build.mcu=32MX320F128H
 uno_pic32.build.f_cpu=80000000L
 uno_pic32.build.core=pic32
 #uno_pic32.upload.using=
+
+
+############################################################
+mc_pic32_starterkit.name=Micrichp PIC32 Starter kit
+
+# new items
+mc_pic32_starterkit.platform=pic32
+mc_pic32_starterkit.board=_BOARD_PIC32_STARTER_KIT_
+mc_pic32_starterkit.define=anything_you_want
+mc_pic32_starterkit.ccflags=ffff
+mc_pic32_starterkit.ldscript=chipKIT-MAX32-application-32MX795F512L.ld
+# end of new items
+
+mc_pic32_starterkit.upload.protocol=stk500v2
+mc_pic32_starterkit.upload.maximum_size=512000
+mc_pic32_starterkit.upload.speed=115200
+
+mc_pic32_starterkit.bootloader.low_fuses=0xff
+mc_pic32_starterkit.bootloader.high_fuses=0xdd
+mc_pic32_starterkit.bootloader.extended_fuses=0x00
+mc_pic32_starterkit.bootloader.path=atmega
+mc_pic32_starterkit.bootloader.file=not-supported
+mc_pic32_starterkit.bootloader.unlock_bits=0x3F
+mc_pic32_starterkit.bootloader.lock_bits=0x0F
+
+mc_pic32_starterkit.build.mcu=32MX360F512L
+mc_pic32_starterkit.build.f_cpu=80000000L
+mc_pic32_starterkit.build.core=pic32
+#mc_pic32_starterkit.upload.using=
+
+
+############################################################
+mc_pic32_ethernet_starterkit.name=Micrichp PIC32 Ethernet Starter kit
+
+# new items
+mc_pic32_ethernet_starterkit.platform=pic32
+mc_pic32_ethernet_starterkit.board=_BOARD_PIC32_STARTER_KIT_
+mc_pic32_ethernet_starterkit.define=anything_you_want
+mc_pic32_ethernet_starterkit.ccflags=ffff
+mc_pic32_ethernet_starterkit.ldscript=chipKIT-MAX32-application-32MX795F512L.ld
+# end of new items
+
+mc_pic32_ethernet_starterkit.upload.protocol=stk500v2
+mc_pic32_ethernet_starterkit.upload.maximum_size=512000
+mc_pic32_ethernet_starterkit.upload.speed=115200
+
+mc_pic32_ethernet_starterkit.bootloader.low_fuses=0xff
+mc_pic32_ethernet_starterkit.bootloader.high_fuses=0xdd
+mc_pic32_ethernet_starterkit.bootloader.extended_fuses=0x00
+mc_pic32_ethernet_starterkit.bootloader.path=atmega
+mc_pic32_ethernet_starterkit.bootloader.file=not-supported
+mc_pic32_ethernet_starterkit.bootloader.unlock_bits=0x3F
+mc_pic32_ethernet_starterkit.bootloader.lock_bits=0x0F
+
+mc_pic32_ethernet_starterkit.build.mcu=32MX795F512L
+mc_pic32_ethernet_starterkit.build.f_cpu=80000000L
+mc_pic32_ethernet_starterkit.build.core=pic32
+#mc_pic32_ethernet_starterkit.upload.using=
