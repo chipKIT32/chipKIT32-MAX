@@ -17,6 +17,10 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
+
+#if defined(__AVR__)
+
+
 #include <math.h>
 #include <stdlib.h>
 #include <inttypes.h>
@@ -473,4 +477,6 @@ SIGNAL(TWI_vect)
       break;
   }
 }
+
+#endif	//	__AVR__
 

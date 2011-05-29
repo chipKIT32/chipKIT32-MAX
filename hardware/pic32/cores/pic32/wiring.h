@@ -35,7 +35,9 @@
 #ifndef Wiring_h
 #define Wiring_h
 
-//#include <avr/io.h>
+#if defined(__AVR__)
+	#include <avr/io.h>
+#endif
 #include <inttypes.h>
 #include "binary.h"
 

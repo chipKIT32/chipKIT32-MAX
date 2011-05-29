@@ -10,7 +10,9 @@
 	#include <avr/interrupt.h>
 #endif
 
-#include "wiring.h"
+#ifndef Wiring_h
+	#include "wiring.h"
+#endif
 
 #ifdef __cplusplus
 #include "WCharacter.h"
