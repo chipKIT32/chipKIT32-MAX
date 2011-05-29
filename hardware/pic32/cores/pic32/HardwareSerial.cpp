@@ -43,6 +43,7 @@
 //*	Feb  6,	2011	<MLS> Uart1B, Uart3A, Uart3B working pin Digilent MEGA (32MX795F512L)
 //*	Apr 10,	2011	<MLS> Added defs for UNO board
 //*	Apr 13,	2011	<MLS> Support for UART4 is NOT finished
+//*	May 25, 2011	<MLS> Added support for Uart2 on UNO32
 //************************************************************************
 #define __LANGUAGE_C__
 
@@ -124,15 +125,6 @@ void HardwareSerial::begin(long baudRate)
 {
 int	configValue;
 
-#if 0
-//*	this is to debug the lack of constructors being called
-//	_uartNumber	=	kSerialPort_1A;
-//	_rx_buffer	=	&rx_buffer1A;
-//	_UxBRG		=	&U1ABRG;
-//	_UxMODE		=	&U1AMODE;
-//	_UxSTA		=	&U1ASTA;
-//	_UxTXREG	=	&U1ATXREG;
-#endif
 
 
 	*_UxMODE	=	(UART_EN);
@@ -740,6 +732,7 @@ unsigned char theChar;
 //*******************************************************************************************
 #elif defined(_BOARD_UNO_)
 		HardwareSerial Serial(	kSerialPort_1,		&rx_buffer1,	&U1BRG,		&U1MODE,	&U1STA,		&U1TXREG);
+		HardwareSerial Serial1(	kSerialPort_2,		&rx_buffer2,	&U2BRG,	&U2MODE,	&U2STA,	&U2TXREG);
 
 //*******************************************************************************************
 #elif defined(_BOARD_EXPLORER16_)

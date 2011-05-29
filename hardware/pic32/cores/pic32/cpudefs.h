@@ -267,6 +267,10 @@
 		#warning CPU type is unknown, cpudefs.h needs to have additions
 	#endif
 
+#elif defined(__arm__)
+		#define	_CPU_NAME_	"ARM"
+		#define	FLASHEND	(((512 - 4) * 1024L) - 1)
+		#define	RAMEND		((128 * 1024L) - 1)
 
 #else
 	#error unknown cpu architecture

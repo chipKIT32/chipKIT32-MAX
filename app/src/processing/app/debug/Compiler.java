@@ -70,7 +70,7 @@ public class Compiler implements MessageConsumer {
 	ArrayList<String> includePaths;
 
 	public Compiler() {
-    	logger.debug("DEBUG: Compiler.java: Logging on.");
+    	logger.debug("DEBUG: Compiler(): Start no arguments");
 		
 	}
 
@@ -186,18 +186,23 @@ public class Compiler implements MessageConsumer {
 
 		// 3. compile the core, outputting .o files to <buildPath> and then
 		// collecting them into the core.a library file.
+	    logger.debug("3. compileCore");
  		compileCore(avrBasePath, buildPath, this.corePath, configPreferences);
 		
 		// 4. link it all together into the .elf file
+	    logger.debug("4. compileLink");
 		compileLink(avrBasePath, buildPath, this.corePath, includePaths, configPreferences);
 
 		// 5. extract EEPROM data (from EEMEM directive) to .eep file.			
+	    logger.debug("5. compileEep");
 		compileEep(avrBasePath, buildPath, includePaths, configPreferences);
 		
 		// 6. build the .hex file
+	    logger.debug("6. compileHex");
 		compileHex(avrBasePath, buildPath, includePaths, configPreferences);
 		
 		//done
+	    logger.debug("7. compile done");
 		return true;
 	}
 

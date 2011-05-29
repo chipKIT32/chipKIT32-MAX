@@ -37,11 +37,20 @@ import java.util.*;
 
 import java.util.regex.*;
 
+import org.apache.log4j.BasicConfigurator;
+//import org.apache.log4j.PropertyConfigurator;
+import org.apache.log4j.Logger;
+import org.apache.log4j.Level;
+
 
 /**
  * Class that orchestrates preprocessing p5 syntax into straight Java.
  */
 public class PdePreprocessor {
+	
+   //enable logging
+   static Logger logger = Logger.getLogger(Base.class.getName());
+	
   // stores number of built user-defined function prototypes
   public int prototypeCount = 0;
 
@@ -74,6 +83,7 @@ public class PdePreprocessor {
    * Setup a new preprocessor.
    */
   public PdePreprocessor() { 
+  	logger.debug("PdePreprocessor: Start");
     int tabSize = Preferences.getInteger("editor.tabs.size");
     char[] indentChars = new char[tabSize];
     Arrays.fill(indentChars, ' ');
@@ -190,14 +200,16 @@ public class PdePreprocessor {
     writeProgram(stream, program, prototypes);
     writeFooter(stream);
     stream.close();
-    
+    logger.debug("write() return name: " + name);
     return name;
   }
 
   // Write the pde program to the cpp file
   protected void writeProgram(PrintStream out, String program, List<String> prototypes) {
     int prototypeInsertionPoint = firstStatement(program);
-  
+  	logger.debug("Prepro: writeProgram");
+  	logger.debug("Program: " + program);
+  	logger.debug("prototypes: " + prototypes);
     out.print(program.substring(0, prototypeInsertionPoint));
     out.print("#include \"WProgram.h\"\n");    
     

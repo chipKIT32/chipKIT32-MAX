@@ -34,6 +34,7 @@
 //*	Apr 26,	2011	<MLS> Errata sheet PIC32MX5XX-6XX-7XX Errata.pdf item #26
 //*	May  5,	2011	<MLS> Uno board does not have 1 to 1 pin mapping for analog, added analogInPinToBit
 //*	May 18,	2011	<MLS> JP4 on the uno board must be in the RD9 position for PWM to work on pin 10
+//*	May 23,	2011	<MLS> Added support for pin numbers to be remaped to analog numbers, (left out in iniitial version)
 //************************************************************************
 
 // Master header file for all peripheral library includes
@@ -61,6 +62,12 @@ int				analogValue;
 unsigned int	offset;	// buffer offset to point to the base of the idle buffer
 unsigned int	param4;
 uint8_t			channelNumber;
+
+#if defined(_BOARD_MEGA_) || defined(_BOARD_MAX32_)
+	if (pin >= 54) pin -= 54; // allow for channel or pin numbers
+#else
+	if (pin >= 14) pin -= 14; // allow for channel or pin numbers
+#endif
 
 	//*	in most cases (except the uno board) this will be a 1 to 1 mapping
 	channelNumber	=	analogInPinToBit(pin);

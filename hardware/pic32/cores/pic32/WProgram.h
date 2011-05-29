@@ -1,3 +1,4 @@
+//************************************************************************
 #ifndef WProgram_h
 #define WProgram_h
 
@@ -14,7 +15,10 @@
 #ifdef __cplusplus
 #include "WCharacter.h"
 #include "WString.h"
-#include "HardwareSerial.h"
+
+#ifndef HardwareSerial_h
+	#include "HardwareSerial.h"
+#endif
 
 uint16_t makeWord(uint16_t w);
 uint16_t makeWord(byte h, byte l);
