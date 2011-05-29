@@ -647,7 +647,7 @@ public class Compiler implements MessageConsumer {
 
 			Object[] Args = {
 				avrBasePath,
-				configPreferences.get("compiler.cpp.cmd"),
+				configPreferences.get("compiler.c.elf.cmd"),
 				configPreferences.get("compiler.c.elf.flags"),
 				configPreferences.get("compiler.cpudef"),
 				configPreferences.get("build.mcu"),				

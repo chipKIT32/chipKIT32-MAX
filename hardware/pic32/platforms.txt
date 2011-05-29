@@ -28,6 +28,7 @@ pic32.compiler.elf2hex.cmd=pic32-bin2hex
 #pic32.compiler.elf2hex.flags=-O::ihex::-R::.eeprom
 #pic32.compiler.elf2hex.cmd=pic32-objcopy
 pic32.compiler.c.elf.flags=-Os::-Wl,--gc-sections
+pic32.compiler.c.elf.cmd=pic32-g++
 pic32.compiler.cpudef=-mprocessor=
 #pic32.compiler.ldflags=
 pic32.compiler.ldscript=chipKIT-BL.ld
