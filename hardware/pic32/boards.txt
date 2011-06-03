@@ -56,7 +56,7 @@ uno_pic32.build.core=pic32
 
 
 ############################################################
-mc_pic32_starterkit.name=Micrichp PIC32 Starter kit
+mc_pic32_starterkit.name=Microchip PIC32 Starter kit
 
 # new items
 mc_pic32_starterkit.platform=pic32
@@ -85,7 +85,7 @@ mc_pic32_starterkit.build.core=pic32
 
 
 ############################################################
-mc_pic32_ethernet_starterkit.name=Micrichp PIC32 Ethernet Starter kit
+mc_pic32_ethernet_starterkit.name=Microchip PIC32 Ethernet Starter kit
 
 # new items
 mc_pic32_ethernet_starterkit.platform=pic32

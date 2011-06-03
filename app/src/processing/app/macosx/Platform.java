@@ -84,7 +84,7 @@ public class Platform extends processing.app.Platform {
 
 
   public File getSettingsFolder() throws Exception {
-    return new File(getLibraryFolder(), "Arduino");
+    return new File(getLibraryFolder(), "mpide");
   }
 
 

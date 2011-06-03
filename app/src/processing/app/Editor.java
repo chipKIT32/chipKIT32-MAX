@@ -155,7 +155,7 @@ static Logger logger = Logger.getLogger(Base.class.getName());
 
 
   public Editor(Base ibase, String path, int[] location) {
-    super("Arduino");
+    super("mpide");
     this.base = ibase;
 
     Base.setIcon(this);
