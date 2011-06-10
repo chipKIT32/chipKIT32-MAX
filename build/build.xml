@@ -335,7 +335,7 @@
 
     <copy todir="linux/work" file="linux/dist/mpide" />
     <chmod perm="755" file="linux/work/mpide" />
-    <unzip dest="linux/work/hardware/pic32/compiler" src="linux/dist/cpp-chipKIT-linux-x86-201100609.zip" overwrite="false"/>
+    <unzip dest="linux/work/hardware/pic32/compiler" src="linux/dist/cpp-chipKIT-linux-x86-20110609.zip" overwrite="false"/>
     <chmod perm="+x">
       <fileset dir="linux/work/hardware/pic32/compiler" includes="**/*" />
     </chmod>
