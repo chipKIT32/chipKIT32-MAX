@@ -206,7 +206,7 @@
       <arg value="macosx/dist/tools-universal.zip" />
     </exec>
      
-<unzip dest="macosx/work/mpide.app/Contents/Resources/Java/hardware/pic32/compiler" src="macosx/dist/cpp-chipKIT-Mac-20110511.zip" overwrite="false"/>
+<unzip dest="macosx/work/mpide.app/Contents/Resources/Java/hardware/pic32/compiler" src="macosx/dist/cpp-chipKIT-Mac-20110609.zip" overwrite="false"/>
 <chmod perm="+x">
       <fileset dir="macosx/work/mpide.app/Contents/Resources/Java/hardware/pic32/compiler" includes="**/*" />
 </chmod>
