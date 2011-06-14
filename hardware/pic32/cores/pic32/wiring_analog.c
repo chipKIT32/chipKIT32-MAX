@@ -189,8 +189,10 @@ uint8_t			channelNumber;
 	//*	A delay is needed for the the ADC start up time
 	//*	this value started out at 1 millisecond, I dont know how long it needs to be
 	//*	99 uSecs will give us the same approximate sampling rate as the AVR chip
-//	delay(1);	
-	delayMicroseconds(99);
+
+	//*	Jun 7, 2011	(pburgess : Phil, that dragon guy) supplied the fix to speed up the code
+	delayMicroseconds(2);
+	mAD1ClearIntFlag();
 
 	while ( ! mAD1GetIntFlag() ) 
 	{ 
@@ -199,12 +201,9 @@ uint8_t			channelNumber;
 
 	analogValue	=	ReadADC10(0);
 	
-	mAD1ClearIntFlag();
-
 	return (analogValue);
 }
 
-//#define	PWM_TIMER_PERIOD	((F_CPU / 256) / 2 / 440)
 #define	PWM_TIMER_PERIOD	((F_CPU / 256) / 490)
 
 //*********************************************************************
