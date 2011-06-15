@@ -1,32 +1,4 @@
 ############################################################
-mega_pic32.name=chipKIT MAX32
-
-# new items
-mega_pic32.platform=pic32
-mega_pic32.board=_BOARD_MEGA_
-mega_pic32.define=anything_you_want
-mega_pic32.ccflags=ffff
-mega_pic32.ldscript=chipKIT-MAX32-application-32MX795F512L.ld
-# end of new items
-
-mega_pic32.upload.protocol=stk500v2
-mega_pic32.upload.maximum_size=512000
-mega_pic32.upload.speed=115200
-
-mega_pic32.bootloader.low_fuses=0xff
-mega_pic32.bootloader.high_fuses=0xdd
-mega_pic32.bootloader.extended_fuses=0x00
-mega_pic32.bootloader.path=atmega
-mega_pic32.bootloader.file=not-supported
-mega_pic32.bootloader.unlock_bits=0x3F
-mega_pic32.bootloader.lock_bits=0x0F
-
-mega_pic32.build.mcu=32MX795F512L
-mega_pic32.build.f_cpu=80000000L
-mega_pic32.build.core=pic32
-#mega_pic32.upload.using=
-
-############################################################
 uno_pic32.name=chipKIT UNO32
 
 # new items
@@ -50,7 +22,7 @@ uno_pic32.upload.speed=115200
 uno_pic32.bootloader.low_fuses=0xff
 uno_pic32.bootloader.high_fuses=0xdd
 uno_pic32.bootloader.extended_fuses=0x00
-uno_pic32.bootloader.path=atmega
+uno_pic32.bootloader.path=not-supported
 uno_pic32.bootloader.file=not-supported
 uno_pic32.bootloader.unlock_bits=0x3F
 uno_pic32.bootloader.lock_bits=0x0F
@@ -59,6 +31,34 @@ uno_pic32.build.mcu=32MX320F128H
 uno_pic32.build.f_cpu=80000000L
 uno_pic32.build.core=pic32
 #uno_pic32.upload.using=
+
+############################################################
+mega_pic32.name=chipKIT MAX32
+
+# new items
+mega_pic32.platform=pic32
+mega_pic32.board=_BOARD_MEGA_
+mega_pic32.define=anything_you_want
+mega_pic32.ccflags=ffff
+mega_pic32.ldscript=chipKIT-MAX32-application-32MX795F512L.ld
+# end of new items
+
+mega_pic32.upload.protocol=stk500v2
+mega_pic32.upload.maximum_size=512000
+mega_pic32.upload.speed=115200
+
+mega_pic32.bootloader.low_fuses=0xff
+mega_pic32.bootloader.high_fuses=0xdd
+mega_pic32.bootloader.extended_fuses=0x00
+mega_pic32.bootloader.path=not-supported
+mega_pic32.bootloader.file=not-supported
+mega_pic32.bootloader.unlock_bits=0x3F
+mega_pic32.bootloader.lock_bits=0x0F
+
+mega_pic32.build.mcu=32MX795F512L
+mega_pic32.build.f_cpu=80000000L
+mega_pic32.build.core=pic32
+#mega_pic32.upload.using=
 
 
 ############################################################
@@ -69,7 +69,7 @@ mc_pic32_starterkit.platform=pic32
 mc_pic32_starterkit.board=_BOARD_PIC32_STARTER_KIT_
 mc_pic32_starterkit.define=anything_you_want
 mc_pic32_starterkit.ccflags=ffff
-mc_pic32_starterkit.ldscript=chipKIT-MAX32-application-32MX795F512L.ld
+mc_pic32_starterkit.ldscript=chipKIT-UNO32-application-32MX320F128L.ld
 # end of new items
 
 mc_pic32_starterkit.upload.protocol=stk500v2
@@ -79,7 +79,7 @@ mc_pic32_starterkit.upload.speed=115200
 mc_pic32_starterkit.bootloader.low_fuses=0xff
 mc_pic32_starterkit.bootloader.high_fuses=0xdd
 mc_pic32_starterkit.bootloader.extended_fuses=0x00
-mc_pic32_starterkit.bootloader.path=atmega
+mc_pic32_starterkit.bootloader.path=not-supported
 mc_pic32_starterkit.bootloader.file=not-supported
 mc_pic32_starterkit.bootloader.unlock_bits=0x3F
 mc_pic32_starterkit.bootloader.lock_bits=0x0F
@@ -108,7 +108,7 @@ mc_pic32_ethernet_starterkit.upload.speed=115200
 mc_pic32_ethernet_starterkit.bootloader.low_fuses=0xff
 mc_pic32_ethernet_starterkit.bootloader.high_fuses=0xdd
 mc_pic32_ethernet_starterkit.bootloader.extended_fuses=0x00
-mc_pic32_ethernet_starterkit.bootloader.path=atmega
+mc_pic32_ethernet_starterkit.bootloader.path=not-supported
 mc_pic32_ethernet_starterkit.bootloader.file=not-supported
 mc_pic32_ethernet_starterkit.bootloader.unlock_bits=0x3F
 mc_pic32_ethernet_starterkit.bootloader.lock_bits=0x0F
@@ -117,3 +117,59 @@ mc_pic32_ethernet_starterkit.build.mcu=32MX795F512L
 mc_pic32_ethernet_starterkit.build.f_cpu=80000000L
 mc_pic32_ethernet_starterkit.build.core=pic32
 #mc_pic32_ethernet_starterkit.upload.using=
+
+############################################################
+mc_pic32_explorer16.name=Microchip PIC32 Explorer 16
+
+# new items
+mc_pic32_explorer16.platform=pic32
+mc_pic32_explorer16.board=_BOARD_PIC32_EXPLORER16_
+mc_pic32_explorer16.define=anything_you_want
+mc_pic32_explorer16.ccflags=ffff
+mc_pic32_explorer16.ldscript=chipKIT-UNO32-application-32MX320F128L.ld
+# end of new items
+
+mc_pic32_explorer16.upload.protocol=stk500v2
+mc_pic32_explorer16.upload.maximum_size=512000
+mc_pic32_explorer16.upload.speed=115200
+
+mc_pic32_explorer16.bootloader.low_fuses=0xff
+mc_pic32_explorer16.bootloader.high_fuses=0xdd
+mc_pic32_explorer16.bootloader.extended_fuses=0x00
+mc_pic32_explorer16.bootloader.path=not-supported
+mc_pic32_explorer16.bootloader.file=not-supported
+mc_pic32_explorer16.bootloader.unlock_bits=0x3F
+mc_pic32_explorer16.bootloader.lock_bits=0x0F
+
+mc_pic32_explorer16.build.mcu=32MX360F512L
+mc_pic32_explorer16.build.f_cpu=80000000L
+mc_pic32_explorer16.build.core=pic32
+#mc_pic32_explorer16.upload.using=
+
+############################################################
+mikroe_multimedia.name=MirkoElektronika PIC32 Multimedia Board
+
+# new items
+mikroe_multimedia.platform=pic32
+mikroe_multimedia.board=_BOARD_MIKROE_MULTIMEDIA_
+mikroe_multimedia.define=anything_you_want
+mikroe_multimedia.ccflags=ffff
+mikroe_multimedia.ldscript=chipKIT-UNO32-application-32MX320F128L.ld
+# end of new items
+
+mikroe_multimedia.upload.protocol=stk500v2
+mikroe_multimedia.upload.maximum_size=512000
+mikroe_multimedia.upload.speed=115200
+
+mikroe_multimedia.bootloader.low_fuses=0xff
+mikroe_multimedia.bootloader.high_fuses=0xdd
+mikroe_multimedia.bootloader.extended_fuses=0x00
+mikroe_multimedia.bootloader.path=not-supported
+mikroe_multimedia.bootloader.file=not-supported
+mikroe_multimedia.bootloader.unlock_bits=0x3F
+mikroe_multimedia.bootloader.lock_bits=0x0F
+
+mikroe_multimedia.build.mcu=32MX460F512L
+mikroe_multimedia.build.f_cpu=80000000L
+mikroe_multimedia.build.core=pic32
+#mikroe_multimedia.upload.using=
