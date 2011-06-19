@@ -255,7 +255,7 @@ public class Compiler implements MessageConsumer {
 	{
 		{
 	logger.debug("execAsynchronously: start");
-    String[] commandArray = command.split("::");	
+    String[] commandArray = command.split(",");	
   
     List<String> stringList = new ArrayList<String>();
 
@@ -424,8 +424,10 @@ public class Compiler implements MessageConsumer {
 				sourceName,
 				objectName
 		};
-						
-		return compileFormat.format(  Args );
+				
+		String command = compileFormat.format(  Args );	
+		String[] commandArray = command.split(",");	
+		return commandArray;
 	}
 	
 	//removed static
@@ -453,8 +455,9 @@ public class Compiler implements MessageConsumer {
 				objectName
 		};
 						
-		return compileFormat.format(  Args );	
-	}
+		String command = compileFormat.format(  Args );	
+		String[] commandArray = command.split(",");	
+		return commandArray;	}
 
 	static private String getCommandCompilerCPP(String avrBasePath,
 			ArrayList<String> includePaths, String sourceName, String objectName,
@@ -480,8 +483,9 @@ public class Compiler implements MessageConsumer {
 				objectName
 		};
 						
-		return compileFormat.format(  Args );			
-	}
+		String command = compileFormat.format(  Args );	
+		String[] commandArray = command.split(",");	
+		return commandArray;	}
 
 	// ///////////////////////////////////////////////////////////////////////////
 
@@ -642,7 +646,7 @@ public class Compiler implements MessageConsumer {
 		String objectFileList = "";
 		
 		for (File file : objectFiles) {
-			objectFileList = objectFileList + file.getAbsolutePath() + "::";
+			objectFileList = objectFileList + file.getAbsolutePath() + ",";
 		}
 
 			Object[] Args = {
@@ -775,7 +779,7 @@ public class Compiler implements MessageConsumer {
 		String includes = "";
 		for (int i = 0; i < includePaths.size(); i++) 
 		{
-			includes = includes + (" -I" + (String) includePaths.get(i)) + "::";
+			includes = includes + (" -I" + (String) includePaths.get(i)) + ",";
 		}
 		//logger.debug("Paths prepared: " + includes);
 		return includes;
