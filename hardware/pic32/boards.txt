@@ -44,7 +44,7 @@ mega_pic32.ldscript=chipKIT-MAX32-application-32MX795F512L.ld
 # end of new items
 
 mega_pic32.upload.protocol=stk500v2
-mega_pic32.upload.maximum_size=512000
+mega_pic32.upload.maximum_size=520192
 mega_pic32.upload.speed=115200
 
 mega_pic32.bootloader.low_fuses=0xff
@@ -73,7 +73,7 @@ mc_pic32_starterkit.ldscript=chipKIT-UNO32-application-32MX320F128L.ld
 # end of new items
 
 mc_pic32_starterkit.upload.protocol=stk500v2
-mc_pic32_starterkit.upload.maximum_size=512000
+mc_pic32_starterkit.upload.maximum_size=520192
 mc_pic32_starterkit.upload.speed=115200
 
 mc_pic32_starterkit.bootloader.low_fuses=0xff
@@ -102,7 +102,7 @@ mc_pic32_ethernet_starterkit.ldscript=chipKIT-MAX32-application-32MX795F512L.ld
 # end of new items
 
 mc_pic32_ethernet_starterkit.upload.protocol=stk500v2
-mc_pic32_ethernet_starterkit.upload.maximum_size=512000
+mc_pic32_ethernet_starterkit.upload.maximum_size=520192
 mc_pic32_ethernet_starterkit.upload.speed=115200
 
 mc_pic32_ethernet_starterkit.bootloader.low_fuses=0xff
@@ -130,7 +130,7 @@ mc_pic32_explorer16.ldscript=chipKIT-UNO32-application-32MX320F128L.ld
 # end of new items
 
 mc_pic32_explorer16.upload.protocol=stk500v2
-mc_pic32_explorer16.upload.maximum_size=512000
+mc_pic32_explorer16.upload.maximum_size=520192
 mc_pic32_explorer16.upload.speed=115200
 
 mc_pic32_explorer16.bootloader.low_fuses=0xff
@@ -154,11 +154,11 @@ mikroe_multimedia.platform=pic32
 mikroe_multimedia.board=_BOARD_MIKROE_MULTIMEDIA_
 mikroe_multimedia.define=anything_you_want
 mikroe_multimedia.ccflags=ffff
-mikroe_multimedia.ldscript=chipKIT-UNO32-application-32MX320F128L.ld
+mikroe_multimedia.ldscript=chipKIT-application-32MX460F512L.ld
 # end of new items
 
 mikroe_multimedia.upload.protocol=stk500v2
-mikroe_multimedia.upload.maximum_size=512000
+mikroe_multimedia.upload.maximum_size=520192
 mikroe_multimedia.upload.speed=115200
 
 mikroe_multimedia.bootloader.low_fuses=0xff
@@ -173,3 +173,118 @@ mikroe_multimedia.build.mcu=32MX460F512L
 mikroe_multimedia.build.f_cpu=80000000L
 mikroe_multimedia.build.core=pic32
 #mikroe_multimedia.upload.using=
+
+############################################################
+mikroe_mikromedia.name=MirkoElektronika PIC32 mikroMedia Board
+
+# new items
+mikroe_mikromedia.platform=pic32
+mikroe_mikromedia.board=_BOARD_MIKROE_MIKROMEDIA_
+mikroe_mikromedia.define=anything_you_want
+mikroe_mikromedia.ccflags=ffff
+mikroe_mikromedia.ldscript=chipKIT-application-32MX460F512L.ld
+# end of new items
+
+mikroe_mikromedia.upload.protocol=stk500v2
+mikroe_mikromedia.upload.maximum_size=520192
+mikroe_mikromedia.upload.speed=115200
+
+mikroe_mikromedia.bootloader.low_fuses=0xff
+mikroe_mikromedia.bootloader.high_fuses=0xdd
+mikroe_mikromedia.bootloader.extended_fuses=0x00
+mikroe_mikromedia.bootloader.path=not-supported
+mikroe_mikromedia.bootloader.file=not-supported
+mikroe_mikromedia.bootloader.unlock_bits=0x3F
+mikroe_mikromedia.bootloader.lock_bits=0x0F
+
+mikroe_mikromedia.build.mcu=32MX460F512L
+mikroe_mikromedia.build.f_cpu=80000000L
+mikroe_mikromedia.build.core=pic32
+#mikroe_mikromedia.upload.using=
+
+############################################################
+ubw32v1.name=Pic32 UBW32 Version 1 (green)
+
+# new items
+ubw32v1.platform=pic32
+ubw32v1.board=_BOARD_UBW32_V1_
+ubw32v1.define=anything_you_want
+ubw32v1.ccflags=ffff
+ubw32v1.ldscript=chipKIT-application-32MX460F512L.ld
+# end of new items
+
+ubw32v1.upload.protocol=stk500v2
+ubw32v1.upload.maximum_size=520192
+ubw32v1.upload.speed=115200
+
+ubw32v1.bootloader.low_fuses=0xff
+ubw32v1.bootloader.high_fuses=0xdd
+ubw32v1.bootloader.extended_fuses=0x00
+ubw32v1.bootloader.path=not-supported
+ubw32v1.bootloader.file=not-supported
+ubw32v1.bootloader.unlock_bits=0x3F
+ubw32v1.bootloader.lock_bits=0x0F
+
+ubw32v1.build.mcu=32MX460F512L
+ubw32v1.build.f_cpu=80000000L
+ubw32v1.build.core=pic32
+#ubw32v1.upload.using=
+
+
+############################################################
+ubw32v2.name=Pic32 UBW32 Version 2 (red)
+
+# new items
+ubw32v2.platform=pic32
+ubw32v2.board=_BOARD_UBW32_V2_
+ubw32v2.define=anything_you_want
+ubw32v2.ccflags=ffff
+ubw32v2.ldscript=chipKIT-MAX32-application-32MX795F512L.ld
+# end of new items
+
+ubw32v2.upload.protocol=stk500v2
+ubw32v2.upload.maximum_size=520192
+ubw32v2.upload.speed=115200
+
+ubw32v2.bootloader.low_fuses=0xff
+ubw32v2.bootloader.high_fuses=0xdd
+ubw32v2.bootloader.extended_fuses=0x00
+ubw32v2.bootloader.path=not-supported
+ubw32v2.bootloader.file=not-supported
+ubw32v2.bootloader.unlock_bits=0x3F
+ubw32v2.bootloader.lock_bits=0x0F
+
+ubw32v2.build.mcu=32MX795F512L
+ubw32v2.build.f_cpu=80000000L
+ubw32v2.build.core=pic32
+#ubw32v2.upload.using=
+
+
+############################################################
+cui32.name=Pic32 CUI32-Development Stick
+
+# new items
+cui32.platform=pic32
+cui32.board=_BOARD_CUI32_
+cui32.define=anything_you_want
+cui32.ccflags=ffff
+cui32.ldscript=chipKIT-application-32MX460F512L.ld
+# end of new items
+
+cui32.upload.protocol=stk500v2
+cui32.upload.maximum_size=520192
+cui32.upload.speed=115200
+
+cui32.bootloader.low_fuses=0xff
+cui32.bootloader.high_fuses=0xdd
+cui32.bootloader.extended_fuses=0x00
+cui32.bootloader.path=not-supported
+cui32.bootloader.file=not-supported
+cui32.bootloader.unlock_bits=0x3F
+cui32.bootloader.lock_bits=0x0F
+
+cui32.build.mcu=32MX440F512L
+cui32.build.f_cpu=80000000L
+cui32.build.core=pic32
+#cui32.upload.using=
+

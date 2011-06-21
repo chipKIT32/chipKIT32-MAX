@@ -151,12 +151,16 @@ class HardwareSerial : public Print
 	extern HardwareSerial Serial1;
 	extern HardwareSerial Serial2;
 	extern HardwareSerial Serial3;
+	extern HardwareSerial Serial4;
+	extern HardwareSerial Serial5;
 
 	#define	_HARDWARE_SERIAL_1_AVAILABLE_	
 	#define	_HARDWARE_SERIAL_2_AVAILABLE_	
 	#define	_HARDWARE_SERIAL_3_AVAILABLE_	
+	#define	_HARDWARE_SERIAL_4_AVAILABLE_	
+	#define	_HARDWARE_SERIAL_5_AVAILABLE_	
 	
-	#define	_HARDWARE_SERIAL_PORT_COUNT_	4
+	#define	_HARDWARE_SERIAL_PORT_COUNT_	6
 #else
 
 	#if defined (_UART1) || defined(_UART1A)

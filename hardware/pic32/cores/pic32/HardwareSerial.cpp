@@ -44,6 +44,7 @@
 //*	Apr 10,	2011	<MLS> Added defs for UNO board
 //*	Apr 13,	2011	<MLS> Support for UART4 is NOT finished
 //*	May 25, 2011	<MLS> Added support for Uart2 on UNO32
+//*	Jun 17,	2011	<MLS> Added Serial4 and Serial5 for MEGA32, ISRs not finished
 //************************************************************************
 #define __LANGUAGE_C__
 
@@ -719,8 +720,6 @@ unsigned char theChar;
 //*******************************************************************************************
 
 
-//*	the Explorer 16 board has the DB9 port connected to the Uart2 which is normally serial 1
-//*	these need to be reversed
 
 //*******************************************************************************************
 #if defined(_BOARD_MEGA_)
@@ -729,13 +728,20 @@ unsigned char theChar;
 		HardwareSerial Serial2(	kSerialPort_3A,	&rx_buffer3A,	&U3ABRG,	&U3AMODE,	&U3ASTA,	&U3ATXREG);
 		HardwareSerial Serial3(	kSerialPort_3B,	&rx_buffer3B,	&U3BBRG,	&U3BMODE,	&U3BSTA,	&U3BTXREG);
 
+
+		HardwareSerial Serial4(	kSerialPort_2A,	&rx_buffer2A,	&U2ABRG,	&U2AMODE,	&U2ASTA,	&U2ATXREG);
+		HardwareSerial Serial5(	kSerialPort_2B,	&rx_buffer2B,	&U2BBRG,	&U2BMODE,	&U2BSTA,	&U2BTXREG);
+
 //*******************************************************************************************
 #elif defined(_BOARD_UNO_)
 		HardwareSerial Serial(	kSerialPort_1,		&rx_buffer1,	&U1BRG,		&U1MODE,	&U1STA,		&U1TXREG);
 		HardwareSerial Serial1(	kSerialPort_2,		&rx_buffer2,	&U2BRG,	&U2MODE,	&U2STA,	&U2TXREG);
 
 //*******************************************************************************************
-#elif defined(_BOARD_EXPLORER16_)
+//*	the Explorer 16 board has the DB9 port connected to the Uart2 which is normally serial 1
+//*	these need to be reversed
+//*******************************************************************************************
+#elif defined(_BOARD_PIC32_EXPLORER16_)
 
 	#warning	Explorer 16 Serial is actually on Uart2, the DB9 connector
 	#ifdef _UART1

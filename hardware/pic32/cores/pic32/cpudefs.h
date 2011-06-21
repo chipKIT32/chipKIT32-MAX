@@ -29,6 +29,8 @@
 //************************************************************************
 //*	Apr 16, 2011	<MLS> started on cpudefs.h
 //*	Apr 24,	2011	<MLS> copied to bootloader, important to keep them in sync
+//*	Jun 16,	2011	<MLS> Added 32MX360F256L
+//*	Jun 21,	2011	<MLS> Added 32MX440F512H
 //************************************************************************
 
 //************************************************************************
@@ -38,17 +40,29 @@
 	#if defined (__AVR_AT94K__)
 										#define	_CPU_NAME_	"AT94k"
 	#elif defined (__AVR_AT43USB320__)
+										#define	_CPU_NAME_	"AT43USB320"
 	#elif defined (__AVR_AT43USB355__)
+										#define	_CPU_NAME_	"AT43USB355"
 	#elif defined (__AVR_AT76C711__)
+										#define	_CPU_NAME_	"AT76C711"
 	#elif defined (__AVR_AT86RF401__)
+										#define	_CPU_NAME_	"AT86RF401"
 	#elif defined (__AVR_AT90PWM1__)
+										#define	_CPU_NAME_	"AT90PWM1"
 	#elif defined (__AVR_AT90PWM2__)
+										#define	_CPU_NAME_	"AT90PWM2"
 	#elif defined (__AVR_AT90PWM2B__)
+										#define	_CPU_NAME_	"AT90PWM2B"
 	#elif defined (__AVR_AT90PWM3__)
+										#define	_CPU_NAME_	"AT90PWM3"
 	#elif defined (__AVR_AT90PWM3B__)
+										#define	_CPU_NAME_	"AT90PWM3B"
 	#elif defined (__AVR_AT90PWM216__)
+										#define	_CPU_NAME_	"AT90PWM216"
 	#elif defined (__AVR_AT90PWM316__)
+										#define	_CPU_NAME_	"AT90PWM316"
 	#elif defined (__AVR_ATmega32C1__)
+										#define	_CPU_NAME_	"ATmega32C1"
 	#elif defined (__AVR_ATmega32M1__)
 										#define	_CPU_NAME_	"ATmega32M1"
 	#elif defined (__AVR_ATmega32U4__)
@@ -174,17 +188,29 @@
 	#elif defined (__AVR_ATmega8535__)
 										#define	_CPU_NAME_	"ATmega8535"
 	#elif defined (__AVR_AT90S8535__)
+										#define	_CPU_NAME_	"AT90S8535"
 	#elif defined (__AVR_AT90C8534__)
+										#define	_CPU_NAME_	"AT90C8534"
 	#elif defined (__AVR_AT90S8515__)
+										#define	_CPU_NAME_	"AT90S8515"
 	#elif defined (__AVR_AT90S4434__)
+										#define	_CPU_NAME_	"AT90S4434"
 	#elif defined (__AVR_AT90S4433__)
+										#define	_CPU_NAME_	"AT90S4433"
 	#elif defined (__AVR_AT90S4414__)
+										#define	_CPU_NAME_	"AT90S4414"
 	#elif defined (__AVR_ATtiny22__)
+										#define	_CPU_NAME_	"ATtiny22"
 	#elif defined (__AVR_ATtiny26__)
+										#define	_CPU_NAME_	"ATtiny26"
 	#elif defined (__AVR_AT90S2343__)
+										#define	_CPU_NAME_	"AT90S2343"
 	#elif defined (__AVR_AT90S2333__)
+										#define	_CPU_NAME_	"AT90S2333"
 	#elif defined (__AVR_AT90S2323__)
+										#define	_CPU_NAME_	"AT90S2323"
 	#elif defined (__AVR_AT90S2313__)
+										#define	_CPU_NAME_	"AT90S2313"
 	#elif defined (__AVR_ATtiny2313__)
 										#define	_CPU_NAME_	"ATtiny2313"
 	#elif defined (__AVR_ATtiny13__)
@@ -246,6 +272,11 @@
 		#define	FLASHEND	(((128 - 4) * 1024L) - 1)
 		#define	RAMEND		((16 * 1024L) - 1)
 
+	#elif defined(__32MX360F256L__)
+		#define	_CPU_NAME_	"32MX360F256L"
+		#define	FLASHEND	(((256 - 4) * 1024L) - 1)
+		#define	RAMEND		((16 * 1024L) - 1)
+
 	#elif defined(__32MX360F512L__)
 		#define	_CPU_NAME_	"32MX360F512L"
 		#define	FLASHEND	(((512 - 4) * 1024L) - 1)
@@ -253,6 +284,12 @@
 
 	//************************************************************************
 	//*	400 series
+	#elif defined(__32MX440F512H__)
+		#define	_CPU_NAME_	"32MX440F512H"
+		#define	FLASHEND	(512 * 1024L)
+		#define	RAMEND		(16 * 1024L)
+
+
 	#elif defined(__32MX460F512L__)
 		#define	_CPU_NAME_	"32MX460F512L"
 		#define	FLASHEND	(512 * 1024L)
@@ -272,7 +309,7 @@
 		#define	RAMEND		((128 * 1024L) - 1)
 
 	#else
-		#warning CPU type is unknown, cpudefs.h needs to have additions
+		#error CPU type is unknown, cpudefs.h needs to have additions
 	#endif
 
 #elif defined(__arm__)
