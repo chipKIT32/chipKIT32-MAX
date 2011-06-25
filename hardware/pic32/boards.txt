@@ -203,61 +203,61 @@ mikroe_mikromedia.build.core=pic32
 #mikroe_mikromedia.upload.using=
 
 ############################################################
-ubw32v1.name=Pic32 UBW32 Version 1 (green)
+ubw32mx460.name=UBW32 MX460
 
 # new items
-ubw32v1.platform=pic32
-ubw32v1.board=_BOARD_UBW32_V1_
-ubw32v1.define=anything_you_want
-ubw32v1.ccflags=ffff
-ubw32v1.ldscript=chipKIT-application-32MX460F512L.ld
+ubw32mx460.platform=pic32
+ubw32mx460.board=_BOARD_UBW32_MX460_
+ubw32mx460.define=anything_you_want
+ubw32mx460.ccflags=ffff
+ubw32mx460.ldscript=chipKIT-application-32MX460F512L.ld
 # end of new items
 
-ubw32v1.upload.protocol=stk500v2
-ubw32v1.upload.maximum_size=520192
-ubw32v1.upload.speed=115200
+ubw32mx460.upload.protocol=stk500v2
+ubw32mx460.upload.maximum_size=520192
+ubw32mx460.upload.speed=115200
 
-ubw32v1.bootloader.low_fuses=0xff
-ubw32v1.bootloader.high_fuses=0xdd
-ubw32v1.bootloader.extended_fuses=0x00
-ubw32v1.bootloader.path=not-supported
-ubw32v1.bootloader.file=not-supported
-ubw32v1.bootloader.unlock_bits=0x3F
-ubw32v1.bootloader.lock_bits=0x0F
+ubw32mx460.bootloader.low_fuses=0xff
+ubw32mx460.bootloader.high_fuses=0xdd
+ubw32mx460.bootloader.extended_fuses=0x00
+ubw32mx460.bootloader.path=not-supported
+ubw32mx460.bootloader.file=not-supported
+ubw32mx460.bootloader.unlock_bits=0x3F
+ubw32mx460.bootloader.lock_bits=0x0F
 
-ubw32v1.build.mcu=32MX460F512L
-ubw32v1.build.f_cpu=80000000L
-ubw32v1.build.core=pic32
-#ubw32v1.upload.using=
+ubw32mx460.build.mcu=32MX460F512L
+ubw32mx460.build.f_cpu=80000000L
+ubw32mx460.build.core=pic32
+#ubw32mx460.upload.using=
 
 
 ############################################################
-ubw32v2.name=Pic32 UBW32 Version 2 (red)
+ubw32mx795.name=UBW32 MX795
 
 # new items
-ubw32v2.platform=pic32
-ubw32v2.board=_BOARD_UBW32_V2_
-ubw32v2.define=anything_you_want
-ubw32v2.ccflags=ffff
-ubw32v2.ldscript=chipKIT-MAX32-application-32MX795F512L.ld
+ubw32mx795.platform=pic32
+ubw32mx795.board=_BOARD_UBW32_MX795_
+ubw32mx795.define=anything_you_want
+ubw32mx795.ccflags=ffff
+ubw32mx795.ldscript=chipKIT-MAX32-application-32MX795F512L.ld
 # end of new items
 
-ubw32v2.upload.protocol=stk500v2
-ubw32v2.upload.maximum_size=520192
-ubw32v2.upload.speed=115200
+ubw32mx795.upload.protocol=stk500v2
+ubw32mx795.upload.maximum_size=520192
+ubw32mx795.upload.speed=115200
 
-ubw32v2.bootloader.low_fuses=0xff
-ubw32v2.bootloader.high_fuses=0xdd
-ubw32v2.bootloader.extended_fuses=0x00
-ubw32v2.bootloader.path=not-supported
-ubw32v2.bootloader.file=not-supported
-ubw32v2.bootloader.unlock_bits=0x3F
-ubw32v2.bootloader.lock_bits=0x0F
+ubw32mx795.bootloader.low_fuses=0xff
+ubw32mx795.bootloader.high_fuses=0xdd
+ubw32mx795.bootloader.extended_fuses=0x00
+ubw32mx795.bootloader.path=not-supported
+ubw32mx795.bootloader.file=not-supported
+ubw32mx795.bootloader.unlock_bits=0x3F
+ubw32mx795.bootloader.lock_bits=0x0F
 
-ubw32v2.build.mcu=32MX795F512L
-ubw32v2.build.f_cpu=80000000L
-ubw32v2.build.core=pic32
-#ubw32v2.upload.using=
+ubw32mx795.build.mcu=32MX795F512L
+ubw32mx795.build.f_cpu=80000000L
+ubw32mx795.build.core=pic32
+#ubw32mx795.upload.using=
 
 
 ############################################################

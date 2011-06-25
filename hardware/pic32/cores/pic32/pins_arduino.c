@@ -181,6 +181,10 @@ const uint32_t port_to_input_PGM[] =
 	#include	"pins_arduino_pic32_uno.cxx"
 #elif defined (_BOARD_CEREBOT_32MX4_)
 	#include	"pins_arduino_pic32_cerebot32mx4.cxx"
+#elif defined (_BOARD_UBW32_MX460_)
+	#include	"pins_arduino_pic32_UBW32MX460.cxx"
+#elif defined (_BOARD_UBW32_MX795_)
+	#include	"pins_arduino_pic32_UBW32MX795.cxx"
 #else
 	#include	"pins_arduino_pic32_default.cxx"
 #endif
