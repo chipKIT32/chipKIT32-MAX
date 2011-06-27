@@ -1,0 +1,743 @@
+Archive member included because of file (symbol)
+
+c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libc.a(default-on-reset.o)
+                              c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib/crt0.o (_on_reset)
+c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libc.a(default-on-bootstrap.o)
+                              c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib/crt0.o (_on_bootstrap)
+c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libc.a(default-nmi-handler.o)
+                              c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib/crt0.o (_nmi_handler)
+c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libmchp_peripheral_32MX795F512L.a(pcache.o)
+                              build/UBW32_MX795/production/_ext/1472/main.o (CheKseg0CacheOn)
+c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libmchp_peripheral_32MX795F512L.a(int_disable_interrupts_lib.o)
+                              build/UBW32_MX795/production/_ext/1472/main.o (INTDisableInterrupts)
+c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libmchp_peripheral_32MX795F512L.a(int_restore_interrupts_lib.o)
+                              build/UBW32_MX795/production/_ext/1472/main.o (INTRestoreInterrupts)
+c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libmchp_peripheral_32MX795F512L.a(int_enable_mv_int_lib.o)
+                              build/UBW32_MX795/production/_ext/1472/main.o (INTEnableSystemMultiVectoredInt)
+c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libmchp_peripheral_32MX795F512L.a(int_enable_interrupts_lib.o)
+                              c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libmchp_peripheral_32MX795F512L.a(int_enable_mv_int_lib.o) (INTEnableInterrupts)
+
+Microchip PIC32 Memory-Usage Report
+
+kseg0 Program-Memory Usage
+section                    address  length [bytes]      (dec)  Description
+-------                 ----------  -------------------------  -----------
+      Total kseg0_program_mem used  :           0           0  
+
+kseg0 Boot-Memory Usage
+section                    address  length [bytes]      (dec)  Description
+-------                 ----------  -------------------------  -----------
+.startup                0x9fc00490          0x1e0         480  C startup code 
+.text                   0x9fc00670         0x1aec        6892  Application's executable code 
+.rodata                 0x9fc0215c          0x12c         300  Read-only constant data 
+.sdata                  0x9fc02288            0xc          12  Small data-initialization template 
+         Total kseg0_boot_mem used  :      0x1e04        7684  69.8% of 0x2b00
+
+Exception-Memory Usage 
+section                    address  length [bytes]      (dec)  Description
+-------                 ----------  -------------------------  -----------
+          Total exception_mem used  :           0           0  
+
+kseg1 Boot-Memory Usage
+section                    address  length [bytes]      (dec)  Description
+-------                 ----------  -------------------------  -----------
+.reset                  0xbfc00000           0x10          16  Reset handler 
+         Total kseg1_boot_mem used  :        0x10          16  1.4% of 0x490
+        --------------------------------------------------------------------------
+         Total Program Memory used  :      0x1e14        7700  63.2% of 0x2f90
+        --------------------------------------------------------------------------
+
+
+kseg1 Data-Memory Usage
+section                    address  length [bytes]      (dec)  Description
+-------                 ----------  -------------------------  -----------
+.sdata                  0xa0000004            0xc          12  Small initialized data 
+.sbss                   0xa0000010           0x7c         124  Small uninitialized data 
+.bss                    0xa0000200         0x10f0        4336  Uninitialized data 
+.stack                  0xa00012f0          0x400        1024  Minimum space reserved for stack 
+         Total kseg1_data_mem used  :      0x1578        5496  16.8% of 0x7ffc
+        --------------------------------------------------------------------------
+            Total Data Memory used  :      0x1578        5496  16.8% of 0x7ffc
+        --------------------------------------------------------------------------
+
+Discarded input sections
+
+ .data          0x00000000        0x0 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib/crt0.o
+ .bss           0x00000000        0x0 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib/crt0.o
+ .reginfo       0x00000000       0x18 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib/crt0.o
+ .pdr           0x00000000       0xa0 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib/crt0.o
+ .bev_handler   0x00000000       0x10 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib/crt0.o
+ .gen_handler   0x00000000       0x10 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib/crt0.o
+ .text          0x00000000        0x0 build/UBW32_MX795/production/_ext/592584297/usb.o
+ .data          0x00000000        0x0 build/UBW32_MX795/production/_ext/592584297/usb.o
+ .bss           0x00000000        0x0 build/UBW32_MX795/production/_ext/592584297/usb.o
+ .reginfo       0x00000000       0x18 build/UBW32_MX795/production/_ext/592584297/usb.o
+ .pdr           0x00000000      0x120 build/UBW32_MX795/production/_ext/592584297/usb.o
+ .sbss.cdc_attached
+                0x00000000        0x1 build/UBW32_MX795/production/_ext/592584297/usb.o
+ .sbss.scsi_attached
+                0x00000000        0x1 build/UBW32_MX795/production/_ext/592584297/usb.o
+ .sbss.scsi_attached_count
+                0x00000000        0x4 build/UBW32_MX795/production/_ext/592584297/usb.o
+ .sbss.other_attached
+                0x00000000        0x1 build/UBW32_MX795/production/_ext/592584297/usb.o
+ .bss.descriptor
+                0x00000000       0x14 build/UBW32_MX795/production/_ext/592584297/usb.o
+ .bss.configuration
+                0x00000000       0x80 build/UBW32_MX795/production/_ext/592584297/usb.o
+ .text          0x00000000        0x0 build/UBW32_MX795/production/_ext/1472/main.o
+ .data          0x00000000        0x0 build/UBW32_MX795/production/_ext/1472/main.o
+ .bss           0x00000000        0x0 build/UBW32_MX795/production/_ext/1472/main.o
+ .reginfo       0x00000000       0x18 build/UBW32_MX795/production/_ext/1472/main.o
+ .pdr           0x00000000       0x60 build/UBW32_MX795/production/_ext/1472/main.o
+ .text._general_exception_context
+                0x00000000        0xc build/UBW32_MX795/production/_ext/1472/main.o
+ .text._bootstrap_exception_handler
+                0x00000000        0xc build/UBW32_MX795/production/_ext/1472/main.o
+ .text          0x00000000        0x0 build/UBW32_MX795/production/_ext/592584297/util.o
+ .data          0x00000000        0x0 build/UBW32_MX795/production/_ext/592584297/util.o
+ .bss           0x00000000        0x0 build/UBW32_MX795/production/_ext/592584297/util.o
+ .reginfo       0x00000000       0x18 build/UBW32_MX795/production/_ext/592584297/util.o
+ .pdr           0x00000000       0x60 build/UBW32_MX795/production/_ext/592584297/util.o
+ .text          0x00000000        0x0 build/UBW32_MX795/production/_ext/1472/avrbl.o
+ .data          0x00000000        0x0 build/UBW32_MX795/production/_ext/1472/avrbl.o
+ .bss           0x00000000        0x0 build/UBW32_MX795/production/_ext/1472/avrbl.o
+ .reginfo       0x00000000       0x18 build/UBW32_MX795/production/_ext/1472/avrbl.o
+ .pdr           0x00000000      0x100 build/UBW32_MX795/production/_ext/1472/avrbl.o
+ .text          0x00000000        0x0 build/UBW32_MX795/production/_ext/592584297/cdcacm.o
+ .data          0x00000000        0x0 build/UBW32_MX795/production/_ext/592584297/cdcacm.o
+ .bss           0x00000000        0x0 build/UBW32_MX795/production/_ext/592584297/cdcacm.o
+ .reginfo       0x00000000       0x18 build/UBW32_MX795/production/_ext/592584297/cdcacm.o
+ .pdr           0x00000000       0xe0 build/UBW32_MX795/production/_ext/592584297/cdcacm.o
+ .sbss.attached_count.0
+                0x00000000        0x4 build/UBW32_MX795/production/_ext/592584297/cdcacm.o
+ .text.cdcacm_command_ack
+                0x00000000       0x38 build/UBW32_MX795/production/_ext/592584297/cdcacm.o
+ .text.check    0x00000000       0x2c build/UBW32_MX795/production/_ext/592584297/cdcacm.o
+ .text          0x00000000        0x0 build/UBW32_MX795/production/_ext/592584297/flash.o
+ .data          0x00000000        0x0 build/UBW32_MX795/production/_ext/592584297/flash.o
+ .bss           0x00000000        0x0 build/UBW32_MX795/production/_ext/592584297/flash.o
+ .reginfo       0x00000000       0x18 build/UBW32_MX795/production/_ext/592584297/flash.o
+ .pdr           0x00000000       0x60 build/UBW32_MX795/production/_ext/592584297/flash.o
+ .text          0x00000000        0x0 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib/./proc/32MX795F512L\processor.o
+ .data          0x00000000        0x0 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib/./proc/32MX795F512L\processor.o
+ .bss           0x00000000        0x0 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib/./proc/32MX795F512L\processor.o
+ .reginfo       0x00000000       0x18 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib/./proc/32MX795F512L\processor.o
+ .pdr           0x00000000        0x0 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib/./proc/32MX795F512L\processor.o
+ .text          0x00000000        0x0 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libc.a(default-on-reset.o)
+ .data          0x00000000        0x0 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libc.a(default-on-reset.o)
+ .bss           0x00000000        0x0 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libc.a(default-on-reset.o)
+ .reginfo       0x00000000       0x18 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libc.a(default-on-reset.o)
+ .pdr           0x00000000       0x20 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libc.a(default-on-reset.o)
+ .text          0x00000000        0x0 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libc.a(default-on-bootstrap.o)
+ .data          0x00000000        0x0 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libc.a(default-on-bootstrap.o)
+ .bss           0x00000000        0x0 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libc.a(default-on-bootstrap.o)
+ .reginfo       0x00000000       0x18 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libc.a(default-on-bootstrap.o)
+ .pdr           0x00000000       0x20 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libc.a(default-on-bootstrap.o)
+ .data          0x00000000        0x0 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libc.a(default-nmi-handler.o)
+ .bss           0x00000000        0x0 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libc.a(default-nmi-handler.o)
+ .reginfo       0x00000000       0x18 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libc.a(default-nmi-handler.o)
+ .pdr           0x00000000       0x20 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libc.a(default-nmi-handler.o)
+ .text          0x00000000        0x0 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libmchp_peripheral_32MX795F512L.a(pcache.o)
+ .data          0x00000000        0x0 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libmchp_peripheral_32MX795F512L.a(pcache.o)
+ .bss           0x00000000        0x0 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libmchp_peripheral_32MX795F512L.a(pcache.o)
+ .reginfo       0x00000000       0x18 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libmchp_peripheral_32MX795F512L.a(pcache.o)
+ .pdr           0x00000000       0x40 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libmchp_peripheral_32MX795F512L.a(pcache.o)
+ .text.CheKseg0CacheOff
+                0x00000000       0x18 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libmchp_peripheral_32MX795F512L.a(pcache.o)
+ .text          0x00000000        0x0 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libmchp_peripheral_32MX795F512L.a(int_disable_interrupts_lib.o)
+ .data          0x00000000        0x0 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libmchp_peripheral_32MX795F512L.a(int_disable_interrupts_lib.o)
+ .bss           0x00000000        0x0 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libmchp_peripheral_32MX795F512L.a(int_disable_interrupts_lib.o)
+ .reginfo       0x00000000       0x18 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libmchp_peripheral_32MX795F512L.a(int_disable_interrupts_lib.o)
+ .pdr           0x00000000       0x20 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libmchp_peripheral_32MX795F512L.a(int_disable_interrupts_lib.o)
+ .text          0x00000000        0x0 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libmchp_peripheral_32MX795F512L.a(int_restore_interrupts_lib.o)
+ .data          0x00000000        0x0 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libmchp_peripheral_32MX795F512L.a(int_restore_interrupts_lib.o)
+ .bss           0x00000000        0x0 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libmchp_peripheral_32MX795F512L.a(int_restore_interrupts_lib.o)
+ .reginfo       0x00000000       0x18 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libmchp_peripheral_32MX795F512L.a(int_restore_interrupts_lib.o)
+ .pdr           0x00000000       0x20 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libmchp_peripheral_32MX795F512L.a(int_restore_interrupts_lib.o)
+ .text          0x00000000        0x0 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libmchp_peripheral_32MX795F512L.a(int_enable_mv_int_lib.o)
+ .data          0x00000000        0x0 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libmchp_peripheral_32MX795F512L.a(int_enable_mv_int_lib.o)
+ .bss           0x00000000        0x0 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libmchp_peripheral_32MX795F512L.a(int_enable_mv_int_lib.o)
+ .reginfo       0x00000000       0x18 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libmchp_peripheral_32MX795F512L.a(int_enable_mv_int_lib.o)
+ .pdr           0x00000000       0x20 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libmchp_peripheral_32MX795F512L.a(int_enable_mv_int_lib.o)
+ .text          0x00000000        0x0 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libmchp_peripheral_32MX795F512L.a(int_enable_interrupts_lib.o)
+ .data          0x00000000        0x0 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libmchp_peripheral_32MX795F512L.a(int_enable_interrupts_lib.o)
+ .bss           0x00000000        0x0 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libmchp_peripheral_32MX795F512L.a(int_enable_interrupts_lib.o)
+ .reginfo       0x00000000       0x18 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libmchp_peripheral_32MX795F512L.a(int_enable_interrupts_lib.o)
+ .pdr           0x00000000       0x20 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libmchp_peripheral_32MX795F512L.a(int_enable_interrupts_lib.o)
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+kseg0_program_mem 0x9d000000         0x00000000         xr
+//kseg0_boot_mem 0x9fc00490         0x00000970         xr
+//exception_mem  0x9fc01180         0x00000090
+//kseg0_boot_memB 0x9fc01210         0x00000df0         xr
+kseg0_boot_mem   0x9fc00490         0x00002b00         xr
+exception_mem    0x9fc00000         0x00000000
+kseg1_boot_mem   0xbfc00000         0x00000490
+config3          0xbfc02ff0         0x00000004
+config2          0xbfc02ff4         0x00000004
+config1          0xbfc02ff8         0x00000004
+config0          0xbfc02ffc         0x00000004
+boot_software_key 0xa0000000         0x00000004
+kseg1_data_mem   0xa0000004         0x00007ffc         w !x
+sfrs             0xbf800000         0x00100000
+*default*        0x00000000         0xffffffff
+
+Linker script and memory map
+
+LOAD c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib/crt0.o
+LOAD build/UBW32_MX795/production/_ext/592584297/usb.o
+LOAD build/UBW32_MX795/production/_ext/1472/main.o
+LOAD build/UBW32_MX795/production/_ext/592584297/util.o
+LOAD build/UBW32_MX795/production/_ext/1472/avrbl.o
+LOAD build/UBW32_MX795/production/_ext/592584297/cdcacm.o
+LOAD build/UBW32_MX795/production/_ext/592584297/flash.o
+                0x00000001                __MPLAB_BUILD = 0x1
+                0x00000400                PROVIDE (_min_stack_size, 0x400)
+                0x00000000                PROVIDE (_min_heap_size, 0x0)
+LOAD c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib/./proc/32MX795F512L\processor.o
+                0x00000001                PROVIDE (_vector_spacing, 0x1)
+                0x9fc01000                //_ebase_address = 0x9fc01000
+                0x00000000                _ebase_address = 0x0
+                0xbfc00000                //_general_exception_context = 0xbfc00000
+                0xbfc00000                //_on_bootstrap = 0xbfc00000
+                0xbfc00000                _RESET_ADDR = 0xbfc00000
+                0xbfc00380                _BEV_EXCPT_ADDR = 0xbfc00380
+                0xbfc00480                _DBG_EXCPT_ADDR = 0xbfc00480
+                0x00000180                _GEN_EXCPT_ADDR = (_ebase_address + 0x180)
+
+.boot_software_key_sec
+ *(.boot_software_key_sec)
+
+.config_BFC02FF0
+ *(.config_BFC02FF0)
+
+.config_BFC02FF4
+                0xbfc02ff4        0x4
+ *(.config_BFC02FF4)
+ .config_BFC02FF4
+                0xbfc02ff4        0x4 build/UBW32_MX795/production/_ext/1472/main.o
+
+.config_BFC02FF8
+                0xbfc02ff8        0x4
+ *(.config_BFC02FF8)
+ .config_BFC02FF8
+                0xbfc02ff8        0x4 build/UBW32_MX795/production/_ext/1472/main.o
+
+.config_BFC02FFC
+                0xbfc02ffc        0x4
+ *(.config_BFC02FFC)
+ .config_BFC02FFC
+                0xbfc02ffc        0x4 build/UBW32_MX795/production/_ext/1472/main.o
+
+.reset          0xbfc00000       0x10
+ *(.reset)
+ .reset         0xbfc00000       0x10 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib/crt0.o
+                0xbfc00000                _reset
+
+.dbg_excpt      0xbfc00480        0x0
+                0xbfc00480                . = (. + DEFINED (_DEBUGGER)?0x8:0x0)
+
+/DISCARD/
+ *(.gen_handler)
+ *(.vector_0)
+ *(.pdr)
+ *(.reginfo)
+ *(.rel.dyn)
+ *(.note.GNU-stack)
+
+.startup        0x9fc00490      0x1e0
+ *(.startup)
+ .startup       0x9fc00490      0x1e0 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib/crt0.o
+
+.text           0x9fc00670     0x1aec
+                0x9fc00670                _text_begin = .
+ *(.text .stub .text.* .gnu.linkonce.t.*)
+ .text          0x9fc00670       0x10 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib/crt0.o
+                0x9fc00678                __crt0_exit
+ .text.parse_configuration
+                0x9fc00680       0xd8 build/UBW32_MX795/production/_ext/592584297/usb.o
+ .text.usb_device_default
+                0x9fc00758       0xa4 build/UBW32_MX795/production/_ext/592584297/usb.o
+ .text.usb_device_enqueue
+                0x9fc007fc      0x11c build/UBW32_MX795/production/_ext/592584297/usb.o
+                0x9fc007fc                usb_device_enqueue
+ .text.usb_isr  0x9fc00918      0x720 build/UBW32_MX795/production/_ext/592584297/usb.o
+                0x9fc00918                usb_isr
+ .text.usb_register
+                0x9fc01038       0x10 build/UBW32_MX795/production/_ext/592584297/usb.o
+                0x9fc01038                usb_register
+ .text.usb_device_descriptor
+                0x9fc01048        0xc build/UBW32_MX795/production/_ext/592584297/usb.o
+                0x9fc01048                usb_device_descriptor
+ .text.usb_configuration_descriptor
+                0x9fc01054        0xc build/UBW32_MX795/production/_ext/592584297/usb.o
+                0x9fc01054                usb_configuration_descriptor
+ .text.usb_string_descriptor
+                0x9fc01060        0xc build/UBW32_MX795/production/_ext/592584297/usb.o
+                0x9fc01060                usb_string_descriptor
+ .text.usb_initialize
+                0x9fc0106c       0x88 build/UBW32_MX795/production/_ext/592584297/usb.o
+                0x9fc0106c                usb_initialize
+ .text.main     0x9fc010f4      0x220 build/UBW32_MX795/production/_ext/1472/main.o
+                0x9fc010f4                main
+ .text.memcpy   0x9fc01314       0x30 build/UBW32_MX795/production/_ext/592584297/util.o
+                0x9fc01314                memcpy
+ .text.memset   0x9fc01344       0x2c build/UBW32_MX795/production/_ext/592584297/util.o
+                0x9fc01344                memset
+ .text.strcpy   0x9fc01370       0x24 build/UBW32_MX795/production/_ext/592584297/util.o
+                0x9fc01370                strcpy
+ .text.avrbl_state_machine
+                0x9fc01394      0x100 build/UBW32_MX795/production/_ext/1472/avrbl.o
+                0x9fc01394                avrbl_state_machine
+ .text.avrbl_receive
+                0x9fc01494       0x5c build/UBW32_MX795/production/_ext/1472/avrbl.o
+                0x9fc01494                avrbl_receive
+ .text.jump_to_app
+                0x9fc014f0       0x34 build/UBW32_MX795/production/_ext/1472/avrbl.o
+                0x9fc014f0                jump_to_app
+ .text.avrbl_print
+                0x9fc01524       0x34 build/UBW32_MX795/production/_ext/1472/avrbl.o
+                0x9fc01524                avrbl_print
+ .text.avrbl_message
+                0x9fc01558      0x498 build/UBW32_MX795/production/_ext/1472/avrbl.o
+                0x9fc01558                avrbl_message
+ .text.avrbl_run
+                0x9fc019f0       0xe4 build/UBW32_MX795/production/_ext/1472/avrbl.o
+                0x9fc019f0                avrbl_run
+ .text.avrbl_initialize
+                0x9fc01ad4       0x20 build/UBW32_MX795/production/_ext/1472/avrbl.o
+                0x9fc01ad4                avrbl_initialize
+ .text.avrbl_reset_cbfn
+                0x9fc01af4        0x8 build/UBW32_MX795/production/_ext/1472/avrbl.o
+ .text.cdcacm_print
+                0x9fc01afc      0x148 build/UBW32_MX795/production/_ext/592584297/cdcacm.o
+                0x9fc01afc                cdcacm_print
+ .text.cdcacm_control_transfer
+                0x9fc01c44       0xb8 build/UBW32_MX795/production/_ext/592584297/cdcacm.o
+ .text.cdcacm_bulk_transfer
+                0x9fc01cfc       0xf0 build/UBW32_MX795/production/_ext/592584297/cdcacm.o
+ .text.cdcacm_reset
+                0x9fc01dec       0x84 build/UBW32_MX795/production/_ext/592584297/cdcacm.o
+ .text.cdcacm_register
+                0x9fc01e70       0x8c build/UBW32_MX795/production/_ext/592584297/cdcacm.o
+                0x9fc01e70                cdcacm_register
+ .text.flash_operation
+                0x9fc01efc       0x88 build/UBW32_MX795/production/_ext/592584297/flash.o
+ .text.flash_erase_pages
+                0x9fc01f84       0x8c build/UBW32_MX795/production/_ext/592584297/flash.o
+                0x9fc01f84                flash_erase_pages
+ .text.flash_write_words
+                0x9fc02010       0xac build/UBW32_MX795/production/_ext/592584297/flash.o
+                0x9fc02010                flash_write_words
+ .text._on_reset
+                0x9fc020bc        0x8 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libc.a(default-on-reset.o)
+                0x9fc020bc                _on_reset
+ .text._on_bootstrap
+                0x9fc020c4        0x8 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libc.a(default-on-bootstrap.o)
+                0x9fc020c4                _on_bootstrap
+ .text          0x9fc020cc       0x18 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libc.a(default-nmi-handler.o)
+                0x9fc020cc                _nmi_handler
+ .text.CheKseg0CacheOn
+                0x9fc020e4       0x18 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libmchp_peripheral_32MX795F512L.a(pcache.o)
+                0x9fc020e4                CheKseg0CacheOn
+ .text.INTDisableInterrupts
+                0x9fc020fc        0x8 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libmchp_peripheral_32MX795F512L.a(int_disable_interrupts_lib.o)
+                0x9fc020fc                INTDisableInterrupts
+ .text.INTRestoreInterrupts
+                0x9fc02104       0x1c c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libmchp_peripheral_32MX795F512L.a(int_restore_interrupts_lib.o)
+                0x9fc02104                INTRestoreInterrupts
+ .text.INTEnableSystemMultiVectoredInt
+                0x9fc02120       0x34 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libmchp_peripheral_32MX795F512L.a(int_enable_mv_int_lib.o)
+                0x9fc02120                INTEnableSystemMultiVectoredInt
+ .text.INTEnableInterrupts
+                0x9fc02154        0x8 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libmchp_peripheral_32MX795F512L.a(int_enable_interrupts_lib.o)
+                0x9fc02154                INTEnableInterrupts
+ *(.text.*personality*)
+ *(.gnu.warning)
+ *(.mips16.fn.*)
+ *(.mips16.call.*)
+                0x9fc0215c                _text_end = .
+
+.rodata         0x9fc0215c      0x12c
+ *(.rodata .rodata.* .gnu.linkonce.r.*)
+ .rodata        0x9fc0215c       0x90 build/UBW32_MX795/production/_ext/1472/avrbl.o
+ .rodata.str1.4
+                0x9fc021ec        0xc build/UBW32_MX795/production/_ext/1472/avrbl.o
+ .rodata.cdcacm_device_descriptor
+                0x9fc021f8       0x14 build/UBW32_MX795/production/_ext/592584297/cdcacm.o
+ .rodata.cdcacm_configuration_descriptor
+                0x9fc0220c       0x44 build/UBW32_MX795/production/_ext/592584297/cdcacm.o
+ .rodata.cdcacm_string_descriptor
+                0x9fc02250       0x38 build/UBW32_MX795/production/_ext/592584297/cdcacm.o
+ *(.rodata1)
+                0x9fc02288                . = ALIGN (0x4)
+
+.sdata2         0x9fc02288        0x0
+ *(.sdata2 .sdata2.* .gnu.linkonce.s2.*)
+                0x9fc02288                . = ALIGN (0x4)
+
+.sbss2          0x9fc02288        0x0
+ *(.sbss2 .sbss2.* .gnu.linkonce.sb2.*)
+                0x9fc02288                . = ALIGN (0x4)
+
+.eh_frame_hdr
+ *(.eh_frame_hdr)
+
+.eh_frame
+ *(.eh_frame)
+
+.dbg_data       0xa0000004        0x0
+                0xa0000004                . = (. + DEFINED (_DEBUGGER)?0x200:0x0)
+
+.data           0xa0000004        0x0 load address 0x9fc02288
+                0xa0000004                _data_begin = .
+ *(.data .data.* .gnu.linkonce.d.*)
+ *(.gnu.linkonce.d.*personality*)
+ *(.data1)
+                0x9fc02288                _data_image_begin = LOADADDR (.data)
+
+.eh_frame
+ *(.eh_frame)
+                0xa0000004                . = .
+                0xa0008000                _gp = (ALIGN (0x10) + 0x7ff0)
+
+.got
+ *(.got.plt)
+ *(.got)
+
+.sdata          0xa0000004        0xc load address 0x9fc02288
+                0xa0000004                _sdata_begin = .
+ *(.sdata .sdata.* .gnu.linkonce.s.*)
+ .sdata.state   0xa0000004        0x4 build/UBW32_MX795/production/_ext/1472/avrbl.o
+ .sdata.line_coding
+                0xa0000008        0x8 build/UBW32_MX795/production/_ext/592584297/cdcacm.o
+                0xa0000010                _sdata_end = .
+
+.lit8
+ *(.lit8)
+
+.lit4
+ *(.lit4)
+                0xa0000010                . = ALIGN (0x4)
+                0xa0000010                _data_end = .
+                0xa0000010                _bss_begin = .
+
+.sbss           0xa0000010       0x7c load address 0x9fc02294
+                0xa0000010                _sbss_begin = .
+ *(.dynsbss)
+ *(.sbss .sbss.* .gnu.linkonce.sb.*)
+ .sbss.cdcacm_attached
+                0xa0000010        0x1 build/UBW32_MX795/production/_ext/592584297/usb.o
+                0xa0000010                cdcacm_attached
+ *fill*         0xa0000011        0x3 00
+ .sbss.cdcacm_attached_count
+                0xa0000014        0x4 build/UBW32_MX795/production/_ext/592584297/usb.o
+                0xa0000014                cdcacm_attached_count
+ .sbss.bulk_in_ep
+                0xa0000018        0x1 build/UBW32_MX795/production/_ext/592584297/usb.o
+                0xa0000018                bulk_in_ep
+ .sbss.bulk_out_ep
+                0xa0000019        0x1 build/UBW32_MX795/production/_ext/592584297/usb.o
+                0xa0000019                bulk_out_ep
+ .sbss.int_ep   0xa000001a        0x1 build/UBW32_MX795/production/_ext/592584297/usb.o
+                0xa000001a                int_ep
+ *fill*         0xa000001b        0x1 00
+ .sbss.bdts     0xa000001c        0x4 build/UBW32_MX795/production/_ext/592584297/usb.o
+ .sbss.device_descriptor
+                0xa0000020        0x4 build/UBW32_MX795/production/_ext/592584297/usb.o
+ .sbss.device_descriptor_length
+                0xa0000024        0x4 build/UBW32_MX795/production/_ext/592584297/usb.o
+ .sbss.configuration_descriptor
+                0xa0000028        0x4 build/UBW32_MX795/production/_ext/592584297/usb.o
+ .sbss.configuration_descriptor_length
+                0xa000002c        0x4 build/UBW32_MX795/production/_ext/592584297/usb.o
+ .sbss.string_descriptor
+                0xa0000030        0x4 build/UBW32_MX795/production/_ext/592584297/usb.o
+ .sbss.string_descriptor_length
+                0xa0000034        0x4 build/UBW32_MX795/production/_ext/592584297/usb.o
+ .sbss.reset_cbfn
+                0xa0000038        0x4 build/UBW32_MX795/production/_ext/592584297/usb.o
+ .sbss.control_transfer_cbfn
+                0xa000003c        0x4 build/UBW32_MX795/production/_ext/592584297/usb.o
+ .sbss.bulk_transfer_cbfn
+                0xa0000040        0x4 build/UBW32_MX795/production/_ext/592584297/usb.o
+ .sbss.setup_buffer
+                0xa0000044        0x8 build/UBW32_MX795/production/_ext/592584297/usb.o
+ .sbss.next_address
+                0xa000004c        0x1 build/UBW32_MX795/production/_ext/592584297/usb.o
+ *fill*         0xa000004d        0x3 00
+ .sbss.cpu_frequency
+                0xa0000050        0x4 build/UBW32_MX795/production/_ext/1472/main.o
+                0xa0000050                cpu_frequency
+ .sbss.oscillator_frequency
+                0xa0000054        0x4 build/UBW32_MX795/production/_ext/1472/main.o
+                0xa0000054                oscillator_frequency
+ .sbss.bus_frequency
+                0xa0000058        0x4 build/UBW32_MX795/production/_ext/1472/main.o
+                0xa0000058                bus_frequency
+ .sbss.load_address.0
+                0xa000005c        0x4 build/UBW32_MX795/production/_ext/1472/avrbl.o
+ .sbss.active   0xa0000060        0x1 build/UBW32_MX795/production/_ext/1472/avrbl.o
+ *fill*         0xa0000061        0x3 00
+ .sbss.loaded   0xa0000064        0x4 build/UBW32_MX795/production/_ext/1472/avrbl.o
+ .sbss.loops    0xa0000068        0x4 build/UBW32_MX795/production/_ext/1472/avrbl.o
+ .sbss.erased   0xa000006c        0x1 build/UBW32_MX795/production/_ext/1472/avrbl.o
+ .sbss.seq      0xa000006d        0x1 build/UBW32_MX795/production/_ext/1472/avrbl.o
+ *fill*         0xa000006e        0x2 00
+ .sbss.size     0xa0000070        0x4 build/UBW32_MX795/production/_ext/1472/avrbl.o
+ .sbss.csum     0xa0000074        0x1 build/UBW32_MX795/production/_ext/1472/avrbl.o
+ .sbss.ready    0xa0000075        0x1 build/UBW32_MX795/production/_ext/1472/avrbl.o
+ *fill*         0xa0000076        0x2 00
+ .sbss.requesti
+                0xa0000078        0x4 build/UBW32_MX795/production/_ext/1472/avrbl.o
+ .sbss.replyi   0xa000007c        0x4 build/UBW32_MX795/production/_ext/1472/avrbl.o
+ .sbss.cdcacm_active
+                0xa0000080        0x1 build/UBW32_MX795/production/_ext/592584297/cdcacm.o
+                0xa0000080                cdcacm_active
+ *fill*         0xa0000081        0x3 00
+ .sbss.reset_cbfn
+                0xa0000084        0x4 build/UBW32_MX795/production/_ext/592584297/cdcacm.o
+ .sbss.rx_in    0xa0000088        0x1 build/UBW32_MX795/production/_ext/592584297/cdcacm.o
+ .sbss.rx_out   0xa0000089        0x1 build/UBW32_MX795/production/_ext/592584297/cdcacm.o
+ .sbss.discard  0xa000008a        0x1 build/UBW32_MX795/production/_ext/592584297/cdcacm.o
+ .sbss.waiting  0xa000008b        0x1 build/UBW32_MX795/production/_ext/592584297/cdcacm.o
+ *(.scommon)
+                0xa000008c                _sbss_end = .
+
+.bss            0xa0000200     0x10f0 load address 0x9fc02294
+ *(.dynbss)
+ *(.bss .bss.* .gnu.linkonce.b.*)
+ .bss.bdt_ram.0
+                0xa0000200      0x200 build/UBW32_MX795/production/_ext/592584297/usb.o
+ .bss.endpoints
+                0xa0000400      0x180 build/UBW32_MX795/production/_ext/592584297/usb.o
+                0xa0000400                endpoints
+ .bss.parameters.1
+                0xa0000580      0x100 build/UBW32_MX795/production/_ext/1472/avrbl.o
+ .bss.request   0xa0000680      0x400 build/UBW32_MX795/production/_ext/1472/avrbl.o
+ .bss.reply     0xa0000a80      0x400 build/UBW32_MX795/production/_ext/1472/avrbl.o
+ .bss.tx        0xa0000e80       0x40 build/UBW32_MX795/production/_ext/592584297/cdcacm.o
+ .bss.rx        0xa0000ec0      0x3f0 build/UBW32_MX795/production/_ext/592584297/cdcacm.o
+ .bss.rx_length
+                0xa00012b0       0x40 build/UBW32_MX795/production/_ext/592584297/cdcacm.o
+ *(COMMON)
+                0xa00012f0                . = ALIGN (0x4)
+                0xa00012f0                . = ALIGN (0x4)
+                0xa00012f0                _end = .
+                0xa00012f0                _bss_end = .
+
+.heap           0xa00012f0        0x0 load address 0x9fc02294
+                0xa00012f0                _heap = .
+                0xa00012f0                . = (. + _min_heap_size)
+                0xa00012f0                . = ALIGN (0x8)
+
+.stack          0xa00012f0      0x400 load address 0x9fc02294
+                0xa00012f0                _splim = .
+                0xa00012f0                _SPLIM = .
+                0xa0001ef0                . = (. + _min_stack_size)
+ *fill*         0xa00012f0      0x400 00
+                0xa00016f0                . = ALIGN (0x8)
+
+.ramfunc        0xa0001800        0x0 load address 0x9fc02294
+                0xa0001800                _ramfunc_begin = .
+ *(.ramfunc .ramfunc.*)
+                0xa0001800                . = ALIGN (0x4)
+                0xa0001800                _ramfunc_end = .
+                0x9fc02294                _ramfunc_image_begin = LOADADDR (.ramfunc)
+                0x00000000                _ramfunc_length = SIZEOF (.ramfunc)
+                0x000017fc                _bmxdkpba_address = (_ramfunc_begin - 0xa0000004)
+                0x00007ffc                _bmxdudba_address = 0x7ffc
+                0x00007ffc                _bmxdupba_address = 0x7ffc
+                0xa0008000                _stack = (_ramfunc_length > 0x0)?(_ramfunc_begin - 0x8):0xa0008000
+                0x00000001                ASSERT (((_min_stack_size + _min_heap_size) <= (_stack - _heap)), Not enough space to allocate both stack and heap.  Reduce heap and/or stack size.)
+
+.stab
+ *(.stab)
+
+.stabstr
+ *(.stabstr)
+
+.stab.excl
+ *(.stab.excl)
+
+.stab.exclstr
+ *(.stab.exclstr)
+
+.stab.index
+ *(.stab.index)
+
+.stab.indexstr
+ *(.stab.indexstr)
+
+.mdebug.abi32   0x00000000        0x0
+ .mdebug.abi32  0x00000000        0x0 build/UBW32_MX795/production/_ext/592584297/usb.o
+ .mdebug.abi32  0x00000000        0x0 build/UBW32_MX795/production/_ext/1472/main.o
+ .mdebug.abi32  0x00000000        0x0 build/UBW32_MX795/production/_ext/592584297/util.o
+ .mdebug.abi32  0x00000000        0x0 build/UBW32_MX795/production/_ext/1472/avrbl.o
+ .mdebug.abi32  0x00000000        0x0 build/UBW32_MX795/production/_ext/592584297/cdcacm.o
+ .mdebug.abi32  0x00000000        0x0 build/UBW32_MX795/production/_ext/592584297/flash.o
+ .mdebug.abi32  0x00000000        0x0 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libc.a(default-on-reset.o)
+ .mdebug.abi32  0x00000000        0x0 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libc.a(default-on-bootstrap.o)
+ .mdebug.abi32  0x00000000        0x0 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libmchp_peripheral_32MX795F512L.a(pcache.o)
+ .mdebug.abi32  0x00000000        0x0 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libmchp_peripheral_32MX795F512L.a(int_disable_interrupts_lib.o)
+ .mdebug.abi32  0x00000000        0x0 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libmchp_peripheral_32MX795F512L.a(int_restore_interrupts_lib.o)
+ .mdebug.abi32  0x00000000        0x0 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libmchp_peripheral_32MX795F512L.a(int_enable_mv_int_lib.o)
+ .mdebug.abi32  0x00000000        0x0 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libmchp_peripheral_32MX795F512L.a(int_enable_interrupts_lib.o)
+
+.comment        0x00000000      0x3e9
+ *(.comment)
+ .comment       0x00000000       0x4d build/UBW32_MX795/production/_ext/592584297/usb.o
+ .comment       0x0000004d       0x4d build/UBW32_MX795/production/_ext/1472/main.o
+ .comment       0x0000009a       0x4d build/UBW32_MX795/production/_ext/592584297/util.o
+ .comment       0x000000e7       0x4d build/UBW32_MX795/production/_ext/1472/avrbl.o
+ .comment       0x00000134       0x4d build/UBW32_MX795/production/_ext/592584297/cdcacm.o
+ .comment       0x00000181       0x4d build/UBW32_MX795/production/_ext/592584297/flash.o
+ .comment       0x000001ce       0x4d c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libc.a(default-on-reset.o)
+ .comment       0x0000021b       0x4d c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libc.a(default-on-bootstrap.o)
+ .comment       0x00000268       0x4d c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libmchp_peripheral_32MX795F512L.a(pcache.o)
+ .comment       0x000002b5       0x4d c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libmchp_peripheral_32MX795F512L.a(int_disable_interrupts_lib.o)
+ .comment       0x00000302       0x4d c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libmchp_peripheral_32MX795F512L.a(int_restore_interrupts_lib.o)
+ .comment       0x0000034f       0x4d c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libmchp_peripheral_32MX795F512L.a(int_enable_mv_int_lib.o)
+ .comment       0x0000039c       0x4d c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libmchp_peripheral_32MX795F512L.a(int_enable_interrupts_lib.o)
+
+.debug
+ *(.debug)
+
+.line
+ *(.line)
+
+.debug_srcinfo
+ *(.debug_srcinfo)
+
+.debug_sfnames
+ *(.debug_sfnames)
+
+.debug_aranges  0x00000000      0x120
+ *(.debug_aranges)
+ .debug_aranges
+                0x00000000       0x28 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libc.a(default-on-reset.o)
+ .debug_aranges
+                0x00000028       0x28 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libc.a(default-on-bootstrap.o)
+ .debug_aranges
+                0x00000050       0x30 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libmchp_peripheral_32MX795F512L.a(pcache.o)
+ .debug_aranges
+                0x00000080       0x28 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libmchp_peripheral_32MX795F512L.a(int_disable_interrupts_lib.o)
+ .debug_aranges
+                0x000000a8       0x28 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libmchp_peripheral_32MX795F512L.a(int_restore_interrupts_lib.o)
+ .debug_aranges
+                0x000000d0       0x28 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libmchp_peripheral_32MX795F512L.a(int_enable_mv_int_lib.o)
+ .debug_aranges
+                0x000000f8       0x28 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libmchp_peripheral_32MX795F512L.a(int_enable_interrupts_lib.o)
+
+.debug_pubnames
+                0x00000000      0x135
+ *(.debug_pubnames)
+ .debug_pubnames
+                0x00000000       0x20 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libc.a(default-on-reset.o)
+ .debug_pubnames
+                0x00000020       0x24 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libc.a(default-on-bootstrap.o)
+ .debug_pubnames
+                0x00000044       0x3b c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libmchp_peripheral_32MX795F512L.a(pcache.o)
+ .debug_pubnames
+                0x0000007f       0x2b c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libmchp_peripheral_32MX795F512L.a(int_disable_interrupts_lib.o)
+ .debug_pubnames
+                0x000000aa       0x2b c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libmchp_peripheral_32MX795F512L.a(int_restore_interrupts_lib.o)
+ .debug_pubnames
+                0x000000d5       0x36 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libmchp_peripheral_32MX795F512L.a(int_enable_mv_int_lib.o)
+ .debug_pubnames
+                0x0000010b       0x2a c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libmchp_peripheral_32MX795F512L.a(int_enable_interrupts_lib.o)
+
+.debug_info     0x00000000      0x164
+ *(.debug_info .gnu.linkonce.wi.*)
+ .debug_info    0x00000000       0x31 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libc.a(default-on-reset.o)
+ .debug_info    0x00000031       0x31 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libc.a(default-on-bootstrap.o)
+ .debug_info    0x00000062       0x42 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libmchp_peripheral_32MX795F512L.a(pcache.o)
+ .debug_info    0x000000a4       0x30 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libmchp_peripheral_32MX795F512L.a(int_disable_interrupts_lib.o)
+ .debug_info    0x000000d4       0x30 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libmchp_peripheral_32MX795F512L.a(int_restore_interrupts_lib.o)
+ .debug_info    0x00000104       0x30 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libmchp_peripheral_32MX795F512L.a(int_enable_mv_int_lib.o)
+ .debug_info    0x00000134       0x30 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libmchp_peripheral_32MX795F512L.a(int_enable_interrupts_lib.o)
+
+.debug_abbrev   0x00000000       0xf9
+ *(.debug_abbrev)
+ .debug_abbrev  0x00000000       0x25 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libc.a(default-on-reset.o)
+ .debug_abbrev  0x00000025       0x25 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libc.a(default-on-bootstrap.o)
+ .debug_abbrev  0x0000004a       0x23 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libmchp_peripheral_32MX795F512L.a(pcache.o)
+ .debug_abbrev  0x0000006d       0x23 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libmchp_peripheral_32MX795F512L.a(int_disable_interrupts_lib.o)
+ .debug_abbrev  0x00000090       0x23 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libmchp_peripheral_32MX795F512L.a(int_restore_interrupts_lib.o)
+ .debug_abbrev  0x000000b3       0x23 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libmchp_peripheral_32MX795F512L.a(int_enable_mv_int_lib.o)
+ .debug_abbrev  0x000000d6       0x23 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libmchp_peripheral_32MX795F512L.a(int_enable_interrupts_lib.o)
+
+.debug_line     0x00000000      0x4a5
+ *(.debug_line)
+ .debug_line    0x00000000       0xa9 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libc.a(default-on-reset.o)
+ .debug_line    0x000000a9       0xad c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libc.a(default-on-bootstrap.o)
+ .debug_line    0x00000156       0x9d c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libmchp_peripheral_32MX795F512L.a(pcache.o)
+ .debug_line    0x000001f3       0xae c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libmchp_peripheral_32MX795F512L.a(int_disable_interrupts_lib.o)
+ .debug_line    0x000002a1       0xae c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libmchp_peripheral_32MX795F512L.a(int_restore_interrupts_lib.o)
+ .debug_line    0x0000034f       0xa9 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libmchp_peripheral_32MX795F512L.a(int_enable_mv_int_lib.o)
+ .debug_line    0x000003f8       0xad c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libmchp_peripheral_32MX795F512L.a(int_enable_interrupts_lib.o)
+
+.debug_frame    0x00000000       0xf8
+ *(.debug_frame)
+ .debug_frame   0x00000000       0x20 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libc.a(default-on-reset.o)
+ .debug_frame   0x00000020       0x20 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libc.a(default-on-bootstrap.o)
+ .debug_frame   0x00000040       0x30 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libmchp_peripheral_32MX795F512L.a(pcache.o)
+ .debug_frame   0x00000070       0x20 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libmchp_peripheral_32MX795F512L.a(int_disable_interrupts_lib.o)
+ .debug_frame   0x00000090       0x20 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libmchp_peripheral_32MX795F512L.a(int_restore_interrupts_lib.o)
+ .debug_frame   0x000000b0       0x28 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libmchp_peripheral_32MX795F512L.a(int_enable_mv_int_lib.o)
+ .debug_frame   0x000000d8       0x20 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libmchp_peripheral_32MX795F512L.a(int_enable_interrupts_lib.o)
+
+.debug_str      0x00000000      0x483
+ *(.debug_str)
+ .debug_str     0x00000000       0xca c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libc.a(default-on-reset.o)
+ .debug_str     0x000000ca       0x8b c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libc.a(default-on-bootstrap.o)
+                                 0xd2 (size before relaxing)
+ .debug_str     0x00000155       0x9e c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libmchp_peripheral_32MX795F512L.a(pcache.o)
+                                 0xe5 (size before relaxing)
+ .debug_str     0x000001f3       0xa3 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libmchp_peripheral_32MX795F512L.a(int_disable_interrupts_lib.o)
+                                 0xea (size before relaxing)
+ .debug_str     0x00000296       0xa3 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libmchp_peripheral_32MX795F512L.a(int_restore_interrupts_lib.o)
+                                 0xea (size before relaxing)
+ .debug_str     0x00000339       0xa9 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libmchp_peripheral_32MX795F512L.a(int_enable_mv_int_lib.o)
+                                 0xf0 (size before relaxing)
+ .debug_str     0x000003e2       0xa1 c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libmchp_peripheral_32MX795F512L.a(int_enable_interrupts_lib.o)
+                                 0xe8 (size before relaxing)
+
+.debug_loc
+ *(.debug_loc)
+
+.debug_macinfo  0x00000000     0x125e
+ *(.debug_macinfo)
+ .debug_macinfo
+                0x00000000      0x92f c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libc.a(default-on-reset.o)
+ .debug_macinfo
+                0x0000092f      0x92f c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libc.a(default-on-bootstrap.o)
+
+.debug_weaknames
+ *(.debug_weaknames)
+
+.debug_funcnames
+ *(.debug_funcnames)
+
+.debug_typenames
+ *(.debug_typenames)
+
+.debug_varnames
+ *(.debug_varnames)
+                0x00000000                _min_heap_size = 0x0
+                0x00000c00                _min_stack_size = 0xc00
+LOAD c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4\libgcc.a
+START GROUP
+LOAD c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libdebug.a
+LOAD c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libc.a
+LOAD c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libm.a
+LOAD c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libe.a
+LOAD c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libdsp.a
+LOAD c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libmchp_peripheral.a
+LOAD c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib\libmchp_peripheral_32MX795F512L.a
+END GROUP
+LOAD c:/Program Files/Microchip/mplabc32/v1.12/bin/../lib/gcc/pic32mx/3.4.4\libgcc.a
+OUTPUT(dist/UBW32_MX795/production/pic32.X.production.elf elf32-tradlittlemips)

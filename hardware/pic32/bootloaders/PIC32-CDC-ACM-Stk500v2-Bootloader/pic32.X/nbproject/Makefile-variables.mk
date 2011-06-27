@@ -1,0 +1,34 @@
+#
+# Generated - do not edit!
+#
+# NOCDDL
+#
+CND_BASEDIR=`pwd`
+# default configuration
+CND_ARTIFACT_DIR_default=dist/default/production
+CND_ARTIFACT_NAME_default=pic32.X.production.elf
+CND_ARTIFACT_PATH_default=dist/default/production/pic32.X.production.elf
+CND_PACKAGE_DIR_default=${CND_DISTDIR}/default/package
+CND_PACKAGE_NAME_default=pic32.x.tar
+CND_PACKAGE_PATH_default=${CND_DISTDIR}/default/package/pic32.x.tar
+# UBW32_MX460 configuration
+CND_ARTIFACT_DIR_UBW32_MX460=dist/UBW32_MX460/production
+CND_ARTIFACT_NAME_UBW32_MX460=pic32.X.production.elf
+CND_ARTIFACT_PATH_UBW32_MX460=dist/UBW32_MX460/production/pic32.X.production.elf
+CND_PACKAGE_DIR_UBW32_MX460=${CND_DISTDIR}/UBW32_MX460/package
+CND_PACKAGE_NAME_UBW32_MX460=pic32.x.tar
+CND_PACKAGE_PATH_UBW32_MX460=${CND_DISTDIR}/UBW32_MX460/package/pic32.x.tar
+# UBW32_MX795 configuration
+CND_ARTIFACT_DIR_UBW32_MX795=dist/UBW32_MX795/production
+CND_ARTIFACT_NAME_UBW32_MX795=pic32.X.production.elf
+CND_ARTIFACT_PATH_UBW32_MX795=dist/UBW32_MX795/production/pic32.X.production.elf
+CND_PACKAGE_DIR_UBW32_MX795=${CND_DISTDIR}/UBW32_MX795/package
+CND_PACKAGE_NAME_UBW32_MX795=pic32.x.tar
+CND_PACKAGE_PATH_UBW32_MX795=${CND_DISTDIR}/UBW32_MX795/package/pic32.x.tar
+# CUI32_MX440 configuration
+CND_ARTIFACT_DIR_CUI32_MX440=dist/CUI32_MX440/production
+CND_ARTIFACT_NAME_CUI32_MX440=pic32.X.production.elf
+CND_ARTIFACT_PATH_CUI32_MX440=dist/CUI32_MX440/production/pic32.X.production.elf
+CND_PACKAGE_DIR_CUI32_MX440=${CND_DISTDIR}/CUI32_MX440/package
+CND_PACKAGE_NAME_CUI32_MX440=pic32.x.tar
+CND_PACKAGE_PATH_CUI32_MX440=${CND_DISTDIR}/CUI32_MX440/package/pic32.x.tar
