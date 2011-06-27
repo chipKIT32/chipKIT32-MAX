@@ -268,7 +268,7 @@ cui32.platform=pic32
 cui32.board=_BOARD_CUI32_
 cui32.define=anything_you_want
 cui32.ccflags=ffff
-cui32.ldscript=chipKIT-application-32MX460F512L.ld
+cui32.ldscript=chipKIT-application-32MX440F512H.ld
 # end of new items
 
 cui32.upload.protocol=stk500v2
@@ -283,7 +283,7 @@ cui32.bootloader.file=not-supported
 cui32.bootloader.unlock_bits=0x3F
 cui32.bootloader.lock_bits=0x0F
 
-cui32.build.mcu=32MX460F512L
+cui32.build.mcu=32MX440F512H
 cui32.build.f_cpu=80000000L
 cui32.build.core=pic32
 #cui32.upload.using=
