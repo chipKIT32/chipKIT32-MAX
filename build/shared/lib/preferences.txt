@@ -241,6 +241,8 @@ board = uno
 target = arduino
 platform = avr
 
+programmer = arduino:avrispmkii
+
 upload.using = bootloader
 
 serial.port=COM1

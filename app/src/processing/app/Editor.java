@@ -706,10 +706,17 @@ static Logger logger = Logger.getLogger(Base.class.getName());
 	  
     menu.addSeparator();
 
-    JMenu bootloaderMenu = new JMenu("Burn Bootloader");
-    base.rebuildBurnBootloaderMenu(bootloaderMenu);
-    menu.add(bootloaderMenu);
-        
+    JMenu programmerMenu = new JMenu("Programmer");
+    base.rebuildProgrammerMenu(programmerMenu);
+    menu.add(programmerMenu);
+
+    item = new JMenuItem("Burn Bootloader");
+    item.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        handleBurnBootloader();
+      }
+    });
+    menu.add(item);        
     menu.addMenuListener(new MenuListener() {
       public void menuCanceled(MenuEvent e) {}
       public void menuDeselected(MenuEvent e) {}
@@ -2413,6 +2420,7 @@ static Logger logger = Logger.getLogger(Base.class.getName());
   }
 
 
+ /*
   protected void handleBurnBootloader(final String target, final String programmer) {
     console.clear();
     statusNotice("Burning bootloader to I/O Board (this may take a minute)...");
@@ -2420,13 +2428,41 @@ static Logger logger = Logger.getLogger(Base.class.getName());
       public void run() {
         try {
         	Uploader uploader = new AvrdudeUploader();
+        	*/
         /*	
         	if (Base.getBoardPreferences().get("upload.using").equals("picdude")) 
     		{
     	 		uploader = new PicdudeUploader();
     		}
           */
+          /*
           if (uploader.burnBootloader(target, programmer)) {
+            statusNotice("Done burning bootloader.");
+          } else {
+            statusError("Error while burning bootloader.");
+            // error message will already be visible
+          }
+        } catch (RunnerException e) {
+          statusError("Error while burning bootloader.");
+          e.printStackTrace();
+          //statusError(e);
+        } catch (Exception e) {
+          statusError("Error while burning bootloader.");
+          e.printStackTrace();
+        }
+      }});
+  }
+*/
+
+
+  protected void handleBurnBootloader() {
+    console.clear();
+    statusNotice("Burning bootloader to I/O Board (this may take a minute)...");
+    SwingUtilities.invokeLater(new Runnable() {
+      public void run() {
+        try {
+          Uploader uploader = new AvrdudeUploader();
+          if (uploader.burnBootloader()) {
             statusNotice("Done burning bootloader.");
           } else {
             statusError("Error while burning bootloader.");
