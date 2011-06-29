@@ -243,7 +243,7 @@ platform = avr
 
 programmer = arduino:avrispmkii
 
-upload.using = bootloader
+upload.using = avrdude
 
 serial.port=COM1
 serial.databits=8
