@@ -1,0 +1,35 @@
+[Version]
+Signature="$Windows NT$"
+Class=Ports
+ClassGuid={4D36E978-E325-11CE-BFC1-08002BE10318}
+Provider=%ProviderName%
+DriverVer=10/15/2009,1.0.0.0
+
+[MANUFACTURER]
+%ProviderName%=DeviceList, NTx86, NTamd64
+
+[DeviceList.NTx86]
+%Stk500v2%=DriverInstall,USB\VID_0403&PID_A662
+
+[DeviceList.NTamd64]
+%Stk500v2%=DriverInstall,USB\VID_0403&PID_A662
+
+[DefaultInstall]
+CopyInf=Stk500v2.inf
+
+[DriverInstall]
+include=mdmcpq.inf
+CopyFiles=FakeModemCopyFileSection
+AddReg=LowerFilterAddReg,SerialPropPageAddReg
+
+[DriverInstall.Services]
+include = mdmcpq.inf
+AddService = usbser, 0x00000002, LowerFilter_Service_Inst
+
+; This adds the serial port property tab to the device properties dialog
+[SerialPropPageAddReg]
+HKR,,EnumPropPages32,,"MsPorts.dll,SerialPortPropPageProvider"
+
+[Strings]
+ProviderName = "www.cpustick.com"
+Stk500v2 = "Stk500v2"

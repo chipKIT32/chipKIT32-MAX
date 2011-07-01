@@ -382,7 +382,7 @@ cui32.platform=pic32
 cui32.board=_BOARD_CUI32_
 cui32.define=anything_you_want
 cui32.ccflags=ffff
-cui32.ldscript=chipKIT-application-32MX460F512L.ld
+cui32.ldscript=chipKIT-application-32MX440F512H.ld
 # end of new items
 
 cui32.upload.protocol=stk500v2
