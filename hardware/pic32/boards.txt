@@ -60,6 +60,33 @@ mega_pic32.build.f_cpu=80000000L
 mega_pic32.build.core=pic32
 #mega_pic32.upload.using=
 
+############################################################
+mega_usb_pic32.name=chipKIT MAX32-USB for Serial
+
+# new items
+mega_usb_pic32.platform=pic32
+mega_usb_pic32.board=_BOARD_MEGA_USB_
+mega_usb_pic32.define=anything_you_want
+mega_usb_pic32.ccflags=ffff
+mega_usb_pic32.ldscript=chipKIT-MAX32-application-32MX795F512L.ld
+# end of new items
+
+mega_usb_pic32.upload.protocol=stk500v2
+mega_usb_pic32.upload.maximum_size=520192
+mega_usb_pic32.upload.speed=115200
+
+mega_usb_pic32.bootloader.low_fuses=0xff
+mega_usb_pic32.bootloader.high_fuses=0xdd
+mega_usb_pic32.bootloader.extended_fuses=0x00
+mega_usb_pic32.bootloader.path=not-supported
+mega_usb_pic32.bootloader.file=not-supported
+mega_usb_pic32.bootloader.unlock_bits=0x3F
+mega_usb_pic32.bootloader.lock_bits=0x0F
+
+mega_usb_pic32.build.mcu=32MX795F512L
+mega_usb_pic32.build.f_cpu=80000000L
+mega_usb_pic32.build.core=pic32
+#mega_usb_pic32.upload.using=
 
 ############################################################
 mc_pic32_starterkit.name=Microchip PIC32 Starter kit
@@ -119,6 +146,34 @@ mc_pic32_ethernet_starterkit.build.core=pic32
 #mc_pic32_ethernet_starterkit.upload.using=
 
 ############################################################
+mc_pic32_usb_starterkit.name=Microchip PIC32 USB Starter kit
+
+# new items
+mc_pic32_usb_starterkit.platform=pic32
+mc_pic32_usb_starterkit.board=_BOARD_PIC32_USB_STARTER_KIT_
+mc_pic32_usb_starterkit.define=anything_you_want
+mc_pic32_usb_starterkit.ccflags=ffff
+mc_pic32_usb_starterkit.ldscript=chipKIT-MAX32-application-32MX795F512L.ld
+# end of new items
+
+mc_pic32_usb_starterkit.upload.protocol=stk500v2
+mc_pic32_usb_starterkit.upload.maximum_size=520192
+mc_pic32_usb_starterkit.upload.speed=115200
+
+mc_pic32_usb_starterkit.bootloader.low_fuses=0xff
+mc_pic32_usb_starterkit.bootloader.high_fuses=0xdd
+mc_pic32_usb_starterkit.bootloader.extended_fuses=0x00
+mc_pic32_usb_starterkit.bootloader.path=not-supported
+mc_pic32_usb_starterkit.bootloader.file=not-supported
+mc_pic32_usb_starterkit.bootloader.unlock_bits=0x3F
+mc_pic32_usb_starterkit.bootloader.lock_bits=0x0F
+
+mc_pic32_usb_starterkit.build.mcu=32MX795F512L
+mc_pic32_usb_starterkit.build.f_cpu=80000000L
+mc_pic32_usb_starterkit.build.core=pic32
+#mc_pic32_usb_starterkit.upload.using=
+
+############################################################
 mc_pic32_explorer16.name=Microchip PIC32 Explorer 16
 
 # new items
@@ -145,6 +200,65 @@ mc_pic32_explorer16.build.mcu=32MX360F512L
 mc_pic32_explorer16.build.f_cpu=80000000L
 mc_pic32_explorer16.build.core=pic32
 #mc_pic32_explorer16.upload.using=
+
+############################################################
+cerebot32mx4.name=Cerebot 32MX4
+
+# new items
+cerebot32mx4.platform=pic32
+cerebot32mx4.board=_BOARD_CEREBOT_32MX4_
+cerebot32mx4.define=anything_you_want
+cerebot32mx4.ccflags=ffff
+cerebot32mx4.ldscript=chipKIT-application-32MX460F512L.ld
+# end of new items
+
+cerebot32mx4.upload.protocol=stk500v2
+cerebot32mx4.upload.maximum_size=520192
+cerebot32mx4.upload.speed=115200
+
+cerebot32mx4.bootloader.low_fuses=0xff
+cerebot32mx4.bootloader.high_fuses=0xdd
+cerebot32mx4.bootloader.extended_fuses=0x00
+cerebot32mx4.bootloader.path=not-supported
+cerebot32mx4.bootloader.file=not-supported
+cerebot32mx4.bootloader.unlock_bits=0x3F
+cerebot32mx4.bootloader.lock_bits=0x0F
+
+cerebot32mx4.build.mcu=32MX460F512L
+cerebot32mx4.build.f_cpu=80000000L
+cerebot32mx4.build.core=pic32
+#cerebot32mx4.upload.using=
+
+
+############################################################
+cerebot32mx7.name=Cerebot 32MX7
+
+# new items
+cerebot32mx7.platform=pic32
+cerebot32mx7.board=_BOARD_CEREBOT_32MX7_
+cerebot32mx7.define=anything_you_want
+cerebot32mx7.ccflags=ffff
+cerebot32mx7.ldscript=chipKIT-MAX32-application-32MX795F512L.ld
+# end of new items
+
+cerebot32mx7.upload.protocol=stk500v2
+cerebot32mx7.upload.maximum_size=520192
+cerebot32mx7.upload.speed=115200
+
+cerebot32mx7.bootloader.low_fuses=0xff
+cerebot32mx7.bootloader.high_fuses=0xdd
+cerebot32mx7.bootloader.extended_fuses=0x00
+cerebot32mx7.bootloader.path=not-supported
+cerebot32mx7.bootloader.file=not-supported
+cerebot32mx7.bootloader.unlock_bits=0x3F
+cerebot32mx7.bootloader.lock_bits=0x0F
+
+cerebot32mx7.build.mcu=32MX795F512L
+cerebot32mx7.build.f_cpu=80000000L
+cerebot32mx7.build.core=pic32
+#cerebot32mx7.upload.using=
+
+
 
 ############################################################
 mikroe_multimedia.name=MirkoElektronika PIC32 Multimedia Board
@@ -203,61 +317,61 @@ mikroe_mikromedia.build.core=pic32
 #mikroe_mikromedia.upload.using=
 
 ############################################################
-ubw32mx460.name=UBW32 MX460
+ubw32_mx460.name=Pic32 UBW32-MX460
 
 # new items
-ubw32mx460.platform=pic32
-ubw32mx460.board=_BOARD_UBW32_MX460_
-ubw32mx460.define=anything_you_want
-ubw32mx460.ccflags=ffff
-ubw32mx460.ldscript=chipKIT-application-32MX460F512L.ld
+ubw32_mx460.platform=pic32
+ubw32_mx460.board=_BOARD_UBW32_MX460_
+ubw32_mx460.define=anything_you_want
+ubw32_mx460.ccflags=ffff
+ubw32_mx460.ldscript=chipKIT-application-32MX460F512L.ld
 # end of new items
 
-ubw32mx460.upload.protocol=stk500v2
-ubw32mx460.upload.maximum_size=520192
-ubw32mx460.upload.speed=115200
+ubw32_mx460.upload.protocol=stk500v2
+ubw32_mx460.upload.maximum_size=520192
+ubw32_mx460.upload.speed=115200
 
-ubw32mx460.bootloader.low_fuses=0xff
-ubw32mx460.bootloader.high_fuses=0xdd
-ubw32mx460.bootloader.extended_fuses=0x00
-ubw32mx460.bootloader.path=not-supported
-ubw32mx460.bootloader.file=not-supported
-ubw32mx460.bootloader.unlock_bits=0x3F
-ubw32mx460.bootloader.lock_bits=0x0F
+ubw32_mx460.bootloader.low_fuses=0xff
+ubw32_mx460.bootloader.high_fuses=0xdd
+ubw32_mx460.bootloader.extended_fuses=0x00
+ubw32_mx460.bootloader.path=not-supported
+ubw32_mx460.bootloader.file=not-supported
+ubw32_mx460.bootloader.unlock_bits=0x3F
+ubw32_mx460.bootloader.lock_bits=0x0F
 
-ubw32mx460.build.mcu=32MX460F512L
-ubw32mx460.build.f_cpu=80000000L
-ubw32mx460.build.core=pic32
-#ubw32mx460.upload.using=
+ubw32_mx460.build.mcu=32MX460F512L
+ubw32_mx460.build.f_cpu=80000000L
+ubw32_mx460.build.core=pic32
+#ubw32_mx460.upload.using=
 
 
 ############################################################
-ubw32mx795.name=UBW32 MX795
+ubw32_mx795.name=Pic32 UBW32-MX795
 
 # new items
-ubw32mx795.platform=pic32
-ubw32mx795.board=_BOARD_UBW32_MX795_
-ubw32mx795.define=anything_you_want
-ubw32mx795.ccflags=ffff
-ubw32mx795.ldscript=chipKIT-MAX32-application-32MX795F512L.ld
+ubw32_mx795.platform=pic32
+ubw32_mx795.board=_BOARD_UBW32_MX795_
+ubw32_mx795.define=anything_you_want
+ubw32_mx795.ccflags=ffff
+ubw32_mx795.ldscript=chipKIT-MAX32-application-32MX795F512L.ld
 # end of new items
 
-ubw32mx795.upload.protocol=stk500v2
-ubw32mx795.upload.maximum_size=520192
-ubw32mx795.upload.speed=115200
+ubw32_mx795.upload.protocol=stk500v2
+ubw32_mx795.upload.maximum_size=520192
+ubw32_mx795.upload.speed=115200
 
-ubw32mx795.bootloader.low_fuses=0xff
-ubw32mx795.bootloader.high_fuses=0xdd
-ubw32mx795.bootloader.extended_fuses=0x00
-ubw32mx795.bootloader.path=not-supported
-ubw32mx795.bootloader.file=not-supported
-ubw32mx795.bootloader.unlock_bits=0x3F
-ubw32mx795.bootloader.lock_bits=0x0F
+ubw32_mx795.bootloader.low_fuses=0xff
+ubw32_mx795.bootloader.high_fuses=0xdd
+ubw32_mx795.bootloader.extended_fuses=0x00
+ubw32_mx795.bootloader.path=not-supported
+ubw32_mx795.bootloader.file=not-supported
+ubw32_mx795.bootloader.unlock_bits=0x3F
+ubw32_mx795.bootloader.lock_bits=0x0F
 
-ubw32mx795.build.mcu=32MX795F512L
-ubw32mx795.build.f_cpu=80000000L
-ubw32mx795.build.core=pic32
-#ubw32mx795.upload.using=
+ubw32_mx795.build.mcu=32MX795F512L
+ubw32_mx795.build.f_cpu=80000000L
+ubw32_mx795.build.core=pic32
+#ubw32_mx795.upload.using=
 
 
 ############################################################
