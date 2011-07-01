@@ -175,7 +175,7 @@ const uint32_t port_to_input_PGM[] =
 //************************************************************************
 
 
-#if defined (_BOARD_MEGA_)
+#if defined (_BOARD_MEGA_) || defined(_BOARD_MEGA_USB_)
 	#include	"pins_arduino_pic32_mega.cxx"
 #elif defined (_BOARD_UNO_)
 	#include	"pins_arduino_pic32_uno.cxx"

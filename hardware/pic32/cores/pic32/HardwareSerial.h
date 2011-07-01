@@ -8,6 +8,8 @@
 //************************************************************************
 //*	Oct 12,	2010	Got MPLAB X working on MacOSX 1.6 for the first time
 //*	May 25, 2011	<MLS> Added support for Uart2 on UNO32
+//*	Jun 24,	2011	<MLS> Adding USB support fore Serial.xxx
+//*	Jun 29,	2011	<MLS> USB support only compiles if enabled
 //************************************************************************
 /*
   HardwareSerial.h - Hardware serial library for Wiring
@@ -35,7 +37,22 @@
 #include <inttypes.h>
 #include <plib.h>
 
-#include "Print.h"
+#ifdef __cplusplus
+	#include "Print.h"
+#endif
+
+
+#if defined(_BOARD_MEGA_USB_)
+	#define _USE_USB_FOR_SERIAL_
+#endif
+#if defined(_BOARD_UBW32_MX460_) || defined(_BOARD_UBW32_MX795_)
+	#define _USE_USB_FOR_SERIAL_
+#endif
+#if defined(_BOARD_CEREBOT_32MX4_) || defined(_BOARD_CEREBOT_32MX7_)
+	#define _USE_USB_FOR_SERIAL_
+#endif
+
+
 
 //#undef _UART3A
 //#undef _UART3B
@@ -115,6 +132,7 @@ typedef struct
 	int tail;
 } ring_buffer;
 
+#ifdef __cplusplus
 
 //*******************************************************************************************
 class HardwareSerial : public Print
@@ -146,7 +164,48 @@ class HardwareSerial : public Print
 		using	Print::write; // pull in write(str) and write(buf, size) from Print
 };
 
-#if defined(_BOARD_MEGA_)
+#if defined(_USB)
+//*******************************************************************************************
+class USBSerial : public Print
+{
+	private:
+		ring_buffer				*_rx_buffer;
+		
+	public:
+		USBSerial	(ring_buffer	*rx_buffer);
+
+		void			begin(long baudRate);
+		void			end();
+		uint8_t			available(void);
+		int				read(void);
+		void			flush(void);
+		virtual	void	write(uint8_t);
+	    virtual void	write(const char *str);
+    	virtual void	write(const uint8_t *buffer, size_t size);
+
+		using	Print::write; // pull in write(str) and write(buf, size) from Print
+};
+
+#endif	//	USB
+
+
+
+
+#if defined(_USB) && defined(_USE_USB_FOR_SERIAL_)
+		extern USBSerial Serial;
+		extern HardwareSerial Serial0;
+		extern HardwareSerial Serial1;
+		extern HardwareSerial Serial2;
+		extern HardwareSerial Serial3;
+	#if defined (_UART2A)
+		extern HardwareSerial Serial4;
+	#endif
+	#if defined (_UART2B)
+		extern HardwareSerial Serial5;
+	#endif
+
+
+#elif defined(_BOARD_MEGA_)
 	extern HardwareSerial Serial;
 	extern HardwareSerial Serial1;
 	extern HardwareSerial Serial2;
@@ -193,5 +252,8 @@ class HardwareSerial : public Print
 		#define	_HARDWARE_SERIAL_5_AVAILABLE_	
 	#endif
 #endif
+
+#endif	//	__cplusplus
+
 
 #endif		//	HardwareSerial_h

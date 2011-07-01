@@ -32,6 +32,10 @@
 //*			etc
 //*
 //************************************************************************
+//*	USB support
+//*		If USB is enabled, the first serial port (Serial.xxx) is redirected to USB
+//*		Serial0.xxx then takes over for the 1st uart in case the programmer needs to use it as well
+//************************************************************************
 //*	Edit History
 //************************************************************************
 //*	Oct 12,	2010	<MLS> Got MPLAB X working on MacOSX 1.6 for the first time
@@ -45,6 +49,7 @@
 //*	Apr 13,	2011	<MLS> Support for UART4 is NOT finished
 //*	May 25, 2011	<MLS> Added support for Uart2 on UNO32
 //*	Jun 17,	2011	<MLS> Added Serial4 and Serial5 for MEGA32, ISRs not finished
+//*	Jun 24,	2011	<MLS> Adding USB support, code from Rich Testardi (http://www.cpustick.com/downloads.htm)
 //************************************************************************
 #define __LANGUAGE_C__
 
@@ -60,6 +65,9 @@
 
 #include "HardwareSerial.h"
 
+#if defined(_USE_USB_FOR_SERIAL_)
+	#define	_DEBUG_USB_VIA_SERIAL0_
+#endif
 
 //*	defines for kSerialPort_x are in "HardwareSerial.h"
 #if defined(_UART1) && !defined(_UART1A)
@@ -719,23 +727,226 @@ unsigned char theChar;
 
 //*******************************************************************************************
 
+#pragma mark -
+#pragma mark -----------------USB support
+#if defined(_USB)
+
+#include	"HardwareSerial_cdcacm.h"
+#include	"HardwareSerial_usb.h"
+
+ring_buffer rx_bufferUSB = { { 0 }, 0, 0 };
+
+//****************************************************************
+void	USBresetRoutine(void)
+{
+	
+}
+
+//****************************************************************
+boolean	USBstoreDataRoutine(const byte *buffer, int length)
+{
+unsigned int	ii;
+
+	for (ii=0; ii<length; ii++)
+	{
+		store_char(buffer[ii], &rx_bufferUSB);
+	}
+}
 
 
 //*******************************************************************************************
-#if defined(_BOARD_MEGA_)
-		HardwareSerial Serial(	kSerialPort_1A,	&rx_buffer1A,	&U1ABRG,	&U1AMODE,	&U1ASTA,	&U1ATXREG);
-		HardwareSerial Serial1(	kSerialPort_1B,	&rx_buffer1B,	&U1BBRG,	&U1BMODE,	&U1BSTA,	&U1BTXREG);
-		HardwareSerial Serial2(	kSerialPort_3A,	&rx_buffer3A,	&U3ABRG,	&U3AMODE,	&U3ASTA,	&U3ATXREG);
-		HardwareSerial Serial3(	kSerialPort_3B,	&rx_buffer3B,	&U3BBRG,	&U3BMODE,	&U3BSTA,	&U3BTXREG);
+USBSerial::USBSerial(ring_buffer	*rx_buffer)
+{
+	_rx_buffer			=	rx_buffer;
+	_rx_buffer->head	=	0;
+	_rx_buffer->tail	=	0;
+}
+
+#ifdef _DEBUG_USB_VIA_SERIAL0_
+	#define	DebugViaSerial0(x)	Serial0.println(x)
+#else
+	#define	DebugViaSerial0(x)
+#endif
 
 
+//*******************************************************************************************
+void USBSerial::begin(long baudRate)
+{
+	DebugViaSerial0("USBSerial::begin");
+
+	DebugViaSerial0("calling usb_initialize");
+	usb_initialize();
+	DebugViaSerial0("returned from usb_initialize");
+
+	cdcacm_register(USBresetRoutine, USBstoreDataRoutine);
+	DebugViaSerial0("returned from cdcacm_register");
+
+	// Must enable glocal interrupts - in this case, we are using multi-vector mode
+    INTEnableSystemMultiVectoredInt();
+	DebugViaSerial0("INTEnableSystemMultiVectoredInt");
+
+}
+
+
+//*******************************************************************************************
+void USBSerial::end()
+{
+}
+
+//*******************************************************************************************
+uint8_t USBSerial::available(void)
+{
+	return (RX_BUFFER_SIZE + _rx_buffer->head - _rx_buffer->tail) % RX_BUFFER_SIZE;
+}
+
+//*******************************************************************************************
+int USBSerial::read(void)
+{
+	unsigned char theChar;
+
+	// if the head isn't ahead of the tail, we don't have any characters
+	if (_rx_buffer->head == _rx_buffer->tail)
+	{
+		return -1;
+	}
+	else
+	{
+		theChar				=	_rx_buffer->buffer[_rx_buffer->tail];
+		_rx_buffer->tail	=	(_rx_buffer->tail + 1) % RX_BUFFER_SIZE;
+		return (theChar);
+	}
+}
+
+//*******************************************************************************************
+void USBSerial::flush()
+{
+	// don't reverse this or there may be problems if the RX interrupt
+	// occurs after reading the value of rx_buffer_head but before writing
+	// the value to rx_buffer_tail; the previous value of rx_buffer_head
+	// may be written to rx_buffer_tail, making it appear as if the buffer
+	// don't reverse this or there may be problems if the RX interrupt
+	// occurs after reading the value of rx_buffer_head but before writing
+	// the value to rx_buffer_tail; the previous value of rx_buffer_head
+	// may be written to rx_buffer_tail, making it appear as if the buffer
+	// were full, not empty.
+	_rx_buffer->head	=	_rx_buffer->tail;
+}
+
+//*******************************************************************************************
+void USBSerial::write(uint8_t theChar)
+{
+unsigned char	usbBuf[4];
+
+	usbBuf[0]	=	theChar;
+	
+	cdcacm_print(usbBuf, 1);
+}
+
+//*	testing showed 63 gave better speed results than 64
+
+#define	kMaxUSBxmitPkt	63
+//*******************************************************************************************
+void USBSerial::write(const uint8_t *buffer, size_t size)
+{
+
+	if (size < kMaxUSBxmitPkt)
+	{
+		cdcacm_print(buffer, size);
+	}
+	else
+	{
+	//*	we can only transmit a maxium of 64 bytes at a time, break it up into 64 byte packets
+	unsigned char	usbBuffer[kMaxUSBxmitPkt + 2];
+	int				ii;
+	size_t 			packetSize;
+	
+		packetSize	=	0;
+		for (ii=0; ii<size; ii++)
+		{
+			usbBuffer[packetSize++]	=	buffer[ii];
+			if (packetSize >= kMaxUSBxmitPkt)
+			{
+				cdcacm_print(usbBuffer, packetSize);
+				packetSize	=	0;
+			}
+		}
+		if (packetSize > 0)
+		{
+			cdcacm_print(usbBuffer, packetSize);
+		}
+	}
+}
+
+//*******************************************************************************************
+void USBSerial::write(const char *str)
+{
+size_t size;
+
+	size	=	strlen(str);
+	write((const uint8_t *)str, size);
+}
+
+
+
+//*******************************************************************************************
+//*	we need the extern C so that the interrupt handler names dont get mangled by C++
+extern "C"
+{
+
+
+};	// extern C
+
+#endif		//	defined(_USB)
+
+//*******************************************************************************************
+#if defined(_USB) && defined(_USE_USB_FOR_SERIAL_)
+//#error USB enabled
+		USBSerial		Serial(						&rx_bufferUSB);
+#if defined (_UART1A)
+		HardwareSerial	Serial0(	kSerialPort_1A,	&rx_buffer1A,	&U1ABRG,	&U1AMODE,	&U1ASTA,	&U1ATXREG);
+#elif defined (_UART1)
+		HardwareSerial	Serial0(	kSerialPort_1,	&rx_buffer1,	&U1BRG,		&U1MODE,	&U1STA,		&U1TXREG);
+#endif
+
+
+#if defined (_UART1B)
+		HardwareSerial	Serial1(	kSerialPort_1B,	&rx_buffer1B,	&U1BBRG,	&U1BMODE,	&U1BSTA,	&U1BTXREG);
+#elif defined (_UART1)
+		HardwareSerial	Serial1(	kSerialPort_2,		&rx_buffer2,	&U2BRG,	&U2MODE,	&U2STA,	&U2TXREG);
+#endif
+
+
+#if defined (_UART3A)
+		HardwareSerial	Serial2(	kSerialPort_3A,	&rx_buffer3A,	&U3ABRG,	&U3AMODE,	&U3ASTA,	&U3ATXREG);
+#endif
+#if defined (_UART3B)
+		HardwareSerial	Serial3(	kSerialPort_3B,	&rx_buffer3B,	&U3BBRG,	&U3BMODE,	&U3BSTA,	&U3BTXREG);
+#endif
+
+
+#if defined (_UART2A)
 		HardwareSerial Serial4(	kSerialPort_2A,	&rx_buffer2A,	&U2ABRG,	&U2AMODE,	&U2ASTA,	&U2ATXREG);
+#endif
+#if defined (_UART2B)
 		HardwareSerial Serial5(	kSerialPort_2B,	&rx_buffer2B,	&U2BBRG,	&U2BMODE,	&U2BSTA,	&U2BTXREG);
+#endif	//	defined(_USB) && defined(_USE_USB_FOR_SERIAL_)
+
+
+//*******************************************************************************************
+#elif defined(_BOARD_MEGA_)
+		HardwareSerial	Serial(		kSerialPort_1A,	&rx_buffer1A,	&U1ABRG,	&U1AMODE,	&U1ASTA,	&U1ATXREG);
+		HardwareSerial	Serial1(	kSerialPort_1B,	&rx_buffer1B,	&U1BBRG,	&U1BMODE,	&U1BSTA,	&U1BTXREG);
+		HardwareSerial	Serial2(	kSerialPort_3A,	&rx_buffer3A,	&U3ABRG,	&U3AMODE,	&U3ASTA,	&U3ATXREG);
+		HardwareSerial	Serial3(	kSerialPort_3B,	&rx_buffer3B,	&U3BBRG,	&U3BMODE,	&U3BSTA,	&U3BTXREG);
+
+
+		HardwareSerial	Serial4(	kSerialPort_2A,	&rx_buffer2A,	&U2ABRG,	&U2AMODE,	&U2ASTA,	&U2ATXREG);
+		HardwareSerial	Serial5(	kSerialPort_2B,	&rx_buffer2B,	&U2BBRG,	&U2BMODE,	&U2BSTA,	&U2BTXREG);
 
 //*******************************************************************************************
 #elif defined(_BOARD_UNO_)
-		HardwareSerial Serial(	kSerialPort_1,		&rx_buffer1,	&U1BRG,		&U1MODE,	&U1STA,		&U1TXREG);
-		HardwareSerial Serial1(	kSerialPort_2,		&rx_buffer2,	&U2BRG,	&U2MODE,	&U2STA,	&U2TXREG);
+		HardwareSerial	Serial(		kSerialPort_1,		&rx_buffer1,	&U1BRG,		&U1MODE,	&U1STA,		&U1TXREG);
+		HardwareSerial	Serial1(	kSerialPort_2,		&rx_buffer2,	&U2BRG,	&U2MODE,	&U2STA,	&U2TXREG);
 
 //*******************************************************************************************
 //*	the Explorer 16 board has the DB9 port connected to the Uart2 which is normally serial 1

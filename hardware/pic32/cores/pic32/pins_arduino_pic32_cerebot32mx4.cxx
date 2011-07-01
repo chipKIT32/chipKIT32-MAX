@@ -173,7 +173,7 @@ const uint8_t	digital_pin_to_port_PGM[] = {
 };
 
 //************************************************************************
-const uint32_t PROGMEM digital_pin_to_bit_mask_PGM[] = 
+const uint16_t PROGMEM digital_pin_to_bit_mask_PGM[] = 
 {
 	// PIN IN PORT
 	// -------------------------------------------
