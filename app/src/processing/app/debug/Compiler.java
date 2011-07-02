@@ -418,11 +418,12 @@ public class Compiler implements MessageConsumer {
 				configPreferences.get("compiler.cpudef"), //3
 				configPreferences.get("build.mcu"), //4				
 				configPreferences.get("build.f_cpu"), //5
-				configPreferences.get("board") + Base.REVISION, //7, //6
-				configPreferences.get("define"), //7
-				includes, //8
-				sourceName, //9
-				objectName //10
+				configPreferences.get("software") + "=" + Base.REVISION,//6
+				configPreferences.get("board") , //7, 
+				configPreferences.get("compiler.define"), //8
+				includes, //9
+				sourceName, //10
+				objectName //11
 		};
 						
 		return compileFormat.format(  Args );
@@ -446,8 +447,9 @@ public class Compiler implements MessageConsumer {
 				configPreferences.get("compiler.cpudef"),
 				configPreferences.get("build.mcu"),				
 				configPreferences.get("build.f_cpu"),
-				configPreferences.get("board") + Base.REVISION,
-				configPreferences.get("define"),
+				configPreferences.get("software") + "=" + Base.REVISION,
+				configPreferences.get("board"), 
+				configPreferences.get("compiler.define"),
 				includes,
 				sourceName,
 				objectName
@@ -475,8 +477,9 @@ public class Compiler implements MessageConsumer {
 				configPreferences.get("compiler.cpudef"),
 				configPreferences.get("build.mcu"),				
 				configPreferences.get("build.f_cpu"),
-				configPreferences.get("board")+	Base.REVISION,								
-				configPreferences.get("define"),
+				configPreferences.get("software") + "=" + Base.REVISION,
+				configPreferences.get("board"),								
+				configPreferences.get("compiler.define"),
 				includes,
 				sourceName,
 				objectName

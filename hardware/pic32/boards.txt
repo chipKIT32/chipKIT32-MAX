@@ -3,8 +3,8 @@ uno_pic32.name=chipKIT UNO32
 
 # new items
 uno_pic32.platform=pic32
-uno_pic32.board=_BOARD_UNO_=
-uno_pic32.define=-Danything_you_want::-Danything=1
+uno_pic32.board=_BOARD_UNO_
+uno_pic32.compiler.define=-Danything_you_want::-Danything=1
 uno_pic32.ccflags=ffff
 uno_pic32.ldscript=chipKIT-UNO32-application-32MX320F128L.ld
 # end of new items
@@ -37,8 +37,8 @@ mega_pic32.name=chipKIT MAX32
 
 # new items
 mega_pic32.platform=pic32
-mega_pic32.board=_BOARD_MEGA_
-mega_pic32.define=anything_you_want
+mega_pic32.board=_BOARD_MEGA_=
+mega_pic32.compiler.define=-Danything_you_want
 mega_pic32.ccflags=ffff
 mega_pic32.ldscript=chipKIT-MAX32-application-32MX795F512L.ld
 # end of new items
@@ -66,7 +66,7 @@ mega_usb_pic32.name=chipKIT MAX32-USB for Serial
 # new items
 mega_usb_pic32.platform=pic32
 mega_usb_pic32.board=_BOARD_MEGA_USB_
-mega_usb_pic32.define=anything_you_want
+mega_usb_pic32.compiler.define=-Danything_you_want
 mega_usb_pic32.ccflags=ffff
 mega_usb_pic32.ldscript=chipKIT-MAX32-application-32MX795F512L.ld
 # end of new items
@@ -94,7 +94,7 @@ mc_pic32_starterkit.name=Microchip PIC32 Starter kit
 # new items
 mc_pic32_starterkit.platform=pic32
 mc_pic32_starterkit.board=_BOARD_PIC32_STARTER_KIT_
-mc_pic32_starterkit.define=anything_you_want
+mc_pic32_starterkit.compiler.define=-Danything_you_want
 mc_pic32_starterkit.ccflags=ffff
 mc_pic32_starterkit.ldscript=chipKIT-UNO32-application-32MX320F128L.ld
 # end of new items
@@ -123,7 +123,7 @@ mc_pic32_ethernet_starterkit.name=Microchip PIC32 Ethernet Starter kit
 # new items
 mc_pic32_ethernet_starterkit.platform=pic32
 mc_pic32_ethernet_starterkit.board=_BOARD_PIC32_STARTER_KIT_
-mc_pic32_ethernet_starterkit.define=anything_you_want
+mc_pic32_ethernet_starterkit.compiler.define=-Danything_you_want
 mc_pic32_ethernet_starterkit.ccflags=ffff
 mc_pic32_ethernet_starterkit.ldscript=chipKIT-MAX32-application-32MX795F512L.ld
 # end of new items
@@ -151,7 +151,7 @@ mc_pic32_usb_starterkit.name=Microchip PIC32 USB Starter kit
 # new items
 mc_pic32_usb_starterkit.platform=pic32
 mc_pic32_usb_starterkit.board=_BOARD_PIC32_USB_STARTER_KIT_
-mc_pic32_usb_starterkit.define=anything_you_want
+mc_pic32_usb_starterkit.compiler.define=-Danything_you_want
 mc_pic32_usb_starterkit.ccflags=ffff
 mc_pic32_usb_starterkit.ldscript=chipKIT-MAX32-application-32MX795F512L.ld
 # end of new items
@@ -179,7 +179,7 @@ mc_pic32_explorer16.name=Microchip PIC32 Explorer 16
 # new items
 mc_pic32_explorer16.platform=pic32
 mc_pic32_explorer16.board=_BOARD_PIC32_EXPLORER16_
-mc_pic32_explorer16.define=anything_you_want
+mc_pic32_explorer16.compiler.define=-Danything_you_want
 mc_pic32_explorer16.ccflags=ffff
 mc_pic32_explorer16.ldscript=chipKIT-UNO32-application-32MX320F128L.ld
 # end of new items
@@ -207,7 +207,7 @@ cerebot32mx4.name=Cerebot 32MX4
 # new items
 cerebot32mx4.platform=pic32
 cerebot32mx4.board=_BOARD_CEREBOT_32MX4_
-cerebot32mx4.define=anything_you_want
+cerebot32mx4.compiler.define=-Danything_you_want
 cerebot32mx4.ccflags=ffff
 cerebot32mx4.ldscript=chipKIT-application-32MX460F512L.ld
 # end of new items
@@ -236,7 +236,7 @@ cerebot32mx7.name=Cerebot 32MX7
 # new items
 cerebot32mx7.platform=pic32
 cerebot32mx7.board=_BOARD_CEREBOT_32MX7_
-cerebot32mx7.define=anything_you_want
+cerebot32mx7.compiler.define=-Danything_you_want
 cerebot32mx7.ccflags=ffff
 cerebot32mx7.ldscript=chipKIT-MAX32-application-32MX795F512L.ld
 # end of new items
@@ -266,7 +266,7 @@ mikroe_multimedia.name=MirkoElektronika PIC32 Multimedia Board
 # new items
 mikroe_multimedia.platform=pic32
 mikroe_multimedia.board=_BOARD_MIKROE_MULTIMEDIA_
-mikroe_multimedia.define=anything_you_want
+mikroe_multimedia.compiler.define=-Danything_you_want
 mikroe_multimedia.ccflags=ffff
 mikroe_multimedia.ldscript=chipKIT-application-32MX460F512L.ld
 # end of new items
@@ -294,7 +294,7 @@ mikroe_mikromedia.name=MirkoElektronika PIC32 mikroMedia Board
 # new items
 mikroe_mikromedia.platform=pic32
 mikroe_mikromedia.board=_BOARD_MIKROE_MIKROMEDIA_
-mikroe_mikromedia.define=anything_you_want
+mikroe_mikromedia.compiler.define=-Danything_you_want
 mikroe_mikromedia.ccflags=ffff
 mikroe_mikromedia.ldscript=chipKIT-application-32MX460F512L.ld
 # end of new items
@@ -322,7 +322,7 @@ ubw32_mx460.name=Pic32 UBW32-MX460
 # new items
 ubw32_mx460.platform=pic32
 ubw32_mx460.board=_BOARD_UBW32_MX460_
-ubw32_mx460.define=anything_you_want
+ubw32_mx460.compiler.define=-Danything_you_want
 ubw32_mx460.ccflags=ffff
 ubw32_mx460.ldscript=chipKIT-application-32MX460F512L.ld
 # end of new items
@@ -351,7 +351,7 @@ ubw32_mx795.name=Pic32 UBW32-MX795
 # new items
 ubw32_mx795.platform=pic32
 ubw32_mx795.board=_BOARD_UBW32_MX795_
-ubw32_mx795.define=anything_you_want
+ubw32_mx795.compiler.define=-Danything_you_want
 ubw32_mx795.ccflags=ffff
 ubw32_mx795.ldscript=chipKIT-MAX32-application-32MX795F512L.ld
 # end of new items
@@ -380,7 +380,7 @@ cui32.name=Pic32 CUI32-Development Stick
 # new items
 cui32.platform=pic32
 cui32.board=_BOARD_CUI32_
-cui32.define=anything_you_want
+cui32.compiler.define=-Danything_you_want
 cui32.ccflags=ffff
 cui32.ldscript=chipKIT-application-32MX440F512H.ld
 # end of new items
