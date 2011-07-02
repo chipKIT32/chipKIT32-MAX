@@ -412,17 +412,18 @@ public class Compiler implements MessageConsumer {
 		String includes = preparePaths(includePaths);
 		
 		Object[] Args = {
-				avrBasePath,
-				configPreferences.get("compiler.cpp.cmd"),
-				configPreferences.get("compiler.S.flags"),
-				configPreferences.get("compiler.cpudef"),
-				configPreferences.get("build.mcu"),				
-				configPreferences.get("build.f_cpu"),
-				configPreferences.get("board"),
-				Base.REVISION,
-				includes,
-				sourceName,
-				objectName
+				avrBasePath, //0
+				configPreferences.get("compiler.cpp.cmd"), //1
+				configPreferences.get("compiler.S.flags"), //2
+				configPreferences.get("compiler.cpudef"), //3
+				configPreferences.get("build.mcu"), //4				
+				configPreferences.get("build.f_cpu"), //5
+				configPreferences.get("software") + "=" + Base.REVISION,//6
+				configPreferences.get("board") , //7, 
+				configPreferences.get("compiler.define"), //8
+				includes, //9
+				sourceName, //10
+				objectName //11
 		};
 						
 		return compileFormat.format(  Args );
@@ -446,8 +447,9 @@ public class Compiler implements MessageConsumer {
 				configPreferences.get("compiler.cpudef"),
 				configPreferences.get("build.mcu"),				
 				configPreferences.get("build.f_cpu"),
-				configPreferences.get("board"),
-				Base.REVISION,
+				configPreferences.get("software") + "=" + Base.REVISION,
+				configPreferences.get("board"), 
+				configPreferences.get("compiler.define"),
 				includes,
 				sourceName,
 				objectName
@@ -465,6 +467,8 @@ public class Compiler implements MessageConsumer {
 		MessageFormat compileFormat = new MessageFormat(baseCommandString);	
 		//getIncludes to String
 		String includes = preparePaths(includePaths);
+		logger.debug("Source: " + sourceName);
+
 
 		Object[] Args = {
 				avrBasePath,
@@ -473,8 +477,9 @@ public class Compiler implements MessageConsumer {
 				configPreferences.get("compiler.cpudef"),
 				configPreferences.get("build.mcu"),				
 				configPreferences.get("build.f_cpu"),
-				configPreferences.get("board"),
-				Base.REVISION,
+				configPreferences.get("software") + "=" + Base.REVISION,
+				configPreferences.get("board"),								
+				configPreferences.get("compiler.define"),
 				includes,
 				sourceName,
 				objectName

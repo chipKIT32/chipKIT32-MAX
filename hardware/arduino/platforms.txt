@@ -12,12 +12,12 @@
 ########avr compile pattern ##########
 #avr.recipe.c.o.pattern={0=compiler.path}{1=compiler.c.cmd}{2=compiler.c.flags}{3=compiler.cpudef}{4=build.mcu}-DF_CPU={5=build.f_cpu}-D{7=ARDUINO}={6=Base.REVISION}{7=-I/INCLUDE_PATHS} {8=SOURCE_NAME} -o{9=OBJECT_NAME}
 #object name seems to have build path in it.
-avr.recipe.c.o.pattern={0}{1}::{2}::{3}{4}::-DF_CPU={5}::-D{6}={7}::{8}::{9}::-o::{10}
+avr.recipe.c.o.pattern={0}{1}::{2}::{3}{4}::-DF_CPU={5}::-D{6}::-D{7}={8}::{9}::{10}::-o::{11}
 
 
 ##compile cc object files
 #avr.recipe.cc.o.pattern={0=compiler.path}{1=compiler.cc.cmd}{2=compiler.c.flags}{3=compiler.cpudef}{4=build.mcu}-DF_CPU={5=build.f_cpu}-DARDUINO={6=Base.REVISION}{-7=I/INCLUDE_PATHS} {8=SOURCE_NAME} -o{9=BUILD_PATH}{10=OBJECT_NAME}
-avr.recipe.cpp.o.pattern={0}{1}::{2}::{3}{4}::-DF_CPU={5}::-D{6}={7}::{8}::{9}::-o::{10}
+avr.recipe.cpp.o.pattern={0}{1}::{2}::{3}{4}::-DF_CPU={5}::-D{6}::-D{7}={8}::{9}::{10}::-o::{11}
 ##create archives
 #avr.recipe.ar.pattern={0=compiler.path}{1=compiler.ar.cmd}{2=compiler.ar.flags}{3=BUILD_PATH}{4=CORE_NAME=core.a}{5=BUILD_PATH}{6=OBJECT_NAME}
 avr.recipe.ar.pattern={0}{1}::{2}::{3}{4}::{5}
@@ -60,4 +60,5 @@ avr.compiler.upload.cmd=
 avr.compiler.upload.flags=
 avr.library.path=./hardware/arduino/cores/arduino
 avr.library.core.path=./libraries
+avr.compiler.define=::
 
