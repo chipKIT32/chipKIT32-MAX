@@ -51,6 +51,9 @@
 #if defined(_BOARD_CEREBOT_32MX4_) || defined(_BOARD_CEREBOT_32MX7_)
 	#define _USE_USB_FOR_SERIAL_
 #endif
+#if defined(_BOARD_CUI32_)
+	#define _USE_USB_FOR_SERIAL_
+#endif
 
 
 

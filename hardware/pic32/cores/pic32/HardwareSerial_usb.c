@@ -271,12 +271,12 @@ void	usb_device_enqueue(int endpoint, boolean tx, byte *buffer, int length)
 		length	=	MIN(length, endpoints[endpoint].packetsize);
 
 		// find the next bdt entry to use
-		odd	=	endpoints[endpoint].bdtodd[tx];
+		odd			=	endpoints[endpoint].bdtodd[tx];
 
 		// initialize the bdt entry
-		bdt	=	MYBDT(endpoint, tx, odd);
+		bdt			=	MYBDT(endpoint, tx, odd);
 		bdt->buffer	=	(byte *)TF_LITTLE(KVA_TO_PA((int)buffer));
-		flags	=	TF_LITTLE(bdt->flags);
+		flags		=	TF_LITTLE(bdt->flags);
 		assert(! (flags & BD_FLAGS_OWN));
 		assert(length <= endpoints[endpoint].packetsize);
 		bdt->flags	=	TF_LITTLE(BD_FLAGS_BC_ENC(length)|BD_FLAGS_OWN|endpoints[endpoint].toggle[tx]|BD_FLAGS_DTS);
@@ -421,7 +421,8 @@ static byte configuration[CONFIGURATION_DESCRIPTOR_SIZE];
 						assert(configuration_descriptor_length);
 						endpoints[endpoint].data_length	=	MIN(configuration_descriptor_length, length);
 						memcpy(endpoints[endpoint].data_buffer, configuration_descriptor, endpoints[endpoint].data_length);
-					} else if ((value >> 8) == STRING_DESCRIPTOR)
+					}
+					else if ((value >> 8) == STRING_DESCRIPTOR)
 					{
 						int i;
 						int j;
@@ -457,7 +458,7 @@ static byte configuration[CONFIGURATION_DESCRIPTOR_SIZE];
 					// data phase starts with data1
 					assert(endpoints[endpoint].toggle[1] == BD_FLAGS_DATA);
 					usb_device_enqueue(0, 1, endpoints[endpoint].data_buffer, MIN(endpoints[endpoint].data_length, endpoints[endpoint].packetsize));
-				} 
+				}
 				else
 				{
 					if (setup->request == REQUEST_CLEAR_FEATURE)
@@ -489,7 +490,7 @@ static byte configuration[CONFIGURATION_DESCRIPTOR_SIZE];
 					}
 					else if (setup->request == REQUEST_GET_CONFIGURATION)
 					{
-						endpoints[endpoint].data_pid	=	TOKEN_IN;
+						endpoints[endpoint].data_pid		=	TOKEN_IN;
 
 						endpoints[endpoint].data_length		=	1;
 						endpoints[endpoint].data_buffer[0]	=	1;
@@ -721,6 +722,17 @@ void	usb_string_descriptor(const byte *descriptor, int length)
 {
 	string_descriptor			=	descriptor;
 	string_descriptor_length	=	length;
+}
+
+//*******************************************************************************
+void	usb_uninitialize(void)
+{
+	// disable usb device mode and usb device pull ups
+	MCF_USB_OTG_CTL			=	0;
+	MCF_USB_OTG_OTG_CTRL	=	0;
+
+	// power off
+	U1PWRCbits.USBPWR		=	0;
 }
 
 //*******************************************************************************

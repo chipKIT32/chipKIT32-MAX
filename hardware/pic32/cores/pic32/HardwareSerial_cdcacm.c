@@ -54,43 +54,43 @@ static const byte cdcacm_device_descriptor[] = {
 };
 
 static const byte cdcacm_configuration_descriptor[] = {
-	9,	// length
-	0x02,	// configuration descriptor
-	67, 0,	// total length
-	0x02,	// num interfaces
-	0x01,	// configuration value
-	0x00,	// configuration (string)
-	0x80,	// attributes
-	250,	// 500 mA
+	9,					// length
+	0x02,				// configuration descriptor
+	67, 0,				// total length
+	0x02,				// num interfaces
+	0x01,				// configuration value
+	0x00,				// configuration (string)
+	0x80,				// attributes
+	250,				// 500 mA
 
-	9,		// length
-	0x04,	// interface descriptor
-	0x00,	// interface number
-	0x00,	// alternate
-	0x01,	// num endpoints
-	0x02,	// interface class (comm)
-	0x02,	// subclass (acm)
-	0x01,	// protocol (at)
-	0x00,	// interface (string)
+	9,					// length
+	0x04,				// interface descriptor
+	0x00,				// interface number
+	0x00,				// alternate
+	0x01,				// num endpoints
+	0x02,				// interface class (comm)
+	0x02,				// subclass (acm)
+	0x01,				// protocol (at)
+	0x00,				// interface (string)
 
-	5,		// length
-	0x24,	// header functional descriptor
+	5,					// length
+	0x24,				// header functional descriptor
 	0x00,
 	0x10, 0x01,
 
-	4,		// length
-	0x24,	// abstract control model descriptor
+	4,					// length
+	0x24,				// abstract control model descriptor
 	0x02,
 	0x00,
 	
-	5,		// length
-	0x24,	// union functional descriptor
+	5,					// length
+	0x24,				// union functional descriptor
 	0x06,
-	0x00,	// comm
-	0x01,	// data
+	0x00,				// comm
+	0x01,				// data
 	
-	5,		// length
-	0x24,	// call management functional descriptor
+	5,					// length
+	0x24,				// call management functional descriptor
 	0x01,
 	0x00,
 	0x01,
@@ -119,12 +119,12 @@ static const byte cdcacm_configuration_descriptor[] = {
 	0x40, 0x00,	// packet size
 	0x00,	// interval (ms)
 
-	7,			// length
-	0x05,		// endpoint descriptor
-	0x03,		// endpoint OUT address
-	0x02,		// attributes: bulk
+	7,		// length
+	0x05,	// endpoint descriptor
+	0x03,	// endpoint OUT address
+	0x02,	// attributes: bulk
 	0x40, 0x00,	// packet size
-	0x00,		// interval (ms)
+	0x00,	// interval (ms)
 };
 
 static const byte cdcacm_string_descriptor[] = {
@@ -132,16 +132,16 @@ static const byte cdcacm_string_descriptor[] = {
 	0x03,		// string descriptor
 	0x09, 0x04,	// english (usa)
 
-	34,	// length
-	0x03,	// string descriptor
+	34,			// length
+	0x03,		// string descriptor
 	'w', 0, 'w', 0, 'w', 0, '.', 0, 'c', 0, 'p', 0, 'u', 0, 's', 0, 't', 0, 'i', 0, 'c', 0, 'k', 0, '.', 0, 'c', 0, 'o', 0, 'm', 0,
 
-	18,	// length
-	0x03,	// string descriptor
+	18,			// length
+	0x03,		// string descriptor
 	'S', 0, 't', 0, 'k', 0, '5', 0, '0', 0, '0', 0, 'v', 0, '2', 0,
 };
 
-boolean cdcacm_active;
+boolean	cdcacm_active;
 
 //*	cbfn	=	Call Back FuNction
 static	cdcacm_reset_cbfn		reset_cbfn;
@@ -150,7 +150,7 @@ static	cdcacm_storedata_cbfn	storedata_cbfn;
 static byte tx[PACKET_SIZE];	// packet from host
 
 //#define NRX	16
-#define NRX	4		//*	make memory foot print smaller
+#define NRX	16		//*	make memory foot print smaller
 
 // N.B. -1 forces short packets
 static byte rx[NRX][PACKET_SIZE-1]; // packets to host
@@ -161,32 +161,6 @@ static byte rx_out;
 
 static boolean discard;	// true when we don't think anyone is listening
 
-unsigned char	gRecevieBuffer[kUSB_RCB_BuffSize];
-unsigned short	gRcbBuff_Head;
-unsigned short	gRcbBuff_Tail;
-
-//****************************************************************
-// this function receives bytes from the CDC/ACM port
-// N.B. if this routine returns false, cdcacm will drop the ball and we'll
-// call cdcacm_command_ack() later to pick it up again.
-//****************************************************************
-static boolean	SaveReceivedData(const byte *buffer, int length)
-{
-unsigned int ii;
-
-	for (ii=0; ii<length; ii++)
-	{
-		gRecevieBuffer[gRcbBuff_Head]	=	buffer[ii];
-		gRcbBuff_Head++;
-		if (gRcbBuff_Head >= kUSB_RCB_BuffSize)
-		{
-			gRcbBuff_Head	=	0;
-		}
-	}
-
-	return true;
-}
-
 
 //************************************************************************
 // this function waits for space to be available in the transport
@@ -195,34 +169,58 @@ unsigned int ii;
 //************************************************************************
 void	cdcacm_print(const byte *buffer, int length)
 {
+	int a;
+	int n;
 	int m;
-	static uint32 attached_count;
-	
+	int x;
+
+	ASSERT(length);
+
 	if (! cdcacm_attached || discard)
 	{
 		return;
 	}
 
-	while (rx_in != rx_out)
-	{
-	#ifdef _USE_USB_IRQ_
-		delayMicroseconds(100);
-	#else
-		// XXX -- replace with a delay for interrupt use
-		usb_isr();
-	#endif
-	}
-	
-	if (! length)
-	{
-		return;
-	}
-	
-	ASSERT(rx_in == rx_out);
+	// figure out how many buffers we need
+	n	=	(length+sizeof(rx[0])-1)/sizeof(rx[0])+1;
 
-	// append to next rx_in(s)
+	x	=	splx(7);
+
+	// forever...
+	m	=	0;
+	for (;;)
+	{
+		// compute the number of available buffers
+		a	=	(rx_out+NRX-rx_in)%NRX;
+		if (! a)
+		{
+			a	=	NRX;
+		}
+
+		// if we have as many as we need...
+		if (a >= n)
+		{
+			// we're ready to go
+			break;
+		}
+
+#if ! INTERRUPT
+		usb_isr();
+#else
+		splx(x);
+		//delay(1);
+		//if (m++ > 1000) {
+		//	discard	=	true;
+		//	return;
+		//}
+		x	=	splx(7);
+#endif
+	}
+
+	// while there is more data to send...
 	do
 	{
+		// append to next rx_in(s)
 		m	=	MIN(length, sizeof(rx[rx_in])-rx_length[rx_in]);
 
 		assert(rx_length[rx_in]+m <= sizeof(rx[rx_in]));
@@ -232,20 +230,27 @@ void	cdcacm_print(const byte *buffer, int length)
 		buffer += m;
 		length -= m;
 
-		if (length)
+		// if this is the first buffer of the transfer or if the transfer will need more buffers...
+		if (a == NRX || length)
 		{
-			assert(rx_length[rx_in] == sizeof(rx[rx_in]));
+			// advance to the next buffer
+			assert(length ? rx_length[rx_in] == sizeof(rx[rx_in]) : true);
+			rx_in	=	(rx_in+1)%NRX;
+			assert(rx_in != rx_out);
+			assert(! rx_length[rx_in]);
 		}
-		
-		rx_in	=	(rx_in+1)%NRX;
-		assert(rx_in != rx_out);
-		assert(! rx_length[rx_in]);
 	} while (length);
 
-	// start the rx ball rolling
-	assert(rx_out != rx_in);
-	assert(rx_length[rx_out] > 0 && rx_length[rx_out] < PACKET_SIZE);
-	usb_device_enqueue(bulk_in_ep, 1, rx[rx_out], rx_length[rx_out]);
+	// if this is the first buffer of the transfer...
+	if (a == NRX)
+	{
+		// start the rx ball rolling
+		assert(rx_out != rx_in);
+		assert(rx_length[rx_out] > 0 && rx_length[rx_out] < PACKET_SIZE);
+		usb_device_enqueue(bulk_in_ep, 1, rx[rx_out], rx_length[rx_out]);
+	}
+
+	splx(x);
 }
 
 
@@ -262,7 +267,8 @@ void	cdcacm_print(const byte *buffer, int length)
 #define FILL_LINE_CODING(bps, stops, parity, data_bits) \
 	(bps) & 0xff, ((bps)>>8) & 0xff, ((bps)>>16) & 0xff, ((bps)>>24) & 0xff, (uint8)(stops), (uint8)(parity), (uint8)(data_bits)
 
-static uint8 line_coding[7]	=	{
+static uint8 line_coding[7]	=
+{
 	FILL_LINE_CODING(115200, 0, 0, 8) /* Default is 115200 BPS and 8N1 format. */
 };
 
@@ -326,19 +332,27 @@ static int	cdcacm_control_transfer(struct setup *setup, byte *buffer, int length
 
 static boolean waiting;
 
+//************************************************************************
 // this function acknowledges receipt of an CDCACM command from upper
 // level code.
 //************************************************************************
 void	cdcacm_command_ack(void)
 {
+	int x;
+
+	x	=	splx(7);
+
 	if (waiting)
 	{
 		// start the tx ball rolling
 		usb_device_enqueue(bulk_out_ep, 0, tx, sizeof(tx));
 		waiting	=	false;
 	}
+
+	splx(x);
 }
 
+//************************************************************************
 // this function implements the CDCACM usb bulk transfer.
 //************************************************************************
 static int	cdcacm_bulk_transfer(boolean in, byte *buffer, int length)
@@ -350,7 +364,6 @@ static int	cdcacm_bulk_transfer(boolean in, byte *buffer, int length)
 		cdcacm_active	=	true;
 		
 		// accumulate commands
-	//	if (SaveReceivedData(buffer, length))
 		if (storedata_cbfn(buffer, length))		//*	call the store data call back function
 		{
 			// keep the tx ball rolling
@@ -412,7 +425,7 @@ static void	cdcacm_reset(void)
 }
 
 //************************************************************************
-static int check(const byte *descriptor, int length)
+static int	check(const byte *descriptor, int length)
 {
 	int i;
 	int j;
