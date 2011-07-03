@@ -62,8 +62,8 @@ struct setup	{
 
 extern volatile boolean usb_in_isr;		// set when in isr
 
-extern boolean	cdcacm_attached;		// set when cdcacm host is attached
-extern uint32	cdcacm_attached_count;
+extern boolean	gCdcacm_attached;		// set when cdcacm host is attached
+extern uint32	gCdcacm_attached_count;
 
 extern byte		bulk_in_ep;
 extern byte		bulk_out_ep;
@@ -97,7 +97,7 @@ extern byte		int_ep;
 	void	usb_string_descriptor(const byte *descriptor, int length);
 
 	// *** init ***
-//	void	usb_isr(void);
+	void	usb_isr(void);
 	void	usb_initialize(void);
 
 

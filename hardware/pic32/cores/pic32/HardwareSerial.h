@@ -4,6 +4,8 @@
 //*	Arduino Library for PIC32
 //*		Copyright (c) 2010, 2011 by Mark Sproul
 //************************************************************************
+//*	this code is best viewed with tabs set to 4 spaces
+//************************************************************************
 //*	Edit History
 //************************************************************************
 //*	Oct 12,	2010	Got MPLAB X working on MacOSX 1.6 for the first time
@@ -195,6 +197,8 @@ class USBSerial : public Print
 
 
 #if defined(_USB) && defined(_USE_USB_FOR_SERIAL_)
+#define	INTERRUPT	1
+
 		extern USBSerial Serial;
 		extern HardwareSerial Serial0;
 		extern HardwareSerial Serial1;

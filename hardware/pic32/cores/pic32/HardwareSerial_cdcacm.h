@@ -4,7 +4,7 @@
 
 #include	"wiring.h"
 
-extern boolean cdcacm_active;
+extern boolean gCdcacm_active;
 
 typedef void (*cdcacm_reset_cbfn)(void);
 typedef boolean (*cdcacm_storedata_cbfn)(const byte *buffer, int length);

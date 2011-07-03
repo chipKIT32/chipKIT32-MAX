@@ -36,6 +36,8 @@
 //*		If USB is enabled, the first serial port (Serial.xxx) is redirected to USB
 //*		Serial0.xxx then takes over for the 1st uart in case the programmer needs to use it as well
 //************************************************************************
+//*	this code is best viewed with tabs set to 4 spaces
+//************************************************************************
 //*	Edit History
 //************************************************************************
 //*	Oct 12,	2010	<MLS> Got MPLAB X working on MacOSX 1.6 for the first time
@@ -851,13 +853,14 @@ void USBSerial::write(const uint8_t *buffer, size_t size)
 
 	if (size < kMaxUSBxmitPkt)
 	{
+		//*	it will fit in one transmit packet
 		cdcacm_print(buffer, size);
 	}
 	else
 	{
 	//*	we can only transmit a maxium of 64 bytes at a time, break it up into 64 byte packets
 	unsigned char	usbBuffer[kMaxUSBxmitPkt + 2];
-	int				ii;
+	unsigned short	ii;
 	size_t 			packetSize;
 	
 		packetSize	=	0;
@@ -886,15 +889,6 @@ size_t size;
 	write((const uint8_t *)str, size);
 }
 
-
-
-//*******************************************************************************************
-//*	we need the extern C so that the interrupt handler names dont get mangled by C++
-extern "C"
-{
-
-
-};	// extern C
 
 #endif		//	defined(_USB)
 

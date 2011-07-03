@@ -6,12 +6,15 @@
 //
 // This file originated from the cpustick.com skeleton project from
 // http://www.cpustick.com/downloads.htm and was originally written
-// by Rich Testardi; please preserve this reference.
+// by Rich Testardi; please preserve this reference and share bug
+// fixes with rich@testardi.com.
+//************************************************************************
+//*	this code is best viewed with tabs set to 4 spaces
 //************************************************************************
 //*	Edit History
 //************************************************************************
 //*	Jun 23,	2011	<MLS> Got code from Rich, started on Serial support for Arduino/chipkit
-//*	Jun 24,	2011	<MLS> USBSerial working completely
+//*	Jun 24,	2011	<MLS> USBSerial working completely, thanks to Rich's help
 //************************************************************************
 
 
@@ -29,51 +32,51 @@
 #include	"HardwareSerial_usb.h"
 #include	"HardwareSerial_cdcacm.h"
 
-// REVISIT -- move to relocated compat.h
-#define	MCF_USB_OTG_CTL						U1CON
-#define	MCF_USB_OTG_CTL_USB_EN_SOF_EN		_U1CON_SOFEN_MASK
-#define	MCF_USB_OTG_OTG_CTRL				U1OTGCON
-#define	MCF_USB_OTG_OTG_CTRL_DP_HIGH		_U1OTGCON_DPPULUP_MASK
-#define	MCF_USB_OTG_OTG_CTRL_OTG_EN			_U1OTGCON_OTGEN_MASK
-#define	MCF_USB_OTG_INT_STAT				U1IR
-#define	MCF_USB_OTG_INT_ENB					U1IE
-#define	MCF_USB_OTG_INT_ENB_USB_RST_EN		_U1IE_URSTIE_MASK
-#define	MCF_USB_OTG_ADDR					U1ADDR
-#define	MCF_USB_OTG_CTL_ODD_RST				_U1CON_PPBRST_MASK
-#define	MCF_USB_OTG_INT_ENB_SLEEP_EN		_U1IE_IDLEIE_MASK
-#define	MCF_USB_OTG_INT_ENB_TOK_DNE_EN		_U1IE_TRNIE_MASK
-#define	MCF_USB_OTG_ENDPT_EP_HSHK			_U1EP0_EPHSHK_MASK
-#define	MCF_USB_OTG_ENDPT_EP_TX_EN			_U1EP0_EPTXEN_MASK
-#define	MCF_USB_OTG_ENDPT_EP_RX_EN			_U1EP0_EPRXEN_MASK
-#define	MCF_USB_OTG_ENDPT_EP_CTL_DIS		_U1EP0_EPCONDIS_MASK
-#define	MCF_USB_OTG_INT_STAT_TOK_DNE		_U1IR_TRNIF_MASK
-#define	MCF_USB_OTG_STAT					U1STAT
-#define	MCF_USB_OTG_STAT_TX					_U1STAT_DIR_MASK
-#define	MCF_USB_OTG_STAT_ODD				_U1STAT_PPBI_MASK
-#define	MCF_USB_OTG_CTL_TXSUSPEND_TOKENBUSY	_U1CON_TOKBUSY_MASK
-#define	MCF_USB_OTG_INT_STAT_USB_RST		_U1IR_URSTIF_MASK
-#define	MCF_USB_OTG_INT_STAT_SLEEP			_U1IR_IDLEIF_MASK
-#define	MCF_USB_OTG_SOF_THLD				U1SOF
-#define	MCF_USB_OTG_BDT_PAGE_01				U1BDTP1
-#define	MCF_USB_OTG_BDT_PAGE_02				U1BDTP2
-#define	MCF_USB_OTG_BDT_PAGE_03				U1BDTP3
+// XXX -- move to relocated compat.h
+#define MCF_USB_OTG_CTL  U1CON
+#define MCF_USB_OTG_CTL_USB_EN_SOF_EN  _U1CON_SOFEN_MASK
+#define MCF_USB_OTG_OTG_CTRL  U1OTGCON
+#define MCF_USB_OTG_OTG_CTRL_DP_HIGH  _U1OTGCON_DPPULUP_MASK
+#define MCF_USB_OTG_OTG_CTRL_OTG_EN  _U1OTGCON_OTGEN_MASK
+#define MCF_USB_OTG_INT_STAT  U1IR
+#define MCF_USB_OTG_INT_ENB  U1IE
+#define MCF_USB_OTG_INT_ENB_USB_RST_EN  _U1IE_URSTIE_MASK
+#define MCF_USB_OTG_ADDR  U1ADDR
+#define MCF_USB_OTG_CTL_ODD_RST  _U1CON_PPBRST_MASK
+#define MCF_USB_OTG_INT_ENB_SLEEP_EN  _U1IE_IDLEIE_MASK
+#define MCF_USB_OTG_INT_ENB_TOK_DNE_EN  _U1IE_TRNIE_MASK
+#define MCF_USB_OTG_ENDPT_EP_HSHK  _U1EP0_EPHSHK_MASK
+#define MCF_USB_OTG_ENDPT_EP_TX_EN  _U1EP0_EPTXEN_MASK
+#define MCF_USB_OTG_ENDPT_EP_RX_EN  _U1EP0_EPRXEN_MASK
+#define MCF_USB_OTG_ENDPT_EP_CTL_DIS  _U1EP0_EPCONDIS_MASK
+#define MCF_USB_OTG_INT_STAT_TOK_DNE  _U1IR_TRNIF_MASK
+#define MCF_USB_OTG_STAT  U1STAT
+#define MCF_USB_OTG_STAT_TX  _U1STAT_DIR_MASK
+#define MCF_USB_OTG_STAT_ODD  _U1STAT_PPBI_MASK
+#define MCF_USB_OTG_CTL_TXSUSPEND_TOKENBUSY  _U1CON_TOKBUSY_MASK
+#define MCF_USB_OTG_INT_STAT_USB_RST  _U1IR_URSTIF_MASK
+#define MCF_USB_OTG_INT_STAT_SLEEP  _U1IR_IDLEIF_MASK
+#define MCF_USB_OTG_SOF_THLD  U1SOF
+#define MCF_USB_OTG_BDT_PAGE_01  U1BDTP1
+#define MCF_USB_OTG_BDT_PAGE_02  U1BDTP2
+#define MCF_USB_OTG_BDT_PAGE_03  U1BDTP3
 
-#define	MCF_USB_OTG_TOKEN					U1TOK
-#define	MCF_USB_OTG_ENDPT0					U1EP0
-#define	MCF_USB_OTG_ENDPT_RETRY_DIS			_U1EP0_RETRYDIS_MASK
-#define	MCF_USB_OTG_CTL_HOST_MODE_EN		_U1CON_HOSTEN_MASK
-#define	MCF_USB_OTG_OTG_CTRL_DM_LOW			_U1OTGCON_DMPULDWN_MASK
-#define	MCF_USB_OTG_OTG_CTRL_DP_LOW			_U1OTGCON_DPPULDWN_MASK
-#define	MCF_USB_OTG_INT_ENB_ATTACH_EN		_U1IE_ATTACHIE_MASK
-#define	MCF_USB_OTG_INT_STAT_ATTACH			_U1IR_ATTACHIF_MASK
-#define	MCF_USB_OTG_CTL_JSTATE				_U1CON_JSTATE_MASK
-#define	MCF_USB_OTG_ADDR_LS_EN				_U1ADDR_LSPDEN_MASK
-#define	MCF_USB_OTG_CTL_RESET				_U1CON_USBRST_MASK
-#define	MCF_USB_OTG_INT_STAT_RESUME			_U1IR_RESUMEIF_MASK
-#define	MCF_USB_OTG_ENDPT_HOST_WO_HUB		_U1EP0_LSPD_MASK
-#define	MCF_USB_OTG_TOKEN_TOKEN_PID(x)		((x)<<_U1TOK_PID0_POSITION)
-#define	MCF_USB_OTG_TOKEN_TOKEN_ENDPT(x)	((x)<<_U1TOK_EP0_POSITION)
-#define MCF_USB_OTG_INT_STAT_ERROR			_U1IE_UERRIE_MASK
+#define MCF_USB_OTG_TOKEN  U1TOK
+#define MCF_USB_OTG_ENDPT0  U1EP0
+#define MCF_USB_OTG_ENDPT_RETRY_DIS  _U1EP0_RETRYDIS_MASK
+#define MCF_USB_OTG_CTL_HOST_MODE_EN  _U1CON_HOSTEN_MASK
+#define MCF_USB_OTG_OTG_CTRL_DM_LOW  _U1OTGCON_DMPULDWN_MASK
+#define MCF_USB_OTG_OTG_CTRL_DP_LOW  _U1OTGCON_DPPULDWN_MASK
+#define MCF_USB_OTG_INT_ENB_ATTACH_EN  _U1IE_ATTACHIE_MASK
+#define MCF_USB_OTG_INT_STAT_ATTACH  _U1IR_ATTACHIF_MASK
+#define MCF_USB_OTG_CTL_JSTATE  _U1CON_JSTATE_MASK
+#define MCF_USB_OTG_ADDR_LS_EN  _U1ADDR_LSPDEN_MASK
+#define MCF_USB_OTG_CTL_RESET  _U1CON_USBRST_MASK
+#define MCF_USB_OTG_INT_STAT_RESUME  _U1IR_RESUMEIF_MASK
+#define MCF_USB_OTG_ENDPT_HOST_WO_HUB  _U1EP0_LSPD_MASK
+#define MCF_USB_OTG_TOKEN_TOKEN_PID(x)  ((x)<<_U1TOK_PID0_POSITION)
+#define MCF_USB_OTG_TOKEN_TOKEN_ENDPT(x)  ((x)<<_U1TOK_EP0_POSITION)
+#define MCF_USB_OTG_INT_STAT_ERROR  _U1IE_UERRIE_MASK
 
 /*
 #define KVA_TO_PA(v)  ((v) & 0x1fffffff)
@@ -84,8 +87,8 @@
 #define HWRETRIES  1
 #define SWRETRIES  3
 
-#define DEVICE_DESCRIPTOR_SIZE			18
-#define CONFIGURATION_DESCRIPTOR_SIZE	128
+#define DEVICE_DESCRIPTOR_SIZE  18
+#define CONFIGURATION_DESCRIPTOR_SIZE  128
 
 #define BULK_ATTRIBUTES  2
 #define INTERRUPT_ATTRIBUTES  3
@@ -114,7 +117,9 @@
 
 #define BDT_RAM_SIZE  256
 
-static struct bdt {
+//************************************************************************
+static struct bdt
+{
 	int flags;
 	byte *buffer;
 } *bdts;  // 512 byte aligned in buffer
@@ -123,16 +128,18 @@ static struct bdt {
 
 #define ENDPOINTS  4
 
-struct endpoint {
-	byte toggle[2];  // rx [0] and tx [1] next packet data0 (0) or data1 (BD_FLAGS_DATA)
-	byte bdtodd[2];  // rx [0] and tx [1] next bdt even (0) or odd (1)
+//************************************************************************
+struct endpoint
+{
+	byte toggle[2];			// rx [0] and tx [1] next packet data0 (0) or data1 (BD_FLAGS_DATA)
+	byte bdtodd[2];			// rx [0] and tx [1] next bdt even (0) or odd (1)
 	byte packetsize;
 	boolean inter;
 
-	byte data_pid;  // TOKEN_IN -> data to host; TOKEN_OUT -> data from host
-	int data_offset;  // current offset in data stream
-	int data_length;  // max offset in data stream
-	byte data_buffer[80];  // data to or from host
+	byte data_pid;			// TOKEN_IN -> data to host; TOKEN_OUT -> data from host
+	int data_offset;		// current offset in data stream
+	int data_length;		// max offset in data stream
+	byte data_buffer[80];	// data to or from host
 } endpoints[ENDPOINTS];
 
 byte bulk_in_ep;
@@ -143,52 +150,52 @@ byte int_ep;
 	volatile boolean usb_in_isr;
 #endif
 
-boolean	cdc_attached;		// set when cdc acm device is attached
-boolean	scsi_attached;		// set when usb mass storage device is attached
+boolean	cdc_attached;			// set when cdc acm device is attached
+boolean	scsi_attached;			// set when usb mass storage device is attached
 uint32	scsi_attached_count;
-boolean	other_attached;		// set when other device is attached
+boolean	other_attached;			// set when other device is attached
 
-boolean	cdcacm_attached;	// set when cdcacm host is attached
-uint32	cdcacm_attached_count;
+boolean	gCdcacm_attached;		// set when cdcacm host is attached
+uint32	gCdcacm_attached_count;
 
-//*******************************************************************************
+//************************************************************************
 static void	parse_configuration(const byte *configuration, int size)
 {
-	int i;
+unsigned int ii;
 
 	// extract the bulk endpoint information
-	for (i = 0; i < size; i += configuration[i])
+	for (ii = 0; ii < size; ii += configuration[ii])
 	{
-		if (configuration[i+1] == ENDPOINT_DESCRIPTOR)
+		if (configuration[ii+1] == ENDPOINT_DESCRIPTOR)
 		{
-			if (configuration[i+3] == BULK_ATTRIBUTES)
+			if (configuration[ii+3] == BULK_ATTRIBUTES)
 			{
-				if (configuration[i+2] & 0x80)
+				if (configuration[ii+2] & 0x80)
 				{
-					bulk_in_ep	=	(byte)(configuration[i+2] & 0xf);
+					bulk_in_ep	=	(byte)(configuration[ii+2] & 0xf);
 					assert(bulk_in_ep < LENGTHOF(endpoints));
-					assert(configuration[i+4]);
-					endpoints[bulk_in_ep].packetsize	=	configuration[i+4];
+					assert(configuration[ii+4]);
+					endpoints[bulk_in_ep].packetsize	=	configuration[ii+4];
 				}
 				else
 				{
-					bulk_out_ep	=	(byte)(configuration[i+2] & 0xf);
+					bulk_out_ep	=	(byte)(configuration[ii+2] & 0xf);
 					assert(bulk_out_ep < LENGTHOF(endpoints));
-					assert(configuration[i+4]);
-					endpoints[bulk_out_ep].packetsize	=	configuration[i+4];
+					assert(configuration[ii+4]);
+					endpoints[bulk_out_ep].packetsize	=	configuration[ii+4];
 				}
 			}
-			else if (configuration[i+3] == INTERRUPT_ATTRIBUTES)
+			else if (configuration[ii+3] == INTERRUPT_ATTRIBUTES)
 			{
-				int_ep	=	(byte)(configuration[i+2] & 0xf);
+				int_ep	=	(byte)(configuration[ii+2] & 0xf);
 				assert(int_ep < LENGTHOF(endpoints));
-				assert(configuration[i+4]);
-				endpoints[int_ep].packetsize	=	configuration[i+4];
+				assert(configuration[ii+4]);
+				endpoints[int_ep].packetsize	=	configuration[ii+4];
 				endpoints[int_ep].inter			=	1;
 			}
 		}
 	}
-	assert(i == size);
+	assert(ii == size);
 }
 
 // *** device ***
@@ -202,14 +209,14 @@ static int configuration_descriptor_length;
 static const byte *string_descriptor;
 static int string_descriptor_length;
 
-static usb_reset_cbfn reset_cbfn;
-static usb_control_cbfn control_transfer_cbfn;
-static usb_bulk_cbfn bulk_transfer_cbfn;
+static usb_reset_cbfn		gReset_cbfn;
+static usb_control_cbfn		gControl_transfer_cbfn;
+static usb_bulk_cbfn		gBulk_transfer_cbfn;
 
-//*******************************************************************************
+//************************************************************************
 // this function puts our state machine in a waiting state, waiting
 // for a usb reset from the host.
-//*******************************************************************************
+//************************************************************************
 static void	usb_device_wait()
 {
 	// enable usb device mode
@@ -223,10 +230,10 @@ static void	usb_device_wait()
 	MCF_USB_OTG_INT_ENB		=	MCF_USB_OTG_INT_ENB_USB_RST_EN;
 }
 
-//*******************************************************************************
+//************************************************************************
 // this function puts our state machine into the default state,
 // waiting for a "set configuration" command from the host.
-//*******************************************************************************
+//************************************************************************
 static void	usb_device_default()
 {
 	// default to address 0 on reset
@@ -249,18 +256,18 @@ static void	usb_device_default()
 
 	// enable (also) usb sleep and token done interrupts
 	MCF_USB_OTG_INT_STAT	=	0xff;
-	MCF_USB_OTG_INT_ENB		|=	MCF_USB_OTG_INT_ENB_SLEEP_EN|MCF_USB_OTG_INT_ENB_TOK_DNE_EN;
+	MCF_USB_OTG_INT_ENB |= MCF_USB_OTG_INT_ENB_SLEEP_EN|MCF_USB_OTG_INT_ENB_TOK_DNE_EN;
 }
 
-//*******************************************************************************
+//************************************************************************
 // enqueue a packet to the usb engine for transfer to/from the host
-//*******************************************************************************
+//************************************************************************
 void	usb_device_enqueue(int endpoint, boolean tx, byte *buffer, int length)
 {
-	int ep;
-	boolean odd;
-	int flags;
-	struct bdt *bdt;
+	int			ep;
+	boolean		odd;
+	int			flags;
+	struct bdt	*bdt;
 
 	assert(endpoint < LENGTHOF(endpoints));
 
@@ -271,12 +278,12 @@ void	usb_device_enqueue(int endpoint, boolean tx, byte *buffer, int length)
 		length	=	MIN(length, endpoints[endpoint].packetsize);
 
 		// find the next bdt entry to use
-		odd			=	endpoints[endpoint].bdtodd[tx];
+		odd	=	endpoints[endpoint].bdtodd[tx];
 
 		// initialize the bdt entry
-		bdt			=	MYBDT(endpoint, tx, odd);
+		bdt	=	MYBDT(endpoint, tx, odd);
 		bdt->buffer	=	(byte *)TF_LITTLE(KVA_TO_PA((int)buffer));
-		flags		=	TF_LITTLE(bdt->flags);
+		flags	=	TF_LITTLE(bdt->flags);
 		assert(! (flags & BD_FLAGS_OWN));
 		assert(length <= endpoints[endpoint].packetsize);
 		bdt->flags	=	TF_LITTLE(BD_FLAGS_BC_ENC(length)|BD_FLAGS_OWN|endpoints[endpoint].toggle[tx]|BD_FLAGS_DTS);
@@ -305,21 +312,17 @@ void	usb_device_enqueue(int endpoint, boolean tx, byte *buffer, int length)
 	}
 }
 
-static byte setup_buffer[SETUP_SIZE];  // from host
-static byte next_address;  // set after successful status
+static byte setup_buffer[SETUP_SIZE];	// from host
+static byte next_address;	// set after successful status
 
 // *** isr ***
 
 static byte descriptor[DEVICE_DESCRIPTOR_SIZE];
 static byte configuration[CONFIGURATION_DESCRIPTOR_SIZE];
 
-//*******************************************************************************
+//************************************************************************
 // called by usb on device attach
-// XXX -- uncomment for interrupt use
-//__ISR(45, ipl6) // REVISIT -- ipl?
-//*******************************************************************************
-//void __ISR(_USB_1_VECTOR, ipl6) IntUSB1Handler(void)
-//void __ISR(45, ipl6) IntUSB1Handler(void)
+//************************************************************************
 #ifdef _USE_USB_IRQ_
 	void __ISR(_USB_1_VECTOR, ipl6) IntUSB1Handler(void)
 #else
@@ -330,14 +333,13 @@ static byte configuration[CONFIGURATION_DESCRIPTOR_SIZE];
 
 	if (! bdts)
 	{
-		return;  // revisit
+		return;	// XXX
 	}
 	
 	assert(! usb_in_isr);
-	assert((usb_in_isr = true) ? true : true);
+	assert((usb_in_isr	=	true) ? true : true);
 	
 #ifdef _USE_USB_IRQ_
-	// XXX -- uncomment for interrupt use
 	IFS1CLR	=	0x02000000; // USBIF
 #endif
 	
@@ -437,7 +439,7 @@ static byte configuration[CONFIGURATION_DESCRIPTOR_SIZE];
 						if (i != -1)
 						{
 							assert(j == string_descriptor_length);
-							endpoints[endpoint].data_length	=	0;  // what to return here?
+							endpoints[endpoint].data_length	=	0;	// what to return here?
 						}
 						else
 						{
@@ -485,14 +487,14 @@ static byte configuration[CONFIGURATION_DESCRIPTOR_SIZE];
 					else if (setup->request == REQUEST_SET_CONFIGURATION)
 					{
 						assert(value == 1);
-						cdcacm_attached_count++;
-						cdcacm_attached	=	1;
+						gCdcacm_attached_count++;
+						gCdcacm_attached	=	1;
 					}
 					else if (setup->request == REQUEST_GET_CONFIGURATION)
 					{
-						endpoints[endpoint].data_pid		=	TOKEN_IN;
+						endpoints[endpoint].data_pid	=	TOKEN_IN;
 
-						endpoints[endpoint].data_length		=	1;
+						endpoints[endpoint].data_length	=	1;
 						endpoints[endpoint].data_buffer[0]	=	1;
 
 						// data phase starts with data1
@@ -516,14 +518,14 @@ XXX_SKIP2_XXX:;
 				if (setup->requesttype & 0x80/*in*/)
 				{
 					// host wants to receive data, get it from our caller!
-					assert(control_transfer_cbfn);
-					rv	=	control_transfer_cbfn(setup, endpoints[endpoint].data_buffer, length);
+					assert(gControl_transfer_cbfn);
+					rv	=	gControl_transfer_cbfn(setup, endpoints[endpoint].data_buffer, length);
 					assert(rv >= 0);
 					assert(rv <= length);
 
 					// prepare to send data, TOKEN_IN(s) will follow
 					endpoints[endpoint].data_pid	=	TOKEN_IN;
-					assert(rv > 0);  // if you don't have a length, use out!
+					assert(rv > 0);	// if you don't have a length, use out!
 					endpoints[endpoint].data_length	=	rv;
 					usb_device_enqueue(0, 1, endpoints[endpoint].data_buffer, endpoints[endpoint].data_length);
 				}
@@ -539,8 +541,8 @@ XXX_SKIP2_XXX:;
 					else
 					{
 						// data transfer is done; put it to our caller!
-						assert(control_transfer_cbfn);
-						rv	=	control_transfer_cbfn((struct setup *)setup_buffer, NULL, 0);
+						assert(gControl_transfer_cbfn);
+						rv	=	gControl_transfer_cbfn((struct setup *)setup_buffer, NULL, 0);
 						assert(rv != -1);
 
 						// status uses data1
@@ -601,8 +603,8 @@ XXX_SKIP2_XXX:;
 					else
 					{
 						// put it to our caller!
-						assert(control_transfer_cbfn);
-						rv	=	control_transfer_cbfn((struct setup *)setup_buffer, endpoints[endpoint].data_buffer, endpoints[endpoint].data_length);
+						assert(gControl_transfer_cbfn);
+						rv	=	gControl_transfer_cbfn((struct setup *)setup_buffer, endpoints[endpoint].data_buffer, endpoints[endpoint].data_length);
 						assert(rv != -1);
 
 						// status uses data1
@@ -639,8 +641,8 @@ XXX_SKIP2_XXX:;
 			data	=	(byte *)TF_LITTLE((int)PA_TO_KVA1((int)bdt->buffer));
 
 			// we just received or sent data from or to the host
-			assert(bulk_transfer_cbfn);
-			bulk_transfer_cbfn(pid == TOKEN_IN, data, bc);
+			assert(gBulk_transfer_cbfn);
+			gBulk_transfer_cbfn(pid == TOKEN_IN, data, bc);
 		}
 
 		MCF_USB_OTG_INT_STAT	=	MCF_USB_OTG_INT_STAT_TOK_DNE;
@@ -649,13 +651,13 @@ XXX_SKIP2_XXX:;
 	// if we just got reset by the host...
 	if (MCF_USB_OTG_INT_STAT & MCF_USB_OTG_INT_STAT_USB_RST)
 	{
-		cdcacm_active	=	0;
-		cdcacm_attached	=	0;
+		gCdcacm_active		=	0;
+		gCdcacm_attached	=	0;
 
 		usb_device_default();
 
-		assert(reset_cbfn);
-		reset_cbfn();
+		assert(gReset_cbfn);
+		gReset_cbfn();
 
 		// setup always uses data0; following transactions start with data1
 		endpoints[0].toggle[0]	=	0;
@@ -670,11 +672,11 @@ XXX_SKIP2_XXX:;
 	// if we just went idle...
 	if (MCF_USB_OTG_INT_STAT & MCF_USB_OTG_INT_STAT_SLEEP)
 	{
-		cdcacm_active	=	0;
-		cdcacm_attached	=	0;
+		gCdcacm_active		=	0;
+		gCdcacm_attached	=	0;
 
 		// disable usb sleep interrupts
-		MCF_USB_OTG_INT_ENB &= ~MCF_USB_OTG_INT_ENB_SLEEP_EN;
+		MCF_USB_OTG_INT_ENB		&=	~MCF_USB_OTG_INT_ENB_SLEEP_EN;
 		MCF_USB_OTG_INT_STAT	=	MCF_USB_OTG_INT_STAT_SLEEP;
 	}
 	
@@ -683,88 +685,87 @@ XXX_SKIP_XXX:
 	assert((usb_in_isr = false) ? true : true);
 }
 
-//*******************************************************************************
+//************************************************************************
 // this function is called by upper level code to register callback
 // functions.
-//*******************************************************************************
+//************************************************************************
 void	usb_register(usb_reset_cbfn reset, usb_control_cbfn control_transfer, usb_bulk_cbfn bulk_transfer)
 {
-	reset_cbfn				=	reset;
-	control_transfer_cbfn	=	control_transfer;
-	bulk_transfer_cbfn		=	bulk_transfer;
+	gReset_cbfn				=	reset;
+	gControl_transfer_cbfn	=	control_transfer;
+	gBulk_transfer_cbfn		=	bulk_transfer;
 }
 
-//*******************************************************************************
+//************************************************************************
 // called by upper level code to specify the device descriptor to
 // return to the host.
-//*******************************************************************************
+//************************************************************************
 void	usb_device_descriptor(const byte *descriptor, int length)
 {
-	device_descriptor			=	descriptor;
-	device_descriptor_length	=	length;
+	device_descriptor = descriptor;
+	device_descriptor_length = length;
 }
 
-//*******************************************************************************
+//************************************************************************
 // called by upper level code to specify the configuration descriptor
 // to return to the host.
-//*******************************************************************************
+//************************************************************************
 void	usb_configuration_descriptor(const byte *descriptor, int length)
 {
-	configuration_descriptor		=	descriptor;
-	configuration_descriptor_length	=	length;
+	configuration_descriptor = descriptor;
+	configuration_descriptor_length = length;
 }
 
-//*******************************************************************************
+//************************************************************************
 // called by upper level code to specify the string descriptors to
 // return to the host.
-//*******************************************************************************
+//************************************************************************
 void	usb_string_descriptor(const byte *descriptor, int length)
 {
-	string_descriptor			=	descriptor;
-	string_descriptor_length	=	length;
+	string_descriptor = descriptor;
+	string_descriptor_length = length;
 }
 
-//*******************************************************************************
+//************************************************************************
 void	usb_uninitialize(void)
 {
 	// disable usb device mode and usb device pull ups
-	MCF_USB_OTG_CTL			=	0;
-	MCF_USB_OTG_OTG_CTRL	=	0;
+	MCF_USB_OTG_CTL = 0;
+	MCF_USB_OTG_OTG_CTRL = 0;
 
 	// power off
-	U1PWRCbits.USBPWR		=	0;
+	U1PWRCbits.USBPWR = 0;
 }
 
-//*******************************************************************************
+//************************************************************************
 void	usb_initialize(void)
 {
 	static __attribute__ ((aligned(512))) byte bdt_ram[BDT_RAM_SIZE];
 
-	bdts	=	(struct bdt *)bdt_ram;
+	bdts = (struct bdt *)bdt_ram;
 
 	assert(BDT_RAM_SIZE >= LENGTHOF(endpoints)*4*sizeof(struct bdt));
 
 	// power on
-	U1PWRCbits.USBPWR	=	1;
+	U1PWRCbits.USBPWR = 1;
 
-#ifdef _USE_USB_IRQ_
 	// enable int
-	// XXX -- uncomment for interrupt use
-	IEC1bits.USBIE	=	1;
-	IPC11bits.USBIP	=	6;
-	IPC11bits.USBIS	=	0;
+#ifdef _USE_USB_IRQ_
+	IEC1bits.USBIE = 1;
+	IPC11bits.USBIP = 6;
+	IPC11bits.USBIS = 0;
 #endif
-	MCF_USB_OTG_SOF_THLD	=	74;
+
+	MCF_USB_OTG_SOF_THLD = 74;
 
 	// initialize usb bdt
 	assert(! ((unsigned int)bdts & 0x1ff));
-	MCF_USB_OTG_BDT_PAGE_01	=	(uint8)(KVA_TO_PA((unsigned int)bdts) >> 8);
-	MCF_USB_OTG_BDT_PAGE_02	=	(uint8)(KVA_TO_PA((unsigned int)bdts) >> 16);
-	MCF_USB_OTG_BDT_PAGE_03	=	(uint8)(KVA_TO_PA((unsigned int)bdts) >> 24);
+	MCF_USB_OTG_BDT_PAGE_01 = (uint8)(KVA_TO_PA((unsigned int)bdts) >> 8);
+	MCF_USB_OTG_BDT_PAGE_02 = (uint8)(KVA_TO_PA((unsigned int)bdts) >> 16);
+	MCF_USB_OTG_BDT_PAGE_03 = (uint8)(KVA_TO_PA((unsigned int)bdts) >> 24);
 
 	// enable usb to interrupt on reset
 	usb_device_wait();
 }
-
 
 #endif	//	defined(_USB) && defined(_USE_USB_FOR_SERIAL_)
