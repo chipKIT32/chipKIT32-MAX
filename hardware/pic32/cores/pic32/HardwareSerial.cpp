@@ -68,7 +68,7 @@
 #include "HardwareSerial.h"
 
 #if defined(_USE_USB_FOR_SERIAL_)
-	#define	_DEBUG_USB_VIA_SERIAL0_
+//	#define	_DEBUG_USB_VIA_SERIAL0_
 #endif
 
 //*	defines for kSerialPort_x are in "HardwareSerial.h"
