@@ -64,6 +64,10 @@ const static uint8_t A4 = 18;
 const static uint8_t A5 = 19;
 const static uint8_t A6 = 20;
 const static uint8_t A7 = 21;
+const static uint8_t A8 = 22;
+const static uint8_t A9 = 23;
+const static uint8_t A10 = 24;
+const static uint8_t A11 = 25;
 #endif
 
 #endif
