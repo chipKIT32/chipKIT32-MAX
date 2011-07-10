@@ -12,8 +12,8 @@ uno_pic32.ldscript=chipKIT-UNO32-application-32MX320F128L.ld
 # Use a high -Gnum for devices that have less than 64K of data memory
 # For -G1024, objects 1024 bytes or smaller will be accessed by
 # gp-relative addressing
-uno_pic32.compiler.c.flags=-O2::-c::-mno-smart-io::-w::-ffunction-sections::-fdata-sections::-G1024
-uno_pic32.compiler.cpp.flags=-O2::-c::-mno-smart-io::-w::-fno-exceptions::-ffunction-sections::-fdata-sections::-G1024
+uno_pic32.compiler.c.flags=-O2::-c::-mno-smart-io::-w::-ffunction-sections::-fdata-sections::-G1024::-g
+uno_pic32.compiler.cpp.flags=-O2::-c::-mno-smart-io::-w::-fno-exceptions::-ffunction-sections::-fdata-sections::-G1024::-g
 
 uno_pic32.upload.protocol=stk500v2
 uno_pic32.upload.maximum_size=126976
