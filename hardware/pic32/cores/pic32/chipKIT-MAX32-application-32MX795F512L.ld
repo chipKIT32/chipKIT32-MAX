@@ -70,7 +70,8 @@ SECTIONS
   
   .eeprom_pic32 _EEPROM_ADDR :
   { 
-    . += 0x4000;
+    KEEP(*(.eeprom_pic32 .eeprom_pic32.*))
+    /* . += 0x4000; */
   } > kseg0_eeprom_mem
 
   /DISCARD/ : { *(.bev_handler) }

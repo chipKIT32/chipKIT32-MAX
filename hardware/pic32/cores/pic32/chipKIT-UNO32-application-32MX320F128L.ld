@@ -69,8 +69,9 @@ SECTIONS
   } > kseg0_program_mem
 
   .eeprom_pic32 _EEPROM_ADDR :
-  { 
-    . += 0x1000;
+  {
+    KEEP(*(.eeprom_pic32 .eeprom_pic32.*))
+    /* . += 0x1000; */
   } > kseg0_eeprom_mem
 
   /DISCARD/ : { *(.bev_handler) }
