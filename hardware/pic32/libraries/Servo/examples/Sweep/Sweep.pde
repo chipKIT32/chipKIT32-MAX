@@ -2,6 +2,8 @@
 // by BARRAGAN <http://barraganstudio.com> 
 // This example code is in the public domain.
 
+// NOTE: UART will be disabled when servo is attached to pin 0 or 1.
+// 	   Due to the use of OC5, Servo will not work when attach to pin 10. 
 
 #include <Servo.h> 
  
