@@ -58,7 +58,7 @@
 #define Servo_VERSION           3      // software version of this library
 
 #define SERVOS_PER_TIMER       8     // the maximum number of servos controlled by one timer 
-#define MAX_SERVOS             8
+#define MAX_SERVOS             24
 
 
 #define MIN_PULSE_WIDTH       544     // the shortest pulse sent to a servo  (us)

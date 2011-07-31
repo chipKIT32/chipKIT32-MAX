@@ -25,7 +25,7 @@ extern "C"{
 
 
 static servo_t servos[MAX_SERVOS];                          // static array of servo structures
-int    channel[1];                                           //channel for the current servo                                                            
+int    channel[3];                                           //channel for the current servo                                                            
 
 uint8_t ServoCount = 0;                                     // the total number of attached servos
 
@@ -37,7 +37,7 @@ uint8_t ServoCount = 0;                                     // the total number 
 #define SERVO(_timer,_channel)  (servos[SERVO_INDEX(_timer,_channel)])            // macro to access servo class by timer and channel
 /************ static functions common to all instances ***********************/
 
-void handle_interrupts(int timer, volatile unsigned int *TMRn, volatile unsigned int *OCnR)
+void handle_interrupts(int timer, volatile unsigned int *TMRn, volatile unsigned int *PR)
 {
 
  
@@ -50,16 +50,17 @@ void handle_interrupts(int timer, volatile unsigned int *TMRn, volatile unsigned
 
   channel[timer]++;    // increment to the next channel
   if( SERVO_INDEX(timer,channel[timer]) < ServoCount && channel[timer] < SERVOS_PER_TIMER) {
-    *OCnR = *TMRn + SERVO(timer,channel[timer]).ticks;
+    *PR = *TMRn + SERVO(timer,channel[timer]).ticks;
     if(SERVO(timer,channel[timer]).Pin.isActive == true)     // check if activated
       digitalWrite( SERVO(timer,channel[timer]).Pin.nbr,HIGH); // its an active channel so pulse it high   
   }  
   else { 
+    *TMRn = channel[timer] * usToTicks(MAX_PULSE_WIDTH);
     // finished all channels so wait for the refresh period to expire before starting over 
     if( (unsigned)*TMRn <  (usToTicks(REFRESH_INTERVAL) + 4) )  // allow a few ticks to ensure the next OCR1A not missed
-      *OCnR = (unsigned int)usToTicks(REFRESH_INTERVAL);  
+      *PR = (unsigned int)usToTicks(REFRESH_INTERVAL);  
     else 
-      *OCnR = *TMRn + 4;  // at least REFRESH_INTERVAL has elapsed
+      *PR = *TMRn + 4;  // at least REFRESH_INTERVAL has elapsed
     channel[timer] = -1; // this will get incremented at the end of the refresh period to start again at the first channel
   }
      
@@ -72,9 +73,17 @@ void handle_interrupts(int timer, volatile unsigned int *TMRn, volatile unsigned
 static void finISR(int timer)
 {
    //disable use of the given timer
-    if(timer = TIMER2)
+     if(timer = TIMER3)
     {
-       IEC0CLR = 0x400000;// disable OC5 interrupt 
+       IEC0CLR = 0x1000;// disable T4 interrupt 
+    }
+    if(timer = TIMER4)
+    {
+       IEC0CLR = 0x10000;// disable T4 interrupt 
+    }
+    if(timer = TIMER5)
+    {
+       IEC0CLR = 0x100000;// disable T5 interrupt 
     }
     
 }
@@ -115,18 +124,17 @@ uint8_t Servo::attach(int pin, int min, int max)
         U1MODE = 0x0;
 
     }
-    if(pin != 10) // pin 10 is tied to OC5 can't use as an output
-    {
-        pinMode( pin, OUTPUT) ;                                   // set servo pin to output
-        servos[this->servoIndex].Pin.nbr = pin;  
-        this->min  = (MIN_PULSE_WIDTH - min)/4; //resolution of min/max is 4 uS
-        this->max  = (MAX_PULSE_WIDTH - max)/4; 
-        // initialize the timer if it has not already been initialized 
-        int timer = SERVO_INDEX_TO_TIMER(this->servoIndex);
-        if(isTimerActive(timer) == false)
-            initISR(timer);    
-        servos[this->servoIndex].Pin.isActive = true;  // this must be set after the check for isTimerActive
-    } 
+   
+    pinMode( pin, OUTPUT) ;                                   // set servo pin to output
+    servos[this->servoIndex].Pin.nbr = pin;  
+    this->min  = (MIN_PULSE_WIDTH - min)/4; //resolution of min/max is 4 uS
+    this->max  = (MAX_PULSE_WIDTH - max)/4; 
+    // initialize the timer if it has not already been initialized 
+    int timer = SERVO_INDEX_TO_TIMER(this->servoIndex);
+    if(isTimerActive(timer) == false)
+        initISR(timer);    
+    servos[this->servoIndex].Pin.isActive = true;  // this must be set after the check for isTimerActive
+
     return this->servoIndex ;     
    }
 }
