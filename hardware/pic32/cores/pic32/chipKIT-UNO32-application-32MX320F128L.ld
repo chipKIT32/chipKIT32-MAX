@@ -30,7 +30,7 @@ _ebase_address  = 0x9D000000;
  * Memory Address Equates
  *************************************************************************/
 _RESET_ADDR              = 0x9D001000;
-_EEPROM_ADDR             = 0x9D01F000;
+_EEPROM_ADDR             = 0x9D01C000;
 _BEV_EXCPT_ADDR          = 0xBFC00380;
 _DBG_EXCPT_ADDR          = 0xBFC00480;
 _DBG_CODE_ADDR           = 0xBFC02000;
@@ -45,8 +45,8 @@ _GEN_EXCPT_ADDR          = _ebase_address + 0x180;
  *************************************************************************/
 MEMORY
 {
-  kseg0_program_mem    (rx)  : ORIGIN = 0x9D001000, LENGTH = 0x1E000
-  kseg0_eeprom_mem           : ORIGIN = 0x9D01F000, LENGTH = 0x1000
+  kseg0_program_mem    (rx)  : ORIGIN = 0x9D001000, LENGTH = 0x1B000
+  kseg0_eeprom_mem           : ORIGIN = 0x9D01C000, LENGTH = 0x4000
   kseg0_boot_mem             : ORIGIN = 0x9FC00490, LENGTH = 0
   exception_mem              : ORIGIN = 0x9D000000, LENGTH = 0x1000
   kseg1_boot_mem             : ORIGIN = 0xBFC00000, LENGTH = 0
@@ -68,10 +68,9 @@ SECTIONS
     KEEP(*(.reset))
   } > kseg0_program_mem
 
-  .eeprom_pic32 _EEPROM_ADDR :
+  .eeprom_pic32 _EEPROM_ADDR (NOLOAD):
   {
     KEEP(*(.eeprom_pic32 .eeprom_pic32.*))
-    /* . += 0x1000; */
   } > kseg0_eeprom_mem
 
   /DISCARD/ : { *(.bev_handler) }
