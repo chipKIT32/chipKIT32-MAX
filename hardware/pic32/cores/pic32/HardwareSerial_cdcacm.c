@@ -15,6 +15,7 @@
 //*	Jun 23,	2011	<MLS> Got code from Rich, started on Serial support for Arduino/chipkit
 //*	Jun 24,	2011	<MLS> USBSerial working completely
 //*	Jul  2,	2011	<MLS/RT> Got the fast transmit buffering working (thanks Rich)
+//*	Aug  2,	2011	<MKS/RT> added code to discard if not attached.
 //************************************************************************
 
 
@@ -212,13 +213,13 @@ int previousInterrutLevel;
 		
 	ASSERT(length);
 
-	if (! gCdcacm_attached || gDiscard)
+	if (! gCdcacm_attached || gDiscard || (length <= 0))
 	{
 		return;
 	}
 
 	// figure out how many buffers we need
-	buffersNeeded	=	(length+sizeof(gRXbuffer[0])-1)/sizeof(gRXbuffer[0])+1;
+	buffersNeeded	=	(length + sizeof(gRXbuffer[0]) - 1) / sizeof(gRXbuffer[0]) + 1;
 
 	previousInterrutLevel	=	SPLX(7);
 
@@ -227,7 +228,7 @@ int previousInterrutLevel;
 	for (;;)
 	{
 		// compute the number of available buffers
-		availableBuffers	=	(gRX_out+NRX-gRX_in)%NRX;
+		availableBuffers	=	(gRX_out + NRX-gRX_in) % NRX;
 		if (! availableBuffers)
 		{
 			availableBuffers	=	NRX;
@@ -239,17 +240,18 @@ int previousInterrutLevel;
 			// we're ready to go
 			break;
 		}
-#ifndef _USE_USB_IRQ_
-		usb_isr();
-#else
+#ifdef _USE_USB_IRQ_
 		SPLX(previousInterrutLevel);
-		//delay(1);
-		//if (m++ > 1000)
-		//{
-		//	gDiscard	=	true;
-		//	return;
-		//}
+
+		delay(1);
+		if (m++ > 1000)
+		{
+			gDiscard	=	true;
+			return;
+		}
 		previousInterrutLevel	=	SPLX(7);
+#else
+		usb_isr();
 #endif
 	}
 
