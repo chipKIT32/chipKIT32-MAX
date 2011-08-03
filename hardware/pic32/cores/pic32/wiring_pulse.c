@@ -21,6 +21,11 @@
 
   $Id: wiring.c 248 2007-02-03 15:36:30Z mellis $
 */
+//************************************************************************
+//*	Edit History
+//************************************************************************
+//*	Jul 25,	2011	<MLS> Modifing for 16 bit I/O ports on pic32 chip
+//************************************************************************
 
 #include "wiring_private.h"
 #include "pins_arduino.h"
@@ -29,12 +34,14 @@
  * or LOW, the type of pulse to measure.  Works on pulses from 2-3 microseconds
  * to 3 minutes in length, but must be called at least a few dozen microseconds
  * before the start of the pulse. */
+//************************************************************************
 unsigned long pulseIn(uint8_t pin, uint8_t state, unsigned long timeout)
 {
+
 	// cache the port and bit of the pin in order to speed up the
 	// pulse width measuring loop and achieve finer resolution.  calling
 	// digitalRead() instead yields much coarser resolution.
-	uint8_t bit = digitalPinToBitMask(pin);
+	uint16_t bit	=	digitalPinToBitMask(pin);
 	uint8_t port = digitalPinToPort(pin);
 	uint8_t stateMask = (state ? bit : 0);
 	unsigned long width = 0; // keep initialization out of time critical area
