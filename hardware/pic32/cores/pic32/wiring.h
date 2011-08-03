@@ -145,6 +145,7 @@ void loop(void);
 #if !defined(__AVR__)
 	#define PROGMEM
 	#define pgm_read_byte(x)		(*((char *)x))
+	#define pgm_read_word(x)		(*((short *)x))
 	#define pgm_read_byte_near(x)	(*((char *)x))
 	#define pgm_read_byte_far(x)	(*((char *)x))
 	#define pgm_read_word_near(x)	(*((short *)x))
