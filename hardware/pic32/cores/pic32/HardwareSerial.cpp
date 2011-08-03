@@ -52,6 +52,7 @@
 //*	May 25, 2011	<MLS> Added support for Uart2 on UNO32
 //*	Jun 17,	2011	<MLS> Added Serial4 and Serial5 for MEGA32, ISRs not finished
 //*	Jun 24,	2011	<MLS> Adding USB support, code from Rich Testardi (http://www.cpustick.com/downloads.htm)
+//*	Jul  3,	2011	<MLS> Fixed bug in baud rate calculation (http://www.chipkit.org/forum/viewtopic.php?f=7&t=213&p=948#p948)
 //************************************************************************
 #define __LANGUAGE_C__
 
@@ -140,7 +141,8 @@ int	configValue;
 
 	*_UxMODE	=	(UART_EN);
 	*_UxSTA		=	(UART_RX_ENABLE | UART_TX_ENABLE);
-	*_UxBRG		=	(__PIC32_pbClk / 16 / (baudRate - 1));	// calculate actual BAUD generate value.
+	//	http://www.chipkit.org/forum/viewtopic.php?f=7&t=213&p=948#p948
+	*_UxBRG		= 	((__PIC32_pbClk / 16 / baudRate) - 1);	// calculate actual BAUD generate value.
 
 	switch(_uartNumber)
 	{
