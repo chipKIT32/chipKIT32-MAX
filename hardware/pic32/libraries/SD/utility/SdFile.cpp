@@ -18,8 +18,9 @@
  * <http://www.gnu.org/licenses/>.
  */
 #include <SdFat.h>
-#include <avr/pgmspace.h>
 #include <WProgram.h>
+
+volatile char SDbuffer[256];
 //------------------------------------------------------------------------------
 // callback function for date/time
 void (*SdFile::dateTime_)(uint16_t* date, uint16_t* time) = NULL;
@@ -256,9 +257,13 @@ uint8_t SdFile::make83Name(const char* str, uint8_t* name) {
       i = 8;   // place for extension
     } else {
       // illegal FAT characters
-      PGM_P p = PSTR("|<>^+=?/[];,*\"\\");
+      char* p = "|<>^+=?/[];,*\"\\";
       uint8_t b;
-      while ((b = pgm_read_byte(p++))) if (b == c) return false;
+
+	  for(int temp=0; temp < 15; temp++) {
+		  SDbuffer[temp] = p[temp];
+	  }
+
       // check size and only allow ASCII printable characters
       if (i > n || c < 0X21 || c > 0X7E)return false;
       // only upper case allowed in 8.3 names - convert lower to upper
@@ -365,7 +370,7 @@ uint8_t SdFile::makeDir(SdFile* dir, const char* dirName) {
  * O_EXCL - If O_CREAT and O_EXCL are set, open() shall fail if the file exists.
  *
  * O_SYNC - Call sync() after each write.  This flag should not be used with
- * write(uint8_t), write_P(PGM_P), writeln_P(PGM_P), or the Arduino Print class.
+ * write(uint8_t), write_P(char*), writeln_P(char*), or the Arduino Print class.
  * These functions do character at a time writes so sync() will be called
  * after each byte.
  *
@@ -1237,8 +1242,8 @@ void SdFile::write(const char* str) {
  *
  * Use SdFile::writeError to check for errors.
  */
-void SdFile::write_P(PGM_P str) {
-  for (uint8_t c; (c = pgm_read_byte(str)); str++) write(c);
+void SdFile::write_P(char* str) {
+  Serial.print(str);
 }
 //------------------------------------------------------------------------------
 /**
@@ -1246,7 +1251,7 @@ void SdFile::write_P(PGM_P str) {
  *
  * Use SdFile::writeError to check for errors.
  */
-void SdFile::writeln_P(PGM_P str) {
+void SdFile::writeln_P(char* str) {
   write_P(str);
-  println();
+  Serial.println();
 }

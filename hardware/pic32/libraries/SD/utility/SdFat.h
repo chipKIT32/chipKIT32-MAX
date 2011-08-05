@@ -23,7 +23,6 @@
  * \file
  * SdFile and SdVolume classes
  */
-#include <avr/pgmspace.h>
 #include "Sd2Card.h"
 #include "FatStructs.h"
 #include "Print.h"
@@ -286,8 +285,8 @@ class SdFile : public Print {
   void write(uint8_t b);
   int16_t write(const void* buf, uint16_t nbyte);
   void write(const char* str);
-  void write_P(PGM_P str);
-  void writeln_P(PGM_P str);
+  void write_P(char* str);
+  void writeln_P(char* str);
 //------------------------------------------------------------------------------
 #if ALLOW_DEPRECATED_FUNCTIONS
 // Deprecated functions  - suppress cpplint warnings with NOLINT comment

@@ -6,12 +6,14 @@
  * or the GNU Lesser General Public License version 2.1, both as
  * published by the Free Software Foundation.
  */
+/*Updated  August/3/2011 by Lowell Scott Hanson to be compatable with chipKIT boards */
 
 #ifndef	W5100_H_INCLUDED
 #define	W5100_H_INCLUDED
 
-#include <avr/pgmspace.h>
+//#include <avr/pgmspace.h>
 #include <SPI.h>
+#include <inttypes.h>
 
 #define MAX_SOCK_NUM 4
 
@@ -138,7 +140,10 @@ public:
    * the data from Receive buffer. Here also take care of the condition while it exceed
    * the Rx memory uper-bound of socket.
    */
-  void read_data(SOCKET s, volatile uint8_t * src, volatile uint8_t * dst, uint16_t len);
+  /* Removed unint8_t pointer cast in read_data (2 argument) due to pic32 pointer values are 32 bit and 
+  pic 32 compiler errors out due to data loss from cast from 32-bit pointer to a 16-bit int. These changes are 
+  made to this method in sockets.cpp where it is used -LSH */
+  void read_data(SOCKET s, uint16_t src, volatile uint8_t * dst, uint16_t len);
   
   /**
    * @brief	 This function is being called by send() and sendto() function also. 
@@ -156,6 +161,9 @@ public:
    * User should read upper byte first and lower byte later to get proper value.
    */
   void recv_data_processing(SOCKET s, uint8_t *data, uint16_t len, uint8_t peek = 0);
+
+
+
 
   inline void setGatewayIp(uint8_t *_addr);
   inline void getGatewayIp(uint8_t *_addr);
@@ -312,6 +320,18 @@ private:
   inline static void initSS()    { DDRB  |=  _BV(4); };
   inline static void setSS()     { PORTB &= ~_BV(4); };
   inline static void resetSS()   { PORTB |=  _BV(4); };
+#elif defined(_BOARD_UNO_)  //chipKIT definitions for SS pin
+  //inline static void initSS()    { TRISGbits.TRISG9 =  0; }; // this code is for ues with jumper JP4 in the RG9 position
+  //inline static void setSS()     { LATGbits.LATG9	=  0; };
+  //inline static void resetSS()   { LATGbits.LATG9	=  1; };
+  inline static void initSS()  { TRISDbits.TRISD4 =  0; };
+  inline static void setSS()     { LATDbits.LATD4	=  0; };
+  inline static void resetSS()   { LATDbits.LATD4	=  1; };
+#elif defined (_BOARD_MEGA_)  //chipKIT definitions for SS pin
+	inline static void initSS()  { TRISDbits.TRISD4 =  0; };
+  inline static void setSS()     { LATDbits.LATD4	=  0; };
+  inline static void resetSS()   { LATDbits.LATD4	=  1; };
+  
 #else
   inline static void initSS()    { DDRB  |=  _BV(2); };
   inline static void setSS()     { PORTB &= ~_BV(2); };

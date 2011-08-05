@@ -25,6 +25,8 @@
  */
 #include "Sd2PinMap.h"
 #include "SdInfo.h"
+#include <plib.h>
+
 /** Set SCK to max rate of F_CPU/2. See Sd2Card::setSckRate(). */
 uint8_t const SPI_FULL_SPEED = 0;
 /** Set SCK rate to F_CPU/4. See Sd2Card::setSckRate(). */
@@ -39,9 +41,9 @@ uint8_t const SPI_QUARTER_SPEED = 2;
  * on Mega Arduinos.  Software SPI works well with GPS Shield V1.1
  * but many SD cards will fail with GPS Shield V1.0.
  */
-#define MEGA_SOFT_SPI 0
+#define MEGA_SOFT_SPI 1
 //------------------------------------------------------------------------------
-#if MEGA_SOFT_SPI && (defined(__AVR_ATmega1280__)||defined(__AVR_ATmega2560__))
+#if MEGA_SOFT_SPI
 #define SOFTWARE_SPI
 #endif  // MEGA_SOFT_SPI
 //------------------------------------------------------------------------------
@@ -57,14 +59,14 @@ uint8_t const SPI_QUARTER_SPEED = 2;
  * master unless SS is set to output mode.
  */
 /** The default chip select pin for the SD card is SS. */
-uint8_t const  SD_CHIP_SELECT_PIN = SS_PIN;
-// The following three pins must not be redefined for hardware SPI.
-/** SPI Master Out Slave In pin */
-uint8_t const  SPI_MOSI_PIN = MOSI_PIN;
-/** SPI Master In Slave Out pin */
-uint8_t const  SPI_MISO_PIN = MISO_PIN;
-/** SPI Clock pin */
-uint8_t const  SPI_SCK_PIN = SCK_PIN;
+//uint8_t const  SD_CHIP_SELECT_PIN = SS_PIN;
+//// The following three pins must not be redefined for hardware SPI.
+///** SPI Master Out Slave In pin */
+//uint8_t const  SPI_MOSI_PIN = MOSI_PIN;
+///** SPI Master In Slave Out pin */
+//uint8_t const  SPI_MISO_PIN = MISO_PIN;
+///** SPI Clock pin */
+//uint8_t const  SPI_SCK_PIN = SCK_PIN;
 /** optimize loops for hardware SPI */
 #define OPTIMIZE_HARDWARE_SPI
 

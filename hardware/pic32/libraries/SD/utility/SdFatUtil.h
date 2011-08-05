@@ -24,7 +24,6 @@
  * Useful utility functions.
  */
 #include <WProgram.h>
-#include <avr/pgmspace.h>
 /** Store and print a string in flash memory.*/
 #define PgmPrint(x) SerialPrint_P(PSTR(x))
 /** Store and print a string in flash memory followed by a CR/LF.*/
@@ -54,8 +53,8 @@ static int FreeRam(void) {
  *
  * \param[in] str Pointer to string stored in flash memory.
  */
-static NOINLINE void SerialPrint_P(PGM_P str) {
-  for (uint8_t c; (c = pgm_read_byte(str)); str++) Serial.print(c);
+static NOINLINE void SerialPrint_P(char* str) {
+  Serial.print(str);
 }
 //------------------------------------------------------------------------------
 /**
@@ -63,7 +62,7 @@ static NOINLINE void SerialPrint_P(PGM_P str) {
  *
  * \param[in] str Pointer to string stored in flash memory.
  */
-static NOINLINE void SerialPrintln_P(PGM_P str) {
+static NOINLINE void SerialPrintln_P(char* str) {
   SerialPrint_P(str);
   Serial.println();
 }

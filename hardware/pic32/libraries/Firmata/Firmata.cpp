@@ -120,20 +120,25 @@ void FirmataClass::setFirmwareNameAndVersion(const char *name, byte major, byte 
   extension = strstr(name, ".cpp");
   filename = strrchr(name, '/') + 1; //points to slash, +1 gets to start of filename
   // add two bytes for version numbers
+
   if(extension && filename) {
     firmwareVersionCount = extension - filename + 2;
+	filename = name;
   } else {
     firmwareVersionCount = strlen(name) + 2;
     filename = name;
   }
+
   firmwareVersionVector = (byte *) malloc(firmwareVersionCount);
   firmwareVersionVector[firmwareVersionCount] = 0;
   firmwareVersionVector[0] = major;
   firmwareVersionVector[1] = minor;
+  
   strncpy((char*)firmwareVersionVector + 2, filename, firmwareVersionCount - 2);
   // alas, no snprintf on Arduino
   //    snprintf(firmwareVersionVector, MAX_DATA_BYTES, "%c%c%s", 
   //             (char)major, (char)minor, firmwareVersionVector);
+  
 }
 
 //------------------------------------------------------------------------------
