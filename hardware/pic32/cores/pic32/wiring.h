@@ -77,6 +77,10 @@ extern "C"{
 #define DEFAULT 1
 #define EXTERNAL 0
 
+#define EXTMINUS 4
+#define EXTPLUSMINUS 5
+
+
 // undefine stdlib's abs if encountered
 #ifdef abs
 #undef abs

@@ -196,7 +196,7 @@ int analogRead(uint8_t pin)
 	//Set up for manual sampling
 	AD1CSSL = 0;
 	AD1CON3 = 0x0002;	//Tad = internal 6 Tpb
-	AD1CON2 = 0;
+	AD1CON2 = analog_reference;
 
 	//Turn on ADC
 	AD1CON1SET = 0x8000;
