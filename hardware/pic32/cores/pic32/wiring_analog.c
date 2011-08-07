@@ -35,7 +35,8 @@
 //*	May  5,	2011	<MLS> Uno board does not have 1 to 1 pin mapping for analog, added analogInPinToBit
 //*	May 18,	2011	<MLS> JP4 on the uno board must be in the RD9 position for PWM to work on pin 10
 //*	May 23,	2011	<MLS> Added support for pin numbers to be remaped to analog numbers, (left out in iniitial version)
-//*	Aug  7,	2011	<MarcMaccomb> fixed bug in Anaglog Read
+//*	Aug  7,	2011	<MarcMaccomb> fixed bug in Anaglog Read (Issue (#67)
+//*	Aug  7,	2011	<Gene Apperson> fixed bug in Anaglog Write (Issue #70)
 //************************************************************************
 
 // Master header file for all peripheral library includes
@@ -203,6 +204,11 @@ int analogRead(uint8_t pin)
 //*	These are defined in the appropriate pins_*.c file.
 //*	For the rest of the pins, we default to digital output.
 //*********************************************************************
+//*	Gene Apperson Aug 2011
+//*	analogWrite resets timer 2 each time it is called. 
+//*	This causes the PWM to fail if it is called repeatedly with a short interval between calls.
+//*	This is the suggested fixed version of analogWrite.
+//*********************************************************************
 void analogWrite(uint8_t pin, int val)
 {
 
@@ -227,7 +233,15 @@ void analogWrite(uint8_t pin, int val)
 		#ifdef _OCMP1
 			case TIMER_OC1:
 				//* Open Timer2 with Period register value
-				OpenTimer2(T2_ON | T2_PS_1_256, PWM_TIMER_PERIOD);
+			//-	OpenTimer2(T2_ON | T2_PS_1_256, PWM_TIMER_PERIOD);
+				T2CON = T2_PS_1_256;
+				// Only reset the timer if we passed the new OCR target already
+				if (PWM_TIMER_PERIOD < TMR2)
+				{
+					TMR2 = 0;
+				}
+				PR2 = PWM_TIMER_PERIOD;
+				T2CONSET = T2_ON;
 				OpenOC1( OC_ON | OC_TIMER2_SRC | OC_PWM_FAULT_PIN_DISABLE, (PWM_TIMER_PERIOD*val)/256, (PWM_TIMER_PERIOD*val)/256  );
 				//Set duty cycle on fly
 				SetDCOC1PWM((PWM_TIMER_PERIOD*val)/256);
@@ -237,7 +251,15 @@ void analogWrite(uint8_t pin, int val)
 		#ifdef _OCMP2
 			case TIMER_OC2:
 				//* Open Timer2 with Period register value
-				OpenTimer2(T2_ON | T2_PS_1_256, PWM_TIMER_PERIOD);
+			//-	OpenTimer2(T2_ON | T2_PS_1_256, PWM_TIMER_PERIOD);
+				T2CON = T2_PS_1_256;
+				// Only reset the timer if we passed the new OCR target already
+				if (PWM_TIMER_PERIOD < TMR2)
+				{
+					TMR2 = 0;
+				}
+				PR2 = PWM_TIMER_PERIOD;
+				T2CONSET = T2_ON;
 				OpenOC2( OC_ON | OC_TIMER2_SRC | OC_PWM_FAULT_PIN_DISABLE, (PWM_TIMER_PERIOD*val)/256, (PWM_TIMER_PERIOD*val)/256  );
 				//Set duty cycle on fly
 				SetDCOC2PWM((PWM_TIMER_PERIOD*val)/256);
@@ -247,7 +269,15 @@ void analogWrite(uint8_t pin, int val)
 		#ifdef _OCMP3
 			case TIMER_OC3:
 				//* Open Timer2 with Period register value
-				OpenTimer2(T2_ON | T2_PS_1_256, PWM_TIMER_PERIOD);
+			//-	OpenTimer2(T2_ON | T2_PS_1_256, PWM_TIMER_PERIOD);
+				T2CON = T2_PS_1_256;
+				// Only reset the timer if we passed the new OCR target already
+				if (PWM_TIMER_PERIOD < TMR2)
+				{
+					TMR2 = 0;
+				}
+				PR2 = PWM_TIMER_PERIOD;
+				T2CONSET = T2_ON;
 				OpenOC3( OC_ON | OC_TIMER2_SRC | OC_PWM_FAULT_PIN_DISABLE, (PWM_TIMER_PERIOD*val)/256, (PWM_TIMER_PERIOD*val)/256  );
 				//Set duty cycle on fly
 				SetDCOC3PWM((PWM_TIMER_PERIOD*val)/256);
@@ -257,7 +287,15 @@ void analogWrite(uint8_t pin, int val)
 		#ifdef _OCMP4
 			case TIMER_OC4:
 				//* Open Timer2 with Period register value
-				OpenTimer2(T2_ON | T2_PS_1_256, PWM_TIMER_PERIOD);
+			//-	OpenTimer2(T2_ON | T2_PS_1_256, PWM_TIMER_PERIOD);
+				T2CON = T2_PS_1_256;
+				// Only reset the timer if we passed the new OCR target already
+				if (PWM_TIMER_PERIOD < TMR2)
+				{
+					TMR2 = 0;
+				}
+				PR2 = PWM_TIMER_PERIOD;
+				T2CONSET = T2_ON;
 				OpenOC4( OC_ON | OC_TIMER2_SRC | OC_PWM_FAULT_PIN_DISABLE, (PWM_TIMER_PERIOD*val)/256, (PWM_TIMER_PERIOD*val)/256  );
 				//Set duty cycle on fly
 				SetDCOC4PWM((PWM_TIMER_PERIOD*val)/256);
@@ -267,65 +305,21 @@ void analogWrite(uint8_t pin, int val)
 		#ifdef _OCMP5
 			case TIMER_OC5:
 				//* Open Timer2 with Period register value
-				OpenTimer2(T2_ON | T2_PS_1_256, PWM_TIMER_PERIOD);
+			//-	OpenTimer2(T2_ON | T2_PS_1_256, PWM_TIMER_PERIOD);
+				T2CON = T2_PS_1_256;
+				// Only reset the timer if we passed the new OCR target already
+				if (PWM_TIMER_PERIOD < TMR2)
+				{
+					TMR2 = 0;
+				}
+				PR2 = PWM_TIMER_PERIOD;
+				T2CONSET = T2_ON;
 				OpenOC5( OC_ON | OC_TIMER2_SRC | OC_PWM_FAULT_PIN_DISABLE, (PWM_TIMER_PERIOD*val)/256, (PWM_TIMER_PERIOD*val)/256  );
 				//Set duty cycle on fly
 				SetDCOC5PWM((PWM_TIMER_PERIOD*val)/256);
 				break;
 		#endif
 
-#if 0
-//*	this is the original code, I want to keep it around for refernce for a bit longer
-		#ifdef _OCMP1
-			case TIMER_OC1:
-				//* Open Timer2 with Period register value
-				OpenTimer2(T2_ON | T2_PS_1_256, PWM_TIMER_PERIOD);
-				OpenOC1( OC_ON | OC_TIMER_MODE32 | OC_TIMER2_SRC | OC_CONTINUE_PULSE | OC_LOW_HIGH, 256, (256 - val) );
-
-//			    SetDCOC1PWM((PWM_TIMER_PERIOD * val) / 256);
-				break;
-		#endif
-
-		#ifdef _OCMP2
-			case TIMER_OC2:
-				//* Open Timer2 with Period register value
-				OpenTimer2(T2_ON | T2_PS_1_256, PWM_TIMER_PERIOD);
-				OpenOC2( OC_ON | OC_TIMER_MODE32 | OC_TIMER2_SRC | OC_CONTINUE_PULSE | OC_LOW_HIGH, 256, (256 - val) );
-
-//			    SetDCOC2PWM((PWM_TIMER_PERIOD * val) / 256);
-				break;
-		#endif
-
-		#ifdef _OCMP3
-			case TIMER_OC3:
-				//* Open Timer2 with Period register value
-				OpenTimer2(T2_ON | T2_PS_1_256, PWM_TIMER_PERIOD);
-				OpenOC3( OC_ON | OC_TIMER_MODE32 | OC_TIMER2_SRC | OC_CONTINUE_PULSE | OC_LOW_HIGH, 256, (256 - val) );
-
-//			    SetDCOC3PWM((PWM_TIMER_PERIOD * val) / 256);
-				break;
-		#endif
-
-		#ifdef _OCMP4
-			case TIMER_OC4:
-				//* Open Timer2 with Period register value
-				OpenTimer2(T2_ON | T2_PS_1_256, PWM_TIMER_PERIOD);
-				OpenOC4( OC_ON | OC_TIMER_MODE32 | OC_TIMER2_SRC | OC_CONTINUE_PULSE | OC_LOW_HIGH, 256, (256 - val) );
-
-//			    SetDCOC4PWM((PWM_TIMER_PERIOD * val) / 256);
-				break;
-		#endif
-
-		#ifdef _OCMP5
-			case TIMER_OC5:
-				//* Open Timer2 with Period register value
-				OpenTimer2(T2_ON | T2_PS_1_256, PWM_TIMER_PERIOD);
-				OpenOC5( OC_ON | OC_TIMER_MODE32 | OC_TIMER2_SRC | OC_CONTINUE_PULSE | OC_LOW_HIGH, 256, (256 - val) );
-
-//			    SetDCOC5PWM((PWM_TIMER_PERIOD * val) / 256);
-				break;
-		#endif
-#endif
 
 			case NOT_ON_TIMER:
 			default:
