@@ -32,6 +32,8 @@
 //*	Oct 12,	2010	<MLS> Got MPLAB X working on MacOSX 1.6 for the first time
 //*	Oct 20,	2010	<MLS> First phase of Arduino port working
 //*	May  5,	2011	<MLS> added analog_pin_to_channel_PGM
+//*	Aug  2,	2011	<MLS> Made pin numbering for default to always include all ports even if they dont exist
+//*						this way the pin numbers always stay the same
 //************************************************************************
 
 //************************************************************************
@@ -55,6 +57,23 @@ const uint8_t	digital_pin_to_port_PGM[] = {
 	PA,
 	PA,
 	PA,
+#else
+	NOT_A_PIN,	//	0
+	NOT_A_PIN,	//	1
+	NOT_A_PIN,	//	2
+	NOT_A_PIN,	//	3
+	NOT_A_PIN,	//	4
+	NOT_A_PIN,	//	5
+	NOT_A_PIN,	//	6
+	NOT_A_PIN,	//	7
+	NOT_A_PIN,	//	8
+	NOT_A_PIN,	//	9
+	NOT_A_PIN,	//	10
+	NOT_A_PIN,	//	11
+	NOT_A_PIN,	//	12
+	NOT_A_PIN,	//	13
+	NOT_A_PIN,	//	14
+	NOT_A_PIN,	//	15
 #endif
 
 #ifdef _PORTB
@@ -74,6 +93,23 @@ const uint8_t	digital_pin_to_port_PGM[] = {
 	PB,
 	PB,
 	PB,
+#else
+	NOT_A_PIN,	//	0
+	NOT_A_PIN,	//	1
+	NOT_A_PIN,	//	2
+	NOT_A_PIN,	//	3
+	NOT_A_PIN,	//	4
+	NOT_A_PIN,	//	5
+	NOT_A_PIN,	//	6
+	NOT_A_PIN,	//	7
+	NOT_A_PIN,	//	8
+	NOT_A_PIN,	//	9
+	NOT_A_PIN,	//	10
+	NOT_A_PIN,	//	11
+	NOT_A_PIN,	//	12
+	NOT_A_PIN,	//	13
+	NOT_A_PIN,	//	14
+	NOT_A_PIN,	//	15
 #endif
 
 #ifdef _PORTC
@@ -93,6 +129,23 @@ const uint8_t	digital_pin_to_port_PGM[] = {
 	PC,
 	PC,
 	PC,
+#else
+	NOT_A_PIN,	//	0
+	NOT_A_PIN,	//	1
+	NOT_A_PIN,	//	2
+	NOT_A_PIN,	//	3
+	NOT_A_PIN,	//	4
+	NOT_A_PIN,	//	5
+	NOT_A_PIN,	//	6
+	NOT_A_PIN,	//	7
+	NOT_A_PIN,	//	8
+	NOT_A_PIN,	//	9
+	NOT_A_PIN,	//	10
+	NOT_A_PIN,	//	11
+	NOT_A_PIN,	//	12
+	NOT_A_PIN,	//	13
+	NOT_A_PIN,	//	14
+	NOT_A_PIN,	//	15
 #endif
 
 #ifdef _PORTD
@@ -112,6 +165,23 @@ const uint8_t	digital_pin_to_port_PGM[] = {
 	PD,
 	PD,
 	PD,
+#else
+	NOT_A_PIN,	//	0
+	NOT_A_PIN,	//	1
+	NOT_A_PIN,	//	2
+	NOT_A_PIN,	//	3
+	NOT_A_PIN,	//	4
+	NOT_A_PIN,	//	5
+	NOT_A_PIN,	//	6
+	NOT_A_PIN,	//	7
+	NOT_A_PIN,	//	8
+	NOT_A_PIN,	//	9
+	NOT_A_PIN,	//	10
+	NOT_A_PIN,	//	11
+	NOT_A_PIN,	//	12
+	NOT_A_PIN,	//	13
+	NOT_A_PIN,	//	14
+	NOT_A_PIN,	//	15
 #endif
 
 #ifdef _PORTE
@@ -131,6 +201,23 @@ const uint8_t	digital_pin_to_port_PGM[] = {
 	PE,
 	PE,
 	PE,
+#else
+	NOT_A_PIN,	//	0
+	NOT_A_PIN,	//	1
+	NOT_A_PIN,	//	2
+	NOT_A_PIN,	//	3
+	NOT_A_PIN,	//	4
+	NOT_A_PIN,	//	5
+	NOT_A_PIN,	//	6
+	NOT_A_PIN,	//	7
+	NOT_A_PIN,	//	8
+	NOT_A_PIN,	//	9
+	NOT_A_PIN,	//	10
+	NOT_A_PIN,	//	11
+	NOT_A_PIN,	//	12
+	NOT_A_PIN,	//	13
+	NOT_A_PIN,	//	14
+	NOT_A_PIN,	//	15
 #endif
 
 #ifdef _PORTF
@@ -150,6 +237,23 @@ const uint8_t	digital_pin_to_port_PGM[] = {
 	PF,
 	PF,
 	PF,
+#else
+	NOT_A_PIN,	//	0
+	NOT_A_PIN,	//	1
+	NOT_A_PIN,	//	2
+	NOT_A_PIN,	//	3
+	NOT_A_PIN,	//	4
+	NOT_A_PIN,	//	5
+	NOT_A_PIN,	//	6
+	NOT_A_PIN,	//	7
+	NOT_A_PIN,	//	8
+	NOT_A_PIN,	//	9
+	NOT_A_PIN,	//	10
+	NOT_A_PIN,	//	11
+	NOT_A_PIN,	//	12
+	NOT_A_PIN,	//	13
+	NOT_A_PIN,	//	14
+	NOT_A_PIN,	//	15
 #endif
 
 #ifdef _PORTG
@@ -169,6 +273,23 @@ const uint8_t	digital_pin_to_port_PGM[] = {
 	PG,
 	PG,
 	PG,
+#else
+	NOT_A_PIN,	//	0
+	NOT_A_PIN,	//	1
+	NOT_A_PIN,	//	2
+	NOT_A_PIN,	//	3
+	NOT_A_PIN,	//	4
+	NOT_A_PIN,	//	5
+	NOT_A_PIN,	//	6
+	NOT_A_PIN,	//	7
+	NOT_A_PIN,	//	8
+	NOT_A_PIN,	//	9
+	NOT_A_PIN,	//	10
+	NOT_A_PIN,	//	11
+	NOT_A_PIN,	//	12
+	NOT_A_PIN,	//	13
+	NOT_A_PIN,	//	14
+	NOT_A_PIN,	//	15
 #endif
 
 };
@@ -178,7 +299,7 @@ const uint16_t PROGMEM digital_pin_to_bit_mask_PGM[] =
 {
 	// PIN IN PORT
 	// -------------------------------------------
-#ifdef _PORTA
+//#ifdef _PORTA
 	_BV( 0 ) ,	// 0 RA 0
 	_BV( 1 ) ,	// 1 RA 1
 	_BV( 2 ) ,	// 2 RA 2
@@ -195,9 +316,9 @@ const uint16_t PROGMEM digital_pin_to_bit_mask_PGM[] =
 	_BV( 13 ) ,	// 13 RA 13
 	_BV( 14 ) ,	// 14 RA 14
 	_BV( 15 ) ,	// 15 RA 15
-#endif
+//#endif
 
-#ifdef _PORTB
+//#ifdef _PORTB
 	_BV( 0 ) ,	// 0 RB 0
 	_BV( 1 ) ,	// 1 RB 1
 	_BV( 2 ) ,	// 2 RB 2
@@ -214,9 +335,9 @@ const uint16_t PROGMEM digital_pin_to_bit_mask_PGM[] =
 	_BV( 13 ) ,	// 13 RB 13
 	_BV( 14 ) ,	// 14 RB 14
 	_BV( 15 ) ,	// 15 RB 15
-#endif
+//#endif
 
-#ifdef _PORTC
+//#ifdef _PORTC
 	_BV( 0 ) ,	// 0 RC 0
 	_BV( 1 ) ,	// 1 RC 1
 	_BV( 2 ) ,	// 2 RC 2
@@ -233,9 +354,9 @@ const uint16_t PROGMEM digital_pin_to_bit_mask_PGM[] =
 	_BV( 13 ) ,	// 13 RC 13
 	_BV( 14 ) ,	// 14 RC 14
 	_BV( 15 ) ,	// 15 RC 15
-#endif
+//#endif
 
-#ifdef _PORTD
+//#ifdef _PORTD
 	_BV( 0 ) ,	// 0 RD 0
 	_BV( 1 ) ,	// 1 RD 1
 	_BV( 2 ) ,	// 2 RD 2
@@ -252,9 +373,9 @@ const uint16_t PROGMEM digital_pin_to_bit_mask_PGM[] =
 	_BV( 13 ) ,	// 13 RD 13
 	_BV( 14 ) ,	// 14 RD 14
 	_BV( 15 ) ,	// 15 RD 15
-#endif
+//#endif
 
-#ifdef _PORTE
+//#ifdef _PORTE
 	_BV( 0 ) ,	// 0 RE 0
 	_BV( 1 ) ,	// 1 RE 1
 	_BV( 2 ) ,	// 2 RE 2
@@ -271,9 +392,9 @@ const uint16_t PROGMEM digital_pin_to_bit_mask_PGM[] =
 	_BV( 13 ) ,	// 13 RE 13
 	_BV( 14 ) ,	// 14 RE 14
 	_BV( 15 ) ,	// 15 RE 15
-#endif
+//#endif
 
-#ifdef _PORTF
+//#ifdef _PORTF
 	_BV( 0 ) ,	// 0 RF 0
 	_BV( 1 ) ,	// 1 RF 1
 	_BV( 2 ) ,	// 2 RF 2
@@ -290,9 +411,9 @@ const uint16_t PROGMEM digital_pin_to_bit_mask_PGM[] =
 	_BV( 13 ) ,	// 13 RF 13
 	_BV( 14 ) ,	// 14 RF 14
 	_BV( 15 ) ,	// 15 RF 15
-#endif
+//#endif
 
-#ifdef _PORTG
+//#ifdef _PORTG
 	_BV( 0 ) ,	// 0 RG 0
 	_BV( 1 ) ,	// 1 RG 1
 	_BV( 2 ) ,	// 2 RG 2
@@ -309,7 +430,7 @@ const uint16_t PROGMEM digital_pin_to_bit_mask_PGM[] =
 	_BV( 13 ) ,	// 13 RG 13
 	_BV( 14 ) ,	// 14 RG 14
 	_BV( 15 ) ,	// 15 RG 15
-#endif
+//#endif
 
 
 };
@@ -319,7 +440,7 @@ const uint16_t PROGMEM digital_pin_to_bit_mask_PGM[] =
 const uint8_t PROGMEM digital_pin_to_timer_PGM[] = {
 	// TIMERS
 	// -------------------------------------------
-#ifdef _PORTA
+//#ifdef _PORTA
 	NOT_ON_TIMER ,	// 0 RA 0
 	NOT_ON_TIMER ,	// 1 RA 1
 	NOT_ON_TIMER ,	// 2 RA 2
@@ -336,9 +457,9 @@ const uint8_t PROGMEM digital_pin_to_timer_PGM[] = {
 	NOT_ON_TIMER ,	// 13 RA 13
 	NOT_ON_TIMER ,	// 14 RA 14
 	NOT_ON_TIMER ,	// 15 RA 15
-#endif
+//#endif
 
-#ifdef _PORTB
+//#ifdef _PORTB
 	NOT_ON_TIMER ,	// 0 RB 0
 	NOT_ON_TIMER ,	// 1 RB 1
 	NOT_ON_TIMER ,	// 2 RB 2
@@ -355,9 +476,9 @@ const uint8_t PROGMEM digital_pin_to_timer_PGM[] = {
 	NOT_ON_TIMER ,	// 13 RB 13
 	NOT_ON_TIMER ,	// 14 RB 14
 	NOT_ON_TIMER ,	// 15 RB 15
-#endif
+//#endif
 
-#ifdef _PORTC
+//#ifdef _PORTC
 	NOT_ON_TIMER ,	// 0 RC 0
 	NOT_ON_TIMER ,	// 1 RC 1
 	NOT_ON_TIMER ,	// 2 RC 2
@@ -374,9 +495,9 @@ const uint8_t PROGMEM digital_pin_to_timer_PGM[] = {
 	NOT_ON_TIMER ,	// 13 RC 13
 	NOT_ON_TIMER ,	// 14 RC 14
 	NOT_ON_TIMER ,	// 15 RC 15
-#endif
+//#endif
 
-#ifdef _PORTD
+//#ifdef _PORTD
 	TIMER_OC1 ,		// 0 RD 0
 	TIMER_OC2 ,		// 1 RD 1
 	TIMER_OC3 ,		// 2 RD 2
@@ -393,9 +514,9 @@ const uint8_t PROGMEM digital_pin_to_timer_PGM[] = {
 	NOT_ON_TIMER ,	// 13 RD 13
 	NOT_ON_TIMER ,	// 14 RD 14
 	NOT_ON_TIMER ,	// 15 RD 15
-#endif
+//#endif
 
-#ifdef _PORTE
+//#ifdef _PORTE
 	NOT_ON_TIMER ,	// 0 RE 0
 	NOT_ON_TIMER ,	// 1 RE 1
 	NOT_ON_TIMER ,	// 2 RE 2
@@ -412,9 +533,9 @@ const uint8_t PROGMEM digital_pin_to_timer_PGM[] = {
 	NOT_ON_TIMER ,	// 13 RE 13
 	NOT_ON_TIMER ,	// 14 RE 14
 	NOT_ON_TIMER ,	// 15 RE 15
-#endif
+//#endif
 
-#ifdef _PORTF
+//#ifdef _PORTF
 	NOT_ON_TIMER ,	// 0 RF 0
 	NOT_ON_TIMER ,	// 1 RF 1
 	NOT_ON_TIMER ,	// 2 RF 2
@@ -431,9 +552,9 @@ const uint8_t PROGMEM digital_pin_to_timer_PGM[] = {
 	NOT_ON_TIMER ,	// 13 RF 13
 	NOT_ON_TIMER ,	// 14 RF 14
 	NOT_ON_TIMER ,	// 15 RF 15
-#endif
+//#endif
 
-#ifdef _PORTG
+//#ifdef _PORTG
 	NOT_ON_TIMER ,	// 0 RG 0
 	NOT_ON_TIMER ,	// 1 RG 1
 	NOT_ON_TIMER ,	// 2 RG 2
@@ -450,7 +571,7 @@ const uint8_t PROGMEM digital_pin_to_timer_PGM[] = {
 	NOT_ON_TIMER ,	// 13 RG 13
 	NOT_ON_TIMER ,	// 14 RG 14
 	NOT_ON_TIMER ,	// 15 RG 15
-#endif
+//#endif
 };
 
 
