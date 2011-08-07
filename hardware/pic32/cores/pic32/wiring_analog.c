@@ -47,8 +47,8 @@
 #include "wiring_private.h"
 #include "pins_arduino.h"
 
-//uint8_t analog_reference = DEFAULT;
-uint32_t analog_reference = 0;      //default to AVDD, AVSS
+//uint8_t analog_reference	=	DEFAULT;
+uint32_t analog_reference	=	0;      //default to AVDD, AVSS
 
 
 //*********************************************************************
@@ -57,24 +57,24 @@ void analogReference(uint8_t mode)
 	// can't actually set the register here because the default setting
 	// will connect AVCC and the AREF pin, which would cause a short if
 	// there's something connected to AREF.
-//	analog_reference = mode;
+//	analog_reference	=	mode;
     switch(mode)
     {
         case EXTERNAL:		//select Vref+,AVSS
-            analog_reference = 0x2000;
+            analog_reference	=	0x2000;
             break;
 
         case EXTMINUS:		//select AVDD, Vref-
-            analog_reference = 0x4000;
+            analog_reference	=	0x4000;
             break;
 
         case EXTPLUSMINUS:	//select Vref+, Vref-
-            analog_reference = 0x6000;
+            analog_reference	=	0x6000;
             break;
 
         case DEFAULT:
         default:			//select AVDD, AVSS
-            analog_reference = 0x0000;
+            analog_reference	=	0x0000;
             break;
     }
 
@@ -108,107 +108,107 @@ int analogRead(uint8_t pin)
 	switch(channelNumber)
 	{
 		case 0:
-			AD1PCFG = 0xFFFE;
-			AD1CHS = 0x00000000;
+			AD1PCFG	=	0xFFFE;
+			AD1CHS	=	0x00000000;
 
 			break;
 			
 		case 1:
-			AD1PCFG = 0xFFFD;
-			AD1CHS = 0x00010000;
+			AD1PCFG	=	0xFFFD;
+			AD1CHS	=	0x00010000;
 			break;
 
 		case 2:
-			AD1PCFG = 0xFFFB;
-			AD1CHS = 0x00020000;
+			AD1PCFG	=	0xFFFB;
+			AD1CHS	=	0x00020000;
 			break;
 
 		case 3:
-			AD1PCFG = 0xFFF7;
-			AD1CHS = 0x00030000;
+			AD1PCFG	=	0xFFF7;
+			AD1CHS	=	0x00030000;
 			break;
 
 		case 4:
-			AD1PCFG = 0xFFEF;
-			AD1CHS = 0x00040000;
+			AD1PCFG	=	0xFFEF;
+			AD1CHS	=	0x00040000;
 			break;
 
 		case 5:
-			AD1PCFG = 0xFFDF;
-			AD1CHS = 0x00050000;
+			AD1PCFG	=	0xFFDF;
+			AD1CHS	=	0x00050000;
 			break;
 
 		case 6:
-			AD1PCFG = 0xFFBF;
-			AD1CHS = 0x00060000;
+			AD1PCFG	=	0xFFBF;
+			AD1CHS	=	0x00060000;
 			break;
 
 		case 7:
-			AD1PCFG = 0xFF7F;
-			AD1CHS = 0x00070000;
+			AD1PCFG	=	0xFF7F;
+			AD1CHS	=	0x00070000;
 			break;
 
 		case 8:
-			AD1PCFG = 0xFEFF;
-			AD1CHS = 0x00080000;
+			AD1PCFG	=	0xFEFF;
+			AD1CHS	=	0x00080000;
 			break;
 
 		case 9:
-			AD1PCFG = 0xFDFF;
-			AD1CHS = 0x00090000;
+			AD1PCFG	=	0xFDFF;
+			AD1CHS	=	0x00090000;
 			break;
 
 		case 10:
-			AD1PCFG = 0xFBFF;
-			AD1CHS = 0x000A0000;
+			AD1PCFG	=	0xFBFF;
+			AD1CHS	=	0x000A0000;
 			break;
 
 		case 11:
-			AD1PCFG = 0xF7FF;
-			AD1CHS = 0x000B0000;
+			AD1PCFG	=	0xF7FF;
+			AD1CHS	=	0x000B0000;
 			break;
 
 		case 12:
-			AD1PCFG = 0xEFFF;
-			AD1CHS = 0x000C0000;
+			AD1PCFG	=	0xEFFF;
+			AD1CHS	=	0x000C0000;
 			break;
 
 		case 13:
-			AD1PCFG = 0xDFFF;
-			AD1CHS = 0x000D0000;
+			AD1PCFG	=	0xDFFF;
+			AD1CHS	=	0x000D0000;
 			break;
 
 		case 14:
-			AD1PCFG = 0xBFFF;
-			AD1CHS = 0x000E0000;
+			AD1PCFG	=	0xBFFF;
+			AD1CHS	=	0x000E0000;
 			break;
 
 		case 15:
-			AD1PCFG = 0x7FFF;
-			AD1CHS = 0x000F0000;
+			AD1PCFG	=	0x7FFF;
+			AD1CHS	=	0x000F0000;
 			break;
 
 	}
 
 
-	AD1CON1 = 0; //Ends sampling, and starts converting
+	AD1CON1	=	0; //Ends sampling, and starts converting
 
 	//Set up for manual sampling
-	AD1CSSL = 0;
-	AD1CON3 = 0x0002;	//Tad = internal 6 Tpb
-	AD1CON2 = analog_reference;
+	AD1CSSL	=	0;
+	AD1CON3	=	0x0002;	//Tad = internal 6 Tpb
+	AD1CON2	=	analog_reference;
 
 	//Turn on ADC
-	AD1CON1SET = 0x8000;
+	AD1CON1SET	=	0x8000;
 	
 	//Start sampling
-	AD1CON1SET = 0x0002;
+	AD1CON1SET	=	0x0002;
 	
 	//Delay for a bit
 	delayMicroseconds(2);
 
 	//Start conversion
-	AD1CON1CLR = 0x0002;
+	AD1CON1CLR	=	0x0002;
 	
 	//Wait for conversion to finish
 	while (!(AD1CON1 & 0x0001));
@@ -220,7 +220,16 @@ int analogRead(uint8_t pin)
 	return (analogValue);
 }
 
+//*********************************************************************
+//* PWM output only works on the pins with hardware support.
+//* These are defined in the appropriate pins_.c file.
+// For the rest of the pins, we default to digital output.
+//*********************************************************************
+
 #define	PWM_TIMER_PERIOD	((F_CPU / 256) / 490)
+
+uint8_t pwm_active = 0; //keep track of active PWM outputs
+
 
 //*********************************************************************
 //*	PWM output only works on the pins with hardware support. 
@@ -234,128 +243,127 @@ int analogRead(uint8_t pin)
 //*********************************************************************
 void analogWrite(uint8_t pin, int val)
 {
+	uint8_t timer;
+	uint8_t pwm_mask;
 
-	// We need to make sure the PWM output is enabled for those pins
-	// that support it, as we turn it off when digitally reading or
-	// writing with them.  Also, make sure the pin is in output mode
-	// for consistenty with Wiring, which doesn't require a pinMode
-	// call for the analog output pins.
+	// Ensure that the pin is an output
 	pinMode(pin, OUTPUT);
-	if (val == 0)
+
+	// For the min and max values, just set the pin state
+	if (val == 0) 
 	{
-		digitalWrite(pin, LOW);
+	    digitalWrite(pin, LOW);
 	}
+
 	else if (val == 255)
 	{
-		digitalWrite(pin, HIGH);
+	    digitalWrite(pin, HIGH);
 	}
+
+	// Otherwise for pins that aren't timer pins, just set the pin
+	// state based on the requested value. If it really is a timer
+	// pin then we can set up the proper PWM behavior.
 	else
 	{
-		switch(digitalPinToTimer(pin))
-		{
-		#ifdef _OCMP1
-			case TIMER_OC1:
-				//* Open Timer2 with Period register value
-			//-	OpenTimer2(T2_ON | T2_PS_1_256, PWM_TIMER_PERIOD);
-				T2CON = T2_PS_1_256;
-				// Only reset the timer if we passed the new OCR target already
-				if (PWM_TIMER_PERIOD < TMR2)
-				{
-					TMR2 = 0;
-				}
-				PR2 = PWM_TIMER_PERIOD;
-				T2CONSET = T2_ON;
-				OpenOC1( OC_ON | OC_TIMER2_SRC | OC_PWM_FAULT_PIN_DISABLE, (PWM_TIMER_PERIOD*val)/256, (PWM_TIMER_PERIOD*val)/256  );
-				//Set duty cycle on fly
-				SetDCOC1PWM((PWM_TIMER_PERIOD*val)/256);
-				break;
-		#endif
+	    timer = digitalPinToTimer(pin);
+	    if (timer != NOT_ON_TIMER)
+	    {
+	        //should assert(timer < 8) here, but assertions aren't being used
+	        pwm_mask = (1 << timer);
+	    }
 
-		#ifdef _OCMP2
-			case TIMER_OC2:
-				//* Open Timer2 with Period register value
-			//-	OpenTimer2(T2_ON | T2_PS_1_256, PWM_TIMER_PERIOD);
-				T2CON = T2_PS_1_256;
-				// Only reset the timer if we passed the new OCR target already
-				if (PWM_TIMER_PERIOD < TMR2)
-				{
-					TMR2 = 0;
-				}
-				PR2 = PWM_TIMER_PERIOD;
-				T2CONSET = T2_ON;
-				OpenOC2( OC_ON | OC_TIMER2_SRC | OC_PWM_FAULT_PIN_DISABLE, (PWM_TIMER_PERIOD*val)/256, (PWM_TIMER_PERIOD*val)/256  );
-				//Set duty cycle on fly
-				SetDCOC2PWM((PWM_TIMER_PERIOD*val)/256);
-				break;
-		#endif
+	    // For pins that aren't actually PWM output pins, set the pin
+	    // state based on the requested duty cycle.
+	    if (timer == NOT_ON_TIMER)
+	    {
+	        if (val < 128)
+	        {
+	            digitalWrite(pin, LOW);
+	        }
+	        else
+	        {
+	            digitalWrite(pin, HIGH);
+	        }
+	    }
 
-		#ifdef _OCMP3
-			case TIMER_OC3:
-				//* Open Timer2 with Period register value
-			//-	OpenTimer2(T2_ON | T2_PS_1_256, PWM_TIMER_PERIOD);
-				T2CON = T2_PS_1_256;
-				// Only reset the timer if we passed the new OCR target already
-				if (PWM_TIMER_PERIOD < TMR2)
-				{
-					TMR2 = 0;
-				}
-				PR2 = PWM_TIMER_PERIOD;
-				T2CONSET = T2_ON;
-				OpenOC3( OC_ON | OC_TIMER2_SRC | OC_PWM_FAULT_PIN_DISABLE, (PWM_TIMER_PERIOD*val)/256, (PWM_TIMER_PERIOD*val)/256  );
-				//Set duty cycle on fly
-				SetDCOC3PWM((PWM_TIMER_PERIOD*val)/256);
-				break;
-		#endif
+	    // It's an actual PWM pin.
+	    else
+	    {
+	        // If no PWM are currently active, then init Timer2
+	        if (pwm_active == 0)
+	        {
+	            T2CON = T2_PS_1_256;
+	            TMR2 = 0;
+	            PR2 = PWM_TIMER_PERIOD;
+	            T2CONSET = T2_ON;
+	       }
 
-		#ifdef _OCMP4
-			case TIMER_OC4:
-				//* Open Timer2 with Period register value
-			//-	OpenTimer2(T2_ON | T2_PS_1_256, PWM_TIMER_PERIOD);
-				T2CON = T2_PS_1_256;
-				// Only reset the timer if we passed the new OCR target already
-				if (PWM_TIMER_PERIOD < TMR2)
-				{
-					TMR2 = 0;
-				}
-				PR2 = PWM_TIMER_PERIOD;
-				T2CONSET = T2_ON;
-				OpenOC4( OC_ON | OC_TIMER2_SRC | OC_PWM_FAULT_PIN_DISABLE, (PWM_TIMER_PERIOD*val)/256, (PWM_TIMER_PERIOD*val)/256  );
-				//Set duty cycle on fly
-				SetDCOC4PWM((PWM_TIMER_PERIOD*val)/256);
-				break;
-		#endif
+	        // If the requested PWM isn't active, init its output compare
+	        if ((pwm_active & pwm_mask) == 0) 
+	        {
+	            switch (timer)
+	            {
+	                case TIMER_OC1:
+	                    OC1R = ((PWM_TIMER_PERIOD*val)/256);
+	                    OC1CON = OC_TIMER2_SRC | OC_PWM_FAULT_PIN_DISABLE;
+	                    OC1CONSET = OC_ON;
+	                    break;
 
-		#ifdef _OCMP5
-			case TIMER_OC5:
-				//* Open Timer2 with Period register value
-			//-	OpenTimer2(T2_ON | T2_PS_1_256, PWM_TIMER_PERIOD);
-				T2CON = T2_PS_1_256;
-				// Only reset the timer if we passed the new OCR target already
-				if (PWM_TIMER_PERIOD < TMR2)
-				{
-					TMR2 = 0;
-				}
-				PR2 = PWM_TIMER_PERIOD;
-				T2CONSET = T2_ON;
-				OpenOC5( OC_ON | OC_TIMER2_SRC | OC_PWM_FAULT_PIN_DISABLE, (PWM_TIMER_PERIOD*val)/256, (PWM_TIMER_PERIOD*val)/256  );
-				//Set duty cycle on fly
-				SetDCOC5PWM((PWM_TIMER_PERIOD*val)/256);
-				break;
-		#endif
+	                case TIMER_OC2:
+	                    OC2R = ((PWM_TIMER_PERIOD*val)/256);
+	                    OC2CON = OC_TIMER2_SRC | OC_PWM_FAULT_PIN_DISABLE;
+	                    OC2CONSET = OC_ON;
+	                    break;
 
+	                case TIMER_OC3:
+	                    OC3R = ((PWM_TIMER_PERIOD*val)/256);
+	                    OC3CON = OC_TIMER2_SRC | OC_PWM_FAULT_PIN_DISABLE;
+	                    OC3CONSET = OC_ON;
+	                    break;
 
-			case NOT_ON_TIMER:
-			default:
-				if (val < 128)
-				{
-					digitalWrite(pin, LOW);
-				}
-				else
-				{
-					digitalWrite(pin, HIGH);
-				}
-		}
-	}
+	                case TIMER_OC4:
+	                    OC4R = ((PWM_TIMER_PERIOD*val)/256);
+	                    OC4CON = OC_TIMER2_SRC | OC_PWM_FAULT_PIN_DISABLE;
+	                    OC4CONSET = OC_ON;
+	                    break;
+
+	                case TIMER_OC5:
+	                    OC5R = ((PWM_TIMER_PERIOD*val)/256);
+	                    OC5CON = OC_TIMER2_SRC | OC_PWM_FAULT_PIN_DISABLE;
+	                    OC5CONSET = OC_ON;
+	                    break;
+	            }
+
+	            pwm_active |= pwm_mask;
+	        }
+
+	        // Set the duty cycle register for the requested output compare
+	        switch (timer)
+	        {
+	            case TIMER_OC1:
+	                OC1RS = ((PWM_TIMER_PERIOD*val)/256);
+	                break;
+
+	            case TIMER_OC2:
+	                OC2RS = ((PWM_TIMER_PERIOD*val)/256);
+	                break;
+
+	            case TIMER_OC3:
+	                OC3RS = ((PWM_TIMER_PERIOD*val)/256);
+	                break;
+
+	            case TIMER_OC4:
+	                OC4RS = ((PWM_TIMER_PERIOD*val)/256);
+	                break;
+
+	            case TIMER_OC5:
+	                OC5RS = ((PWM_TIMER_PERIOD*val)/256);
+	                break;
+	        }
+	    }
+
+	}    
+
 }
 
 
@@ -365,24 +373,47 @@ void turnOffPWM(uint8_t timer)
 	switch(timer)
 	{
 	#ifdef _OCMP1
-		case TIMER_OC1:	CloseOC1();	break;
+		case TIMER_OC1:	
+		//-	CloseOC1();	
+        OC1CONCLR	=	OC_ON;
+		break;
 	#endif
 
 	#ifdef _OCMP2
-		case TIMER_OC2:	CloseOC2();	break;
+		case TIMER_OC2:	
+		//-	CloseOC2();
+	        OC2CONCLR	=	OC_ON;
+			break;
 	#endif
 
 	#ifdef _OCMP3
-		case TIMER_OC3:	CloseOC3();	break;
+		case TIMER_OC3:
+		//-	CloseOC3();
+	        OC3CONCLR	=	OC_ON;
+			break;
 	#endif
 
 	#ifdef _OCMP4
-		case TIMER_OC4:	CloseOC4();	break;
+		case TIMER_OC4:
+		//-	CloseOC4();
+	        OC4CONCLR	=	OC_ON;
+			break;
 	#endif
 
 	#ifdef _OCMP5
-		case TIMER_OC5:	CloseOC5();	break;
+		case TIMER_OC5:
+		//-	CloseOC5();
+	        OC5CONCLR	=	OC_ON;
+			break;
 	#endif
 
+	}
+	// Turn off the bit saying that this PWM is active.
+	pwm_active &=	~(1 << timer);
+
+	// If no PWM are active, turn off the timer.
+	if (pwm_active == 0)
+	{
+    	T2CONCLR	=	T2_ON;
 	}
 }
