@@ -37,6 +37,7 @@
 //*	May 23,	2011	<MLS> Added support for pin numbers to be remaped to analog numbers, (left out in iniitial version)
 //*	Aug  7,	2011	<MarcMaccomb> fixed bug in Anaglog Read (Issue (#67)
 //*	Aug  7,	2011	<Gene Apperson> fixed bug in Anaglog Write (Issue #70)
+//*	Aug  7,	2011	<Gene Apperson> Added necessary code for analogReference (Issue #69)
 //************************************************************************
 
 // Master header file for all peripheral library includes
@@ -47,6 +48,8 @@
 #include "pins_arduino.h"
 
 //uint8_t analog_reference = DEFAULT;
+uint32_t analog_reference = 0;      //default to AVDD, AVSS
+
 
 //*********************************************************************
 void analogReference(uint8_t mode)
@@ -55,6 +58,26 @@ void analogReference(uint8_t mode)
 	// will connect AVCC and the AREF pin, which would cause a short if
 	// there's something connected to AREF.
 //	analog_reference = mode;
+    switch(mode)
+    {
+        case EXTERNAL:		//select Vref+,AVSS
+            analog_reference = 0x2000;
+            break;
+
+        case EXTMINUS:		//select AVDD, Vref-
+            analog_reference = 0x4000;
+            break;
+
+        case EXTPLUSMINUS:	//select Vref+, Vref-
+            analog_reference = 0x6000;
+            break;
+
+        case DEFAULT:
+        default:			//select AVDD, AVSS
+            analog_reference = 0x0000;
+            break;
+    }
+
 }
 
 //*********************************************************************
