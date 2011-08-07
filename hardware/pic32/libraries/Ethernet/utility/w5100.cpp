@@ -5,14 +5,17 @@
  * it under the terms of either the GNU General Public License version 2
  * or the GNU Lesser General Public License version 2.1, both as
  * published by the Free Software Foundation.
+ * 
  */
+
+/*Updated  August/3/2011 by Lowell Scott Hanson to be compatable with chipKIT boards */
 
 #include <stdio.h>
 #include <string.h>
-#include <avr/interrupt.h>
 
+//#include <avr/interrupt.h>
 #include "w5100.h"
-
+#include "WProgram.h"
 // W5100 controller instance
 W5100Class W5100;
 
@@ -26,10 +29,13 @@ W5100Class W5100;
 void W5100Class::init(void)
 {
   delay(300);
+  
 
   SPI.begin();
+  SPI.setClockDivider(SPI_CLOCK_DIV8); //Sets the spi clock rate to around 10Mhz(divide by 4 will work but not recommended due to signal integraty issues) -LSH
+  SPI.setDataMode(SPI_MODE0);			//Defines spi to operate in mode 0 -LSH
+
   initSS();
-  
   writeMR(1<<RST);
   writeTMSR(0x55);
   writeRMSR(0x55);
@@ -68,9 +74,10 @@ uint16_t W5100Class::getRXReceivedSize(SOCKET s)
 void W5100Class::send_data_processing(SOCKET s, uint8_t *data, uint16_t len)
 {
   uint16_t ptr = readSnTX_WR(s);
-
   uint16_t offset = ptr & SMASK;
   uint16_t dstAddr = offset + SBASE[s];
+
+digitalWrite(13,HIGH);
 
   if (offset + len > SSIZE) 
   {
@@ -92,7 +99,9 @@ void W5100Class::recv_data_processing(SOCKET s, uint8_t *data, uint16_t len, uin
 {
   uint16_t ptr;
   ptr = readSnRX_RD(s);
-  read_data(s, (uint8_t *)ptr, data, len);
+  digitalWrite(13,LOW);
+/* removed unint8_t pointer cast in read_data due to pic32 pointer values are 32 bit and compiler errors out due to data loss from cast to 16-bit int -LSH */
+read_data(s, ptr, data, len);
   if (!peek)
   {
     ptr += len;
@@ -100,13 +109,14 @@ void W5100Class::recv_data_processing(SOCKET s, uint8_t *data, uint16_t len, uin
   }
 }
 
-void W5100Class::read_data(SOCKET s, volatile uint8_t *src, volatile uint8_t *dst, uint16_t len)
+/* removed unint8_t pointer cast in read_data due to pic32 pointer values are 32 bit and compiler errors out due to data loss from cast to 16-bit int -LSH */
+void W5100Class::read_data(SOCKET s,  uint16_t src, volatile uint8_t *dst, uint16_t len)
 {
   uint16_t size;
   uint16_t src_mask;
   uint16_t src_ptr;
 
-  src_mask = (uint16_t)src & RMASK;
+  src_mask = src & RMASK;  
   src_ptr = RBASE[s] + src_mask;
 
   if( (src_mask + len) > RSIZE ) 
@@ -123,11 +133,13 @@ void W5100Class::read_data(SOCKET s, volatile uint8_t *src, volatile uint8_t *ds
 
 uint8_t W5100Class::write(uint16_t _addr, uint8_t _data)
 {
+
   setSS();  
   SPI.transfer(0xF0);
   SPI.transfer(_addr >> 8);
   SPI.transfer(_addr & 0xFF);
   SPI.transfer(_data);
+    
   resetSS();
   return 1;
 }
@@ -142,7 +154,8 @@ uint16_t W5100Class::write(uint16_t _addr, uint8_t *_buf, uint16_t _len)
     SPI.transfer(_addr & 0xFF);
     _addr++;
     SPI.transfer(_buf[i]);
-    resetSS();
+   
+	resetSS();
   }
   return _len;
 }

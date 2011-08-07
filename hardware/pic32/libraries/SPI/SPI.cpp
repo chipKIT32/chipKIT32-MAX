@@ -47,7 +47,8 @@ void SPIClass::setDataMode(WORD mode)
   SPI2CONSET = mode;
 }
 
-void SPIClass::setClockDivider(BYTE rate)
+void SPIClass::setClockDivider(WORD rate)
 {
+  rate &= 0x1FF;
   SPI2BRGSET = rate;
 }

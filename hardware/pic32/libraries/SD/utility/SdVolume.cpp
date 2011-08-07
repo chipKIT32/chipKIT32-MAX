@@ -238,7 +238,8 @@ uint8_t SdVolume::init(Sd2Card* dev, uint8_t part) {
       p->firstSector == 0) {
       // not a valid partition
       return false;
-    }
+	}
+
     volumeStartBlock = p->firstSector;
   }
   if (!cacheRawBlock(volumeStartBlock, CACHE_FOR_READ)) return false;
@@ -257,7 +258,9 @@ uint8_t SdVolume::init(Sd2Card* dev, uint8_t part) {
   clusterSizeShift_ = 0;
   while (blocksPerCluster_ != (1 << clusterSizeShift_)) {
     // error if not power of 2
-    if (clusterSizeShift_++ > 7) return false;
+    if (clusterSizeShift_++ > 7) {
+		return false;
+	}
   }
   blocksPerFat_ = bpb->sectorsPerFat16 ?
                     bpb->sectorsPerFat16 : bpb->sectorsPerFat32;

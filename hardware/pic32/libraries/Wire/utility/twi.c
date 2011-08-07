@@ -92,6 +92,12 @@ void twi_setAddress(uint8_t address)
 uint8_t twi_readFrom(uint8_t address, uint8_t* data, uint8_t length)
 {
   unsigned int i;
+
+  if(address < 8)
+  {
+	  return 0;
+  }
+
   // Ensure data will fit into buffer
   if(TWI_BUFFER_LENGTH < length){
     return 0;
@@ -143,6 +149,11 @@ uint8_t twi_readFrom(uint8_t address, uint8_t* data, uint8_t length)
 uint8_t twi_writeTo(uint8_t address, uint8_t* data, uint8_t length, uint8_t wait)
 {
   uint8_t i;
+
+  if(address < 8)
+  {
+	  return 0;
+  }
 
   // ensure data will fit into buffer
   if(TWI_BUFFER_LENGTH < length){

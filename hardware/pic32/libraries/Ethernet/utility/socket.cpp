@@ -256,7 +256,8 @@ uint16_t recvfrom(SOCKET s, uint8_t *buf, uint16_t len, uint8_t *addr, uint16_t 
     switch (W5100.readSnMR(s) & 0x07)
     {
     case SnMR::UDP :
-      W5100.read_data(s, (uint8_t *)ptr, head, 0x08);
+/* removed unint8_t pointer cast in read_data due to pic32 pointer values are 32 bit and compiler errors out due to data loss from cast to 16-bit int -LSH */
+      W5100.read_data(s, ptr, head, 0x08);
       ptr += 8;
       // read peer's IP address, port number.
       addr[0] = head[0];
@@ -267,15 +268,16 @@ uint16_t recvfrom(SOCKET s, uint8_t *buf, uint16_t len, uint8_t *addr, uint16_t 
       *port = (*port << 8) + head[5];
       data_len = head[6];
       data_len = (data_len << 8) + head[7];
-
-      W5100.read_data(s, (uint8_t *)ptr, buf, data_len); // data copy.
+/* removed unint8_t pointer cast in read_data due to pic32 pointer values are 32 bit and compiler errors out due to data loss from cast to 16-bit int -LSH */
+      W5100.read_data(s, ptr, buf, data_len); // data copy.
       ptr += data_len;
 
       W5100.writeSnRX_RD(s, ptr);
       break;
 
     case SnMR::IPRAW :
-      W5100.read_data(s, (uint8_t *)ptr, head, 0x06);
+/* removed unint8_t pointer cast in read_data due to pic32 pointer values are 32 bit and compiler errors out due to data loss from cast to 16-bit int -LSH */
+      W5100.read_data(s, ptr, head, 0x06);
       ptr += 6;
 
       addr[0] = head[0];
@@ -284,20 +286,21 @@ uint16_t recvfrom(SOCKET s, uint8_t *buf, uint16_t len, uint8_t *addr, uint16_t 
       addr[3] = head[3];
       data_len = head[4];
       data_len = (data_len << 8) + head[5];
-
-      W5100.read_data(s, (uint8_t *)ptr, buf, data_len); // data copy.
+/* removed unint8_t pointer cast in read_data due to pic32 pointer values are 32 bit and compiler errors out due to data loss from cast to 16-bit int -LSH */
+      W5100.read_data(s, ptr, buf, data_len); // data copy.
       ptr += data_len;
 
       W5100.writeSnRX_RD(s, ptr);
       break;
 
     case SnMR::MACRAW:
-      W5100.read_data(s,(uint8_t*)ptr,head,2);
+/* removed unint8_t pointer cast in read_data due to pic32 pointer values are 32 bit and compiler errors out due to data loss from cast to 16-bit int -LSH */
+      W5100.read_data(s, ptr,head,2);
       ptr+=2;
       data_len = head[0];
       data_len = (data_len<<8) + head[1] - 2;
-
-      W5100.read_data(s,(uint8_t*) ptr,buf,data_len);
+/* removed unint8_t pointer cast in read_data due to pic32 pointer values are 32 bit and compiler errors out due to data loss from cast to 16-bit int -LSH */
+      W5100.read_data(s, ptr,buf,data_len);
       ptr += data_len;
       W5100.writeSnRX_RD(s, ptr);
       break;

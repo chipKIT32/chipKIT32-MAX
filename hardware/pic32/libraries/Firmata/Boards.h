@@ -255,6 +255,34 @@ writePort(port, value, bitmask):  Write an 8 bit port.
 #define PIN_TO_PWM(p)           PIN_TO_DIGITAL(p)
 #define PIN_TO_SERVO(p)         ((p) - 2)
 
+#elif defined(_BOARD_MEGA_) 
+#define TOTAL_ANALOG_PINS       16
+#define TOTAL_PINS              85 //  69 digital + 16 analog
+#define VERSION_BLINK_PIN       13
+#define IS_PIN_DIGITAL(p)       (((p) >= 2 && (p) <= 23) || ((p) >= 28 && (p) <= 39) || ((p) >= 43 && (p) <= 84))
+#define IS_PIN_ANALOG(p)        ((p) >= 54 && (p) <= 69)
+#define IS_PIN_PWM(p)           IS_PIN_DIGITAL(p)
+#define IS_PIN_SERVO(p)         (((p) >= 2 && (p) <= 23 && (p) - 2 < MAX_SERVOS) || (((p) >= 28 && (p) <= 29 && (p) - 6 < MAX_SERVOS)))
+#define IS_PIN_I2C(p)           (0)
+#define PIN_TO_DIGITAL(p)       (p)
+#define PIN_TO_ANALOG(p)        ((p)-54)
+#define PIN_TO_PWM(p)           PIN_TO_DIGITAL(p)
+#define PIN_TO_SERVO(p)         (p)<=23 ? (p)-2 : (p)-6
+
+
+#elif defined(_BOARD_UNO_)
+#define TOTAL_ANALOG_PINS       12
+#define TOTAL_PINS              42 // 30 digital + 12 analog two digital are unuseable in firmata due to analog configuration (41 and 42)
+#define VERSION_BLINK_PIN       43
+#define IS_PIN_DIGITAL(p)       (((p) >= 2  && (p) <= 40)) //&& (p) <= 13) || ((p) >= 26
+#define IS_PIN_ANALOG(p)        ((p) >= 14 && (p) <= 25)
+#define IS_PIN_PWM(p)           IS_PIN_DIGITAL(p)
+#define IS_PIN_SERVO(p)         (((p) >= 2 && (p) <= 13 && (p) - 2 < MAX_SERVOS) || (((p) >= 26 && (p) <= 38 && (p) - 14 < MAX_SERVOS)))
+#define IS_PIN_I2C(p)           (0)
+#define PIN_TO_DIGITAL(p)       (p)
+#define PIN_TO_ANALOG(p)        ((p) - 14)
+#define PIN_TO_PWM(p)           PIN_TO_DIGITAL(p)
+#define PIN_TO_SERVO(p)         (p)<=13 ? (p)-2 : (p)-14
 
 // anything else
 #else

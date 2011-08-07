@@ -53,7 +53,7 @@
 /********************************/
 
 #define SPI_CLOCK_DIV4 0x01
-#define SPI_CLOCK_DIV16 0x7
+#define SPI_CLOCK_DIV16 0x07
 #define SPI_CLOCK_DIV64 0x1F
 #define SPI_CLOCK_DIV128 0x3F
 #define SPI_CLOCK_DIV2 0x00

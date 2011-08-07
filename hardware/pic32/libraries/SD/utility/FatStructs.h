@@ -101,13 +101,17 @@ typedef struct partitionTable part_t;
  *
  * The first block of a storage device that is formatted with a MBR.
  */
+
+#pragma pack(1)
+
 struct masterBootRecord {
            /** Code Area for master boot program. */
   uint8_t  codeArea[440];
            /** Optional WindowsNT disk signature. May contain more boot code. */
   uint32_t diskSignature;
            /** Usually zero but may be more boot code. */
-  uint16_t usuallyZero;
+  uint8_t usuallyZero;
+  uint8_t test1;
            /** Partition tables. */
   part_t   part[4];
            /** First MBR signature byte. Must be 0X55 */
