@@ -35,6 +35,7 @@
 //*	May  5,	2011	<MLS> Uno board does not have 1 to 1 pin mapping for analog, added analogInPinToBit
 //*	May 18,	2011	<MLS> JP4 on the uno board must be in the RD9 position for PWM to work on pin 10
 //*	May 23,	2011	<MLS> Added support for pin numbers to be remaped to analog numbers, (left out in iniitial version)
+//*	Aug  7,	2011	<MarcMaccomb> fixed bug in Anaglog Read
 //************************************************************************
 
 // Master header file for all peripheral library includes
@@ -56,150 +57,141 @@ void analogReference(uint8_t mode)
 }
 
 //*********************************************************************
+//*	Marc McComb Aug 2011
+//*	Found bug with analogRead(). When using more than one ADC input in a program, 
+//*	only one result will be read with that value being mirrored in the second result.
+//*	I commented out the code using the Microchip PIC32 Peripheral Libraries and substituted 
+//*	direct writes to the registers as shown below. This fixed all problems and works great:
+//*********************************************************************
 int analogRead(uint8_t pin)
 {
-int				analogValue;
-unsigned int	offset;	// buffer offset to point to the base of the idle buffer
-unsigned int	param4;
-uint8_t			channelNumber;
+	int analogValue;
+	uint8_t	channelNumber;
 
-#if defined(_BOARD_MEGA_) || defined(_BOARD_MAX32_)
-	if (pin >= 54) pin -= 54; // allow for channel or pin numbers
-#else
-	if (pin >= 14) pin -= 14; // allow for channel or pin numbers
-#endif
+	#if defined(_BOARD_MEGA_) || defined(_BOARD_MAX32_)
+		if (pin >= 54) pin -= 54; // allow for channel or pin numbers
 
-	//*	in most cases (except the uno board) this will be a 1 to 1 mapping
+	#else
+		if (pin >= 14) pin -= 14; // allow for channel or pin numbers
+	#endif
+
+
+	//in most cases (except the uno board) this will be a 1 to 1 mapping
 	channelNumber	=	analogInPinToBit(pin);
 
 
-	//*	May 1, 2011	Gene Apperson of Digitlent sent me PIC32MX5XX-6XX-7XX Errata.pdf
-	//*	item #26 documents a condition that I/O pins take time if previously set to outputs
-	
-	
-
-
-	//*	first attempt, set all to 0
-//	AD1PCFG	=	0;
-
-	// configure and enable the ADC
-	CloseADC10();	// ensure the ADC is off before setting the configuration
-
-	// define setup parameters for OpenADC10
-	//				 Turn module on | ouput in integer | trigger mode auto | enable autosample
-	#define PARAM1	ADC_FORMAT_INTG16 | ADC_CLK_AUTO | ADC_AUTO_SAMPLING_ON
-
-	// define setup parameters for OpenADC10
-	//				 ADC ref external	| disable offset test	| disable scan mode | perform 2 samples | use dual buffers | use alternate mode
-	#define PARAM2	ADC_VREF_AVDD_AVSS | ADC_OFFSET_CAL_DISABLE | ADC_SCAN_OFF | ADC_SAMPLES_PER_INT_1 | ADC_ALT_BUF_ON 
-
-	// define setup parameters for OpenADC10
-	//					use ADC internal clock | set sample time
-	#define PARAM3	ADC_CONV_CLK_INTERNAL_RC | ADC_SAMPLE_TIME_15
-
-
-	// define setup parameters for OpenADC10
-	//				set AN4 and AN5 as analog inputs
-	param4	=	channelNumber;
-	
-	// define setup parameters for OpenADC10
-	// do not assign channels to scan
-	#define PARAM5	SKIP_SCAN_ALL
-	
-	// use ground as neg ref for A | use AN4 for input A	  | use ground as neg ref for A | use AN5 for input B
-
-//	SetChanADC10( ADC_CH0_NEG_SAMPLEA_NVREF | ADC_CH0_POS_SAMPLEA_AN4 |  ADC_CH0_NEG_SAMPLEB_NVREF | ADC_CH0_POS_SAMPLEB_AN5); // configure to sample AN4 & AN5
-//	SetChanADC10( ADC_CH0_NEG_SAMPLEA_NVREF | ADC_CH0_POS_SAMPLEA_AN0 |  ADC_CH0_NEG_SAMPLEB_NVREF | ADC_CH0_POS_SAMPLEB_AN1); // configure to sample AN4 & AN5
-//	OpenADC10( PARAM1, PARAM2, PARAM3, PARAM4, PARAM5 ); // configure ADC using the parameters defined above
 
 	switch(channelNumber)
 	{
 		case 0:
-			SetChanADC10( ADC_CH0_NEG_SAMPLEA_NVREF | ADC_CH0_POS_SAMPLEA_AN0);
+			AD1PCFG = 0xFFFE;
+			AD1CHS = 0x00000000;
+
 			break;
 			
 		case 1:
-			SetChanADC10( ADC_CH0_NEG_SAMPLEA_NVREF | ADC_CH0_POS_SAMPLEA_AN1);
+			AD1PCFG = 0xFFFD;
+			AD1CHS = 0x00010000;
 			break;
 
 		case 2:
-			SetChanADC10( ADC_CH0_NEG_SAMPLEA_NVREF | ADC_CH0_POS_SAMPLEA_AN2);
+			AD1PCFG = 0xFFFB;
+			AD1CHS = 0x00020000;
 			break;
 
 		case 3:
-			SetChanADC10( ADC_CH0_NEG_SAMPLEA_NVREF | ADC_CH0_POS_SAMPLEA_AN3);
+			AD1PCFG = 0xFFF7;
+			AD1CHS = 0x00030000;
 			break;
 
 		case 4:
-			SetChanADC10( ADC_CH0_NEG_SAMPLEA_NVREF | ADC_CH0_POS_SAMPLEA_AN4);
+			AD1PCFG = 0xFFEF;
+			AD1CHS = 0x00040000;
 			break;
 
 		case 5:
-			SetChanADC10( ADC_CH0_NEG_SAMPLEA_NVREF | ADC_CH0_POS_SAMPLEA_AN5);
+			AD1PCFG = 0xFFDF;
+			AD1CHS = 0x00050000;
 			break;
 
 		case 6:
-			SetChanADC10( ADC_CH0_NEG_SAMPLEA_NVREF | ADC_CH0_POS_SAMPLEA_AN6);
+			AD1PCFG = 0xFFBF;
+			AD1CHS = 0x00060000;
 			break;
 
 		case 7:
-			SetChanADC10( ADC_CH0_NEG_SAMPLEA_NVREF | ADC_CH0_POS_SAMPLEA_AN7);
+			AD1PCFG = 0xFF7F;
+			AD1CHS = 0x00070000;
 			break;
 
 		case 8:
-			SetChanADC10( ADC_CH0_NEG_SAMPLEA_NVREF | ADC_CH0_POS_SAMPLEA_AN8);
+			AD1PCFG = 0xFEFF;
+			AD1CHS = 0x00080000;
 			break;
 
 		case 9:
-			SetChanADC10( ADC_CH0_NEG_SAMPLEA_NVREF | ADC_CH0_POS_SAMPLEA_AN9);
+			AD1PCFG = 0xFDFF;
+			AD1CHS = 0x00090000;
 			break;
 
 		case 10:
-			SetChanADC10( ADC_CH0_NEG_SAMPLEA_NVREF | ADC_CH0_POS_SAMPLEA_AN10);
+			AD1PCFG = 0xFBFF;
+			AD1CHS = 0x000A0000;
 			break;
 
 		case 11:
-			SetChanADC10( ADC_CH0_NEG_SAMPLEA_NVREF | ADC_CH0_POS_SAMPLEA_AN11);
+			AD1PCFG = 0xF7FF;
+			AD1CHS = 0x000B0000;
 			break;
 
 		case 12:
-			SetChanADC10( ADC_CH0_NEG_SAMPLEA_NVREF | ADC_CH0_POS_SAMPLEA_AN12);
+			AD1PCFG = 0xEFFF;
+			AD1CHS = 0x000C0000;
 			break;
 
 		case 13:
-			SetChanADC10( ADC_CH0_NEG_SAMPLEA_NVREF | ADC_CH0_POS_SAMPLEA_AN13);
+			AD1PCFG = 0xDFFF;
+			AD1CHS = 0x000D0000;
 			break;
 
 		case 14:
-			SetChanADC10( ADC_CH0_NEG_SAMPLEA_NVREF | ADC_CH0_POS_SAMPLEA_AN14);
+			AD1PCFG = 0xBFFF;
+			AD1CHS = 0x000E0000;
 			break;
 
 		case 15:
-			SetChanADC10( ADC_CH0_NEG_SAMPLEA_NVREF | ADC_CH0_POS_SAMPLEA_AN15);
+			AD1PCFG = 0x7FFF;
+			AD1CHS = 0x000F0000;
 			break;
+
 	}
 
+
+	AD1CON1 = 0; //Ends sampling, and starts converting
+
+	//Set up for manual sampling
+	AD1CSSL = 0;
+	AD1CON3 = 0x0002;	//Tad = internal 6 Tpb
+	AD1CON2 = 0;
+
+	//Turn on ADC
+	AD1CON1SET = 0x8000;
 	
-	// configure to sample what ever pin was specified
+	//Start sampling
+	AD1CON1SET = 0x0002;
 	
-	OpenADC10( PARAM1, PARAM2, PARAM3, param4, PARAM5 ); // configure ADC using the parameters defined above
-
-	EnableADC10(); // Enable the ADC
-
-	//*	A delay is needed for the the ADC start up time
-	//*	this value started out at 1 millisecond, I dont know how long it needs to be
-	//*	99 uSecs will give us the same approximate sampling rate as the AVR chip
-
-	//*	Jun 7, 2011	(pburgess : Phil, that dragon guy) supplied the fix to speed up the code
+	//Delay for a bit
 	delayMicroseconds(2);
-	mAD1ClearIntFlag();
 
-	while ( ! mAD1GetIntFlag() ) 
-	{ 
-		// wait for the first conversion to complete so there will be vaild data in ADC result registers
-	}
+	//Start conversion
+	AD1CON1CLR = 0x0002;
+	
+	//Wait for conversion to finish
+	while (!(AD1CON1 & 0x0001));
+	
 
-	analogValue	=	ReadADC10(0);
+	//Read the ADC Value
+	analogValue	=	ADC1BUF0;
 	
 	return (analogValue);
 }
