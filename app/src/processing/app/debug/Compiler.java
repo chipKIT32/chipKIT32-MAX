@@ -542,7 +542,10 @@ public class Compiler implements MessageConsumer {
 	ArrayList<String> getIncludes(String corePath) 
 	{
 		logger.debug("corePath: " + corePath);
+		logger.debug("getSketchFlderPath: " + sketch.getFolder().toString());
 		ArrayList<String> includePaths = new ArrayList();
+		//add the sketch path to the includes
+		includePaths.add(sketch.getFolder().toString());
 		includePaths.add(corePath);
 		for (File file : sketch.getImportedLibraries()) 
 		{
