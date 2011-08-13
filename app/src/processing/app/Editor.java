@@ -2136,7 +2136,7 @@ static Logger logger = Logger.getLogger(Base.class.getName());
     }
     header.rebuild();
     // Set the title of the window to "sketch_070752a - Processing 0126"
-    setTitle(sketch.getName() + " | Arduino " + Base.VERSION_NAME);
+    setTitle(sketch.getName() + " | Mpide " + Base.VERSION_NAME);
     // Disable untitled setting from previous document, if any
     untitled = false;
 
