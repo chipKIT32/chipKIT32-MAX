@@ -1,3 +1,4 @@
+
 /* -*- mode: jde; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
@@ -96,7 +97,7 @@ public class Target {
      // System.exit(0);	
     
     }    
-   
+
 
     File programmersFile = new File(folder, "programmers.txt");
     try {
@@ -132,5 +133,33 @@ public class Target {
   	logger.debug("Get platformsfor: " + this.name);
     return platforms;
   }
+
+  public Map<String, String> getSketchPreferences(File folder) {
+     Map sketchprefs;
+     sketchprefs = new LinkedHashMap();
+
+     //In this case folder needs to be placed in the sketches folder
+    File sketchprefsFile = new File(folder,"preferences.txt");
+    try
+    {
+       if(sketchprefsFile.exists()){
+          Map sketchPreferences = new LinkedHashMap();
+          Preferences.load(new FileInputStream(sketchprefsFile), sketchPreferences);
+          for(Object k : sketchPreferences.keySet()) {
+               String key=(String) k;
+               String sketchpref=key.substring(0,key.indexOf('.'));
+               if (!sketchprefs.containsKey(sketchprefs)) sketchprefs.put(sketchprefs, new HashMap());
+                  ((Map) sketchprefs.get(sketchpref)).put(key.substring(key.indexOf('.') + 1),sketchPreferences.get(key));
+           }     
+         }
+     } catch (Exception e) {
+        System.err.println("Error loading sketchprefs from " +
+                      sketchprefsFile + ": " + e);
+        // System.exit(0);
+    }  
+    logger.debug("Get sketchprefs for: " + this.name);
+    return sketchprefs;
+  }
+
 
 }

@@ -60,8 +60,9 @@ public class Compiler implements MessageConsumer {
 	RunnerException exception;
 
 	HashMap<String, String> configPreferences;
-	HashMap<String, String> boardPreferences;
-	HashMap<String, String> platformPreferences;
+	Map<String, String> boardPreferences;
+	Map<String, String> platformPreferences;
+	Map<String, String> sketchPreferences;
 
 	String avrBasePath;
 	String corePath;
@@ -70,8 +71,7 @@ public class Compiler implements MessageConsumer {
 	ArrayList<String> includePaths;
 
 	public Compiler() {
-    	logger.debug("DEBUG: Compiler(): Start no arguments");
-		
+    	   logger.debug("DEBUG: Compiler(): Start no arguments");
 	}
 
 	/**
@@ -87,8 +87,9 @@ public class Compiler implements MessageConsumer {
 	 * @throws RunnerException
 	 *             Only if there's a problem. Only then.
 	 */
-	public boolean compile(Sketch sketch, String buildPath,String primaryClassName, boolean verbose) throws RunnerException {
-		 logger.debug("DEBUG: Compiler.java: Start Compile(...).");
+	public boolean compile(Sketch sketch, String buildPath,String primaryClassName, boolean verbose) throws RunnerException 
+        {
+		logger.debug("DEBUG: Compiler.java: Start Compile(...).");
 
 		this.sketch = sketch;
 		this.buildPath = buildPath;
@@ -103,16 +104,19 @@ public class Compiler implements MessageConsumer {
 		platform = boardPreferences.get("platform");
 		if (platform == null)
 		{
-		      platformPreferences = new HashMap(Base.getPlatformPreferences());
+		    platformPreferences = new HashMap(Base.getPlatformPreferences());
 		}
 		else
 		{
-			platformPreferences = new HashMap(Base.getPlatformPreferences(platform));
+		    platformPreferences = new HashMap(Base.getPlatformPreferences(platform));
 		}
 
-		//Put all the global preference configuration into one Master configpreferences
-	    configPreferences = mergePreferences( Preferences.getMap(), platformPreferences, boardPreferences);
+		//Get the preferences file from the sketch folder
+		File sketchFolder = sketch.getFolder();	
+		sketchPreferences = Base.getSketchPreferences(sketchFolder) ;
 
+		//Put all the global preference configuration into one Master configpreferences
+	        configPreferences = mergePreferences( Preferences.getMap(), platformPreferences, boardPreferences, sketchPreferences);
 
 		avrBasePath = configPreferences.get("compiler.path");
 		
@@ -716,13 +720,12 @@ public class Compiler implements MessageConsumer {
 		
 	}
 	//merge all the preferences file in the correct order of precedence
-	HashMap mergePreferences(Map Preferences,  Map platformPreferences, Map boardPreferences)
+	HashMap mergePreferences(Map Preferences,  Map platformPreferences, Map boardPreferences, Map sketchPreferences)
 	{
-		HashMap _map = new HashMap();
-		
-	    Iterator iterator = Preferences.entrySet().iterator();
+	 HashMap _map = new HashMap();
+	 Iterator iterator = Preferences.entrySet().iterator();
        
-        while(iterator.hasNext())
+         while(iterator.hasNext())
   	    {
   	    	Map.Entry pair = (Map.Entry)iterator.next();
   	    	if (pair.getValue() == null)
@@ -739,7 +742,7 @@ public class Compiler implements MessageConsumer {
 		
 		iterator = platformPreferences.entrySet().iterator();
        
-       while(iterator.hasNext())
+         while(iterator.hasNext())
   	    {
   	    	Map.Entry pair = (Map.Entry)iterator.next();
   	    	
@@ -757,7 +760,7 @@ public class Compiler implements MessageConsumer {
 		//System.out.println("Done: platformPreferences");
 		iterator = boardPreferences.entrySet().iterator();
 
-        while(iterator.hasNext())
+         while(iterator.hasNext())
   	    {
   	    	Map.Entry pair = (Map.Entry)iterator.next();
   	    	
@@ -772,7 +775,25 @@ public class Compiler implements MessageConsumer {
             //System.out.println(pair.getKey() + " = " + pair.getValue());
 	    }
 		//System.out.println("Done: boardPreferences");
-        
+
+            iterator = sketchPreferences.entrySet().iterator();
+            while(iterator.hasNext())
+            {
+                Map.Entry pair = (Map.Entry)iterator.next();
+            
+                if (pair.getValue() == null)
+                {
+                        _map.put(pair.getKey(), "");
+                }
+                else
+                {
+                        _map.put(pair.getKey(), pair.getValue());
+                }
+            //System.out.println(pair.getKey() + " = " + pair.getValue());
+            }
+                //System.out.println("Done: boardPreferences");
+
+ 
 
 	return _map;
 	}

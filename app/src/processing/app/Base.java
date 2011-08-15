@@ -1613,6 +1613,11 @@ public class Base {
     return Base.targetsTable.get(Preferences.get("target"));
   }
   
+static public Map<String, String> getSketchPreferences(File folder) {
+	Target target = getTarget();
+	Map map = target.getSketchPreferences(folder);
+	return map;
+}
  
 static public Map<String, String> getPlatformPreferences() {
     Target target = getTarget();
