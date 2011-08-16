@@ -28,7 +28,11 @@
 //*	Edit History
 //************************************************************************
 //*	Oct 15,	2010	<MLS> Started on WInterrupts.c for Pic32
+//* Aug  8, 2011	<GeneApperson> completely rewritten (issue #75)
 //************************************************************************
+
+#include <plib.h>
+#include <p32xxxx.h>
 
 #include <inttypes.h>
 #include <stdio.h>
@@ -38,24 +42,83 @@
 
 volatile static voidFuncPtr intFunc[EXTERNAL_NUM_INTERRUPTS];
 
+// Interrupt privilege and sub-privilege level for external interrupts
+// This is an arbitrary selection.
+#define	EXT_INT_IPL		4
+#define	EXT_INT_SPL		1
+
+//************************************************************************
+// PIC32 devices only support rising and falling edge triggered interrupts
+// on the external interrupt pins. Only the RISING and FALLING modes are
+// supported.
 //************************************************************************
 void attachInterrupt(uint8_t interruptNum, void (*userFunc)(void), int mode)
 {
-	if(interruptNum < EXTERNAL_NUM_INTERRUPTS)
+	int		edge;
+
+	if ((interruptNum < EXTERNAL_NUM_INTERRUPTS) && ((mode == FALLING)||(mode == RISING)))
 	{
-	    intFunc[interruptNum] = userFunc;
-	    
-	    // Configure the interrupt mode (trigger on low input, any change, rising
-	    // edge, or falling edge).  The mode constants were chosen to correspond
-	    // to the configuration bits in the hardware register, so we simply shift
-	    // the mode into place.
-	      
-	    // Enable the interrupt.
-	      
+	    intFunc[interruptNum]	=	userFunc;
+
+		// The active edge is selected via the INTxEP bits in the INTCON register.
+		// A '0' bit selects falling edge, and a '1' bit select rising edge.
+		if (mode == FALLING)
+		{
+			edge	=	0;
+		}
+		else
+		{
+			edge	=	1;
+		}
+
+		// Select the active edge, set the privilege and sub-privilege levels,
+		// and enable the interrupt.	      
 	    switch (interruptNum)
 	    {
-	    	case 1:
+	    	case 0:
+				IEC0bits.INT0IE		=	0;
+				IFS0bits.INT0IF		=	0;
+				INTCONbits.INT0EP	=	edge;
+				IPC0bits.INT0IP		=	EXT_INT_IPL;
+				IPC0bits.INT0IS		=	EXT_INT_SPL;
+				IEC0bits.INT0IE		=	1;
 	    		break;
+
+			case 1:
+				IEC0bits.INT1IE		=	0;
+				IFS0bits.INT1IF		=	0;
+				INTCONbits.INT1EP	=	edge;
+				IPC1bits.INT1IP		=	EXT_INT_IPL;
+				IPC1bits.INT1IS		=	EXT_INT_SPL;
+				IEC0bits.INT1IE		=	1;
+				break;
+
+			case 2:
+				IEC0bits.INT2IE		=	0;
+				IFS0bits.INT2IF		=	0;
+				INTCONbits.INT2EP	=	edge;
+				IPC2bits.INT2IP		=	EXT_INT_IPL;
+				IPC2bits.INT2IS		=	EXT_INT_SPL;
+				IEC0bits.INT2IE		=	1;
+				break;
+
+			case 3:
+				IEC0bits.INT3IE		=	0;
+				IFS0bits.INT3IF		=	0;
+				INTCONbits.INT3EP	=	edge;
+				IPC3bits.INT3IP		=	EXT_INT_IPL;
+				IPC3bits.INT3IS		=	EXT_INT_SPL;
+				IEC0bits.INT3IE		=	1;
+				break;
+
+			case 4:
+				IEC0bits.INT4IE		=	0;
+				IFS0bits.INT4IF		=	0;
+				INTCONbits.INT4EP	=	edge;
+				IPC4bits.INT4IP		=	EXT_INT_IPL;
+				IPC4bits.INT4IS		=	EXT_INT_SPL;
+				IEC0bits.INT4IE		=	1;
+				break;
 		}
 	}
 }
@@ -63,74 +126,94 @@ void attachInterrupt(uint8_t interruptNum, void (*userFunc)(void), int mode)
 //************************************************************************
 void detachInterrupt(uint8_t interruptNum)
 {
-	if(interruptNum < EXTERNAL_NUM_INTERRUPTS)
+	if (interruptNum < EXTERNAL_NUM_INTERRUPTS)
 	{
-		// Disable the interrupt.  (We can't assume that interruptNum is equal
-		// to the number of the EIMSK bit to clear, as this isn't true on the 
-		// ATmega8.  There, INT0 is 6 and INT1 is 7.)
 		switch (interruptNum) 
 		{
-	    	case 1:
+	    	case 0:
+				IEC0bits.INT0IE	=	0;
 	    		break;
+
+			case 1:
+				IEC0bits.INT1IE	=	0;
+				break;
+
+			case 2:
+				IEC0bits.INT2IE	=	0;
+				break;
+
+			case 3:
+				IEC0bits.INT3IE	=	0;
+				break;
+
+			case 4:
+				IEC0bits.INT4IE	=	0;
+				break;
 		}
 
-		intFunc[interruptNum] = 0;
+		intFunc[interruptNum]	=	0;
 	}
 }
 
+//************************************************************************
+// INT0 ISR
+void __ISR(_EXTERNAL_0_VECTOR, ipl4) ExtInt0Handler(void)
+{
 
-//#if defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__)
-#if defined(EICRA) && defined(EICRB)
+	IFS0bits.INT0IF	=	0;
+	if (intFunc[0] != 0)
+	{
+		(*intFunc[0])();
+	}
+}
 
 //************************************************************************
-SIGNAL(INT0_vect)
+// INT1 ISR
+void __ISR(_EXTERNAL_1_VECTOR, ipl4) ExtInt1Handler(void)
 {
-  if(intFunc[EXTERNAL_INT_2])
-    intFunc[EXTERNAL_INT_2]();
+
+	IFS0bits.INT1IF	=	0;
+	if (intFunc[1] != 0)
+	{
+		(*intFunc[1])();
+	}
 }
 
-SIGNAL(INT1_vect) {
-  if(intFunc[EXTERNAL_INT_3])
-    intFunc[EXTERNAL_INT_3]();
+//************************************************************************
+// INT2 ISR
+void __ISR(_EXTERNAL_2_VECTOR, ipl4) ExtInt2Handler(void)
+{
+
+	IFS0bits.INT2IF	=	0;
+	if (intFunc[2] != 0)
+	{
+		(*intFunc[2])();
+	}
 }
 
-SIGNAL(INT2_vect) {
-  if(intFunc[EXTERNAL_INT_4])
-    intFunc[EXTERNAL_INT_4]();
+//************************************************************************
+// INT3 ISR
+void __ISR(_EXTERNAL_3_VECTOR, ipl4) ExtInt3Handler(void)
+{
+
+	IFS0bits.INT3IF	=	0;
+	if (intFunc[3] != 0)
+	{
+		(*intFunc[3])();
+	}
 }
 
-SIGNAL(INT3_vect) {
-  if(intFunc[EXTERNAL_INT_5])
-    intFunc[EXTERNAL_INT_5]();
+//************************************************************************
+// INT4 ISR
+void __ISR(_EXTERNAL_4_VECTOR, ipl4) ExtInt4Handler(void)
+{
+
+	IFS0bits.INT4IF	=	0;
+	if (intFunc[4] != 0)
+	{
+		(*intFunc[4])();
+	}
 }
 
-SIGNAL(INT4_vect) {
-  if(intFunc[EXTERNAL_INT_0])
-    intFunc[EXTERNAL_INT_0]();
-}
-
-SIGNAL(INT5_vect) {
-  if(intFunc[EXTERNAL_INT_1])
-    intFunc[EXTERNAL_INT_1]();
-}
-
-SIGNAL(INT6_vect) {
-  if(intFunc[EXTERNAL_INT_6])
-    intFunc[EXTERNAL_INT_6]();
-}
-
-SIGNAL(INT7_vect) {
-  if(intFunc[EXTERNAL_INT_7])
-    intFunc[EXTERNAL_INT_7]();
-}
-
-
-#endif
-
-/*
-SIGNAL(SIG_2WIRE_SERIAL) {
-  if(twiIntFunc)
-    twiIntFunc();
-}
-*/
+//************************************************************************
 
