@@ -30,6 +30,7 @@
 //*	Oct 15,	2010	<MLS> Master interrupts working to generate millis()
 //*	May 18,	2011	<MLS> merged in Brian Schmalz work on microseconds timer
 //*	May 20,	2011	<MLS> For mega board, disabling secondary oscillator
+//*	Aug 17,	2011	<MLS> Issue #84 disable the uart on init so that the pins can be used as general purpose I/O
 //************************************************************************
 #include <plib.h>
 #include <p32xxxx.h>
@@ -245,6 +246,11 @@ void init()
 	
 #endif
 
+	//*	Issue #84
+	//*	disable the uart so that the pins can be used as general purpose I/O
+#if defined(_UART1)
+	U1MODEbits.UARTEN	=	0x00;
+#endif
 }
 
 
