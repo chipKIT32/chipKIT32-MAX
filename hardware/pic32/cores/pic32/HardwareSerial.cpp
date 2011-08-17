@@ -283,7 +283,8 @@ int	configValue;
 	}
 
 	// Must enable glocal interrupts - in this case, we are using multi-vector mode
-    INTEnableSystemMultiVectoredInt();
+	//*	this is already done in Init() (issue #78)
+//-    INTEnableSystemMultiVectoredInt();
 
 
 }
@@ -292,6 +293,8 @@ int	configValue;
 //*******************************************************************************************
 void HardwareSerial::end()
 {
+	//*	disable the uart so that the pins can be used as general purpose I/O
+	*_UxMODE	=	0;
 }
 
 //*******************************************************************************************
