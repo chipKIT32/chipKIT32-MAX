@@ -147,13 +147,18 @@ void loop(void);
 #endif
 
 #if !defined(__AVR__)
+	#define _BV(bit) (1ul << (bit))
+
 	#define PROGMEM
 	#define pgm_read_byte(x)		(*((char *)x))
-	#define pgm_read_word(x)		(*((short *)x))
+//	#define pgm_read_word(x)		(*((short *)(x & 0xfffffffe)))
+	#define pgm_read_word(x)		( ((*((unsigned char *)x + 1)) << 8) + (*((unsigned char *)x)))
 	#define pgm_read_byte_near(x)	(*((char *)x))
 	#define pgm_read_byte_far(x)	(*((char *)x))
-	#define pgm_read_word_near(x)	(*((short *)x))
-	#define pgm_read_workd_far(x)	(*((short *)x))
+//	#define pgm_read_word_near(x)	(*((short *)(x & 0xfffffffe))
+//	#define pgm_read_word_far(x)	(*((short *)(x & 0xfffffffe)))
+	#define pgm_read_word_near(x)	( ((*((unsigned char *)x + 1)) << 8) + (*((unsigned char *)x)))
+	#define pgm_read_word_far(x)	( ((*((unsigned char *)x + 1)) << 8) + (*((unsigned char *)x))))
 
 
 	#define	prog_void		const void
