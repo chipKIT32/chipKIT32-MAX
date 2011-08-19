@@ -92,7 +92,7 @@ public:
 
   static void setBitOrder(BYTE);
   static void setDataMode(WORD);
-  static void setClockDivider(BYTE);
+  static void setClockDivider(WORD);
 };
 
 extern SPIClass SPI;
