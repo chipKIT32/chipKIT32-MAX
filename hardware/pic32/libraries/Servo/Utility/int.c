@@ -1,12 +1,36 @@
-/*
- * Copyright (c) 2011 Digilent
- * Interrupt handeler for Servo Master library for PIC arduino.
- *
- * This file is free software; you can redistribute it and/or modify
- * it under the terms of either the GNU General Public License version 2
- * or the GNU Lesser General Public License version 2.1, both as
- * published by the Free Software Foundation.
-*/
+/************************************************************************/
+/*																		*/
+/*	int.c	--	Handles timer interrupts for PIC32      				*/
+/*																		*/
+/************************************************************************/
+/*	Author:		Michelle Yu                                             */
+/*                          											*/
+/*	Copyright 2011, Digilent Inc.										*/
+/*  This library is free software; you can redistribute it and/or       */
+/*  modify it under the terms of the GNU Lesser General Public          */
+/*  License as published by the Free Software Foundation; either        */
+/*  version 2.1 of the License, or (at your option) any later version.  */
+/*                                                                      */
+/*  This library is distributed in the hope that it will be useful,     */
+/*  but WITHOUT ANY WARRANTY; without even the implied warranty of      */
+/*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU   */
+/*  Lesser General Public License for more details.                     */
+/*                                                                      */
+/*  You should have received a copy of the GNU Lesser General Public    */
+/*  License along with this library; if not, write to the Free Software */
+/*  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA           */
+/*  02110-1301 USA                                                      */
+/************************************************************************/
+/*  File Description:													*/
+/*	This file declares functions that handle timer interrupts for       */
+/*  chipKIT PIC32 boards.												*/
+/************************************************************************/
+/*  Revision History:													*/
+/*																		*/
+/*	08/18/2011(MichelleY): file header comment block reformatted		*/
+/*																		*/
+/************************************************************************/
+
 
 #include "int.h"
 

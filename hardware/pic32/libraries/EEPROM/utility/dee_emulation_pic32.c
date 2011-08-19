@@ -31,7 +31,7 @@
  * IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL OR
  * CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
  *
- *$Id: $
+ *$Id: dee_emulation_pic32.c,v 1.1.1.1 2011/08/12 18:45:37 gapperson Exp $
  *
  **********************************************************************/
 #include <dee_emulation_pic32.h>

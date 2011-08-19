@@ -321,7 +321,7 @@ private:
   inline static void setSS()     { PORTB &= ~_BV(4); };
   inline static void resetSS()   { PORTB |=  _BV(4); };
 #elif defined(_BOARD_UNO_)  //chipKIT definitions for SS pin
-  //inline static void initSS()    { TRISGbits.TRISG9 =  0; }; // this code is for ues with jumper JP4 in the RG9 position
+  //inline static void initSS()    { TRISGbits.TRISG9 =  0; }; // this code is for ues with jumper JP4 in the RG9 position -lsh
   //inline static void setSS()     { LATGbits.LATG9	=  0; };
   //inline static void resetSS()   { LATGbits.LATG9	=  1; };
   inline static void initSS()  { TRISDbits.TRISD4 =  0; };

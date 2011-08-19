@@ -1,4 +1,6 @@
-/* Boards.h - Hardware Abstraction Layer for Firmata library */
+/* Boards.h - Hardware Abstraction Layer for Firmata library            */
+/* Revision: 08/18/2011 (Scott Hanson)                                  */ 
+/*            - chipKIT Uno32 and chipKIT Max32 support added           */
 
 #ifndef Firmata_Boards_h
 #define Firmata_Boards_h

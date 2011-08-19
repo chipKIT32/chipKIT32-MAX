@@ -43,7 +43,7 @@
 #  7. Type "make upload", reset your Arduino board, and press enter  to
 #     upload your program to the Arduino board.
 #
-# $Id: Makefile,v 1.7 2007/04/13 05:28:23 eighthave Exp $
+# $Id: Makefile,v 1.1.1.1 2011/08/12 18:45:37 gapperson Exp $
 
 PORT = /dev/tty.usbserial-*
 TARGET := $(shell pwd | sed 's|.*/\(.*\)|\1|')

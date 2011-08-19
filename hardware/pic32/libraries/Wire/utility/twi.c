@@ -1,6 +1,7 @@
 /*
   twi.c - TWI/I2C library for Wiring & Arduino (chipKit line)
   Copyright (c) 2011 Digilent.  All right reserved.
+  Based on source Copyright (c) 2006 Nicholas Zambetti.
   Author: Oliver Jones
   Revision Date: 5/20/2011
 

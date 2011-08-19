@@ -1,5 +1,6 @@
 /* Arduino SdFat Library
  * Copyright (C) 2010 by William Greiman
+ * Revision Date: 08/18/2011 (Olver Jones)
  *
  * This file is part of the Arduino SdFat Library
  *

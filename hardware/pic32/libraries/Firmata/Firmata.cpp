@@ -1,7 +1,8 @@
 /*
   Firmata.cpp - Firmata library
   Copyright (C) 2006-2008 Hans-Christoph Steiner.  All rights reserved.
- 
+  Revision: 08/18/2011 (Scott Hanson)
+    - Firmata firmware version number bug fix
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
   License as published by the Free Software Foundation; either
