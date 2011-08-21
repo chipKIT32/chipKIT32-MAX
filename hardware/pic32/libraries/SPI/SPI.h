@@ -1,9 +1,27 @@
- /*
-  SPI.h - SPI Master library for the PIC arduino.
-  Copyright (c) 2011 Digilent.  All right reserved.
-  Based on source Copyright (c) 2010 by Cristian Maglie
-  Author: Oliver Jones
-  Revision Date: 08/18/2011
+/************************************************************************/
+/*                                                                      */
+/*  SPI.h	--	Interface Declarations for SPI.cpp                      */
+/*                                                                      */
+/************************************************************************/
+/*  Author: Oliver Jones                                                */
+/*  Copyright (c) 2011, Digilent. All rights reserved.                  */
+/*                                                                      */
+/*	Based on original work Copyright (c) 2010 by Cristian Maglie        */
+/************************************************************************/
+/*  File Description:													*/
+/*                                                                      */
+/*  This file contains declarations need to use the chipKIT standard    */
+/*  SPI library in SPI.CPP.                                             */
+/*                                                                      */
+/************************************************************************/
+/*  Revision History:													*/
+/*                                                                      */
+/*  08/20/2011(GeneApperson): revised to fix build problems introduced  */
+/*      by the initial port of the original Arduino library. Changed    *
+/*       all use of the types BYTE and WORD to uint8_t and uint16_t.    */
+/*                                                                      */
+/************************************************************************/
+/*
   
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -18,16 +36,18 @@
   You should have received a copy of the GNU Lesser General Public
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+
 */
+/************************************************************************/
 
 
-#ifndef _SPI_H_INCLUDED
+#if !defined(_SPI_H_INCLUDED)
 #define _SPI_H_INCLUDED
 
 #define __LANGUAGE_C__
 
-#include <plib.h>
 #include <stdio.h>
+#include <WProgram.h>
 
 /*	SPIxCON
 */
@@ -65,13 +85,13 @@
 #define bnSCK				6
 /********************************/
 
+#define SPI_CLOCK_DIV2 0x00
 #define SPI_CLOCK_DIV4 0x01
+#define SPI_CLOCK_DIV8 0x03
 #define SPI_CLOCK_DIV16 0x07
+#define SPI_CLOCK_DIV32 0x0F
 #define SPI_CLOCK_DIV64 0x1F
 #define SPI_CLOCK_DIV128 0x3F
-#define SPI_CLOCK_DIV2 0x00
-#define SPI_CLOCK_DIV8 0x03
-#define SPI_CLOCK_DIV32 0x0F
 
 #define SPI_MODE0 0x00  // CKP = 0 CKE = 0
 #define SPI_MODE1 0x100 // CKP = 0 CKE = 1
@@ -80,7 +100,7 @@
 
 class SPIClass {
 public:
-  inline static BYTE transfer(BYTE _data);
+  inline static uint8_t transfer(uint8_t _data);
 
   // SPI Configuration methods
 
@@ -90,14 +110,14 @@ public:
   static void begin(); // Default
   static void end();
 
-  static void setBitOrder(BYTE);
-  static void setDataMode(WORD);
-  static void setClockDivider(WORD);
+  static void setBitOrder(uint8_t);
+  static void setDataMode(uint16_t);
+  static void setClockDivider(uint16_t);
 };
 
 extern SPIClass SPI;
 
-BYTE SPIClass::transfer(BYTE _data) {
+uint8_t SPIClass::transfer(uint8_t _data) {
   while( ((1 << bnTbe) & SPI2STAT) == 0 );
   SPI2BUF = _data;
   while( ((1 << bnRbf) & SPI2STAT) == 0 );

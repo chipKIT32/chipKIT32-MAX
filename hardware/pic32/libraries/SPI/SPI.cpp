@@ -1,9 +1,28 @@
- /*
-  SPI.cpp - SPI Master library for the PIC arduino.
-  Copyright (c) 2011 Digilent.  All right reserved.
-  Based on source Copyright (c) 2010 by Cristian Maglie
-  Author: Oliver Jones
-  Revision Date: 08/18/2011
+/************************************************************************/
+/*                                                                      */
+/*	SPI.cpp	--	Top Level Module for chipKIT standard SPI Library		*/
+/*                                                                      */
+/************************************************************************/
+/*  Author: Oliver Jones                                                */
+/*  Copyright (c) 2011, Digilent. All rights reserved.                  */
+/*                                                                      */
+/*	Based on original work Copyright (c) 2010 by Cristian Maglie        */
+/************************************************************************/
+/*  File Description:													*/
+/*                                                                      */
+/*	This is the top level module for the standard SPI Library for the	*/
+/*	chipKIT system. This library is based on, and is functionally		*/
+/*	similar to the original Arduino standard SPI library.				*/
+/*                                                                      */
+/************************************************************************/
+/*  Revision History:													*/
+/*                                                                      */
+/*  08/20/2011(GeneApperson): revised to fix build problems introduced  */
+/*      by the initial port of the original Arduino library. Changed    *
+/*       all use of the types BYTE and WORD to uint8_t and uint16_t.    */
+/*                                                                      */
+/************************************************************************/
+/*
   
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -18,7 +37,9 @@
   You should have received a copy of the GNU Lesser General Public
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+
 */
+/************************************************************************/
 
 
 #define __LANGUAGE_C__
@@ -50,17 +71,17 @@ void SPIClass::end() {
   SPI2CONCLR = ( 1 << bnOn );
 }
 
-void SPIClass::setBitOrder(BYTE bitOrder)
+void SPIClass::setBitOrder(uint8_t bitOrder)
 {
 	//Bit order is not implemented on the PIC parts
 }
 
-void SPIClass::setDataMode(WORD mode)
+void SPIClass::setDataMode(uint16_t mode)
 {
   SPI2CONSET = mode;
 }
 
-void SPIClass::setClockDivider(WORD rate)
+void SPIClass::setClockDivider(uint16_t rate)
 {
   rate &= 0x1FF;
   SPI2BRGSET = rate;
