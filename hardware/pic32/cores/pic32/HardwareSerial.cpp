@@ -304,6 +304,19 @@ uint8_t HardwareSerial::available(void)
 }
 
 //*******************************************************************************************
+int HardwareSerial::peek()
+{
+    if (_rx_buffer->head == _rx_buffer->tail)
+    {
+        return -1;
+    }
+    else
+    {
+        return _rx_buffer->buffer[_rx_buffer->tail];
+    }
+}
+
+//*******************************************************************************************
 int HardwareSerial::read(void)
 {
 	unsigned char theChar;

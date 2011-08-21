@@ -142,32 +142,34 @@ typedef struct
 //*******************************************************************************************
 class HardwareSerial : public Print
 {
-	private:
-		ring_buffer				*_rx_buffer;
-		uint8_t					_uartNumber;
-		//*	pic32 registers
-		volatile uint32_t		*_UxBRG;
-		volatile uint32_t		*_UxMODE;
-		volatile uint32_t		*_UxSTA;
-		volatile uint32_t		*_UxTXREG;
-		
-	public:
-		HardwareSerial(	uint8_t					uartNumber,
-						ring_buffer				*rx_buffer,
-						volatile uint32_t		*uxbrg_reg,
-						volatile uint32_t		*uxmode_reg,
-						volatile uint32_t		*uxsta_reg,
-						volatile uint32_t		*uxtxreg_reg
-						);
+    private:
+        ring_buffer             *_rx_buffer;
+        uint8_t                 _uartNumber;
+        //* pic32 registers
+        volatile uint32_t       *_UxBRG;
+        volatile uint32_t       *_UxMODE;
+        volatile uint32_t       *_UxSTA;
+        volatile uint32_t       *_UxTXREG;
 
-		void	begin(long baudRate);
-		void	end();
-		uint8_t	available(void);
-		int		read(void);
-		void	flush(void);
-		virtual	void	write(uint8_t);
-		using	Print::write; // pull in write(str) and write(buf, size) from Print
+    public:
+        HardwareSerial( uint8_t                 uartNumber,
+                        ring_buffer             *rx_buffer,
+                        volatile uint32_t       *uxbrg_reg,
+                        volatile uint32_t       *uxmode_reg,
+                        volatile uint32_t       *uxsta_reg,
+                        volatile uint32_t       *uxtxreg_reg
+                        );
+
+        void    begin(long baudRate);
+        void    end();
+        int     peek();
+        uint8_t available(void);
+        int     read(void);
+        void    flush(void);
+        virtual void    write(uint8_t);
+        using   Print::write; // pull in write(str) and write(buf, size) from Print
 };
+
 
 #if defined(_USB)
 //*******************************************************************************************
