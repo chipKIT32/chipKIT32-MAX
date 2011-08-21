@@ -97,6 +97,9 @@ volatile unsigned long gMicros_overflows		=	0;
 volatile unsigned long gCore_timer_first_val	=	0;
 volatile unsigned long gMicros_calculating		=	0;
 
+// SoftPWM library update function pointer
+uint32_t (*gSoftPWMServoUpdate)(void) = NULL;
+
 //************************************************************************
 unsigned long millis()
 {
@@ -180,13 +183,6 @@ unsigned long	startMicros	=	micros();
 
 
 //************************************************************************
-// Let compile time pre-processor calculate the CORE_TICK_PERIOD
-//	clock rate is 80000000ull
-#define TOGGLES_PER_SEC			1000
-#define CORE_TICK_RATE			(F_CPU / 2 / TOGGLES_PER_SEC)
-
-
-//************************************************************************
 void init()
 {
 
@@ -257,37 +253,46 @@ void init()
 //************************************************************************
 void __ISR(_CORE_TIMER_VECTOR, ipl2) CoreTimerHandler(void)
 {
-unsigned int cur_timer_val;
-	
-
+    unsigned int cur_timer_val;
 	cur_timer_val	=	ReadCoreTimer();
+
+	// Only call the SoftPMW update function if it has been hooked into by the
+	// SoftPWM library. Otherwise, always just do the normal 1ms update stuff
+	if ((gSoftPWMServoUpdate != NULL && gSoftPWMServoUpdate()) || gSoftPWMServoUpdate == NULL)
+	{
+		// Handle updates that need to happen at the 1ms rate:
+
+		// .. things to do
+	
+		// Check for CoreTimer overflows, record for micros() function
+		// If micros() is not called more often than every 107 seconds (the
+		// period of overflow for CoreTimer) then overflows to CoreTimer
+		// will be lost. So we put code here to check for this condition
+		// and record it so that the next call to micros() will be accurate.
+		if (!gMicros_calculating)
+		{
+			if (cur_timer_val < gCore_timer_last_val)
+			{
+				// We have an overflow
+				gCore_timer_micros		+=	((0xFFFFFFFF - gCore_timer_last_val) + cur_timer_val) / CORETIMER_TICKS_PER_MICROSECOND;
+				gCore_timer_first_val	=	cur_timer_val;
+				gMicros_overflows	=	gCore_timer_micros;
+			}
+			gCore_timer_last_val	=	cur_timer_val;
+		}
+	
+		// Count this millisecond
+		gTimer0_millis++;
+	}
+
+	if (gSoftPWMServoUpdate == NULL)
+	{
+		// update the period
+		UpdateCoreTimer(CORE_TICK_RATE);
+	}
+
 	// clear the interrupt flag
 	mCTClearIntFlag();
-
-	// update the period
-	UpdateCoreTimer(CORE_TICK_RATE);
-
-	// .. things to do
-	
-	// Check for CoreTimer overflows, record for micros() function
-	// If micros() is not called more often than every 107 seconds (the
-	// period of overflow for CoreTimer) then overflows to CoreTimer
-	// will be lost. So we put code here to check for this condition
-	// and record it so that the next call to micros() will be accurate.
-	if (!gMicros_calculating)
-	{
-		if (cur_timer_val < gCore_timer_last_val)
-		{
-			// We have an overflow
-			gCore_timer_micros		+=	((0xFFFFFFFF - gCore_timer_last_val) + cur_timer_val) / CORETIMER_TICKS_PER_MICROSECOND;
-			gCore_timer_first_val	=	cur_timer_val;
-			gMicros_overflows	=	gCore_timer_micros;
-		}
-		gCore_timer_last_val	=	cur_timer_val;
-	}
-	
-	// Count this millisecond
-	gTimer0_millis++;
 }
 
 
