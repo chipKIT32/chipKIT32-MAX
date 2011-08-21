@@ -2,7 +2,7 @@
 #define client_h
 #include "WProgram.h"	
 #include "Print.h"
-#include "stream.h"
+#include "Stream.h"
 class Client : public Stream {
 
 public:
