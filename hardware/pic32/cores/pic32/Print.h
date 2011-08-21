@@ -27,6 +27,8 @@
 	#include <stdio.h> // for size_t
 #endif
 
+#include "WString.h"
+
 #define PRINT_DEC 10
 #define PRINT_HEX 16
 #define PRINT_OCT 8
@@ -49,6 +51,7 @@ class Print
     virtual void write(const char *str);
     virtual void write(const uint8_t *buffer, size_t size);
 
+    void print(const String &);
     void print(const char[]);
     void print(char, int = PRINT_BYTE);
     void print(unsigned char, int = PRINT_BYTE);
@@ -58,6 +61,7 @@ class Print
     void print(unsigned long, int = PRINT_DEC);
     void print(double, int = 2);
 
+    void println(const String &s);
     void println(const char[]);
     void println(char, int = PRINT_BYTE);
     void println(unsigned char, int = PRINT_BYTE);
