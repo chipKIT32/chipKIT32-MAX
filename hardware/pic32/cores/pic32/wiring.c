@@ -31,6 +31,7 @@
 //*	May 18,	2011	<MLS> merged in Brian Schmalz work on microseconds timer
 //*	May 20,	2011	<MLS> For mega board, disabling secondary oscillator
 //*	Aug 17,	2011	<MLS> Issue #84 disable the uart on init so that the pins can be used as general purpose I/O
+//*	Aug ??,	2011	Brian added softpwm
 //************************************************************************
 #include <plib.h>
 #include <p32xxxx.h>
@@ -253,12 +254,23 @@ void init()
 //************************************************************************
 void __ISR(_CORE_TIMER_VECTOR, ipl2) CoreTimerHandler(void)
 {
-    unsigned int cur_timer_val;
+unsigned int	cur_timer_val;
+uint32_t		softPWMreturnFlag;
+
 	cur_timer_val	=	ReadCoreTimer();
 
 	// Only call the SoftPMW update function if it has been hooked into by the
 	// SoftPWM library. Otherwise, always just do the normal 1ms update stuff
-	if ((gSoftPWMServoUpdate != NULL && gSoftPWMServoUpdate()) || gSoftPWMServoUpdate == NULL)
+	if (gSoftPWMServoUpdate != NULL)
+	{
+		softPWMreturnFlag	=	gSoftPWMServoUpdate();
+	}
+	else
+	{
+		softPWMreturnFlag	=	1;
+	}
+
+	if (softPWMreturnFlag != 0)
 	{
 		// Handle updates that need to happen at the 1ms rate:
 

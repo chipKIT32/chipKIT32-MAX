@@ -25,6 +25,10 @@
 //*	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 //*	
 //************************************************************************
+//*	Edit History
+//************************************************************************
+//*	Aug ??,	2011	<?> String class methods added
+//************************************************************************
 
 #include <stdio.h>
 #include <string.h>
@@ -57,11 +61,12 @@ void Print::write(const uint8_t *buffer, size_t size)
 	}
 }
 //************************************************************************
-void Print::print(const String &s)
+void Print::print(const String &argString)
 {
-  for (unsigned int i = 0; i < s.length(); i++) {
-    write(s[i]);
-  }
+	for (unsigned int i = 0; i < argString.length(); i++)
+	{
+		write(argString[i]);
+	}
 }
 //************************************************************************
 void Print::print(const char str[])
@@ -141,10 +146,10 @@ void Print::println(void)
 	print('\n');
 }
 //************************************************************************
-void Print::println(const String &s)
+void Print::println(const String &argString)
 {
-  print(s);
-  println();
+	print(argString);
+	println();
 }
 //************************************************************************
 void Print::println(const char c[])
