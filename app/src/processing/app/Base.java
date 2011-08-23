@@ -232,6 +232,9 @@ public class Base {
 
     // Get paths for the libraries and examples in the Processing folder
     //String workingDirectory = System.getProperty("user.dir");
+
+    //Issue: 104 Need to support loading examples, and libraries based on platform
+
     examplesFolder = getContentFile("examples");
   
     librariesFolder = getContentFile("libraries");

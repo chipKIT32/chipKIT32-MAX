@@ -1,10 +1,12 @@
-README.TXT - for SoftPWMServo library, v1.0
+README.TXT - for SoftPWMServo library
 Released August 2011 by Brian Schmalz http://www.schmalzhaus.com
 Written for all PIC32 based boards
 
 This document describes the overall intent of the SoftPWMServo library, as well
 as the technical details that you may want to know in order to understand some 
 of the aspects of using the library in your application.
+
+See SoftPWMServo.h for information on version differences of his library.
 
 Overview:
 

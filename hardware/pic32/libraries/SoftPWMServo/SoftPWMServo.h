@@ -29,6 +29,19 @@
   explination about how the internals of the library work.
 */
 
+/*
+  Change List:
+  08/17/2011 : version 1.0 release
+  
+  08/22/2011 : Version 1.1 release
+    * Fixed math bug where every 107s the overflow of the CoreTimer would cause 
+      bad pulse outputs.
+    * Internal optomization : removal of explicit Active bit : a pin's existance
+      in the linked list of active pins now defines its active status
+    * Switched from generic LATch registers to SET and CLR for a slight speed
+      improvement
+*/
+
 #ifndef SoftPWMServo_h
 #define SoftPWMServo_h
 
@@ -38,7 +51,7 @@
 
 #include <inttypes.h>
 
-#define SOFTPWMSERVO_VERSION  1        // software version of this library
+#define SOFTPWMSERVO_VERSION  1.1      // software version of this library
 #define SOFTPWMSERVO_MAX_PINS (86)     // Max number of pins the library can handle
 #define SOFTPWMSERVO_ERROR    (-1)     // Returned when a function fails
 #define SOFTPWMSERVO_OK       (0)      // Returned when a function passes
