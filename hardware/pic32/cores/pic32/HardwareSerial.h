@@ -187,8 +187,8 @@ class USBSerial : public Print
 		int				read(void);
 		void			flush(void);
 		virtual	void	write(uint8_t);
-	    virtual void	write(const char *str);
-    	virtual void	write(const uint8_t *buffer, size_t size);
+		virtual void	write(const char *str);
+		virtual void	write(const uint8_t *buffer, size_t size);
 
 		using	Print::write; // pull in write(str) and write(buf, size) from Print
 };

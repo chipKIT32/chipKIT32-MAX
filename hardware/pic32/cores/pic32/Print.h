@@ -44,33 +44,33 @@
 class Print
 {
   private:
-    void printNumber(unsigned long, uint8_t);
-    void printFloat(double, uint8_t);
+	void printNumber(unsigned long, uint8_t);
+	void printFloat(double, uint8_t);
   public:
-    virtual void write(uint8_t) = 0;
-    virtual void write(const char *str);
-    virtual void write(const uint8_t *buffer, size_t size);
+	virtual void write(uint8_t) = 0;
+	virtual void write(const char *str);
+	virtual void write(const uint8_t *buffer, size_t size);
 
-    void print(const String &);
-    void print(const char[]);
-    void print(char, int = PRINT_BYTE);
-    void print(unsigned char, int = PRINT_BYTE);
-    void print(int, int = PRINT_DEC);
-    void print(unsigned int, int = PRINT_DEC);
-    void print(long, int = PRINT_DEC);
-    void print(unsigned long, int = PRINT_DEC);
-    void print(double, int = 2);
+	void print(const String &);
+	void print(const char[]);
+	void print(char, int = PRINT_BYTE);
+	void print(unsigned char, int = PRINT_BYTE);
+	void print(int, int = PRINT_DEC);
+	void print(unsigned int, int = PRINT_DEC);
+	void print(long, int = PRINT_DEC);
+	void print(unsigned long, int = PRINT_DEC);
+	void print(double, int = 2);
 
-    void println(const String &s);
-    void println(const char[]);
-    void println(char, int = PRINT_BYTE);
-    void println(unsigned char, int = PRINT_BYTE);
-    void println(int, int = PRINT_DEC);
-    void println(unsigned int, int = PRINT_DEC);
-    void println(long, int = PRINT_DEC);
-    void println(unsigned long, int = PRINT_DEC);
-    void println(double, int = 2);
-    void println(void);
+	void println(const String &s);
+	void println(const char[]);
+	void println(char, int = PRINT_BYTE);
+	void println(unsigned char, int = PRINT_BYTE);
+	void println(int, int = PRINT_DEC);
+	void println(unsigned int, int = PRINT_DEC);
+	void println(long, int = PRINT_DEC);
+	void println(unsigned long, int = PRINT_DEC);
+	void println(double, int = 2);
+	void println(void);
 };
 
 #endif

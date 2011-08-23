@@ -284,7 +284,7 @@ int	configValue;
 
 	// Must enable glocal interrupts - in this case, we are using multi-vector mode
 	//*	this is already done in Init() (issue #78)
-//-    INTEnableSystemMultiVectoredInt();
+//-	INTEnableSystemMultiVectoredInt();
 
 
 }
@@ -313,7 +313,7 @@ int HardwareSerial::peek()
 	else
 	{
 		return _rx_buffer->buffer[_rx_buffer->tail];
-    }
+	}
 }
 
 //*******************************************************************************************
@@ -473,7 +473,7 @@ unsigned char theChar;
 		store_char(theChar, &rx_buffer1);
 
 		// Clear the RX interrupt Flag (must be AFTER the read)
-	    mU1RXClearIntFlag();
+		mU1RXClearIntFlag();
 	}
 
 	// We don't care about TX interrupt
@@ -502,7 +502,7 @@ unsigned char theChar;
 		store_char(theChar, &rx_buffer1A);
 
 		// Clear the RX interrupt Flag (must be AFTER the read)
-	    mU1ARXClearIntFlag();
+		mU1ARXClearIntFlag();
 	}
 
 	// We don't care about TX interrupt
@@ -531,7 +531,7 @@ unsigned char theChar;
 		store_char(theChar, &rx_buffer1B);
 
 		// Clear the RX interrupt Flag (must be AFTER the read)
-	    mU1BRXClearIntFlag();
+		mU1BRXClearIntFlag();
 	}
 
 	// We don't care about TX interrupt
@@ -561,7 +561,7 @@ unsigned char theChar;
 		store_char(theChar, &rx_buffer2);
 
 		// Clear the RX interrupt Flag (must be AFTER the read)
-	    mU2RXClearIntFlag();
+		mU2RXClearIntFlag();
 	}
 
 	// We don't care about TX interrupt
@@ -590,7 +590,7 @@ unsigned char theChar;
 		store_char(theChar, &rx_buffer2A);
 
 		// Clear the RX interrupt Flag (must be AFTER the read)
-	    mU2ARXClearIntFlag();
+		mU2ARXClearIntFlag();
 	}
 
 	// We don't care about TX interrupt
@@ -618,7 +618,7 @@ unsigned char theChar;
 		store_char(theChar, &rx_buffer2B);
 
 		// Clear the RX interrupt Flag (must be AFTER the read)
-	    mU2BRXClearIntFlag();
+		mU2BRXClearIntFlag();
 	}
 
 	// We don't care about TX interrupt
@@ -645,7 +645,7 @@ unsigned char theChar;
 		store_char(theChar, &rx_buffer3);
 
 		// Clear the RX interrupt Flag (must be AFTER the read)
-	    mU3RXClearIntFlag();
+		mU3RXClearIntFlag();
 	}
 
 	// We don't care about TX interrupt
@@ -674,7 +674,7 @@ unsigned char theChar;
 		store_char(theChar, &rx_buffer3A);
 
 		// Clear the RX interrupt Flag (must be AFTER the read)
-	    mU3ARXClearIntFlag();
+		mU3ARXClearIntFlag();
 	}
 
 	// We don't care about TX interrupt
@@ -702,7 +702,7 @@ unsigned char theChar;
 		store_char(theChar, &rx_buffer3B);
 
 		// Clear the RX interrupt Flag (must be AFTER the read)
-	    mU3BRXClearIntFlag();
+		mU3BRXClearIntFlag();
 	}
 
 	// We don't care about TX interrupt
@@ -730,7 +730,7 @@ unsigned char theChar;
 //		store_char(theChar, &rx_buffer4);
 
 		// Clear the RX interrupt Flag (must be AFTER the read)
-//	    mU4RXClearIntFlag();
+//		mU4RXClearIntFlag();
 //	}
 
 	// We don't care about TX interrupt
@@ -802,7 +802,7 @@ void USBSerial::begin(long baudRate)
 	DebugViaSerial0("returned from cdcacm_register");
 
 	// Must enable glocal interrupts - in this case, we are using multi-vector mode
-    INTEnableSystemMultiVectoredInt();
+	INTEnableSystemMultiVectoredInt();
 	DebugViaSerial0("INTEnableSystemMultiVectoredInt");
 
 }
