@@ -137,31 +137,6 @@ public class Base {
       e.printStackTrace();
     }
 
-//    if (System.getProperty("mrj.version") != null) {
-//      //String jv = System.getProperty("java.version");
-//      String ov = System.getProperty("os.version");
-//      if (ov.startsWith("10.5")) {
-//        System.setProperty("apple.laf.useScreenMenuBar", "true");
-//      }
-//    }
-
-    /*
-    commandLine = false;
-    if (args.length >= 2) {
-      if (args[0].startsWith("--")) {
-        commandLine = true;
-      }
-    }
-
-    if (PApplet.javaVersion < 1.5f) {
-      //System.err.println("no way man");
-      Base.showError("Need to install Java 1.5",
-                     "This version of Processing requires    \n" +
-                     "Java 1.5 or later to run properly.\n" +
-                     "Please visit java.com to upgrade.", null);
-    }
-    */
-
     initPlatform();
 
 //    // Set the look and feel before opening the window
@@ -259,18 +234,6 @@ public class Base {
     //String workingDirectory = System.getProperty("user.dir");
     examplesFolder = getContentFile("examples");
   
-    //Debug
-    //librariesFolder is defined here.
-    //Check if preference has been overiden.
-    /*Map<String, String> platformPrefs = getPlatformPreferences(Preferences.get("platform"));
-    if () {
-   		librariesFolder = 
-    }
-    else {
-    	librariesFolder = getContentFile("libraries");
-    }
-    */
-    
     librariesFolder = getContentFile("libraries");
 
     toolsFolder = getContentFile("tools");
