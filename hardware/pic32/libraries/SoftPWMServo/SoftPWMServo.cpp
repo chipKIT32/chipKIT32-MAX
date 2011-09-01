@@ -18,12 +18,6 @@
  */
  
 /* 
- TODO List
- // TODO: Remove NextEdgeTime (see if we can use just PWMValue and compute next
-        edge time in ISR)
- // TODO: Remove Active (see if we can use fact of channel being in linked list 
-        or not rather than Active)
-
  Plase see the README.TXT file for more detail on how the internals of the
  library work.
 */
@@ -58,12 +52,12 @@ typedef struct ChanStruct ChanType;
 struct ChanStruct
 {
     int32_t             NextEdgeTime;           // Time in 40MHz units before next edge (i.e. this pin's falling edge)
-    volatile uint32_t   *LatchPort;             // Pointer to port register for this pin
-    uint8_t             Port;                   // Port number for this pin
-    uint16_t            Bit;                    // Bit of Port that this pin is on
+    volatile uint32_t   *SetPort;               // Pointer to port register (SET) for this pin
+    volatile uint32_t   *ClearPort;             // Pointer to port register (CLEAR) for this pin
+    uint32_t            Port;                   // Port number for this pin
+    uint32_t            Bit;                    // Bit of Port that this pin is on
     uint32_t            PWMValue;               // Length of high time for this pin, in 40MHz units
-    bool                Active;                 // If FALSE, do not touch this channel's pin, otherwise treat normally
-    bool                IsServo;                // True if this channel is being used as a servo rather than PWM
+    uint32_t            IsServo;                // True if this channel is being used as a servo rather than PWM
     ChanType *          NextChanP;              // Pointer to next channel in the list (next edge)
 };
 
@@ -100,11 +94,11 @@ int32_t SoftPWMServoInit(void)
         for (i = 0; i < SOFTPWMSERVO_MAX_PINS; i++)
         {
             Chan[j][i].NextEdgeTime = 0;
-            Chan[j][i].LatchPort = NULL;
+            Chan[j][i].SetPort = NULL;
+            Chan[j][i].ClearPort = NULL;
             Chan[j][i].Port = 0;
             Chan[j][i].Bit = 0;
             Chan[j][i].PWMValue = 0;
-            Chan[j][i].Active = false;
             Chan[j][i].IsServo = false;
             Chan[j][i].NextChanP = NULL;
         }
@@ -147,7 +141,7 @@ int32_t SoftPWMServoUnload(void)
 int32_t SoftPWMServoPinEnable(uint32_t Pin, bool PinType)
 {
     // If user has not already enabled this pin for SoftPWM, then initalize it
-    if (Chan[InactiveBuffer][Pin].LatchPort == NULL)
+    if (Chan[InactiveBuffer][Pin].SetPort == NULL)
     {
         // Set up this pin's 
         pinMode(Pin, OUTPUT);                                      // set servo pin to output
@@ -155,18 +149,18 @@ int32_t SoftPWMServoPinEnable(uint32_t Pin, bool PinType)
         Chan[InactiveBuffer][Pin].NextEdgeTime = 0;                // Computed on the fly in the ISR
         Chan[InactiveBuffer][Pin].Port = digitalPinToPort(Pin);    // Set up our bit and port so we don't have to
         Chan[InactiveBuffer][Pin].Bit = digitalPinToBitMask(Pin);  //  do it inside the ISR.
-        Chan[InactiveBuffer][Pin].LatchPort = portOutputRegister(Chan[InactiveBuffer][Pin].Port);
+        Chan[InactiveBuffer][Pin].SetPort = portOutputRegister(Chan[InactiveBuffer][Pin].Port) + 2; // +2 is PORTxSET
+        Chan[InactiveBuffer][Pin].ClearPort = portOutputRegister(Chan[InactiveBuffer][Pin].Port) + 1; // +1 is PORTxCLR
         Chan[InactiveBuffer][Pin].PWMValue = 0;                    // Start out with zero PWM time (always off)
-        Chan[InactiveBuffer][Pin].Active = FALSE;                  // Since we're at zero PWM, turn off the pin flipping
         Chan[InactiveBuffer][Pin].IsServo = PinType;               // Set the type for this pin (servo vs PWM)
         Chan[InactiveBuffer][Pin].NextChanP = NULL;                // Add() will set this
         // Now also do the same thing in the other buffer
         Chan[ActiveBuffer][Pin].NextEdgeTime = 0;                  
         Chan[ActiveBuffer][Pin].Port = digitalPinToPort(Pin);    
         Chan[ActiveBuffer][Pin].Bit = digitalPinToBitMask(Pin);  
-        Chan[ActiveBuffer][Pin].LatchPort = portOutputRegister(Chan[InactiveBuffer][Pin].Port);
+        Chan[ActiveBuffer][Pin].SetPort = portOutputRegister(Chan[InactiveBuffer][Pin].Port) + 2;
+        Chan[ActiveBuffer][Pin].ClearPort = portOutputRegister(Chan[InactiveBuffer][Pin].Port) + 1;
         Chan[ActiveBuffer][Pin].PWMValue = 0;                    
-        Chan[ActiveBuffer][Pin].Active = FALSE;                  
         Chan[InactiveBuffer][Pin].IsServo = PinType;
         Chan[ActiveBuffer][Pin].NextChanP = NULL;                
     }
@@ -186,8 +180,8 @@ int32_t SoftPWMServoPinDisable(uint32_t Pin)
     Remove(Pin);
 
     // Mark it as unused
-    Chan[InactiveBuffer][Pin].LatchPort = NULL;
-    Chan[InactiveBuffer][Pin].Active = FALSE;
+    Chan[InactiveBuffer][Pin].SetPort = NULL;
+    Chan[InactiveBuffer][Pin].ClearPort = NULL;
     INTRestoreInterrupts(intr);    
 
     return SOFTPWMSERVO_OK;
@@ -243,7 +237,6 @@ int32_t SoftPWMServoRawWrite(uint32_t Pin, uint32_t Value, bool PinType)
 
     // Update the PWM value for this pin
     Chan[InactiveBuffer][Pin].PWMValue = Value;
-    Chan[InactiveBuffer][Pin].Active = true;
     Chan[InactiveBuffer][Pin].IsServo = PinType;
     
     // Remove it from the list
@@ -261,7 +254,7 @@ int32_t SoftPWMServoRawWrite(uint32_t Pin, uint32_t Value, bool PinType)
 // Return SOFTPWM_ERROR if pin not enabled
 int32_t SoftPWMServoRawRead(uint32_t Pin) 
 {
-    if (!Chan[ActiveBuffer][Pin].Active)
+    if (Chan[InactiveBuffer][Pin].SetPort == NULL)
     {
         return SOFTPWMSERVO_ERROR;
     }
@@ -331,7 +324,7 @@ static uint32_t HandlePWMServo(void)
     static ChanType * CurChanP = NULL;      // Pointer to the current channel we're operating on
     bool DoItAgain = FALSE;                 // True if we don't have time to leave the ISR and come back in
     uint32_t NextTimeAcc = 0;               // Records the sum of NextTime values while we stay in the do-while loop
-
+    
     // This do-while loop keeps us inside this function as long as there are
     // edges to process. Only once we have enough time to leave and get back
     // in for the next edge do we break out of the while loop.
@@ -363,8 +356,8 @@ static uint32_t HandlePWMServo(void)
                     // For each channel that's active, set its pin high
                     while (CurChanP != NULL)
                     {
-                        // But only if it's active and it is not at %0
-                        if (CurChanP->Active && CurChanP->PWMValue != 0)
+                        // But only if it is not at %0
+                        if (CurChanP->PWMValue != 0)
                         {
                             // Make an exception for servos - only set them
                             // high when ServoFrameCounter is zero.
@@ -374,7 +367,7 @@ static uint32_t HandlePWMServo(void)
                                 (!CurChanP->IsServo)
                             )
                             {
-                                *(CurChanP->LatchPort) |= CurChanP->Bit;
+                                *(CurChanP->SetPort) |= CurChanP->Bit;
                             }
                         }
                         // Advance to next channel to check it
@@ -431,11 +424,11 @@ static uint32_t HandlePWMServo(void)
             {
                 // Now we have a falling edge. So we need to set some channel's pin low here.
 
-                // Always set the next bit low, if the channel is active and it's not at 100%
+                // Always set the next bit low, if the channel is not at 100%
                 // But if it's a servo, always set it low.
-                if (CurChanP->Active && (CurChanP->PWMValue < FrameTime || CurChanP->IsServo))
+                if (CurChanP->PWMValue < FrameTime || CurChanP->IsServo)
                 {
-                    *(CurChanP->LatchPort) &= ~CurChanP->Bit;
+                    *(CurChanP->ClearPort) |= CurChanP->Bit;
                 }
 
                 // Record how much time has passed (where are we in the frame)
@@ -443,7 +436,7 @@ static uint32_t HandlePWMServo(void)
                 
                 // Check for more channels that have this same time - but only if we
                 // haven't hit the end of the list yet. (Channels with same edges
-                // will have NextEdgeTime = 0)
+                // will have PWMValues that are the same.)
                 while (
                     (CurChanP->NextChanP != NULL)
                     &&
@@ -453,12 +446,12 @@ static uint32_t HandlePWMServo(void)
                     // Now start working on the next channel in the linked list
                     CurChanP = CurChanP->NextChanP;
 
-                    // Only touch the output if it's Active and it's not at 100% or if it is a sero
+                    // Only touch the output if it's not at 100% or if it is a servo
                     // pin (they always go low).
-                    if (CurChanP->Active && (CurChanP->PWMValue < FrameTime || CurChanP->IsServo))
+                    if (CurChanP->PWMValue < FrameTime || CurChanP->IsServo)
                     {
                         // Set this bit low
-                        *(CurChanP->LatchPort) &= ~CurChanP->Bit;
+                        *(CurChanP->ClearPort) |= CurChanP->Bit;
                     }
                 }
                 
@@ -530,7 +523,8 @@ static uint32_t HandlePWMServo(void)
             // we will be doing the 1ms stuff rather than PWM stuff.
             MS1Time = 0;
         }
-
+       
+        
         // get the old compare time (the Core Timer value when we entered this ISR)
         // Note that we may stay in this ISR for a long time if there are a lot of
         // edges that need to happen and we don't have time to leave and come back
@@ -551,9 +545,12 @@ static uint32_t HandlePWMServo(void)
         // There's a fudge factor added in to where we think we are in time so that
         // we can copmensate for the number of CoreTimer counts it takes to leave
         // the ISR.
-        if (
-            (OldPeriod + NextTimeAcc < (ReadCoreTimer() + EXTRA_ISR_EXIT_CYCLES))
-        )
+        //
+        // Change from v1.0 to v1.1: we now do this calculation by first subtracting
+        // off the OldPeriod from our current CoreTimer value. This subtraction will
+        // eleminate problems where adding NextTimeAcc rolls OldPeriod over, or where
+        // the CoreTimer has rolled over from OldPeriod.
+        if ((ReadCoreTimer() - OldPeriod + EXTRA_ISR_EXIT_CYCLES) > NextTimeAcc)
         {
             DoItAgain = true;
 
@@ -561,7 +558,9 @@ static uint32_t HandlePWMServo(void)
             // CoreTimer fire has come and gone. We also put a fuge factor in here to
             // simulate the number of cycles necessary to get into the ISR and to the 
             // point where the top of the do-while loop starts executing.
-            while(ReadCoreTimer() < (OldPeriod + NextTimeAcc + EXTRA_ISR_ENTRY_CYCLES));
+            while(ReadCoreTimer() < (OldPeriod + NextTimeAcc + EXTRA_ISR_ENTRY_CYCLES))
+            {
+            }
         }
         else
         {
