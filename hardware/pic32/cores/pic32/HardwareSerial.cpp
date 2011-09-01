@@ -53,6 +53,7 @@
 //*	Jun 17,	2011	<MLS> Added Serial4 and Serial5 for MEGA32, ISRs not finished
 //*	Jun 24,	2011	<MLS> Adding USB support, code from Rich Testardi (http://www.cpustick.com/downloads.htm)
 //*	Jul  3,	2011	<MLS> Fixed bug in baud rate calculation (http://www.chipkit.org/forum/viewtopic.php?f=7&t=213&p=948#p948)
+//*	Sep  1,	2011	<MLS> Issue #111, #ifdefs around <plib.h>, it was being included twice
 //************************************************************************
 #define __LANGUAGE_C__
 
@@ -61,7 +62,9 @@
 #include <string.h>
 #include <inttypes.h>
 
-#include <plib.h>
+#ifndef _PERIPHERAL_LIBRARY_MASTER_HEADER_FILE
+	#include <plib.h>
+#endif
 
 #include "wiring.h"
 #include "wiring_private.h"

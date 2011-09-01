@@ -12,6 +12,8 @@
 //*	May 25, 2011	<MLS> Added support for Uart2 on UNO32
 //*	Jun 24,	2011	<MLS> Adding USB support fore Serial.xxx
 //*	Jun 29,	2011	<MLS> USB support only compiles if enabled
+//*	Aug 26,	2011	<MLS> Microchip starter kits w/USB now default to USB serial
+//*	Sep  1,	2011	<MLS> Issue #111, #ifdefs around <plib.h>, it was being included twice
 //************************************************************************
 /*
   HardwareSerial.h - Hardware serial library for Wiring
@@ -37,24 +39,29 @@
 #define __LANGUAGE_C__
 
 #include <inttypes.h>
-#include <plib.h>
+#ifndef _PERIPHERAL_LIBRARY_MASTER_HEADER_FILE
+	#include <plib.h>
+#endif
 
 #ifdef __cplusplus
 	#include "Print.h"
 #endif
 
 
-#if defined(_BOARD_MEGA_USB_)
-	#define _USE_USB_FOR_SERIAL_
-#endif
 #if defined(_BOARD_UBW32_MX460_) || defined(_BOARD_UBW32_MX795_)
-	#define _USE_USB_FOR_SERIAL_
+//	#define _USE_USB_FOR_SERIAL_
 #endif
 #if defined(_BOARD_CEREBOT_32MX4_) || defined(_BOARD_CEREBOT_32MX7_)
-	#define _USE_USB_FOR_SERIAL_
+//	#define _USE_USB_FOR_SERIAL_
 #endif
 #if defined(_BOARD_CUI32_)
-	#define _USE_USB_FOR_SERIAL_
+//	#define _USE_USB_FOR_SERIAL_
+#endif
+#if defined(_BOARD_PIC32_ETHERNET_STARTER_KIT_) || defined(_BOARD_PIC32_USB_STARTER_KIT_)
+//	#define _USE_USB_FOR_SERIAL_
+#endif
+#if defined(_BOARD_MIKROE_MIKROMEDIA_)
+//	#define _USE_USB_FOR_SERIAL_
 #endif
 
 
