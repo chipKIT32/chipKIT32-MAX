@@ -14,6 +14,7 @@
 //*	Jun 29,	2011	<MLS> USB support only compiles if enabled
 //*	Aug 26,	2011	<MLS> Microchip starter kits w/USB now default to USB serial
 //*	Sep  1,	2011	<MLS> Issue #111, #ifdefs around <plib.h>, it was being included twice
+//*	Sep  2,	2011	<MLS> Issue #111, changed include <plib.h> to include <p32xxxx.h>
 //************************************************************************
 /*
   HardwareSerial.h - Hardware serial library for Wiring
@@ -39,8 +40,8 @@
 #define __LANGUAGE_C__
 
 #include <inttypes.h>
-#ifndef _PERIPHERAL_LIBRARY_MASTER_HEADER_FILE
-	#include <plib.h>
+#ifndef _P32XXXX_H
+	#include <p32xxxx.h>
 #endif
 
 #ifdef __cplusplus

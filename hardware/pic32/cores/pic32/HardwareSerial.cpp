@@ -62,9 +62,8 @@
 #include <string.h>
 #include <inttypes.h>
 
-#ifndef _PERIPHERAL_LIBRARY_MASTER_HEADER_FILE
-	#include <plib.h>
-#endif
+#include <plib.h>
+//#include <p32xxxx.h>
 
 #include "wiring.h"
 #include "wiring_private.h"
