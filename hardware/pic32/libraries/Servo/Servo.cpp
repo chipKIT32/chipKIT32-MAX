@@ -48,8 +48,8 @@ extern "C"{
     #include "int.h"
 }
 
-#define usToTicks(_us)    (1.25* _us)                   // converts microseconds to tick 
-#define ticksToUs(_ticks) ( (unsigned)_ticks/1.25)      // converts from ticks back to microseconds
+#define usToTicks(_us)    (((_us)*5)/4)                   // converts microseconds to tick 
+#define ticksToUs(_ticks) ((((unsigned)(_ticks))*4)/5)    // converts from ticks back to microseconds
 
 
 #define TRIM_DURATION       2                               // compensation ticks to trim adjust for digitalWrite delays // 12 August 200

@@ -29,6 +29,8 @@
 //************************************************************************
 //*	Oct 15,	2010	<MLS> Started on WInterrupts.c for Pic32
 //* Aug  8, 2011	<GeneApperson> completely rewritten (issue #75)
+//* Aug 30, 2011    <GeneApperson> clear interrupt flag after return from
+//*                     user interrupt function (issue #109)
 //************************************************************************
 
 #include <plib.h>
@@ -160,11 +162,11 @@ void detachInterrupt(uint8_t interruptNum)
 void __ISR(_EXTERNAL_0_VECTOR, ipl4) ExtInt0Handler(void)
 {
 
-	IFS0bits.INT0IF	=	0;
 	if (intFunc[0] != 0)
 	{
 		(*intFunc[0])();
 	}
+	IFS0bits.INT0IF	=	0;
 }
 
 //************************************************************************
@@ -172,11 +174,11 @@ void __ISR(_EXTERNAL_0_VECTOR, ipl4) ExtInt0Handler(void)
 void __ISR(_EXTERNAL_1_VECTOR, ipl4) ExtInt1Handler(void)
 {
 
-	IFS0bits.INT1IF	=	0;
 	if (intFunc[1] != 0)
 	{
 		(*intFunc[1])();
 	}
+	IFS0bits.INT1IF	=	0;
 }
 
 //************************************************************************
@@ -184,11 +186,11 @@ void __ISR(_EXTERNAL_1_VECTOR, ipl4) ExtInt1Handler(void)
 void __ISR(_EXTERNAL_2_VECTOR, ipl4) ExtInt2Handler(void)
 {
 
-	IFS0bits.INT2IF	=	0;
 	if (intFunc[2] != 0)
 	{
 		(*intFunc[2])();
 	}
+	IFS0bits.INT2IF	=	0;
 }
 
 //************************************************************************
@@ -196,11 +198,11 @@ void __ISR(_EXTERNAL_2_VECTOR, ipl4) ExtInt2Handler(void)
 void __ISR(_EXTERNAL_3_VECTOR, ipl4) ExtInt3Handler(void)
 {
 
-	IFS0bits.INT3IF	=	0;
 	if (intFunc[3] != 0)
 	{
 		(*intFunc[3])();
 	}
+	IFS0bits.INT3IF	=	0;
 }
 
 //************************************************************************
@@ -208,11 +210,11 @@ void __ISR(_EXTERNAL_3_VECTOR, ipl4) ExtInt3Handler(void)
 void __ISR(_EXTERNAL_4_VECTOR, ipl4) ExtInt4Handler(void)
 {
 
-	IFS0bits.INT4IF	=	0;
 	if (intFunc[4] != 0)
 	{
 		(*intFunc[4])();
 	}
+	IFS0bits.INT4IF	=	0;
 }
 
 //************************************************************************
