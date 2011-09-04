@@ -93,10 +93,10 @@
 #define SPI_CLOCK_DIV64 0x1F
 #define SPI_CLOCK_DIV128 0x3F
 
-#define SPI_MODE0 0x00  // CKP = 0 CKE = 0
-#define SPI_MODE1 0x100 // CKP = 0 CKE = 1
-#define SPI_MODE2 0x40  // CKP = 1 CKE = 0
-#define SPI_MODE3 0x140 // CKP = 1 CKE = 1 
+#define SPI_MODE0 0x100 // CKP = 0 CKE = 1
+#define SPI_MODE1 0x00  // CKP = 0 CKE = 0
+#define SPI_MODE2 0x140 // CKP = 1 CKE = 1 
+#define SPI_MODE3 0x40  // CKP = 1 CKE = 0
 
 class SPIClass {
 public:
