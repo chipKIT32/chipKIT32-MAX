@@ -925,20 +925,6 @@ public class Base {
     } catch (IOException e) {
       e.printStackTrace();
     }
-  
-/*
-  //System.out.println("rebuilding examples menu");
-    // Add each of the subfolders of examples directly to the menu
-    try {
-      
-      boolean found = addSketches(menu, getPic32CoreLibraries(), true);
-      if (found) menu.addSeparator();
-      addSketches(menu, librariesFolder, true);
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-  }
-*/
  }
 
   protected void rebuildSketchbookMenu(JMenu menu) {
@@ -1567,11 +1553,6 @@ public class Base {
   //Get the core libraries
   static public File getCoreLibraries(String path) {
   	return getContentFile(path);	
-  }
-  
-  //Get the pci32  core libraries from folder
-  static public File getPic32CoreLibraries() {
-  	return	getContentFile("hardware/pic32/libraries");
   }
   
   static public String getHardwarePath() {
