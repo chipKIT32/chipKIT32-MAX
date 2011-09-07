@@ -22,7 +22,21 @@
  library work.
 */
 
-#include <WProgram.h> 
+/*
+  Change List:
+  09/05/2011 <GeneApperson>:
+    * Fixed a compile error introduced when the include of plib.h was
+      removed from HardwareSerial.h (included by WProgram.h). Added
+      include of plib.h here.
+*/
+
+/* Note: plib.h must be included before WProgram.h. There is a fundamental
+** incompatibility between GenericTypedefs.h (included by plib.h) and Print.h
+** (included by WProgram.h) on the declaration of the symbol BYTE.
+*/
+#include <plib.h>
+
+#include <WProgram.h>
 #include <wiring.h>
 #include <inttypes.h>
 #include "SoftPWMServo.h"
