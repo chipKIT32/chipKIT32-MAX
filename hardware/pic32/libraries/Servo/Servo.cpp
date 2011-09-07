@@ -36,23 +36,26 @@
  attach(pin, min, max  ) - Attaches to a pin setting min and max values in microseconds
  default min is 544, max is 2400  
  
- write()     - Sets the servo angle in degrees.  (invalid angle that is valid as pulse in microseconds is treated as microseconds)
+ write()		- Sets the servo angle in degrees.  (invalid angle that is valid as pulse in microseconds is treated as microseconds)
  writeMicroseconds() - Sets the servo pulse width in microseconds 
- read()      - Gets the last written servo pulse width as an angle between 0 and 179. 
+ read()			- Gets the last written servo pulse width as an angle between 0 and 179. 
  readMicroseconds()   - Gets the last written servo pulse width in microseconds. 
- attached()  - Returns true if there is a servo attached. 
- detach()    - Stops an attached servos from pulsing its i/o pin. 
+ attached()		- Returns true if there is a servo attached. 
+ detach()		- Stops an attached servos from pulsing its i/o pin. 
  
 */
 //************************************************************************
 //*	Edit History
 //************************************************************************
-//*	Aug 21,	2011	<GeneApperson> fixed floating point issue by changing to interger math
+//*	Aug 21,	2011	<GeneApperson> fixed floating point issue by changing to integer math
 //*	Sep  1,	2011	<MLS> Cleaning up formatting
 //*	Sep  1,	2011	<MLS> Cleaning up formatting
 //*	Sep  1,	2011	<MLS> issue #112, changed assigment to compare in finISR
+//* Sep  5, 2011	<GeneApperson> added include of plib.h to fix compile errors
+//*						introduced when plib.h was removed from HardwareSerial.h
 //************************************************************************
 
+#include <plib.h>
 #include "Servo.h"
 
 extern "C"{
@@ -63,18 +66,18 @@ extern "C"{
 #define ticksToUs(_ticks) ((((unsigned)(_ticks))*4)/5)	// converts from ticks back to microseconds
 
 
-#define TRIM_DURATION		2								// compensation ticks to trim adjust for digitalWrite delays // 12 August 200
+#define TRIM_DURATION		2							// compensation ticks to trim adjust for digitalWrite delays // 12 August 200
 
 
-static servo_t servos[MAX_SERVOS];						  // static array of servo structures
-int	channel[3];											//channel for the current servo
+static servo_t servos[MAX_SERVOS];						// static array of servo structures
+int	channel[3];											// channel for the current servo
 
-uint8_t ServoCount	=	0;									 // the total number of attached servos
+uint8_t ServoCount	=	0;								// the total number of attached servos
 
 
 #define SERVO_MIN() (MIN_PULSE_WIDTH - this->min * 4)  // minimum value in uS for this servo
 #define SERVO_MAX() (MAX_PULSE_WIDTH - this->max * 4)  // maximum value in uS for this servo 
-#define SERVO_INDEX(_timer,_channel)  ((_timer*SERVOS_PER_TIMER) + _channel)	 // macro to access servo index by timer and channel
+#define SERVO_INDEX(_timer,_channel)  ((_timer*SERVOS_PER_TIMER) + _channel)	// macro to access servo index by timer and channel
 #define SERVO_INDEX_TO_TIMER(_servo_nbr) ((int)(_servo_nbr / SERVOS_PER_TIMER)) // returns the timer controlling this servo
 #define SERVO(_timer,_channel)  (servos[SERVO_INDEX(_timer,_channel)])			// macro to access servo class by timer and channel
 /************ static functions common to all instances ***********************/
@@ -100,7 +103,7 @@ void handle_interrupts(int timer, volatile unsigned int *TMRn, volatile unsigned
 	if ( SERVO_INDEX(timer,channel[timer]) < ServoCount && channel[timer] < SERVOS_PER_TIMER)
 	{
 		*PR	=	*TMRn + SERVO(timer,channel[timer]).ticks;
-		if (SERVO(timer,channel[timer]).Pin.isActive == true)	 // check if activated
+		if (SERVO(timer,channel[timer]).Pin.isActive == true)			// check if activated
 		{
 			digitalWrite( SERVO(timer,channel[timer]).Pin.nbr,HIGH); // its an active channel so pulse it high
 		}
@@ -130,15 +133,15 @@ static void finISR(int timer)
 	//disable use of the given timer
 	if (timer == TIMER3)
 	{
-		IEC0CLR = 0x1000;// disable T4 interrupt 
+		IEC0CLR = 0x1000;		// disable T4 interrupt 
 	}
 	if (timer == TIMER4)
 	{
-		IEC0CLR = 0x10000;// disable T4 interrupt 
+		IEC0CLR = 0x10000;		// disable T4 interrupt 
 	}
 	if (timer == TIMER5)
 	{
-		IEC0CLR = 0x100000;// disable T5 interrupt 
+		IEC0CLR = 0x100000;		// disable T5 interrupt 
 	}
 }
 
@@ -189,7 +192,7 @@ uint8_t Servo::attach(int pin, int min, int max)
 
 		pinMode( pin, OUTPUT) ;								// set servo pin to output
 		servos[this->servoIndex].Pin.nbr = pin;
-		this->min	=	(MIN_PULSE_WIDTH - min)/4;				//resolution of min/max is 4 uS
+		this->min	=	(MIN_PULSE_WIDTH - min)/4;			// resolution of min/max is 4 uS
 		this->max	=	(MAX_PULSE_WIDTH - max)/4; 
 		// initialize the timer if it has not already been initialized 
 		int timer = SERVO_INDEX_TO_TIMER(this->servoIndex);
@@ -199,7 +202,7 @@ uint8_t Servo::attach(int pin, int min, int max)
 		}
 		servos[this->servoIndex].Pin.isActive = true;		// this must be set after the check for isTimerActive
 
-		return this->servoIndex ;	 
+		return this->servoIndex;
 	}
 }
 
