@@ -24,13 +24,17 @@
 /*  File Description:													*/
 /*	This file declares functions that handle timer interrupts for       */
 /*  chipKIT PIC32 boards.												*/
-/************************************************************************/
-/*  Revision History:													*/
-/*																		*/
-/*	08/18/2011(MichelleY): file header comment block reformatted		*/
-/*																		*/
-/************************************************************************/
+//************************************************************************
+//*	Edit History
+//************************************************************************
+//*	Aug 18,	2011	<MichelleY> file header comment block reformatted
+//*	Sep  5,	2011	<GeneA> Added include of p32xxxx.h and plib.h to fix
+//*						compile errors intoduced when include of plib.h was removed
+//*						HardwareSerial.h
+//************************************************************************
 
+#include <p32xxxx.h>
+#include <plib.h>
 
 #include "int.h"
 
