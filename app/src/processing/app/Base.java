@@ -233,12 +233,7 @@ public class Base {
     // Get paths for the libraries and examples in the Processing folder
     //String workingDirectory = System.getProperty("user.dir");
 
-    //Issue: 104 Need to support loading examples, and libraries based on platform
-
     examplesFolder = getContentFile("examples");
-  
-    librariesFolder = getContentFile("libraries");
-
     toolsFolder = getContentFile("tools");
 
     // Get the sketchbook path, and make sure it's set properly
@@ -271,6 +266,11 @@ public class Base {
     targetsTable = new HashMap<String, Target>();
     loadHardware(getHardwareFolder());
     loadHardware(getSketchbookHardwareFolder());
+
+   //Issue: 104 Need to support loading examples, and libraries based on platform
+    String platformname =  this.getBoardPreferences().get("platform");
+    librariesFolder = getContentFile(this.getPlatformPreferences(platformname).get("library.core.path"));
+    logger.debug("librariesFolder: " + librariesFolder);
 
     // Check if there were previously opened sketches to be restored
     boolean opened = restoreSketches();
@@ -921,23 +921,10 @@ public class Base {
       found = addSketches(menu, getSketchbookLibrariesFolder(), true);
       if (found) menu.addSeparator();
       addSketches(menu, librariesFolder, true);
+      logger.debug("addsketches librariesFolder: true: " + librariesFolder); 
     } catch (IOException e) {
       e.printStackTrace();
     }
-  
-/*
-  //System.out.println("rebuilding examples menu");
-    // Add each of the subfolders of examples directly to the menu
-    try {
-      
-      boolean found = addSketches(menu, getPic32CoreLibraries(), true);
-      if (found) menu.addSeparator();
-      addSketches(menu, librariesFolder, true);
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-  }
-*/
  }
 
   protected void rebuildSketchbookMenu(JMenu menu) {
@@ -975,11 +962,11 @@ public class Base {
 
 	        logger.debug("library.core.path  = " + libraryPath);
 	    	logger.debug("DEBUG: add libraries.");
-		    JMenuItem platformItem = new JMenuItem(targetname);
-		    platformItem.setEnabled(false);
-		    importMenu.add(platformItem);
-			importMenu.addSeparator();
-		    addLibraries(importMenu, getCoreLibraries(libraryPath));
+	    	JMenuItem platformItem = new JMenuItem(targetname);
+	    	platformItem.setEnabled(false);
+	    	importMenu.add(platformItem);
+		importMenu.addSeparator();
+	    	addLibraries(importMenu, getCoreLibraries(libraryPath));
     	
     } catch (IOException e) {
       e.printStackTrace();
@@ -1002,14 +989,26 @@ public class Base {
 
 
   public void rebuildExamplesMenu(JMenu menu) {
-    //System.out.println("rebuilding examples menu");
+        logger.debug("DEBUG: Enter: rebuildExamplesMenu"); 
     try {
-      menu.removeAll();
-      boolean found = addSketches(menu, examplesFolder, false);
+	//Find the current target. Get the platform, and then select the correct name and core path.
+    	String platformname = this.getBoardPreferences().get("platform");
+    	String targetname = this.getPlatformPreferences(platformname).get("name");
+        String libraryPath = this.getPlatformPreferences(platformname).get("library.core.path");
+
+        menu.removeAll();
+        boolean found = addSketches(menu, examplesFolder, false);
+
+        logger.debug("DEBUG: Find examples in library.core.path  = " + libraryPath);
+    	JMenuItem platformItem = new JMenuItem("test: " + targetname);
+    	platformItem.setEnabled(false);
+    	menu.add(platformItem);
+	menu.addSeparator();
+
       if (found) menu.addSeparator();
       found = addSketches(menu, getSketchbookLibrariesFolder(), false);
       if (found) menu.addSeparator();
-      addSketches(menu, librariesFolder, false);
+      addSketches(menu, getContentFile(libraryPath), false);
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -1030,9 +1029,10 @@ public class Base {
               logger.debug("DEBUG: start: " + "Switching to " + (String) getValue("target") + ":" + (String) getValue("board"));
               Preferences.set("target", (String) getValue("target"));
               Preferences.set("board", (String) getValue("board"));
-              logger.debug("DEBUG: rebuildBoardsMenu: inside rebuildImportMenu" );
           	  //Debug: created new imports menu based on board
               rebuildImportMenu(activeEditor.importMenu);
+	      logger.debug("Rebuilding examples menu base on board.");
+	      rebuildExamplesMenu(activeEditor.examplesMenu);
             }
           };
         action.putValue("target", target.getName());
@@ -1553,11 +1553,6 @@ public class Base {
   //Get the core libraries
   static public File getCoreLibraries(String path) {
   	return getContentFile(path);	
-  }
-  
-  //Get the pci32  core libraries from folder
-  static public File getPic32CoreLibraries() {
-  	return	getContentFile("hardware/pic32/libraries");
   }
   
   static public String getHardwarePath() {
