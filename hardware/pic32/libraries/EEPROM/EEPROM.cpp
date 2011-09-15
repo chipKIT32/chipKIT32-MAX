@@ -1,7 +1,6 @@
 /*
   EEPROM.cpp - EEPROM library
   Copyright (c) 2006 David A. Mellis.  All right reserved.
-  Revision: 08/18/2011(Oliver Jones)
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -23,36 +22,42 @@
  ******************************************************************************/
 
 extern "C" {
-#include "dee_emulation_pic32.h"
+	#include "Deeprom.h"
 }
 
 #include "EEPROM.h"
 
-/******************************************************************************
- * Definitions
- ******************************************************************************/
-
-/******************************************************************************
- * Constructors
- ******************************************************************************/
 EEPROMClass::EEPROMClass()
 {
-	DataEEInit();
 }
-/******************************************************************************
- * User API
- ******************************************************************************/
 
-unsigned int EEPROMClass::read(unsigned int address)
+void EEPROMClass::setMaxAddress(unsigned int value)
 {
-	unsigned int data;
-	DataEERead(&data,address);
+	setMax(value);
+}
+
+unsigned int EEPROMClass::getMaxAddress()
+{
+	return getMax();
+}
+
+void EEPROMClass::clear()
+{
+	clearEeprom();
+}
+
+uint8_t EEPROMClass::read(unsigned int address)
+{
+	uint8_t data;
+
+    readEeprom((uint32_t)address, &data);
+
 	return data;
 }
 
 void EEPROMClass::write(unsigned int address, unsigned int value)
 {
-	DataEEWrite(value,address);
+	writeEeprom((uint32_t)address, (uint8_t)value);
 }
 
 EEPROMClass EEPROM;

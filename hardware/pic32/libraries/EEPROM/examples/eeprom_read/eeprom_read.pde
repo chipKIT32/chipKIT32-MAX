@@ -4,6 +4,15 @@
  * Reads the value of each byte of the EEPROM and prints it 
  * to the computer.
  * This example code is in the public domain.
+ *
+ * Settings:
+ *
+ * EEPROM.setMaxAddress(int value)
+ * This setting will allow a user determine the size
+ * of the emulated EEPROM. However this setting has 
+ * the potential to prematurely wear out the flash if
+ * made to large. The largest allowable address is 1023
+ * and the default value is 512
  */
 
 #include <EEPROM.h>
@@ -35,5 +44,5 @@ void loop()
   if (address == 512)
     address = 0;
     
-  delay(500);
+  delay(100);
 }
