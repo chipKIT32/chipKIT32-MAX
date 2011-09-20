@@ -63,7 +63,6 @@
 #include <inttypes.h>
 
 #include <plib.h>
-//#include <p32xxxx.h>
 
 #include "wiring.h"
 #include "wiring_private.h"

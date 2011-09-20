@@ -59,15 +59,15 @@
 //	= 0 - stopped
 //	< 0 - infinitely (until stop() method called, or new play() called)
 volatile long		timer1_toggle_count;
-static uint8_t		tone_pin = 255;
+static uint8_t		tone_pin	=	255;
 volatile uint32_t	*tone_pin_port;
 volatile uint16_t	tone_pin_mask;
 
 #if defined(DEAD)
 	#define AVAILABLE_TONE_PINS 1
 
-	const uint8_t   tone_pin_to_timer_PGM[] = { 2 /*, 3, 4, 5, 1, 0 */ };
-	static uint8_t tone_pins[AVAILABLE_TONE_PINS] = { 255 /*, 255, 255, 255, 255, 255 */ };
+	const uint8_t	tone_pin_to_timer_PGM[]	=	{ 2 /*, 3, 4, 5, 1, 0 */ };
+	static uint8_t tone_pins[AVAILABLE_TONE_PINS]	=	{ 255 /*, 255, 255, 255, 255, 255 */ };
 #endif
 
 // frequency (in hertz) and duration (in milliseconds).
@@ -87,7 +87,7 @@ uint8_t port;
 	if (tone_pin == 255)
 	{
 		// No tone currently playing. Init the timer.
-		T1CON = T1_PS_1_256;
+		T1CON	=	T1_PS_1_256;
 		mT1ClearIntFlag();
 		ConfigIntTimer1(T1_INT_ON | T1_INT_PRIOR_3 | T1_INT_SUB_PRIOR_1);
 	}
@@ -98,10 +98,10 @@ uint8_t port;
 	}
 
 	// Determine which port and bit are requested.
-	tone_pin		= _pin; 
-	port			=   digitalPinToPort(_pin);
-	tone_pin_port   =   portOutputRegister(port);
-	tone_pin_mask   =   digitalPinToBitMask(_pin);
+	tone_pin		=	_pin; 
+	port			=	digitalPinToPort(_pin);
+	tone_pin_port	=	portOutputRegister(port);
+	tone_pin_mask	=	digitalPinToBitMask(_pin);
 
 	// Ensure that the pin is a digital output
 	pinMode(_pin, OUTPUT);
@@ -110,24 +110,24 @@ uint8_t port;
 	// mean to play for that many milliseconds.
 	if (duration > 0)
 	{
-		timer1_toggle_count = (2 * frequency * duration)/1000;
+		timer1_toggle_count	=	(2 * frequency * duration)/1000;
 	}
 	else
 	{
-		timer1_toggle_count = -1;
+		timer1_toggle_count	=	-1;
 	}
 
-	TMR1 = 0;
-	PR1 = ((F_CPU / 256) / 2 / frequency);
-	T1CONSET = T1_ON;
+	TMR1		=	0;
+	PR1			=	((F_CPU / 256) / 2 / frequency);
+	T1CONSET	=	T1_ON;
 }
 
 //************************************************************************
 void disableTimer(uint8_t _timer)
 {
-mT1IntEnable(0);
-T1CON = 0;;
-tone_pin = 255;
+	mT1IntEnable(0);
+	T1CON		=	0;;
+	tone_pin	=	255;
 }
 
 //************************************************************************
@@ -136,7 +136,7 @@ void noTone(uint8_t _pin)
 int8_t _timer = 1;
 
 	if (_pin == tone_pin)
-	{   
+	{
 		digitalWrite(_pin, 0);
 		disableTimer(_timer);
 	}
@@ -159,7 +159,7 @@ mT1ClearIntFlag();
 	{
 		// toggle the pin
 		// The PORTxINV register is at offset +3 from the PORTx register
-		*(tone_pin_port+3)  =   tone_pin_mask;
+		*(tone_pin_port+3)	=	tone_pin_mask;
 
 		if (timer1_toggle_count > 0)
 		{
@@ -170,9 +170,9 @@ mT1ClearIntFlag();
 	{
 		disableTimer(1);
 		// The PORTxCLR register is at offset +1 from the PORTx register
-		*(tone_pin_port+1) = tone_pin_mask;	// keep pin low after stop
+		*(tone_pin_port+1)	=	tone_pin_mask;	// keep pin low after stop
 	}
 }
 
-};
+};	//*	extgern "C"
 
