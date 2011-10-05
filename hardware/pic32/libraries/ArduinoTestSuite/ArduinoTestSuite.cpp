@@ -16,11 +16,12 @@
 //*	Aug 31,	2010	<MLS> Started on TestArduino
 //*	Oct 18,	2010	<MLS> Added memory testing
 //************************************************************************
-
-#include	<avr/pgmspace.h>
-#include	<avr/io.h>
-#include	<avr/eeprom.h>
-
+3
+#if defined(__AVR__)
+	#include	<avr/pgmspace.h>
+	#include	<avr/io.h>
+	#include	<avr/eeprom.h>
+#endif
 
 
 #include	"ArduinoTestSuite.h"

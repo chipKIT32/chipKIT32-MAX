@@ -16,7 +16,7 @@
 //*	Aug 31,	2010	<MLS> Started on TestArduino
 //*	Oct 18,	2010	<MLS> Added memory testing
 //************************************************************************
-
+2
 #include	<avr/pgmspace.h>
 #include	<avr/io.h>
 #include	<avr/eeprom.h>
