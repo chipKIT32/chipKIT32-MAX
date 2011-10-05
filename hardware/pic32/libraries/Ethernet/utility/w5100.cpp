@@ -8,7 +8,9 @@
  * 
  */
 
-/*Updated  August/3/2011 by Lowell Scott Hanson to be compatable with chipKIT boards */
+//* Edit History
+//*  Aug  3,  2011 <Lowell Scott Hanson> ported toh chipKIT boards
+//*  Sept 13, 2011	<Gene Apperson> change SPI clock divider from DIV8 to DIV32
 
 #include <stdio.h>
 #include <string.h>
@@ -32,8 +34,13 @@ void W5100Class::init(void)
   
 
   SPI.begin();
-  SPI.setClockDivider(SPI_CLOCK_DIV8); //Sets the spi clock rate to around 10Mhz(divide by 4 will work but not recommended due to signal integraty issues) -LSH
-  SPI.setDataMode(SPI_MODE0);			//Defines spi to operate in mode 0 -LSH
+  //Set the SPI clock speed to 2.5Mhz. Setting it to 5Mhz (DIV16) may
+  //work for some hardware configurations.
+  SPI.setClockDivider(SPI_CLOCK_DIV32);
+  //The W5100 chip operates in SPI mode 0. Early versions of the chipKIT
+  //SPI library (prior to 20110907) set the modes incorrectly. To work
+  //with those early versions use SPI_MODE1.
+  SPI.setDataMode(SPI_MODE0);
 
   initSS();
   writeMR(1<<RST);
