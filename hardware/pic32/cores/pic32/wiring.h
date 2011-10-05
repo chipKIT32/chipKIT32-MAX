@@ -166,6 +166,9 @@ void loop(void);
 	#define pgm_read_word_near(x)	( ((*((unsigned char *)x + 1)) << 8) + (*((unsigned char *)x)))
 	#define pgm_read_word_far(x)	( ((*((unsigned char *)x + 1)) << 8) + (*((unsigned char *)x))))
 
+	#define	strcpy_P		strcpy
+	#define	strcat_P		strcat
+
 
 	#define	prog_void		const void
 	#define	prog_char		const char
