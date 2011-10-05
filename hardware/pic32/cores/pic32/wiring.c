@@ -32,6 +32,8 @@
 //*	May 20,	2011	<MLS> For mega board, disabling secondary oscillator
 //*	Aug 17,	2011	<MLS> Issue #84 disable the uart on init so that the pins can be used as general purpose I/O
 //*	Aug ??,	2011	Brian added softpwm
+//* Sept 12, 2011	<GeneApperson> Fixed bug in core timer interrupt service routine
+//*						when some interrupts had been missed due to interrupts disabled
 //************************************************************************
 #include <plib.h>
 #include <p32xxxx.h>
@@ -252,12 +254,40 @@ void init()
 
 
 //************************************************************************
+
 void __ISR(_CORE_TIMER_VECTOR, ipl2) CoreTimerHandler(void)
 {
-unsigned int	cur_timer_val;
-uint32_t		softPWMreturnFlag;
+uint32_t	cur_timer_val;
+uint32_t	softPWMreturnFlag;
+uint32_t	timer_delta;
+uint32_t	tick_delta;
 
 	cur_timer_val	=	ReadCoreTimer();
+
+	// We have to allow for the fact that we may have missed one or more
+	// core timer ticks. This can happen if the user left interrupts
+	// turned off for more than a millisecond. It can also happen when
+	// certain NVM operations take place. For example, page erase takes
+	// 20ms. During that time, the CPU is stalled, not executing instructions
+	// but the core timer is still counting. When we update the core timer
+	// compare register, we have to account for the number of missed timer
+	// ticks when we update the value for the next interrupt.
+
+	timer_delta = cur_timer_val - gCore_timer_last_val;
+	if (cur_timer_val < gCore_timer_last_val)
+	{
+		// We've had an overflow. Take the complement of the computed value.
+		timer_delta = ~timer_delta + 1;
+	}
+	// Convert from delta in core timer counter clock cycles to number of
+	// core timer ticks elapsed since the last interrupt. We need to make sure
+	// that tick_delta is at least 1. It's possible that gCore_timer_last_val
+	// didn't get updated quickly enough last time and the delta between the
+	// current counter value and its value is less than the CORE_TICK_RATE
+	tick_delta = timer_delta / CORE_TICK_RATE;
+	if (tick_delta == 0) {
+		tick_delta = 1;
+	}
 
 	// Only call the SoftPMW update function if it has been hooked into by the
 	// SoftPWM library. Otherwise, always just do the normal 1ms update stuff
@@ -293,14 +323,17 @@ uint32_t		softPWMreturnFlag;
 			gCore_timer_last_val	=	cur_timer_val;
 		}
 	
-		// Count this millisecond
-		gTimer0_millis++;
+		// Update the global variable that keeps track of the number of
+		// milliseconds that the system has been running.
+		gTimer0_millis += tick_delta;
 	}
 
 	if (gSoftPWMServoUpdate == NULL)
 	{
-		// update the period
-		UpdateCoreTimer(CORE_TICK_RATE);
+		// Set the time for the next interrupt to occur. This function
+		// adds the parameteer value to the current value in the compare
+		// register.
+		UpdateCoreTimer(tick_delta * CORE_TICK_RATE);
 	}
 
 	// clear the interrupt flag
