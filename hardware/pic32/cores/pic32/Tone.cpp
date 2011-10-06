@@ -36,6 +36,7 @@
 //************************************************************************
 //*	Oct 15,	2010	Started on Tone.cpp for PIC32
 //*	Aug  7, 2011	<GeneApperson> Completed implementation for single tone.
+//*	Oct  5,	2011	<MLS> Issue #132 Tone fails when the frequency is 0 fixed
 //************************************************************************
 
 
@@ -79,47 +80,52 @@ uint32_t tonePeriod;
 uint8_t port;
 
 	// Should have an error check here for pin number out of range.
-
-	// If a tone is currently playing on a different pin, the function is
-	// documented to have no effect. If playing on the same pin, change
-	// the frequency. If not currently playing, initialize the timer.
-	// This is currently hard coded to use timer1.
-	if (tone_pin == 255)
+	//*	there is no standard on the number of pins. Since we want this to work on all versions of the PIC32
+	//*	I have set it to 112 for now which is the largest I/O pin count on a pic32
+	if ((frequency > 0) && (_pin < 112))
 	{
-		// No tone currently playing. Init the timer.
-		T1CON	=	T1_PS_1_256;
-		mT1ClearIntFlag();
-		ConfigIntTimer1(T1_INT_ON | T1_INT_PRIOR_3 | T1_INT_SUB_PRIOR_1);
-	}
-	else if (_pin != tone_pin)
-	{
-		// Tone currently playing on another pin. ignore this call.
-		return;
-	}
+			
+		// If a tone is currently playing on a different pin, the function is
+		// documented to have no effect. If playing on the same pin, change
+		// the frequency. If not currently playing, initialize the timer.
+		// This is currently hard coded to use timer1.
+		if (tone_pin == 255)
+		{
+			// No tone currently playing. Init the timer.
+			T1CON	=	T1_PS_1_256;
+			mT1ClearIntFlag();
+			ConfigIntTimer1(T1_INT_ON | T1_INT_PRIOR_3 | T1_INT_SUB_PRIOR_1);
+		}
+		else if (_pin != tone_pin)
+		{
+			// Tone currently playing on another pin. ignore this call.
+			return;
+		}
 
-	// Determine which port and bit are requested.
-	tone_pin		=	_pin; 
-	port			=	digitalPinToPort(_pin);
-	tone_pin_port	=	portOutputRegister(port);
-	tone_pin_mask	=	digitalPinToBitMask(_pin);
+		// Determine which port and bit are requested.
+		tone_pin		=	_pin; 
+		port			=	digitalPinToPort(_pin);
+		tone_pin_port	=	portOutputRegister(port);
+		tone_pin_mask	=	digitalPinToBitMask(_pin);
 
-	// Ensure that the pin is a digital output
-	pinMode(_pin, OUTPUT);
+		// Ensure that the pin is a digital output
+		pinMode(_pin, OUTPUT);
 
-	// Duration 0 means to play forever until stopped. Other values
-	// mean to play for that many milliseconds.
-	if (duration > 0)
-	{
-		timer1_toggle_count	=	(2 * frequency * duration)/1000;
+		// Duration 0 means to play forever until stopped. Other values
+		// mean to play for that many milliseconds.
+		if (duration > 0)
+		{
+			timer1_toggle_count	=	(2 * frequency * duration) / 1000;
+		}
+		else
+		{
+			timer1_toggle_count	=	-1;
+		}
+
+		TMR1		=	0;
+		PR1			=	((F_CPU / 256) / 2 / frequency);
+		T1CONSET	=	T1_ON;
 	}
-	else
-	{
-		timer1_toggle_count	=	-1;
-	}
-
-	TMR1		=	0;
-	PR1			=	((F_CPU / 256) / 2 / frequency);
-	T1CONSET	=	T1_ON;
 }
 
 //************************************************************************
