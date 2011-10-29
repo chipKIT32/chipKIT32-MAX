@@ -41,8 +41,8 @@ import org.apache.log4j.Level;
 
 
 public class Compiler implements MessageConsumer {
-	
-	 static Logger logger = Logger.getLogger(Base.class.getName());
+
+	static Logger logger = Logger.getLogger(Base.class.getName());
 
 	static final String BUGS_URL = "http://code.google.com/p/arduino/issues/list";
 	static final String SUPER_BADNESS = "Compiler error, please submit this code to "
@@ -66,12 +66,12 @@ public class Compiler implements MessageConsumer {
 
 	String avrBasePath;
 	String corePath;
-	
+
 	List<File> objectFiles;
 	ArrayList<String> includePaths;
 
 	public Compiler() {
-    	   logger.debug("DEBUG: Compiler(): Start no arguments");
+		logger.debug("DEBUG: Compiler(): Start no arguments");
 	}
 
 	/**
@@ -88,7 +88,7 @@ public class Compiler implements MessageConsumer {
 	 *             Only if there's a problem. Only then.
 	 */
 	public boolean compile(Sketch sketch, String buildPath,String primaryClassName, boolean verbose) throws RunnerException 
-        {
+	{
 		logger.debug("DEBUG: Compiler.java: Start Compile(...).");
 
 		this.sketch = sketch;
@@ -104,11 +104,11 @@ public class Compiler implements MessageConsumer {
 		platform = boardPreferences.get("platform");
 		if (platform == null)
 		{
-		    platformPreferences = new HashMap(Base.getPlatformPreferences());
+			platformPreferences = new HashMap(Base.getPlatformPreferences());
 		}
 		else
 		{
-		    platformPreferences = new HashMap(Base.getPlatformPreferences(platform));
+			platformPreferences = new HashMap(Base.getPlatformPreferences(platform));
 		}
 
 		//Get the preferences file from the sketch folder
@@ -116,10 +116,10 @@ public class Compiler implements MessageConsumer {
 		sketchPreferences = Base.getSketchPreferences(sketchFolder) ;
 
 		//Put all the global preference configuration into one Master configpreferences
-	        configPreferences = mergePreferences( Preferences.getMap(), platformPreferences, boardPreferences, sketchPreferences);
+		configPreferences = mergePreferences( Preferences.getMap(), platformPreferences, boardPreferences, sketchPreferences);
 
 		avrBasePath = configPreferences.get("compiler.path");
-		
+
 		logger.debug("avrBasePath: " + avrBasePath);
 		if (avrBasePath == null) 
 		{
@@ -136,7 +136,7 @@ public class Compiler implements MessageConsumer {
 			}
 			Object[] Args = {basePath};
 			avrBasePath = compileFormat.format(  Args );
-	
+
 		}
 		this.board = configPreferences.get("board");
 		if (this.board == "")
@@ -167,17 +167,17 @@ public class Compiler implements MessageConsumer {
 		}
 
 		/*
-		* Debug corePath
-		*/
-			logger.debug("corePaths: " + this.corePath);
+		 * Debug corePath
+		 */
+		logger.debug("corePaths: " + this.corePath);
 
-		
+
 		this.objectFiles = new ArrayList<File>();
-				
+
 		// 0. include paths for core + all libraries
 		logger.debug("0. getIncludes");
 		this.includePaths =	getIncludes(this.corePath);
-		
+
 		// 1. compile the sketch (already in the buildPath)
 		logger.debug("1. compileSketch");
 		compileSketch(avrBasePath, buildPath, includePaths, configPreferences);
@@ -190,23 +190,23 @@ public class Compiler implements MessageConsumer {
 
 		// 3. compile the core, outputting .o files to <buildPath> and then
 		// collecting them into the core.a library file.
-	    logger.debug("3. compileCore");
- 		compileCore(avrBasePath, buildPath, this.corePath, configPreferences);
-		
+		logger.debug("3. compileCore");
+		compileCore(avrBasePath, buildPath, this.corePath, configPreferences);
+
 		// 4. link it all together into the .elf file
-	    logger.debug("4. compileLink");
+		logger.debug("4. compileLink");
 		compileLink(avrBasePath, buildPath, this.corePath, includePaths, configPreferences);
 
 		// 5. extract EEPROM data (from EEMEM directive) to .eep file.			
-	    logger.debug("5. compileEep");
+		logger.debug("5. compileEep");
 		compileEep(avrBasePath, buildPath, includePaths, configPreferences);
-		
+
 		// 6. build the .hex file
-	    logger.debug("6. compileHex");
+		logger.debug("6. compileHex");
 		compileHex(avrBasePath, buildPath, includePaths, configPreferences);
-		
+
 		//done
-	    logger.debug("7. compile done");
+		logger.debug("7. compile done");
 		return true;
 	}
 
@@ -250,95 +250,95 @@ public class Compiler implements MessageConsumer {
 	boolean firstErrorFound;
 	boolean secondErrorFound;
 
-/***
-* Exec as String instead of Array
-*
-*/
+	/***
+	 * Exec as String instead of Array
+	 *
+	 */
 
 	private void execAsynchronously(String command) throws RunnerException 
 	{
 		{
-	logger.debug("execAsynchronously: start");
-    String[] commandArray = command.split("::");	
-  
-    List<String> stringList = new ArrayList<String>();
+			logger.debug("execAsynchronously: start");
+			String[] commandArray = command.split("::");	
 
-    for(String string : commandArray) {
-  	 string = string.trim();
-     if(string != null && string.length() > 0) {
-       stringList.add(string);
-    }
-   }
-   commandArray = stringList.toArray(new String[stringList.size()]);
+			List<String> stringList = new ArrayList<String>();
 
-    
-    int result = 0;
-    
-    if (verbose || Preferences.getBoolean("build.verbose")) 
-	{
-      System.out.print(command.replace(":"," "));
-      System.out.println();
-      /*if(logger.isDebugEnabled()) {     
- 		for (int i = 0; i < commandArray.length; i++) {
-                        logger.debug("commandArray[" + i + "]: " + commandArray[i]);
-              }
-         logger.debug("Command: " + command.replace(":"," "));
-       
-      }*/
-    }
+			for(String string : commandArray) {
+				string = string.trim();
+				if(string != null && string.length() > 0) {
+					stringList.add(string);
+				}
+			}
+			commandArray = stringList.toArray(new String[stringList.size()]);
 
-    firstErrorFound = false;  // haven't found any errors yet
-    secondErrorFound = false;
 
-    Process process;
-    
-    try {
-      process = Runtime.getRuntime().exec(commandArray);
-    } catch (IOException e) {
-      RunnerException re = new RunnerException(e.getMessage());
-      re.hideStackTrace();
-      throw re;
-    }
+			int result = 0;
 
-    MessageSiphon in = new MessageSiphon(process.getInputStream(), this);
-    MessageSiphon err = new MessageSiphon(process.getErrorStream(), this);
+			if (verbose || Preferences.getBoolean("build.verbose")) 
+			{
+				System.out.print(command.replace(":"," "));
+				System.out.println();
+				/*if(logger.isDebugEnabled()) {     
+ 				for (int i = 0; i < commandArray.length; i++) {
+                        		logger.debug("commandArray[" + i + "]: " + commandArray[i]);
+              			}
+         			logger.debug("Command: " + command.replace(":"," "));
 
-    // wait for the process to finish.  if interrupted
-    // before waitFor returns, continue waiting
-    boolean running = true;
-    while (running) {
-      try {
-        if (in.thread != null)
-          in.thread.join();
-        if (err.thread != null)
-          err.thread.join();
-        result = process.waitFor();
-        //System.out.println("result is " + result);
-        running = false;
-      } catch (InterruptedException ignored) { }
-    }
+      				}*/
+			}
 
-    // an error was queued up by message(), barf this back to compile(),
-    // which will barf it back to Editor. if you're having trouble
-    // discerning the imagery, consider how cows regurgitate their food
-    // to digest it, and the fact that they have five stomaches.
-    //
-    //System.out.println("throwing up " + exception);
-    if (exception != null) { throw exception; }
+			firstErrorFound = false;  // haven't found any errors yet
+			secondErrorFound = false;
 
-    if (result > 1) {
-      // a failure in the tool (e.g. unable to locate a sub-executable)
-      System.err.println(command + " returned " + result);
-    }
+			Process process;
 
-    if (result != 0) {
-      RunnerException re = new RunnerException("Error running.");
-      re.hideStackTrace();
-      throw re;
-    }
+			try {
+				process = Runtime.getRuntime().exec(commandArray);
+			} catch (IOException e) {
+				RunnerException re = new RunnerException(e.getMessage());
+				re.hideStackTrace();
+				throw re;
+			}
+
+			MessageSiphon in = new MessageSiphon(process.getInputStream(), this);
+			MessageSiphon err = new MessageSiphon(process.getErrorStream(), this);
+
+			// wait for the process to finish.  if interrupted
+			// before waitFor returns, continue waiting
+			boolean running = true;
+			while (running) {
+				try {
+					if (in.thread != null)
+						in.thread.join();
+					if (err.thread != null)
+						err.thread.join();
+					result = process.waitFor();
+					//System.out.println("result is " + result);
+					running = false;
+				} catch (InterruptedException ignored) { }
+			}
+
+			// an error was queued up by message(), barf this back to compile(),
+			// which will barf it back to Editor. if you're having trouble
+			// discerning the imagery, consider how cows regurgitate their food
+			// to digest it, and the fact that they have five stomaches.
+			//
+			//System.out.println("throwing up " + exception);
+			if (exception != null) { throw exception; }
+
+			if (result > 1) {
+				// a failure in the tool (e.g. unable to locate a sub-executable)
+				System.err.println(command + " returned " + result);
+			}
+
+			if (result != 0) {
+				RunnerException re = new RunnerException("Error running.");
+				re.hideStackTrace();
+				throw re;
+			}
 		}
 	}
-	
+
 	/**
 	 * Part of the MessageConsumer interface, this is called whenever a piece
 	 * (usually a line) of error message is spewed out from the compiler. The
@@ -381,9 +381,9 @@ public class Compiler implements MessageConsumer {
 				SketchCode code = sketch.getCode(e.getCodeIndex());
 				String fileName = code
 						.isExtension(sketch.getDefaultExtension()) ? code
-						.getPrettyName() : code.getFileName();
-				s = fileName + ":" + e.getCodeLine() + ": error: "
-						+ e.getMessage();
+								.getPrettyName() : code.getFileName();
+								s = fileName + ":" + e.getCodeLine() + ": error: "
+										+ e.getMessage();
 			}
 
 			if (pieces[3].trim().equals("SPI.h: No such file or directory")) {
@@ -407,14 +407,14 @@ public class Compiler implements MessageConsumer {
 	static private String getCommandCompilerS(String avrBasePath,
 			ArrayList<String> includePaths, String sourceName, String objectName,
 			HashMap<String, String> configPreferences) 
-			{
+	{
 		logger.debug("getCommandCompilerS: start");	
 		String baseCommandString = configPreferences.get("recipe.cpp.o.pattern");
 		MessageFormat compileFormat = new MessageFormat(baseCommandString);	
 		//getIncludes to String
-		
+
 		String includes = preparePaths(includePaths);
-		
+
 		Object[] Args = {
 				avrBasePath, //0
 				configPreferences.get("compiler.cpp.cmd"), //1
@@ -429,15 +429,15 @@ public class Compiler implements MessageConsumer {
 				sourceName, //10
 				objectName //11
 		};
-						
+
 		return compileFormat.format(  Args );
 	}
-	
+
 	//removed static
 	private String getCommandCompilerC(String avrBasePath,
 			ArrayList<String> includePaths, String sourceName, String objectName,
 			HashMap<String, String> configPreferences) 
-			{
+	{
 		logger.debug("getCommandCompilerC: start");	
 		String baseCommandString = configPreferences.get("recipe.c.o.pattern");
 		MessageFormat compileFormat = new MessageFormat(baseCommandString);	
@@ -458,14 +458,14 @@ public class Compiler implements MessageConsumer {
 				sourceName,
 				objectName
 		};
-						
+
 		return compileFormat.format(  Args );	
 	}
 
 	static private String getCommandCompilerCPP(String avrBasePath,
 			ArrayList<String> includePaths, String sourceName, String objectName,
 			HashMap<String, String> configPreferences) 
-			{
+	{
 		logger.debug("getCommandCompilerCPP: start");	
 		String baseCommandString = configPreferences.get("recipe.cpp.o.pattern");
 		MessageFormat compileFormat = new MessageFormat(baseCommandString);	
@@ -488,7 +488,7 @@ public class Compiler implements MessageConsumer {
 				sourceName,
 				objectName
 		};
-						
+
 		return compileFormat.format(  Args );			
 	}
 
@@ -560,21 +560,21 @@ public class Compiler implements MessageConsumer {
 	}
 	// 1. compile the sketch (already in the buildPath)
 	void compileSketch(String avrBasePath, String buildPath, ArrayList<String> includePaths, HashMap<String, String> configPreferences)
-	throws RunnerException 
-	{
+			throws RunnerException 
+			{
 		logger.debug("compileSketch: start");	
 		this.objectFiles.addAll(compileFiles(avrBasePath, buildPath, includePaths,
 				findFilesInPath(buildPath, "S", false),
 				findFilesInPath(buildPath, "c", false),
 				findFilesInPath(buildPath, "cpp", false), 
 				configPreferences));
-	}
-	
+			}
+
 	// 2. compile the libraries, outputting .o files to:
 	// <buildPath>/<library>/
 	void compileLibraries (String avrBasePath, String buildPath, ArrayList<String> includePaths, HashMap<String, String> configPreferences) 
-		throws RunnerException 
-	{
+			throws RunnerException 
+			{
 		logger.debug("compileLibraries: start");
 		for (File libraryFolder : sketch.getImportedLibraries()) 
 		{
@@ -600,21 +600,21 @@ public class Compiler implements MessageConsumer {
 			// other libraries should not see this library's utility/ folder
 			this.includePaths.remove(includePaths.size() - 1);
 		}
-	}
-	
+			}
+
 	// 3. compile the core, outputting .o files to <buildPath> and then
 	// collecting them into the core.a library file.
 	void compileCore (String avrBasePath, String buildPath, String corePath, HashMap<String, String> configPreferences) 
-		throws RunnerException 
-	{
+			throws RunnerException 
+			{
 		logger.debug("compileCore(...) start");
 
 		ArrayList<String>  includePaths =  new ArrayList();
-	    includePaths.add(corePath); //include core path only
+		includePaths.add(corePath); //include core path only
 		String baseCommandString = configPreferences.get("recipe.ar.pattern");
 		String commandString = "";
 		MessageFormat compileFormat = new MessageFormat(baseCommandString);	
-		
+
 		List<File> coreObjectFiles	 = compileFiles(
 				avrBasePath, 
 				buildPath,
@@ -623,41 +623,41 @@ public class Compiler implements MessageConsumer {
 				findFilesInPath(corePath, "c", true),
 				findFilesInPath(corePath, "cpp", true), 
 				configPreferences);
-		
+
 		for (File file : coreObjectFiles) {
 			//List commandAR = new ArrayList(baseCommandAR);
 			//commandAR = commandAR +  file.getAbsolutePath();
-		
+
 			Object[] Args = {
-				avrBasePath,
-				configPreferences.get("compiler.ar.cmd"),
-				configPreferences.get("compiler.ar.flags"),
-				//corePath,
-				buildPath + File.separator,
-				"core.a",
-				//objectName
-				file.getAbsolutePath()
+					avrBasePath,
+					configPreferences.get("compiler.ar.cmd"),
+					configPreferences.get("compiler.ar.flags"),
+					//corePath,
+					buildPath + File.separator,
+					"core.a",
+					//objectName
+					file.getAbsolutePath()
 			};
 			commandString = compileFormat.format(  Args );
 			execAsynchronously(commandString);
 		}
-	}
-			
+			}
+
 	// 4. link it all together into the .elf file
 	void compileLink(String avrBasePath, String buildPath, String corePath, ArrayList<String> includePaths, HashMap<String, String> configPreferences) 
-		throws RunnerException 
-	{	
+			throws RunnerException 
+			{	
 		logger.debug("compileLink: start");
 		String baseCommandString = configPreferences.get("recipe.c.combine.pattern");
 		String commandString = "";
 		MessageFormat compileFormat = new MessageFormat(baseCommandString);	
 		String objectFileList = "";
-		
+
 		for (File file : objectFiles) {
 			objectFileList = objectFileList + file.getAbsolutePath() + "::";
 		}
 
-			Object[] Args = {
+		Object[] Args = {
 				avrBasePath,
 				configPreferences.get("compiler.c.elf.cmd"),
 				configPreferences.get("compiler.c.elf.flags"),
@@ -670,136 +670,136 @@ public class Compiler implements MessageConsumer {
 				buildPath,
 				corePath,	
 				configPreferences.get("ldscript"),	
-			};
-			commandString = compileFormat.format(  Args );
-			execAsynchronously(commandString);
-	}
+		};
+		commandString = compileFormat.format(  Args );
+		execAsynchronously(commandString);
+			}
 
 	// 5. extract EEPROM data (from EEMEM directive) to .eep file.
 	void compileEep (String avrBasePath, String buildPath, ArrayList<String> includePaths, HashMap<String, String> configPreferences) 
-		throws RunnerException 
-	{
+			throws RunnerException 
+			{
 		logger.debug("compileEep: start");
 		String baseCommandString = configPreferences.get("recipe.objcopy.eep.pattern");
 		String commandString = "";
 		MessageFormat compileFormat = new MessageFormat(baseCommandString);	
 		String objectFileList = "";
-		
+
 		Object[] Args = {
-			avrBasePath,
-			configPreferences.get("compiler.objcopy.cmd"),
-			configPreferences.get("compiler.objcopy.eep.flags"),
-			buildPath + File.separator + primaryClassName,
-			buildPath + File.separator + primaryClassName
-			};
+				avrBasePath,
+				configPreferences.get("compiler.objcopy.cmd"),
+				configPreferences.get("compiler.objcopy.eep.flags"),
+				buildPath + File.separator + primaryClassName,
+				buildPath + File.separator + primaryClassName
+		};
 		commandString = compileFormat.format(  Args );		
-				
+
 		execAsynchronously(commandString);	
-	}
-	
+			}
+
 	// 6. build the .hex file
 	void compileHex (String avrBasePath, String buildPath, ArrayList<String> includePaths, HashMap<String, String> configPreferences) 
-		throws RunnerException 
-	{
+			throws RunnerException 
+			{
 		logger.debug("compileHex: start");
 		String baseCommandString = configPreferences.get("recipe.objcopy.hex.pattern");
 		String commandString = "";
 		MessageFormat compileFormat = new MessageFormat(baseCommandString);	
 		String objectFileList = "";
-	
+
 		Object[] Args = {
-			avrBasePath,
-			configPreferences.get("compiler.elf2hex.cmd"),
-			configPreferences.get("compiler.elf2hex.flags"),
-			buildPath + File.separator + primaryClassName,
-			buildPath + File.separator + primaryClassName
-			};
+				avrBasePath,
+				configPreferences.get("compiler.elf2hex.cmd"),
+				configPreferences.get("compiler.elf2hex.flags"),
+				buildPath + File.separator + primaryClassName,
+				buildPath + File.separator + primaryClassName
+		};
 		commandString = compileFormat.format(  Args );		
-				
+
 		execAsynchronously(commandString);	
-		
-	}
+
+			}
 	//merge all the preferences file in the correct order of precedence
 	HashMap mergePreferences(Map Preferences,  Map platformPreferences, Map boardPreferences, Map sketchPreferences)
 	{
-	 HashMap _map = new HashMap();
-	 Iterator iterator = Preferences.entrySet().iterator();
-       
-         while(iterator.hasNext())
-  	    {
-  	    	Map.Entry pair = (Map.Entry)iterator.next();
-  	    	if (pair.getValue() == null)
-  	    	{
-  	    		_map.put(pair.getKey(), "");
-  	    	}
-  	    	else
-  	    	{
-  	    		_map.put(pair.getKey(), pair.getValue());
-  	    	}
-	    }
-	    
+		HashMap _map = new HashMap();
+		Iterator iterator = Preferences.entrySet().iterator();
+
+		while(iterator.hasNext())
+		{
+			Map.Entry pair = (Map.Entry)iterator.next();
+			if (pair.getValue() == null)
+			{
+				_map.put(pair.getKey(), "");
+			}
+			else
+			{
+				_map.put(pair.getKey(), pair.getValue());
+			}
+		}
+
 		//logger.debug("Done: Preferences");
-		
+
 		iterator = platformPreferences.entrySet().iterator();
-       
-         while(iterator.hasNext())
-  	    {
-  	    	Map.Entry pair = (Map.Entry)iterator.next();
-  	    	
-  	    	if (pair.getValue() == null)
-  	    	{
-  	    		_map.put(pair.getKey(), "");
-  	    	}
-  	    	else
-  	    	{
-  	    		_map.put(pair.getKey(), pair.getValue());
-  	    	}
-            //System.out.println(pair.getKey() + " = " + pair.getValue());
-	    }
+
+		while(iterator.hasNext())
+		{
+			Map.Entry pair = (Map.Entry)iterator.next();
+
+			if (pair.getValue() == null)
+			{
+				_map.put(pair.getKey(), "");
+			}
+			else
+			{
+				_map.put(pair.getKey(), pair.getValue());
+			}
+			//System.out.println(pair.getKey() + " = " + pair.getValue());
+		}
 
 		//System.out.println("Done: platformPreferences");
 		iterator = boardPreferences.entrySet().iterator();
 
-         while(iterator.hasNext())
-  	    {
-  	    	Map.Entry pair = (Map.Entry)iterator.next();
-  	    	
-  	    	if (pair.getValue() == null)
-  	    	{
-  	    		_map.put(pair.getKey(), "");
-  	    	}
-  	    	else
-  	    	{
-  	    		_map.put(pair.getKey(), pair.getValue());
-  	    	}
-            //System.out.println(pair.getKey() + " = " + pair.getValue());
-	    }
+		while(iterator.hasNext())
+		{
+			Map.Entry pair = (Map.Entry)iterator.next();
+
+			if (pair.getValue() == null)
+			{
+				_map.put(pair.getKey(), "");
+			}
+			else
+			{
+				_map.put(pair.getKey(), pair.getValue());
+			}
+			//System.out.println(pair.getKey() + " = " + pair.getValue());
+		}
 		//System.out.println("Done: boardPreferences");
 
-            iterator = sketchPreferences.entrySet().iterator();
-            while(iterator.hasNext())
-            {
-                Map.Entry pair = (Map.Entry)iterator.next();
-            
-                if (pair.getValue() == null)
-                {
-                        _map.put(pair.getKey(), "");
-                }
-                else
-                {
-                        _map.put(pair.getKey(), pair.getValue());
-                }
-            //System.out.println(pair.getKey() + " = " + pair.getValue());
-            }
-                //System.out.println("Done: boardPreferences");
+		iterator = sketchPreferences.entrySet().iterator();
+		while(iterator.hasNext())
+		{
+			Map.Entry pair = (Map.Entry)iterator.next();
 
- 
+			if (pair.getValue() == null)
+			{
+				_map.put(pair.getKey(), "");
+			}
+			else
+			{
+				_map.put(pair.getKey(), pair.getValue());
+			}
+			//System.out.println(pair.getKey() + " = " + pair.getValue());
+		}
+		//System.out.println("Done: boardPreferences");
 
-	return _map;
+
+
+		return _map;
 	}
-	
+
 	private static String preparePaths(ArrayList<String> includePaths) {
-	//getIncludes to String
+		//getIncludes to String
 		//logger.debug("Start: Prepare paths");
 		String includes = "";
 		for (int i = 0; i < includePaths.size(); i++) 
@@ -809,5 +809,5 @@ public class Compiler implements MessageConsumer {
 		//logger.debug("Paths prepared: " + includes);
 		return includes;
 	}
-	
+
 }
