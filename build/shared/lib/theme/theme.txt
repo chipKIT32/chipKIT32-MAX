@@ -80,6 +80,10 @@ editor.keyword3.style = #cc6600,bold
 # constants: e.g. null, true, this, RGB, TWO_PI
 editor.literal1.style = #006699,plain
 
+
+# http://arduino.cc/
+editor.url.style = #0000ff,underlined
+
 # p5 built in variables: e.g. mouseX, width, pixels
 editor.literal2.style = #006699,plain
 

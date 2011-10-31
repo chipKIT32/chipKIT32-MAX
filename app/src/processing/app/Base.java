@@ -1014,7 +1014,13 @@ public class Base {
     }
   }
   
-  
+  public void onBoardOrPortChange() {
+    for (Editor editor : editors) {
+      editor.onBoardOrPortChange();
+    }
+  }
+ 
+ 
   public void rebuildBoardsMenu(JMenu menu) {
     logger.debug("DEBUG: start: rebuilding boards menu.");
   
@@ -1051,8 +1057,9 @@ public class Base {
 
   }
   
-  
-  public void rebuildBurnBootloaderMenu(JMenu menu) {
+ //? ROA: Trying a quick rename
+ // public void rebuildBurnBootloaderMenu(JMenu menu) {
+    public void rebuildProgrammerMenu(JMenu menu) {
     //System.out.println("rebuilding burn bootloader menu");
     menu.removeAll();      
     for (Target target : targetsTable.values()) {
@@ -1072,6 +1079,36 @@ public class Base {
       }
     }
   }
+
+
+/*
+  public void rebuildProgrammerMenu(JMenu menu) {
+    //System.out.println("rebuilding programmer menu");
+    menu.removeAll();      
+    ButtonGroup group = new ButtonGroup();
+    for (Target target : targetsTable.values()) {
+      for (String programmer : target.getProgrammers().keySet()) {
+        AbstractAction action = 
+          new AbstractAction(
+            target.getProgrammers().get(programmer).get("name")) {
+            public void actionPerformed(ActionEvent actionevent) {
+              Preferences.set("programmer", getValue("target") + ":" +
+                                            getValue("programmer"));
+            }
+          };
+        action.putValue("target", target.getName());
+        action.putValue("programmer", programmer);
+        JMenuItem item = new JRadioButtonMenuItem(action);
+        if (Preferences.get("programmer").equals(target.getName() + ":" +
+                                                 programmer)) {
+          item.setSelected(true);
+        }
+        group.add(item);
+        menu.add(item);
+      }
+    }
+  }
+*/
 
 
   /**

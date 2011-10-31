@@ -735,7 +735,8 @@ public class Preferences {
     return font;
   }
 
-
+  
+// ROA: current getStyle: from Arduino 1.0
   static public SyntaxStyle getStyle(String what /*, String dflt*/) {
     String str = get("editor." + what + ".style"); //, dflt);
 
@@ -751,11 +752,13 @@ public class Preferences {
     s = st.nextToken();
     boolean bold = (s.indexOf("bold") != -1);
     boolean italic = (s.indexOf("italic") != -1);
+    boolean underlined = (s.indexOf("underlined") != -1);
     //System.out.println(what + " = " + str + " " + bold + " " + italic);
 
-    return new SyntaxStyle(color, italic, bold);
+    return new SyntaxStyle(color, italic, bold, underlined);
   }
-  
+
+
   //get a Map of the Preferences
   static public Map<String, String> getMap() 
   {

@@ -171,39 +171,71 @@ public class Compiler implements MessageConsumer {
 		 */
 		logger.debug("corePaths: " + this.corePath);
 
+  String variant = boardPreferences.get("build.variant");
+    String variantPath = null;
+    
+    if (variant != null) {
+      if (variant.indexOf(':') == -1) {
+	Target t = Base.getTarget();
+	File variantFolder = new File(new File(t.getFolder(), "variants"), variant);
+	variantPath = variantFolder.getAbsolutePath();
+      } else {
+	Target t = Base.targetsTable.get(variant.substring(0, variant.indexOf(':')));
+	File variantFolder = new File(t.getFolder(), "variants");
+	variantFolder = new File(variantFolder, variant.substring(variant.indexOf(':') + 1));
+	variantPath = variantFolder.getAbsolutePath();
+      }
+    }
+
 
 		this.objectFiles = new ArrayList<File>();
 
 		// 0. include paths for core + all libraries
 		logger.debug("0. getIncludes");
+		sketch.setCompilingProgress(20);
 		this.includePaths =	getIncludes(this.corePath);
+		if (variantPath != null)  {
+			includePaths.add(variantPath);
+		}
+   		for (File file : sketch.getImportedLibraries()) {
+     			includePaths.add(file.getPath());
+   		}
+
 
 		// 1. compile the sketch (already in the buildPath)
 		logger.debug("1. compileSketch");
 		compileSketch(avrBasePath, buildPath, includePaths, configPreferences);
+		sketch.setCompilingProgress(30);
 
 		// 2. compile the libraries, outputting .o files to:
 		// <buildPath>/<library>/
 		//Doesn't really use configPreferences
 		logger.debug("2. compileLibraries");
 		compileLibraries(avrBasePath, buildPath, includePaths, configPreferences);
+		sketch.setCompilingProgress(40);
 
 		// 3. compile the core, outputting .o files to <buildPath> and then
 		// collecting them into the core.a library file.
 		logger.debug("3. compileCore");
-		compileCore(avrBasePath, buildPath, this.corePath, configPreferences);
+		compileCore(avrBasePath, buildPath, corePath, variant, variantPath, configPreferences);
+		sketch.setCompilingProgress(50);
+		
 
 		// 4. link it all together into the .elf file
 		logger.debug("4. compileLink");
 		compileLink(avrBasePath, buildPath, this.corePath, includePaths, configPreferences);
+		sketch.setCompilingProgress(60);
 
 		// 5. extract EEPROM data (from EEMEM directive) to .eep file.			
 		logger.debug("5. compileEep");
 		compileEep(avrBasePath, buildPath, includePaths, configPreferences);
+		sketch.setCompilingProgress(70);
 
 		// 6. build the .hex file
 		logger.debug("6. compileHex");
+		sketch.setCompilingProgress(80);
 		compileHex(avrBasePath, buildPath, includePaths, configPreferences);
+		sketch.setCompilingProgress(90);
 
 		//done
 		logger.debug("7. compile done");
@@ -604,13 +636,15 @@ public class Compiler implements MessageConsumer {
 
 	// 3. compile the core, outputting .o files to <buildPath> and then
 	// collecting them into the core.a library file.
-	void compileCore (String avrBasePath, String buildPath, String corePath, HashMap<String, String> configPreferences) 
+	void compileCore (String avrBasePath, String buildPath, String corePath, String variant, String variantPath,  HashMap<String, String> configPreferences) 
 			throws RunnerException 
 			{
 		logger.debug("compileCore(...) start");
 
 		ArrayList<String>  includePaths =  new ArrayList();
 		includePaths.add(corePath); //include core path only
+	        if (variantPath != null) includePaths.add(variantPath);
+
 		String baseCommandString = configPreferences.get("recipe.ar.pattern");
 		String commandString = "";
 		MessageFormat compileFormat = new MessageFormat(baseCommandString);	

@@ -1525,6 +1525,7 @@ public class Sketch {
     throws RunnerException {
     
     // run the preprocessor
+    editor.status.progressUpdate(20);
     String primaryClassName = preprocess(buildPath);
 
     // compile the program. errors will happen as a RunnerException
@@ -1582,11 +1583,16 @@ public class Sketch {
 //                       "name in the code was " + foundName, null);
 //      return false;
 //    }
-
+    editor.status.progressNotice("Uploading...");
     upload(appletFolder.getPath(), foundName, verbose);
-    
+    editor.status.progressUpdate(100);    
     return true;
   }
+
+  public void setCompilingProgress(int percent) {
+    editor.status.progressUpdate(percent);
+  }
+
 
 
   protected void size(String buildPath, String suggestedClassName)
