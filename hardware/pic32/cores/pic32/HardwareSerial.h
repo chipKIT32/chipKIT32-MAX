@@ -15,6 +15,8 @@
 //*	Aug 26,	2011	<MLS> Microchip starter kits w/USB now default to USB serial
 //*	Sep  1,	2011	<MLS> Issue #111, #ifdefs around <plib.h>, it was being included twice
 //*	Sep  2,	2011	<MLS> Issue #111, changed include <plib.h> to include <p32xxxx.h>
+//*	Nov  1,	2011	<MLS> Issue #140, HardwareSerial not derived from Stream 
+//*	Nov  1,	2011	<MLS> Also fixed some other compatibilty issues
 //************************************************************************
 /*
   HardwareSerial.h - Hardware serial library for Wiring
@@ -46,6 +48,7 @@
 
 #ifdef __cplusplus
 	#include "Print.h"
+	#include "Stream.h"
 #endif
 
 
@@ -148,7 +151,8 @@ typedef struct
 #ifdef __cplusplus
 
 //*******************************************************************************************
-class HardwareSerial : public Print
+//class HardwareSerial : public Print
+class HardwareSerial : public Stream
 {
 	private:
 		ring_buffer				*_rx_buffer;
@@ -168,12 +172,12 @@ class HardwareSerial : public Print
 						volatile uint32_t		*uxtxreg_reg
 						);
 
-		void	begin(long baudRate);
+		void	begin(unsigned long baudRate);
 		void	end();
-		int		peek();
-		uint8_t	available(void);
-		int		read(void);
-		void	flush(void);
+		virtual int 	available(void);
+		virtual	int		peek();
+		virtual	int		read(void);
+		virtual	void	flush(void);
 		virtual	void	write(uint8_t);
 		using	Print::write; // pull in write(str) and write(buf, size) from Print
 };
