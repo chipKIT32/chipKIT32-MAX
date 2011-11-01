@@ -184,7 +184,7 @@ class HardwareSerial : public Stream
 
 #if defined(_USB)
 //*******************************************************************************************
-class USBSerial : public Print
+class USBSerial : public Stream
 {
 	private:
 		ring_buffer				*_rx_buffer;
@@ -192,12 +192,12 @@ class USBSerial : public Print
 	public:
 		USBSerial	(ring_buffer	*rx_buffer);
 
-		void			begin(long baudRate);
+		void			begin(unsigned long baudRate);
 		void			end();
-//++	int				peek();
-		uint8_t			available(void);
-		int				read(void);
-		void			flush(void);
+		virtual int		available(void);
+		virtual int		peek();
+		virtual int		read(void);
+		virtual void	flush(void);
 		virtual	void	write(uint8_t);
 		virtual void	write(const char *str);
 		virtual void	write(const uint8_t *buffer, size_t size);

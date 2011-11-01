@@ -793,7 +793,7 @@ USBSerial::USBSerial(ring_buffer	*rx_buffer)
 
 
 //*******************************************************************************************
-void USBSerial::begin(long baudRate)
+void USBSerial::begin(unsigned long baudRate)
 {
 	DebugViaSerial0("USBSerial::begin");
 
@@ -817,10 +817,24 @@ void USBSerial::end()
 }
 
 //*******************************************************************************************
-uint8_t USBSerial::available(void)
+int USBSerial::available(void)
 {
 	return (RX_BUFFER_SIZE + _rx_buffer->head - _rx_buffer->tail) % RX_BUFFER_SIZE;
 }
+
+//*******************************************************************************************
+int USBSerial::peek()
+{
+	if (_rx_buffer->head == _rx_buffer->tail)
+	{
+		return -1;
+	}
+	else
+	{
+		return _rx_buffer->buffer[_rx_buffer->tail];
+	}
+}
+
 
 //*******************************************************************************************
 int USBSerial::read(void)
