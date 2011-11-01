@@ -1028,13 +1028,13 @@ public class Base {
     ButtonGroup group = new ButtonGroup();
     for (Target target : targetsTable.values()) {
       for (String board : target.getBoards().keySet()) {
-
         AbstractAction action = 
           new AbstractAction(target.getBoards().get(board).get("name")) {
             public void actionPerformed(ActionEvent actionevent) {
               logger.debug("DEBUG: start: " + "Switching to " + (String) getValue("target") + ":" + (String) getValue("board"));
               Preferences.set("target", (String) getValue("target"));
               Preferences.set("board", (String) getValue("board"));
+              onBoardOrPortChange();
           	  //Debug: created new imports menu based on board
               rebuildImportMenu(activeEditor.importMenu);
 	      logger.debug("Rebuilding examples menu base on board.");
