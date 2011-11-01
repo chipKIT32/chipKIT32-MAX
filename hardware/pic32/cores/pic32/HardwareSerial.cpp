@@ -54,6 +54,8 @@
 //*	Jun 24,	2011	<MLS> Adding USB support, code from Rich Testardi (http://www.cpustick.com/downloads.htm)
 //*	Jul  3,	2011	<MLS> Fixed bug in baud rate calculation (http://www.chipkit.org/forum/viewtopic.php?f=7&t=213&p=948#p948)
 //*	Sep  1,	2011	<MLS> Issue #111, #ifdefs around <plib.h>, it was being included twice
+//*	Nov  1,	2011	<MLS> Issue #140, HardwareSerial not derived from Stream 
+//*	Nov  1,	2011	<MLS> Also fixed some other compatibilty issues
 //************************************************************************
 #define __LANGUAGE_C__
 
@@ -134,7 +136,7 @@ HardwareSerial::HardwareSerial(	uint8_t					uartNumber,
 
 
 //*******************************************************************************************
-void HardwareSerial::begin(long baudRate)
+void HardwareSerial::begin(unsigned long baudRate)
 {
 int	configValue;
 
@@ -299,7 +301,7 @@ void HardwareSerial::end()
 }
 
 //*******************************************************************************************
-uint8_t HardwareSerial::available(void)
+int HardwareSerial::available(void)
 {
 	return (RX_BUFFER_SIZE + _rx_buffer->head - _rx_buffer->tail) % RX_BUFFER_SIZE;
 }
@@ -791,7 +793,7 @@ USBSerial::USBSerial(ring_buffer	*rx_buffer)
 
 
 //*******************************************************************************************
-void USBSerial::begin(long baudRate)
+void USBSerial::begin(unsigned long baudRate)
 {
 	DebugViaSerial0("USBSerial::begin");
 
@@ -815,10 +817,24 @@ void USBSerial::end()
 }
 
 //*******************************************************************************************
-uint8_t USBSerial::available(void)
+int USBSerial::available(void)
 {
 	return (RX_BUFFER_SIZE + _rx_buffer->head - _rx_buffer->tail) % RX_BUFFER_SIZE;
 }
+
+//*******************************************************************************************
+int USBSerial::peek()
+{
+	if (_rx_buffer->head == _rx_buffer->tail)
+	{
+		return -1;
+	}
+	else
+	{
+		return _rx_buffer->buffer[_rx_buffer->tail];
+	}
+}
+
 
 //*******************************************************************************************
 int USBSerial::read(void)

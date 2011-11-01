@@ -31,7 +31,7 @@
 //*	May 18,	2011	<MLS> merged in Brian Schmalz work on microseconds timer
 //*	May 20,	2011	<MLS> For mega board, disabling secondary oscillator
 //*	Aug 17,	2011	<MLS> Issue #84 disable the uart on init so that the pins can be used as general purpose I/O
-//*	Aug ??,	2011	Brian added softpwm
+//*	Aug  1,	2011	Brian Schmalz added softpwm
 //* Sept 12, 2011	<GeneApperson> Fixed bug in core timer interrupt service routine
 //*						when some interrupts had been missed due to interrupts disabled
 //************************************************************************
@@ -285,7 +285,8 @@ uint32_t	tick_delta;
 	// didn't get updated quickly enough last time and the delta between the
 	// current counter value and its value is less than the CORE_TICK_RATE
 	tick_delta = timer_delta / CORE_TICK_RATE;
-	if (tick_delta == 0) {
+	if (tick_delta == 0)
+	{
 		tick_delta = 1;
 	}
 
