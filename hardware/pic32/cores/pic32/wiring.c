@@ -31,12 +31,19 @@
 //*	May 18,	2011	<MLS> merged in Brian Schmalz work on microseconds timer
 //*	May 20,	2011	<MLS> For mega board, disabling secondary oscillator
 //*	Aug 17,	2011	<MLS> Issue #84 disable the uart on init so that the pins can be used as general purpose I/O
-//*	Aug  1,	2011	Brian Schmalz added softpwm
+//*	Aug  1,	2011	<BPS> added softpwm
 //* Sept 12, 2011	<GeneApperson> Fixed bug in core timer interrupt service routine
 //*						when some interrupts had been missed due to interrupts disabled
+//* Nov 12, 2011	<GeneApperson> revised for board variant support
+//* Nov 19, 2011    <BPS> Added WestfW's code from ChipKit forum - fixes
+//*                 lost millisecond and microsecond times during rollover
 //************************************************************************
 #include <plib.h>
 #include <p32xxxx.h>
+#include <p32_defs.h>
+
+#define OPT_BOARD_INTERNAL
+#include <pins_arduino.h>
 
 #include "wiring_private.h"
 //#define _ENABLE_PIC_RTC_
@@ -125,32 +132,17 @@ unsigned long micros()
 unsigned int cur_timer_val	=	0;
 unsigned int micros_delta	=	0;
 
-	// Use this as a flag to tell the ISR not to touch anything
-	gMicros_calculating	=	1;
-	cur_timer_val	=	ReadCoreTimer();
+	unsigned int result;
+	
+	INTDisableInterrupts();
+	result = gTimer0_millis * 1000;
+	cur_timer_val = ReadCoreTimer();
+	cur_timer_val -= gCore_timer_last_val;
+	cur_timer_val += CORETIMER_TICKS_PER_MICROSECOND/2;  // rounding
+	cur_timer_val /= CORETIMER_TICKS_PER_MICROSECOND;  // convert to microseconds
+	INTEnableInterrupts();
+	return (result + cur_timer_val);
 
-	// Check for overflow
-	if (cur_timer_val >= gCore_timer_last_val)
-	{
-		// Note - gCore_timer_micros is not added to here (just a =, not a +=)
-		// so we don't accumulate any errors.
-		micros_delta	=	(cur_timer_val - gCore_timer_first_val) / CORETIMER_TICKS_PER_MICROSECOND;
-		gCore_timer_micros	=	gMicros_overflows + micros_delta;
-	}
-	else
-	{
-		// We have an overflow
-		gCore_timer_micros		+=	((0xFFFFFFFF - gCore_timer_last_val) + cur_timer_val) / CORETIMER_TICKS_PER_MICROSECOND;
-		// Store off the current counter value for use in all future micros() calls
-		gCore_timer_first_val	=	cur_timer_val;
-		// And store off current micros count for future micros() calls
-		gMicros_overflows		=	gCore_timer_micros;
-	}
-	// Always record the current counter value and remember it for next time
-	gCore_timer_last_val	=	cur_timer_val;
-	gMicros_calculating		=	0;
-
-	return(gCore_timer_micros);
 }
 
 
@@ -227,118 +219,75 @@ void init()
 	DDPCONbits.JTAGEN	=	0;
 
 
-#if defined (_BOARD_MEGA_)
-	//*	Turn Secondary oscillator off
-	//*	this is only needed on the mega board because the mega uses secondary ocsilator pins
-	//*	as general I/O
-	{
-	unsigned int dma_status;
-	unsigned int int_status;
-	
-		mSYSTEMUnlock(int_status, dma_status);
-
-		OSCCONCLR	=	_OSCCON_SOSCEN_MASK;
-
-
-		mSYSTEMLock(int_status, dma_status);
-	}
-	
+#if (OPT_BOARD_INIT != 0)
+void	_board_init(void);
+	_board_init();
 #endif
 
 	//*	Issue #84
 	//*	disable the uart so that the pins can be used as general purpose I/O
-#if defined(_UART1)
-	U1MODEbits.UARTEN	=	0x00;
+#if defined(_SER0_BASE)
+	p32_uart *	uart;
+	uart = (p32_uart *)_SER0_BASE;
+	uart->uxMode.clr = (1 << _UARTMODE_ON);
 #endif
 }
 
 
 //************************************************************************
 
+#define read_count(dest) __asm__ __volatile__("mfc0 %0,$9" : "=r" (dest))
+#define read_comp(dest) __asm__ __volatile__("mfc0 %0,$11" : "=r" (dest))
+#define write_comp(src) __asm__ __volatile__("mtc0 %0,$11" : "=r" (src))
+
 void __ISR(_CORE_TIMER_VECTOR, ipl2) CoreTimerHandler(void)
 {
-uint32_t	cur_timer_val;
-uint32_t	softPWMreturnFlag;
-uint32_t	timer_delta;
-uint32_t	tick_delta;
+    uint32_t compare, count, millisLocal;
+    uint32_t softPWMreturnFlag = 1;
 
-	cur_timer_val	=	ReadCoreTimer();
+    millisLocal = gTimer0_millis;  // defeat volatility
 
-	// We have to allow for the fact that we may have missed one or more
-	// core timer ticks. This can happen if the user left interrupts
-	// turned off for more than a millisecond. It can also happen when
-	// certain NVM operations take place. For example, page erase takes
-	// 20ms. During that time, the CPU is stalled, not executing instructions
-	// but the core timer is still counting. When we update the core timer
-	// compare register, we have to account for the number of missed timer
-	// ticks when we update the value for the next interrupt.
+    // Only call the SoftPMW update function if it has been hooked into by the
+    // SoftPWM library. Otherwise, always just do the normal 1ms update stuff
+    if (gSoftPWMServoUpdate != NULL)
+    {
+        softPWMreturnFlag       =       gSoftPWMServoUpdate();
+    }
 
-	timer_delta = cur_timer_val - gCore_timer_last_val;
-	if (cur_timer_val < gCore_timer_last_val)
-	{
-		// We've had an overflow. Take the complement of the computed value.
-		timer_delta = ~timer_delta + 1;
-	}
-	// Convert from delta in core timer counter clock cycles to number of
-	// core timer ticks elapsed since the last interrupt. We need to make sure
-	// that tick_delta is at least 1. It's possible that gCore_timer_last_val
-	// didn't get updated quickly enough last time and the delta between the
-	// current counter value and its value is less than the CORE_TICK_RATE
-	tick_delta = timer_delta / CORE_TICK_RATE;
-	if (tick_delta == 0)
-	{
-		tick_delta = 1;
-	}
-
-	// Only call the SoftPMW update function if it has been hooked into by the
-	// SoftPWM library. Otherwise, always just do the normal 1ms update stuff
-	if (gSoftPWMServoUpdate != NULL)
-	{
-		softPWMreturnFlag	=	gSoftPWMServoUpdate();
-	}
-	else
-	{
-		softPWMreturnFlag	=	1;
-	}
-
-	if (softPWMreturnFlag != 0)
-	{
-		// Handle updates that need to happen at the 1ms rate:
-
-		// .. things to do
-	
-		// Check for CoreTimer overflows, record for micros() function
-		// If micros() is not called more often than every 107 seconds (the
-		// period of overflow for CoreTimer) then overflows to CoreTimer
-		// will be lost. So we put code here to check for this condition
-		// and record it so that the next call to micros() will be accurate.
-		if (!gMicros_calculating)
-		{
-			if (cur_timer_val < gCore_timer_last_val)
-			{
-				// We have an overflow
-				gCore_timer_micros		+=	((0xFFFFFFFF - gCore_timer_last_val) + cur_timer_val) / CORETIMER_TICKS_PER_MICROSECOND;
-				gCore_timer_first_val	=	cur_timer_val;
-				gMicros_overflows	=	gCore_timer_micros;
-			}
-			gCore_timer_last_val	=	cur_timer_val;
-		}
-	
-		// Update the global variable that keeps track of the number of
-		// milliseconds that the system has been running.
-		gTimer0_millis += tick_delta;
-	}
-
-	if (gSoftPWMServoUpdate == NULL)
-	{
-		// Set the time for the next interrupt to occur. This function
-		// adds the parameteer value to the current value in the compare
-		// register.
-		UpdateCoreTimer(tick_delta * CORE_TICK_RATE);
-	}
+    if (softPWMreturnFlag)
+    {
+        read_comp(compare);
+        // Handle updates that need to happen at the 1ms rate:
+        do {
+            millisLocal++;                  /* At least one tick */
+            read_count(count);              /* keep current count current */
+            compare += CORE_TICK_RATE;      /* increment next compare */
+            /*
+             * In the common case, we're done.  Now we check special
+             * circumstances.  1st, see if the next target compare value has
+             * wrapped around, but the current count hasn't.  That means the
+             * counter is behind the target, and will deliver another interrupt.
+             */
+            if (compare < CORE_TICK_RATE) { // next compare overflow?
+                if (count > 32*CORE_TICK_RATE) { // but count hasn't overflowed
+                    break;
+                }
+            }
+            /*
+             * Next check for having missed one or more clock ticks entirely,
+             * in which case out next computer compare value will be "before"
+             * the current count.  In this case we add an extra count to make
+             * up for the miss, and try again.
+             */
+        } while (compare < count);
+        write_comp(compare);           /* A compare val that is about 1ms past cur count */
+        gCore_timer_last_val = count;  /* Save the count, too, for calculating micros() */
+        gTimer0_millis = millisLocal;  /* update millis */
+    }
 
 	// clear the interrupt flag
 	mCTClearIntFlag();
 }
+
 
 

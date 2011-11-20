@@ -53,16 +53,19 @@
 #endif
 
 #include "wiring.h"
+
+#define OPT_BOARD_INTERNAL	//pull in internal symbol definitons
+#include "p32_defs.h"
 #include "pins_arduino.h"
 
 //	timerx_toggle_count:
 //	> 0 - duration specified
 //	= 0 - stopped
 //	< 0 - infinitely (until stop() method called, or new play() called)
-volatile long		timer1_toggle_count;
-static uint8_t		tone_pin	=	255;
-volatile uint32_t	*tone_pin_port;
-volatile uint16_t	tone_pin_mask;
+volatile long			timer1_toggle_count;
+static uint8_t			tone_pin	=	255;
+volatile p32_ioport * 	tone_pin_port;
+volatile uint16_t		tone_pin_mask;
 
 #if defined(DEAD)
 	#define AVAILABLE_TONE_PINS 1
@@ -82,7 +85,7 @@ uint8_t port;
 	// Should have an error check here for pin number out of range.
 	//*	there is no standard on the number of pins. Since we want this to work on all versions of the PIC32
 	//*	I have set it to 112 for now which is the largest I/O pin count on a pic32
-	if ((frequency > 0) && (_pin < 112))
+	if ((frequency > 0) && (_pin < (NUM_DIGITAL_PINS)))
 	{
 			
 		// If a tone is currently playing on a different pin, the function is
@@ -105,7 +108,7 @@ uint8_t port;
 		// Determine which port and bit are requested.
 		tone_pin		=	_pin; 
 		port			=	digitalPinToPort(_pin);
-		tone_pin_port	=	portOutputRegister(port);
+		tone_pin_port	=	(p32_ioport *)portRegisters(port);
 		tone_pin_mask	=	digitalPinToBitMask(_pin);
 
 		// Ensure that the pin is a digital output
@@ -158,14 +161,12 @@ extern "C"
 void __ISR(_TIMER_1_VECTOR, ipl3) Timer1Handler(void)
 {
 
-// clear the interrupt flag
-mT1ClearIntFlag();
-
 	if (timer1_toggle_count != 0)
 	{
 		// toggle the pin
 		// The PORTxINV register is at offset +3 from the PORTx register
-		*(tone_pin_port+3)	=	tone_pin_mask;
+		//*(tone_pin_port+3)	=	tone_pin_mask;
+		tone_pin_port->lat.inv = tone_pin_mask;
 
 		if (timer1_toggle_count > 0)
 		{
@@ -176,9 +177,13 @@ mT1ClearIntFlag();
 	{
 		disableTimer(1);
 		// The PORTxCLR register is at offset +1 from the PORTx register
-		*(tone_pin_port+1)	=	tone_pin_mask;	// keep pin low after stop
+		//*(tone_pin_port+1)	=	tone_pin_mask;	// keep pin low after stop
+		tone_pin_port->lat.clr = tone_pin_mask;
 	}
+
+	// clear the interrupt flag
+	mT1ClearIntFlag();
 }
 
-};	//*	extgern "C"
+};	//*	extern "C"
 

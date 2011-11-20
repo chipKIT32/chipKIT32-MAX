@@ -22,6 +22,7 @@
 #define twi_h
 
   #include <inttypes.h>
+  #include <p32_defs.h>
 
   #ifndef CLK_PBUS
   #define CLK_PBUS 80000000
@@ -142,7 +143,7 @@
 #define latLED4		LATF
 
   
-  void twi_init(void);
+  void twi_init(p32_i2c * ptwiT, uint8_t irqBus, uint8_t irqSlv, uint8_t irqMst, uint8_t vec);
   void twi_setAddress(uint8_t);
   uint8_t twi_readFrom(uint8_t, uint8_t*, uint8_t);
   uint8_t twi_writeTo(uint8_t, uint8_t*, uint8_t, uint8_t);

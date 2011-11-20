@@ -25,9 +25,13 @@
 //*	Edit History
 //************************************************************************
 //*	Jul 25,	2011	<MLS> Modifing for 16 bit I/O ports on pic32 chip
+//* Nov 12, 2011	<GeneApperson> revise for board variant support
+//* Nov 16, 2011	<GeneApperson> revised to use p32_defs.h structure definitions
 //************************************************************************
 
+#define OPT_BOARD_INTERNAL	//pull in internal symbol definitons
 #include "wiring_private.h"
+#include "p32_defs.h"
 #include "pins_arduino.h"
 
 /* Measures the length (in microseconds) of a pulse on the pin; state is HIGH
@@ -37,32 +41,40 @@
 //************************************************************************
 unsigned long pulseIn(uint8_t pin, uint8_t state, unsigned long timeout)
 {
+uint16_t		bit;
+uint8_t			port;
+p32_ioport *	iop;
+uint8_t			stateMask;
+unsigned long	width;
+unsigned long	numloops;
+unsigned long	maxloops;
 
 	// cache the port and bit of the pin in order to speed up the
 	// pulse width measuring loop and achieve finer resolution.  calling
 	// digitalRead() instead yields much coarser resolution.
-	uint16_t bit	=	digitalPinToBitMask(pin);
-	uint8_t port = digitalPinToPort(pin);
-	uint8_t stateMask = (state ? bit : 0);
-	unsigned long width = 0; // keep initialization out of time critical area
+	bit	=	digitalPinToBitMask(pin);
+	port = digitalPinToPort(pin);
+	iop = (p32_ioport *)portRegisters(pin);
+	stateMask = (state ? bit : 0);
+	width = 0; // keep initialization out of time critical area
 	
 	// convert the timeout from microseconds to a number of times through
 	// the initial loop; it takes 16 clock cycles per iteration.
-	unsigned long numloops = 0;
-	unsigned long maxloops = microsecondsToClockCycles(timeout) / 16;
+	numloops = 0;
+	maxloops = microsecondsToClockCycles(timeout) / 16;
 	
 	// wait for any previous pulse to end
-	while ((*portInputRegister(port) & bit) == stateMask)
+	while ((iop->port.reg & bit) == stateMask)
 		if (numloops++ == maxloops)
 			return 0;
 	
 	// wait for the pulse to start
-	while ((*portInputRegister(port) & bit) != stateMask)
+	while ((iop->port.reg & bit) != stateMask)
 		if (numloops++ == maxloops)
 			return 0;
 	
 	// wait for the pulse to stop
-	while ((*portInputRegister(port) & bit) == stateMask) {
+	while ((iop->port.reg & bit) == stateMask) {
 		if (numloops++ == maxloops)
 			return 0;
 		width++;

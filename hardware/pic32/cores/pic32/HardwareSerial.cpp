@@ -56,6 +56,7 @@
 //*	Sep  1,	2011	<MLS> Issue #111, #ifdefs around <plib.h>, it was being included twice
 //*	Nov  1,	2011	<MLS> Issue #140, HardwareSerial not derived from Stream 
 //*	Nov  1,	2011	<MLS> Also fixed some other compatibilty issues
+//* Nov 12, 2001	<GeneApperson> Rewrite for board variant support
 //************************************************************************
 #define __LANGUAGE_C__
 
@@ -69,275 +70,266 @@
 #include "wiring.h"
 #include "wiring_private.h"
 
+#define	OPT_BOARD_INTERNAL
+#include "pins_arduino.h"
+
 #include "HardwareSerial.h"
 
 #if defined(_USE_USB_FOR_SERIAL_)
 //	#define	_DEBUG_USB_VIA_SERIAL0_
 #endif
 
-//*	defines for kSerialPort_x are in "HardwareSerial.h"
-#if defined(_UART1) && !defined(_UART1A)
-	ring_buffer rx_buffer1 = { { 0 }, 0, 0 };
-#endif
-#if defined(_UART1A)
-	ring_buffer rx_buffer1A = { { 0 }, 0, 0 };
-#endif
-#if defined(_UART1B)
-	ring_buffer rx_buffer1B = { { 0 }, 0, 0 };
-#endif
-
-#if defined(_UART2) && !defined(_UART2A)
-	ring_buffer rx_buffer2 = { { 0 }, 0, 0 };
-#endif
-#if defined(_UART2A)
-	ring_buffer rx_buffer2A = { { 0 }, 0, 0 };
-#endif
-#if defined(_UART2B)
-	ring_buffer rx_buffer2B = { { 0 }, 0, 0 };
-#endif
-
-#if defined(_UART3) && !defined(_UART3A)
-	ring_buffer rx_buffer3 = { { 0 }, 0, 0 };
-#endif
-#if defined(_UART3A)
-	ring_buffer rx_buffer3A = { { 0 }, 0, 0 };
-#endif
-#if defined(_UART3B)
-	ring_buffer rx_buffer3B = { { 0 }, 0, 0 };
-#endif
-
-#ifdef _UART4
-	ring_buffer rx_buffer4 = { { 0 }, 0, 0 };
-#endif
-#ifdef _UART5
-	ring_buffer rx_buffer5 = { { 0 }, 0, 0 };
-#endif
-#ifdef _UART6
-	ring_buffer rx_buffer6 = { { 0 }, 0, 0 };
-#endif
+/* ------------------------------------------------------------ */
+/*			General Declarations								*/
+/* ------------------------------------------------------------ */
 
 
-//*******************************************************************************************
-HardwareSerial::HardwareSerial(	uint8_t					uartNumber,
-								ring_buffer				*rx_buffer,
-								volatile uint32_t		*uxbrg_reg,
-								volatile uint32_t		*uxmode_reg,
-								volatile uint32_t		*uxsta_reg,
-								volatile uint32_t		*uxtxreg_reg
-								)
+/* ------------------------------------------------------------ */
+/*			HardwareSerial Object Class Implementation			*/
+/* ------------------------------------------------------------ */
+/***	HardwareSerial::HardwareSerial
+**
+**	Parameters:
+**		uartP		- pointer to base register for UART
+**		irqP		- base IRQ number for the UART
+**
+**	Return Value:
+**		none
+**
+**	Errors:
+**		none
+**
+**	Description:
+**		Object constructor. Initialize member variables, and
+**		any global variables used by the object.
+*/
+
+HardwareSerial::HardwareSerial(p32_uart * uartP, int irqP, int vecP)
 {
-	_uartNumber	=	uartNumber;
-	_rx_buffer	=	rx_buffer;
-	_UxBRG		=	uxbrg_reg;
-	_UxMODE		=	uxmode_reg;
-	_UxSTA		=	uxsta_reg;
-	_UxTXREG	=	uxtxreg_reg;
+	uart = uartP;
+	irq  = irqP;
+	vec  = vecP;
+
+	/* Make sure that the UART is disabled until the user wants to
+	** use it.
+	*/
+	//uart->uxMode.reg = 0;
+
+	/* The interrupt flag and enable control register addresses and
+	** the bit numbers for the flag bits can be computed from the
+	** IRQ number for the UART. The irq parameter specifies the IRQ
+	** for the ERR interrupt. The RX interrupt IRQ is ERR+1 and the
+	** TX interrupt IRQ is ERR+2; There are 32 IRQ bits in each IFS
+	** and IEC register. For each IFS register, there is a SET, CLR,
+	** and INV register, so the distance (in dwords) from IFS0 to IFS1
+	** is 4.
+	** The interrupt priorty control register address and the priority bits
+	** can be computed from the vector number. Each IPC register contains the
+	** the priority bits for four vectors. Each byte of an IPC registger contains
+	** the priority and sub-priority bits arranged such that  bits 0-1 are
+	** the sub-priority, bits 2-4 the priority, and bits 5-7 unused.
+	*/
+	ifs = ((p32_regset *)&IFS0) + (irq / 32);	//interrupt flag register set
+	iec = ((p32_regset *)&IEC0) + (irq / 32);	//interrupt enable control reg set
+
+	bit_err = 1 << (irq % 32);		//error interrupt flag/enable bit
+	bit_rx  = 1 << ((irq+1) % 32);	//rx interrupt flag/enable bit
+	bit_tx  = 1 << ((irq+2) % 32);	//tx interrupt flag/enable bit
 }
 
+/* ------------------------------------------------------------ */
+/***	HardwareSerial::begin
+**
+**	Parameters:
+**		baudRate		- baud rate to use on port
+**
+**	Return Value:
+**		none
+**
+**	Errors:
+**		none
+**
+**	Description:
+**		Initialize the UART for use, setting the baud rate to the
+**		requested value, data size of 8-bits, and no parity.
+*/
 
-//*******************************************************************************************
 void HardwareSerial::begin(unsigned long baudRate)
 {
-int	configValue;
+	p32_regset *	ipc;	//interrupt priority control register set
+	int				irq_shift;
 
+	/* Initialize the receive buffer.
+	*/
+	flush();
 
+	/* Compute the address of the interrupt priority control
+	** registers used by this UART
+	*/
+	ipc = ((p32_regset *)&IPC0) + (vec / 4);	//interrupt priority control reg set
 
-	*_UxMODE	=	(UART_EN);
-	*_UxSTA		=	(UART_RX_ENABLE | UART_TX_ENABLE);
+	/* Compute the number of bit positions to shift to get to the
+	** correct position for the priority bits for this IRQ.
+	*/
+	irq_shift = 8 * (vec % 4);
+
+	/* Set the interrupt privilege level and sub-privilege level
+	*/
+	ipc->clr = 	(0x1F << irq_shift);
+	ipc->set = ((_IPL_UART_IPC << 2) + _SPL_UART_IPC) << irq_shift;
+
+	/* Clear the interrupt flags, and set the interrupt enables for the
+	** interrupts used by this UART.
+	*/
+	ifs->clr = bit_rx + bit_tx + bit_err;	//clear all interrupt flags
+
+	iec->clr = bit_rx + bit_tx + bit_err;	//disable all interrupts
+	iec->set = bit_rx;						//enable rx interrupts
+
+	/* Initialize the UART itself.
+	*/
 	//	http://www.chipkit.org/forum/viewtopic.php?f=7&t=213&p=948#p948
-	*_UxBRG		= 	((__PIC32_pbClk / 16 / baudRate) - 1);	// calculate actual BAUD generate value.
-
-	switch(_uartNumber)
-	{
-	#if defined(_UART1) && !defined(_UART1A)
-		case kSerialPort_1:
-			U1MODEbits.UARTEN	=	0x01;
-			U1STAbits.UTXEN		=	0x01;
-
-			// Configure UART1 RX Interrupt
-			//-ConfigIntUART1(UART_INT_PR2 | UART_RX_INT_EN);
-			mU1ClearAllIntFlags();
-
-			configValue	=	UART_INT_PR1 | UART_RX_INT_EN;
-
-			SetPriorityIntU1(configValue);
-			SetSubPriorityIntU1(configValue);
-			mU1SetIntEnable((((configValue) >> 6) & 7)) ;
-			break;
-	#endif
-
-	#if defined(_UART1A)
-		case kSerialPort_1A:
-			U1AMODEbits.UARTEN	=	0x01;
-			U1ASTAbits.UTXEN	=	0x01;
-
-			mU1AClearAllIntFlags();
-
-			configValue	=	UART_INT_PR1 | UART_RX_INT_EN;
-
-			SetPriorityIntU1(configValue);
-			SetSubPriorityIntU1(configValue);
-			mU1ASetIntEnable((((configValue) >> 6) & 7)) ;
-			break;
-	#endif
-
-	#if defined(_UART1B)
-		case kSerialPort_1B:
-			U1BMODEbits.UARTEN	=	0x01;
-			U1BSTAbits.UTXEN	=	0x01;
-
-			mU1BClearAllIntFlags();
-
-			configValue			=	UART_INT_PR1 | UART_RX_INT_EN;
-
-			mU1BSetIntPriority((UART_INT_PR1 & 0x7));
-
-			mU1BSetIntSubPriority((((configValue) >> 4) & 3));
-			
-			mU1BSetIntEnable((((configValue) >> 6) & 7)) ;
-
-			break;
-	#endif
-
-	#if defined(_UART2) && !defined(_UART2A)
-		case kSerialPort_2:
-			U2MODEbits.UARTEN	=	0x01;
-			U2STAbits.UTXEN		=	0x01;
-
-			// Configure UART2 RX Interrupt
-			mU2ClearAllIntFlags();
-
-			configValue	=	UART_INT_PR1 | UART_RX_INT_EN;
-
-			SetPriorityIntU2(configValue);
-			SetSubPriorityIntU2(configValue);
-			mU2SetIntEnable((((configValue) >> 6) & 7)) ;
-			break;
-	#endif
-
-	#if defined (_UART3) && !defined(_UART3A)
-		case kSerialPort_3:
-			U3MODEbits.UARTEN	=	0x01;
-			U3STAbits.UTXEN		=	0x01;
-
-			// Configure UART1 RX Interrupt
-			//-ConfigIntUART1(UART_INT_PR2 | UART_RX_INT_EN);
-			mU3ClearAllIntFlags();
-
-			configValue	=	UART_INT_PR1 | UART_RX_INT_EN;
-
-			SetPriorityIntU1(configValue);
-			SetSubPriorityIntU1(configValue);
-			mU3SetIntEnable((((configValue) >> 6) & 7)) ;
-			break;
-	#endif
-
-
-	#if defined(_UART3A)
-		case kSerialPort_3A:
-			U3AMODEbits.UARTEN	=	0x01;
-			U3ASTAbits.UTXEN	=	0x01;
-
-			mU3AClearAllIntFlags();
-
-			configValue	=	UART_INT_PR1 | UART_RX_INT_EN;
-
-			mU3ASetIntPriority((configValue & 0x7));
-
-			mU3ASetIntSubPriority((((configValue) >> 4) & 3));
-			
-			mU3ASetIntEnable((((configValue) >> 6) & 7)) ;
-			break;
-	#endif
-
-	#if defined(_UART3B)
-		case kSerialPort_3B:
-			U3BMODEbits.UARTEN	=	0x01;
-			U3BSTAbits.UTXEN	=	0x01;
-
-			mU3BClearAllIntFlags();
-
-			configValue	=	UART_INT_PR1 | UART_RX_INT_EN;
-
-			mU3BSetIntPriority((configValue & 0x7));
-
-			mU3BSetIntSubPriority((((configValue) >> 4) & 3));
-			
-			mU3BSetIntEnable((((configValue) >> 6) & 7)) ;
-			break;
-	#endif
-
-	#if defined(_UART4)
-		case kSerialPort_4:
-			U4MODEbits.UARTEN	=	0x01;
-			U4STAbits.UTXEN		=	0x01;
-
-		//+	mU4ClearAllIntFlags();
-
-		//+	configValue	=	UART_INT_PR1 | UART_RX_INT_EN;
-
-		//+	mU4SetIntPriority((configValue & 0x7));
-
-		//+	mU4SetIntSubPriority((((configValue) >> 4) & 3));
-			
-		//+	mU4SetIntEnable((((configValue) >> 6) & 7)) ;
-			break;
-	#endif
-	}
-
-	// Must enable glocal interrupts - in this case, we are using multi-vector mode
-	//*	this is already done in Init() (issue #78)
-//-	INTEnableSystemMultiVectoredInt();
-
+	uart->uxBrg.reg	 = ((__PIC32_pbClk / 16 / baudRate) - 1);	// calculate actual BAUD generate value.
+	uart->uxSta.reg = 0;
+	uart->uxMode.reg = (1 << _UARTMODE_ON);			//enable UART module
+	uart->uxSta.reg  = (1 << _UARTSTA_UTXEN) + (1 << _UARTSTA_URXEN);	//enable transmitter and receiver
 
 }
 
+/* ------------------------------------------------------------ */
+/***	HardwareSerial::end
+**
+**	Parameters:
+**		none
+**
+**	Return Value:
+**		none
+**
+**	Errors:
+**		none
+**
+**	Description:
+**		Disable the UART and UART interrupts.
+*/
 
-//*******************************************************************************************
 void HardwareSerial::end()
 {
-	//*	disable the uart so that the pins can be used as general purpose I/O
-	*_UxMODE	=	0;
+	p32_regset *	iec;	//interrupt enable control register set
+
+	/* Disable all UART interrupts.
+	*/
+	iec = ((p32_regset *)&IEC0) + (irq / 32);	//interrupt enable control reg set
+	iec->clr = bit_err + bit_rx + bit_tx;
+	
+	/* Disable the UART so that the pins can be used as general purpose I/O
+	*/
+	uart->uxMode.reg =	0;
+
 }
 
-//*******************************************************************************************
+/* ------------------------------------------------------------ */
+/***	HardwareSerial.available
+**
+**	Parameters:
+**		none
+**
+**	Return Value:
+**		Returns the number of characters available in the receive buffer
+**
+**	Errors:
+**		none
+**
+**	Description:
+**		Return the number of characters currently available in the
+**		receive buffer.
+*/
+
 int HardwareSerial::available(void)
 {
-	return (RX_BUFFER_SIZE + _rx_buffer->head - _rx_buffer->tail) % RX_BUFFER_SIZE;
+	return (RX_BUFFER_SIZE + rx_buffer.head - rx_buffer.tail) % RX_BUFFER_SIZE;
 }
 
-//*******************************************************************************************
+/* ------------------------------------------------------------ */
+/***	HardwareSerial::peek
+**
+**	Parameters:
+**		none
+**
+**	Return Value:
+**		returns the next character from the receive buffer
+**
+**	Errors:
+**		returns -1 if no characters in buffer
+**
+**	Description:
+**		This returns the next character in the receive buffer without
+**		removing it from the buffer, or -1 if no characters are in the buffer.
+*/
+
 int HardwareSerial::peek()
 {
-	if (_rx_buffer->head == _rx_buffer->tail)
+	if (rx_buffer.head == rx_buffer.tail)
 	{
 		return -1;
 	}
 	else
 	{
-		return _rx_buffer->buffer[_rx_buffer->tail];
+		return rx_buffer.buffer[rx_buffer.tail];
 	}
 }
 
-//*******************************************************************************************
+/* ------------------------------------------------------------ */
+/***	HardwareSerial::read
+**
+**	Parameters:
+**		none
+**
+**	Return Value:
+**		next character from the receive buffer
+**
+**	Errors:
+**		returns -1 if no characters in buffer
+**
+**	Description:
+**		Return the next character from the receive buffer and remove
+**		it from the buffer, or -1 if no characters are available in
+**		the buffer.
+*/
+
 int HardwareSerial::read(void)
 {
 	unsigned char theChar;
 
 	// if the head isn't ahead of the tail, we don't have any characters
-	if (_rx_buffer->head == _rx_buffer->tail)
+	if (rx_buffer.head == rx_buffer.tail)
 	{
 		return -1;
 	}
 	else
 	{
-		theChar				=	_rx_buffer->buffer[_rx_buffer->tail];
-		_rx_buffer->tail	=	(_rx_buffer->tail + 1) % RX_BUFFER_SIZE;
+		theChar			= rx_buffer.buffer[rx_buffer.tail];
+		rx_buffer.tail	= (rx_buffer.tail + 1) % RX_BUFFER_SIZE;
 		return (theChar);
 	}
 }
 
-//*******************************************************************************************
+/* ------------------------------------------------------------ */
+/***	HardwareSerial::flush
+**
+**	Parameters:
+**		none
+**
+**	Return Value:
+**		none
+**
+**	Errors:
+**		none
+**
+**	Description:
+**		Empty the receive buffer by discarding any characters in
+**		the buffer.
+*/
+
 void HardwareSerial::flush()
 {
 	// don't reverse this or there may be problems if the RX interrupt
@@ -349,94 +341,114 @@ void HardwareSerial::flush()
 	// the value to rx_buffer_tail; the previous value of rx_buffer_head
 	// may be written to rx_buffer_tail, making it appear as if the buffer
 	// were full, not empty.
-	_rx_buffer->head	=	_rx_buffer->tail;
+	rx_buffer.head = rx_buffer.tail;
 }
 
-//*******************************************************************************************
+/* ------------------------------------------------------------ */
+/***	HardwareSerial::write
+**
+**	Parameters:
+**		theChar		- the character to transmit
+**
+**	Return Value:
+**		none
+**
+**	Errors:
+**		none
+**
+**	Description:
+**		Wait until the transmitter is idle, and then transmit the
+**		specified character.
+*/
+
 void HardwareSerial::write(uint8_t theChar)
 {
-	switch(_uartNumber)
-	{
-	#if defined(_UART1) && !defined(_UART1A)
-		case kSerialPort_1:
-			while (!U1STAbits.TRMT)
-			{
-				//*	wait for the buffer to be clear
-			}
-			break;
-	#endif
 
-	#if defined(_UART1A)
-		case kSerialPort_1A:
-			while (!U1ASTAbits.TRMT)
-			{
-				//*	wait for the buffer to be clear
-			}
-			break;
-	#endif
+	while ((uart->uxSta.reg & (1 << _UARTSTA_TMRT)) == 0)	//check the TRMT bit
+		{
+		//* wait for the transmitter to be clear
+		}
 
-	#if defined(_UART1B)
-		case kSerialPort_1B:
-			while (!U1BSTAbits.TRMT)
-			{
-				//*	wait for the buffer to be clear
-			}
-			break;
-	#endif
 
-	#if defined(_UART2) && !defined(_UART2A)
-		case kSerialPort_2:
-			while (!U2STAbits.TRMT)
-			{
-				//*	wait for the buffer to be clear
-			}
-			break;
-	#endif
-
-	#if defined(_UART2A)
-		case kSerialPort_2A:
-			while (!U2ASTAbits.TRMT)
-			{
-				//*	wait for the buffer to be clear
-			}
-			break;
-	#endif
-
-	#if defined(_UART2B)
-		case kSerialPort_2B:
-			while (!U2BSTAbits.TRMT)
-			{
-				//*	wait for the buffer to be clear
-			}
-			break;
-	#endif
-
-	#if defined(_UART3A)
-		case kSerialPort_3A:
-			while (!U3ASTAbits.TRMT)
-			{
-				//*	wait for the buffer to be clear
-			}
-			break;
-	#endif
-
-	#if defined(_UART3B)
-		case kSerialPort_3B:
-			while (!U3BSTAbits.TRMT)
-			{
-				//*	wait for the buffer to be clear
-			}
-			break;
-	#endif
-	}
-	*_UxTXREG	=	theChar;
+	uart->uxTx.reg = theChar;
 }
+
+/* ------------------------------------------------------------ */
+/***	HardwareSerial::doSerialInt
+**
+**	Parameters:
+**		none
+**
+**	Return Value:
+**		none
+**
+**	Errors:
+**		none
+**
+**	Description:
+**		This function is called by the interrupt service routine
+**		for the UART being used by this object. It's purpose is
+**		to process receive interrupts and place the received
+**		characters into the receive buffer.
+*/
+
+void HardwareSerial::doSerialInt(void)
+{
+int		bufIndex;
+uint8_t	ch;
+
+	/* If it's a receive interrupt, get the character and store
+	** it in the receive buffer.
+	*/
+	if ((ifs->reg & bit_rx) != 0)
+	{
+		ch = uart->uxRx.reg;
+		bufIndex	= (rx_buffer.head + 1) % RX_BUFFER_SIZE;
+	
+		/* If we should be storing the received character into the location
+		** just before the tail (meaning that the head would advance to the
+		** current location of the tail), we're about to overflow the buffer
+		** and so we don't write the character or advance the head.
+		*/
+		if (bufIndex != rx_buffer.tail)
+		{
+			rx_buffer.buffer[rx_buffer.head] = ch;
+			rx_buffer.head = bufIndex;
+		}
+
+		/* Clear the interrupt flag.
+		*/
+		ifs->clr = bit_rx;
+	}
+
+	/* If it's a transmit interrupt, ignore it, as we don't current
+	** have interrupt driven i/o on the transmit side.
+	*/
+	if ((ifs->reg & bit_tx) != 0)
+	{
+		/* Clear the interrupt flag.
+		*/
+		ifs->clr = bit_tx;
+	}
+
+}
+
+/* ------------------------------------------------------------ */
+/*				USBSerial Object Class Implementation			*/
+/* ------------------------------------------------------------ */
 
 
 //*******************************************************************************************
-//*	we need the extern C so that the interrupt handler names dont get mangled by C++
-extern "C"
-{
+
+#pragma mark -
+#pragma mark -----------------USB support
+
+#if defined(_USB) && defined(_USE_USB_FOR_SERIAL_)
+
+#include	"HardwareSerial_cdcacm.h"
+#include	"HardwareSerial_usb.h"
+
+ring_buffer rx_bufferUSB = { { 0 }, 0, 0 };
 
 //*******************************************************************************************
 inline void store_char(unsigned char theChar, ring_buffer *rx_buffer)
@@ -455,309 +467,6 @@ int	bufIndex;
 		rx_buffer->head	=	bufIndex;
 	}
 }
-
-
-
-
-#if defined(_UART1) && !defined(_UART1A)
-//*******************************************************************************************
-// UART 1 interrupt handler
-// it is set at priority level 2
-//*******************************************************************************************
-void __ISR(_UART1_VECTOR, ipl2) IntUart1Handler(void)
-{
-unsigned char theChar;
-
-	// Is this an RX interrupt?
-	if (mU1RXGetIntFlag())
-	{
-
-		theChar	=	ReadUART1();
-		store_char(theChar, &rx_buffer1);
-
-		// Clear the RX interrupt Flag (must be AFTER the read)
-		mU1RXClearIntFlag();
-	}
-
-	// We don't care about TX interrupt
-	if ( mU1TXGetIntFlag() )
-	{
-		mU1TXClearIntFlag();
-	}
-}
-#endif
-
-
-#ifdef _UART1A
-//*******************************************************************************************
-// UART 1a interrupt handler
-// it is set at priority level 2
-//*******************************************************************************************
-void __ISR(_UART_1A_VECTOR, ipl2) IntUart1AHandler(void)
-{
-unsigned char theChar;
-
-	// Is this an RX interrupt?
-	if (mU1ARXGetIntFlag())
-	{
-
-		theChar	=	U1ARXREG;
-		store_char(theChar, &rx_buffer1A);
-
-		// Clear the RX interrupt Flag (must be AFTER the read)
-		mU1ARXClearIntFlag();
-	}
-
-	// We don't care about TX interrupt
-	if ( mU1ATXGetIntFlag() )
-	{
-		mU1ATXClearIntFlag();
-	}
-}
-#endif
-
-
-#ifdef _UART1B
-//*******************************************************************************************
-// UART 1 interrupt handler
-// it is set at priority level 2
-//*******************************************************************************************
-void __ISR(_UART_1B_VECTOR, ipl2) IntUart1BHandler(void)
-{
-unsigned char theChar;
-
-	// Is this an RX interrupt?
-	if (mU1BRXGetIntFlag())
-	{
-
-		theChar	=	U1BRXREG;
-		store_char(theChar, &rx_buffer1B);
-
-		// Clear the RX interrupt Flag (must be AFTER the read)
-		mU1BRXClearIntFlag();
-	}
-
-	// We don't care about TX interrupt
-	if ( mU1BTXGetIntFlag() )
-	{
-		mU1BTXClearIntFlag();
-	}
-}
-#endif
-
-
-#if defined(_UART2) && !defined(_UART2A)
-//*******************************************************************************************
-// UART 2 interrupt handler
-// it is set at priority level 2
-//*******************************************************************************************
-void __ISR(_UART2_VECTOR, ipl2) IntUart2Handler(void)
-{
-unsigned char theChar;
-
-
-	// Is this an RX interrupt?
-	if (mU2RXGetIntFlag())
-	{
-	//	theChar	=	ReadUART2();
-		theChar	=	U2RXREG;
-		store_char(theChar, &rx_buffer2);
-
-		// Clear the RX interrupt Flag (must be AFTER the read)
-		mU2RXClearIntFlag();
-	}
-
-	// We don't care about TX interrupt
-	if ( mU2TXGetIntFlag() )
-	{
-		mU2TXClearIntFlag();
-	}
-}
-
-#endif
-
-#ifdef _UART2A
-//*******************************************************************************************
-// UART 2A interrupt handler
-// it is set at priority level 2
-//*******************************************************************************************
-void __ISR(_UART_2A_VECTOR, ipl2) IntUart2AHandler(void)
-{
-unsigned char theChar;
-
-	// Is this an RX interrupt?
-	if (mU2ARXGetIntFlag())
-	{
-
-		theChar	=	U2ARXREG;
-		store_char(theChar, &rx_buffer2A);
-
-		// Clear the RX interrupt Flag (must be AFTER the read)
-		mU2ARXClearIntFlag();
-	}
-
-	// We don't care about TX interrupt
-	if ( mU2ATXGetIntFlag() )
-	{
-		mU2ATXClearIntFlag();
-	}
-}
-#endif
-
-#ifdef _UART2B
-//*******************************************************************************************
-// UART 2B interrupt handler
-// it is set at priority level 2
-//*******************************************************************************************
-void __ISR(_UART_2B_VECTOR, ipl2) IntUart2BHandler(void)
-{
-unsigned char theChar;
-
-	// Is this an RX interrupt?
-	if (mU2BRXGetIntFlag())
-	{
-
-		theChar	=	U2BRXREG;
-		store_char(theChar, &rx_buffer2B);
-
-		// Clear the RX interrupt Flag (must be AFTER the read)
-		mU2BRXClearIntFlag();
-	}
-
-	// We don't care about TX interrupt
-	if ( mU2BTXGetIntFlag() )
-	{
-		mU2BTXClearIntFlag();
-	}
-}
-#endif
-
-#if defined(_UART3) && !defined(_UART3A)
-//*******************************************************************************************
-// UART 3 interrupt handler
-// it is set at priority level 2
-//*******************************************************************************************
-void __ISR(_UART3_VECTOR, ipl2) IntUart3Handler(void)
-{
-unsigned char theChar;
-
-	// Is this an RX interrupt?
-	if (mU3RXGetIntFlag())
-	{
-		theChar	=	ReadUART3();
-		store_char(theChar, &rx_buffer3);
-
-		// Clear the RX interrupt Flag (must be AFTER the read)
-		mU3RXClearIntFlag();
-	}
-
-	// We don't care about TX interrupt
-	if ( mU3TXGetIntFlag() )
-	{
-		mU3TXClearIntFlag();
-	}
-}
-
-#endif
-
-#ifdef _UART3A
-//*******************************************************************************************
-// UART 3A interrupt handler
-// it is set at priority level 2
-//*******************************************************************************************
-void __ISR(_UART_3A_VECTOR, ipl2) IntUart3AHandler(void)
-{
-unsigned char theChar;
-
-	// Is this an RX interrupt?
-	if (mU3ARXGetIntFlag())
-	{
-
-		theChar	=	U3ARXREG;
-		store_char(theChar, &rx_buffer3A);
-
-		// Clear the RX interrupt Flag (must be AFTER the read)
-		mU3ARXClearIntFlag();
-	}
-
-	// We don't care about TX interrupt
-	if ( mU3ATXGetIntFlag() )
-	{
-		mU3ATXClearIntFlag();
-	}
-}
-#endif
-
-#ifdef _UART3B
-//*******************************************************************************************
-// UART 3B interrupt handler
-// it is set at priority level 2
-//*******************************************************************************************
-void __ISR(_UART_3B_VECTOR, ipl2) IntUart3BHandler(void)
-{
-unsigned char theChar;
-
-	// Is this an RX interrupt?
-	if (mU3BRXGetIntFlag())
-	{
-
-		theChar	=	U3BRXREG;
-		store_char(theChar, &rx_buffer3B);
-
-		// Clear the RX interrupt Flag (must be AFTER the read)
-		mU3BRXClearIntFlag();
-	}
-
-	// We don't care about TX interrupt
-	if ( mU3BTXGetIntFlag() )
-	{
-		mU3BTXClearIntFlag();
-	}
-}
-#endif
-
-
-#ifdef _UART4_notFinished
-//*******************************************************************************************
-// UART 4 interrupt handler
-// it is set at priority level 2
-//*******************************************************************************************
-void __ISR(_UART_4_VECTOR, ipl2) IntUart4Handler(void)
-{
-unsigned char theChar;
-
-	// Is this an RX interrupt?
-//	if (mU4RXGetIntFlag())
-//	{
-//		theChar	=	ReadUART4();
-//		store_char(theChar, &rx_buffer4);
-
-		// Clear the RX interrupt Flag (must be AFTER the read)
-//		mU4RXClearIntFlag();
-//	}
-
-	// We don't care about TX interrupt
-//	if ( mU4TXGetIntFlag() )
-//	{
-//		mU4TXClearIntFlag();
-//	}
-}
-
-#endif
-
-
-};	// extern C
-
-//*******************************************************************************************
-
-#pragma mark -
-#pragma mark -----------------USB support
-#if defined(_USB)
-
-#include	"HardwareSerial_cdcacm.h"
-#include	"HardwareSerial_usb.h"
-
-ring_buffer rx_bufferUSB = { { 0 }, 0, 0 };
 
 //****************************************************************
 void	USBresetRoutine(void)
@@ -817,7 +526,7 @@ void USBSerial::end()
 }
 
 //*******************************************************************************************
-int USBSerial::available(void)
+uint8_t USBSerial::available(void)
 {
 	return (RX_BUFFER_SIZE + _rx_buffer->head - _rx_buffer->tail) % RX_BUFFER_SIZE;
 }
@@ -834,7 +543,6 @@ int USBSerial::peek()
 		return _rx_buffer->buffer[_rx_buffer->tail];
 	}
 }
-
 
 //*******************************************************************************************
 int USBSerial::read(void)
@@ -927,110 +635,267 @@ size_t size;
 
 #endif		//	defined(_USB)
 
-//*******************************************************************************************
+
+
+/* ------------------------------------------------------------ */
+/*			UART Interrupt Service Routines						*/
+/* ------------------------------------------------------------ */
+
+//*	we need the extern C so that the interrupt handler names don't
+//* get mangled by C++
+
+extern "C" {
+
+/* ------------------------------------------------------------ */
+/***	IntSer0Handler
+**
+**	Parameters:
+**		none
+**
+**	Return Value:
+**		none
+**
+**	Errors:
+**		none
+**
+**	Description:
+**		Interrupt service routine for the UART being used by
+**		serial port 0.
+*/
+#if defined(_SER0_VECTOR)
+
+void __ISR(_SER0_VECTOR, ipl2) IntSer0Handler(void)
+{
 #if defined(_USB) && defined(_USE_USB_FOR_SERIAL_)
-//#error USB enabled
-		USBSerial		Serial(						&rx_bufferUSB);
-#if defined (_UART1A)
-		HardwareSerial	Serial0(	kSerialPort_1A,	&rx_buffer1A,	&U1ABRG,	&U1AMODE,	&U1ASTA,	&U1ATXREG);
-#elif defined (_UART1)
-		HardwareSerial	Serial0(	kSerialPort_1,	&rx_buffer1,	&U1BRG,		&U1MODE,	&U1STA,		&U1TXREG);
-#endif
-
-
-#if defined (_UART1B)
-		HardwareSerial	Serial1(	kSerialPort_1B,	&rx_buffer1B,	&U1BBRG,	&U1BMODE,	&U1BSTA,	&U1BTXREG);
-#elif defined (_UART1)
-		HardwareSerial	Serial1(	kSerialPort_2,		&rx_buffer2,	&U2BRG,	&U2MODE,	&U2STA,	&U2TXREG);
-#endif
-
-
-#if defined (_UART3A)
-		HardwareSerial	Serial2(	kSerialPort_3A,	&rx_buffer3A,	&U3ABRG,	&U3AMODE,	&U3ASTA,	&U3ATXREG);
-#endif
-#if defined (_UART3B)
-		HardwareSerial	Serial3(	kSerialPort_3B,	&rx_buffer3B,	&U3BBRG,	&U3BMODE,	&U3BSTA,	&U3BTXREG);
-#endif
-
-
-#if defined (_UART2A)
-		HardwareSerial Serial4(	kSerialPort_2A,	&rx_buffer2A,	&U2ABRG,	&U2AMODE,	&U2ASTA,	&U2ATXREG);
-#endif
-#if defined (_UART2B)
-		HardwareSerial Serial5(	kSerialPort_2B,	&rx_buffer2B,	&U2BBRG,	&U2BMODE,	&U2BSTA,	&U2BTXREG);
-#endif	//	defined(_USB) && defined(_USE_USB_FOR_SERIAL_)
-
-
-//*******************************************************************************************
-#elif defined(_BOARD_MEGA_)
-		HardwareSerial	Serial(		kSerialPort_1A,	&rx_buffer1A,	&U1ABRG,	&U1AMODE,	&U1ASTA,	&U1ATXREG);
-		HardwareSerial	Serial1(	kSerialPort_1B,	&rx_buffer1B,	&U1BBRG,	&U1BMODE,	&U1BSTA,	&U1BTXREG);
-		HardwareSerial	Serial2(	kSerialPort_3A,	&rx_buffer3A,	&U3ABRG,	&U3AMODE,	&U3ASTA,	&U3ATXREG);
-		HardwareSerial	Serial3(	kSerialPort_3B,	&rx_buffer3B,	&U3BBRG,	&U3BMODE,	&U3BSTA,	&U3BTXREG);
-
-
-		HardwareSerial	Serial4(	kSerialPort_2A,	&rx_buffer2A,	&U2ABRG,	&U2AMODE,	&U2ASTA,	&U2ATXREG);
-		HardwareSerial	Serial5(	kSerialPort_2B,	&rx_buffer2B,	&U2BBRG,	&U2BMODE,	&U2BSTA,	&U2BTXREG);
-
-//*******************************************************************************************
-#elif defined(_BOARD_UNO_)
-		HardwareSerial	Serial(		kSerialPort_1,		&rx_buffer1,	&U1BRG,		&U1MODE,	&U1STA,		&U1TXREG);
-		HardwareSerial	Serial1(	kSerialPort_2,		&rx_buffer2,	&U2BRG,	&U2MODE,	&U2STA,	&U2TXREG);
-
-//*******************************************************************************************
-//*	the Explorer 16 board has the DB9 port connected to the Uart2 which is normally serial 1
-//*	these need to be reversed
-//*******************************************************************************************
-#elif defined(_BOARD_PIC32_EXPLORER16_)
-
-	#warning	Explorer 16 Serial is actually on Uart2, the DB9 connector
-	#ifdef _UART1
-		HardwareSerial Serial1(	1,				&rx_buffer1,	&U1BRG,	&U1MODE,	&U1STA,	&U1TXREG);
-	#endif
-	#ifdef _UART2
-		HardwareSerial Serial(	2,				&rx_buffer2,	&U2BRG,	&U2MODE,	&U2STA,	&U2TXREG);
-	#endif
-
-//*******************************************************************************************
+	Serial0.doSerialInt();
 #else
-//*	this is the NORMAL mode of operation
-//*	this should be for _BOARD_PIC32_STARTER_KIT_
-
-	#if defined (_UART1) && !defined(_UART1A)
-		HardwareSerial Serial(	kSerialPort_1,		&rx_buffer1,	&U1BRG,		&U1MODE,	&U1STA,		&U1TXREG);
-	#elif defined(_UART1A)
-		HardwareSerial Serial(	kSerialPort_1A,		&rx_buffer1A,	&U1ABRG,	&U1AMODE,	&U1ASTA,	&U1ATXREG);
-	#else
-		#error Serial not defined for this CPU
-	#endif
-
-	#if defined(_UART1B)
-		HardwareSerial Serial1(	kSerialPort_1B,		&rx_buffer1B,	&U1BBRG,	&U1BMODE,	&U1BSTA,	&U1BTXREG);
-	#elif defined (_UART2) && !defined(_UART2A)
-		HardwareSerial Serial1(	kSerialPort_2,		&rx_buffer2,	&U2BRG,	&U2MODE,	&U2STA,	&U2TXREG);
-	#endif
-
-	
-	
-	#if defined (_UART3) && !defined(_UART3A)
-	//*******************************************************************************************
-		HardwareSerial Serial2(	kSerialPort_3,		&rx_buffer3,	&U3BRG,	&U3MODE,	&U3STA,	&U3TXREG	);
-	#elif defined(_UART3A)
-		HardwareSerial Serial2(	kSerialPort_3A,	&rx_buffer3A,	&U3ABRG,	&U3AMODE,	&U3ASTA,	&U3ATXREG);
-	#endif
-
-	#ifdef _UART4
-	//*******************************************************************************************
-		HardwareSerial Serial3(	kSerialPort_4,		&rx_buffer4,	&U4BRG,	&U4MODE,	&U4STA,	&U4TXREG	);
-	#endif
-
-	#ifdef _UART5
-	//*******************************************************************************************
-		HardwareSerial Serial4(	kSerialPort_5,		&rx_buffer5,	&U5BRG,	&U5MODE,	&U5STA,	&U2TXREG	);
-	#endif
-
-	#ifdef _UART6
-	//*******************************************************************************************
-		HardwareSerial Serial5(	kSerialPort_6,		&rx_buffer6,	&U6BRG,	&U6MODE,	&U6STA,	&U6TXREG	);
-	#endif
+	Serial.doSerialInt();
 #endif
+}
+#endif
+
+/* ------------------------------------------------------------ */
+/***	IntSer1Handler
+**
+**	Parameters:
+**		none
+**
+**	Return Value:
+**		none
+**
+**	Errors:
+**		none
+**
+**	Description:
+**		Interrupt service routine for the UART being used by
+**		serial port 1.
+*/
+#if defined(_SER1_VECTOR)
+
+void __ISR(_SER1_VECTOR, ipl2) IntSer1Handler(void)
+{
+	Serial1.doSerialInt();
+}
+#endif
+
+/* ------------------------------------------------------------ */
+/***	IntSer2Handler
+**
+**	Parameters:
+**		none
+**
+**	Return Value:
+**		none
+**
+**	Errors:
+**		none
+**
+**	Description:
+**		Interrupt service routine for the UART being used by
+**		serial port 2.
+*/
+#if defined(_SER2_VECTOR)
+
+void __ISR(_SER2_VECTOR, ipl2) IntSer2Handler(void)
+{
+	Serial2.doSerialInt();
+}
+#endif
+
+/* ------------------------------------------------------------ */
+/***	IntSer3Handler
+**
+**	Parameters:
+**		none
+**
+**	Return Value:
+**		none
+**
+**	Errors:
+**		none
+**
+**	Description:
+**		Interrupt service routine for the UART being used by
+**		serial port 3.
+*/
+#if defined(_SER3_VECTOR)
+
+void __ISR(_SER3_VECTOR, ipl2) IntSer3Handler(void)
+{
+	Serial3.doSerialInt();
+}
+#endif
+
+/* ------------------------------------------------------------ */
+/***	IntSer4Handler
+**
+**	Parameters:
+**		none
+**
+**	Return Value:
+**		none
+**
+**	Errors:
+**		none
+**
+**	Description:
+**		Interrupt service routine for the UART being used by
+**		serial port 4.
+*/
+#if defined(_SER4_VECTOR)
+
+void __ISR(_SER4_VECTOR, ipl2) IntSer4Handler(void)
+{
+	Serial4.doSerialInt();
+}
+#endif
+
+/* ------------------------------------------------------------ */
+/***	IntSer5Handler
+**
+**	Parameters:
+**		none
+**
+**	Return Value:
+**		none
+**
+**	Errors:
+**		none
+**
+**	Description:
+**		Interrupt service routine for the UART being used by
+**		serial port 5.
+*/
+#if defined(_SER5_VECTOR)
+
+void __ISR(_SER5_VECTOR, ipl2) IntSer5Handler(void)
+{
+	Serial5.doSerialInt();
+}
+#endif
+
+/* ------------------------------------------------------------ */
+/***	IntSer6Handler
+**
+**	Parameters:
+**		none
+**
+**	Return Value:
+**		none
+**
+**	Errors:
+**		none
+**
+**	Description:
+**		Interrupt service routine for the UART being used by
+**		serial port 6.
+*/
+#if defined(_SER6_VECTOR)
+
+void __ISR(_SER6_VECTOR, ipl2) IntSer6Handler(void)
+{
+	Serial6.doSerialInt();
+}
+#endif
+
+/* ------------------------------------------------------------ */
+/***	IntSer7Handler
+**
+**	Parameters:
+**		none
+**
+**	Return Value:
+**		none
+**
+**	Errors:
+**		none
+**
+**	Description:
+**		Interrupt service routine for the UART being used by
+**		serial port 7.
+*/
+#if defined(_SER7_VECTOR)
+
+void __ISR(_SER7_VECTOR, ipl2) IntSer7Handler(void)
+{
+	Serial7.doSerialInt();
+}
+#endif
+
+};	// extern C
+
+/* ------------------------------------------------------------ */
+/*			Serial Port Object Instances						*/
+/* ------------------------------------------------------------ */
+
+#if defined(_USB) && defined(_USE_USB_FOR_SERIAL_)
+/* If we're using USB for serial, the USB serial port gets
+** instantiated as Serial and hardware serial port 0 gets
+** instantiated as Serial0.
+*/
+USBSerial		Serial(&rx_bufferUSB);
+#if defined(_SER0_BASE)
+HardwareSerial Serial0((p32_uart *)_SER0_BASE, _SER0_IRQ, _SER0_VECTOR);
+#endif
+
+#else
+/* If we're not using USB for serial, then hardware serial port 0
+** gets instantiated as Serial.
+*/
+#if defined(_SER0_BASE)
+HardwareSerial Serial((p32_uart *)_SER0_BASE, _SER0_IRQ, _SER0_VECTOR);
+#endif
+
+#endif	//defined(_USB) && defined(_USE_USB_FOR_SERIAL_)
+
+#if defined(_SER1_BASE)
+HardwareSerial Serial1((p32_uart *)_SER1_BASE, _SER1_IRQ, _SER1_VECTOR);
+#endif
+
+#if defined(_SER2_BASE)
+HardwareSerial Serial2((p32_uart *)_SER2_BASE, _SER2_IRQ, _SER2_VECTOR);
+#endif
+
+#if defined(_SER3_BASE)
+HardwareSerial Serial3((p32_uart *)_SER3_BASE, _SER3_IRQ, _SER3_VECTOR);
+#endif
+
+#if defined(_SER4_BASE)
+HardwareSerial Serial4((p32_uart *)_SER4_BASE, _SER4_IRQ, _SER4_VECTOR);
+#endif
+
+#if defined(_SER5_BASE)
+HardwareSerial Serial5((p32_uart *)_SER5_BASE, _SER5_IRQ, _SER5_VECTOR);
+#endif
+
+#if defined(_SER6_BASE)
+HardwareSerial Serial6((p32_uart *)_SER6_BASE, _SER6_IRQ, _SER6_VECTOR);
+#endif
+
+#if defined(_SER7_BASE)
+HardwareSerial Serial7((p32_uart *)_SER7_BASE, _SER7_IRQ, _SER7_VECTOR);
+#endif
+
+/* ------------------------------------------------------------ */
+
+/************************************************************************/

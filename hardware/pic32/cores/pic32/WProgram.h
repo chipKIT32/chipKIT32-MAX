@@ -10,6 +10,8 @@
 	#include <avr/interrupt.h>
 #endif
 
+#include <pins_arduino.h>
+
 #ifndef Wiring_h
 	#include "wiring.h"
 #endif
@@ -38,6 +40,7 @@ long random(long, long);
 void randomSeed(unsigned int);
 long map(long, long, long, long, long);
 
+#if defined(DEAD)
 #if defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__) || defined(_BOARD_MEGA_)
 const static uint8_t A0 = 54;
 const static uint8_t A1 = 55;
@@ -68,6 +71,7 @@ const static uint8_t A8 = 22;
 const static uint8_t A9 = 23;
 const static uint8_t A10 = 24;
 const static uint8_t A11 = 25;
+#endif
 #endif
 
 #endif

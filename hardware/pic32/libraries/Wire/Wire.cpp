@@ -24,6 +24,10 @@ extern "C" {
   #include "twi.h"
 }
 
+#define OPT_BOARD_INTERNAL
+#include <p32xxxx.h>
+#include <pins_arduino.h>
+#include <p32_defs.h>
 #include "Wire.h"
 
 // Initialize Class Variables //////////////////////////////////////////////////
@@ -57,15 +61,15 @@ void TwoWire::begin(void)
   txBufferIndex = 0;
   txBufferLength = 0;
 
-  twi_init();
+  twi_init((p32_i2c *)_TWI_BASE, _TWI_BUS_IRQ, _TWI_SLV_IRQ, _TWI_MST_IRQ, _TWI_VECTOR);
 }
 
 void TwoWire::begin(uint8_t address)
 {
+  begin();
   twi_setAddress(address);
   twi_attachSlaveTxEvent(onRequestService);
   twi_attachSlaveRxEvent(onReceiveService);
-  begin();
 }
 
 void TwoWire::begin(int address)

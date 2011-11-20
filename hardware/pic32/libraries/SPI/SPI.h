@@ -17,12 +17,14 @@
 /*  Revision History:													*/
 /*                                                                      */
 /*  08/20/2011(GeneApperson): revised to fix build problems introduced  */
-/*      by the initial port of the original Arduino library. Changed    *
+/*      by the initial port of the original Arduino library. Changed    */
 /*       all use of the types BYTE and WORD to uint8_t and uint16_t.    */
+/*	10/28/2011(GeneApperson): revised for new board variant scheme, and	*/
+/*		fixed bug in clock divider values so that they produce the same	*/
+/*		SPI clock frequency on PIC32 as they do on AVR.					*/
 /*                                                                      */
 /************************************************************************/
-/*
-  
+/*  
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
   License as published by the Free Software Foundation; either
@@ -49,57 +51,54 @@
 #include <stdio.h>
 #include <WProgram.h>
 
+#include <p32_defs.h>
+
 /*	SPIxCON
 */
-#define bnOn	15
-#define bnSmp	9
-#define bnCkp	6
-#define bnMsten 5
+#define _SPICON_ON		15
+#define _SPICON_SMP		9
+#define	_SPICON_CKE		8
+#define _SPICON_CKP		6
+#define _SPICON_MSTEN	5
 
 /*	SPIxSTAT
 */
-#define bnTbe	3
-#define bnRbf	0
+#define	_SPISTAT_SPIROV	6
+#define	_SPISTAT_SPITBE	3
+#define _SPISTAT_SPIRBF	0
 
-/*	IEC0
-*/
-#define bnSPI2RXIE	7
-#define bnSPI2TXIE	6
-
-/* SPI Connection
-*/
-#define trisSS				TRISG
-#define latSS				LATG
-#define	bnSS				9
-
-#define	trisSDO				TRISG
-#define	latSDO				LATG
-#define	bnSDO				8
-
-#define trisSDI				TRISG
-#define	latSDI				LATG
-#define bnSDI				7
-
-#define trisSCK				TRISG
-#define latSCK				LATG
-#define bnSCK				6
 /********************************/
+/* The following values produce the same SPI clock rate that is
+** obtained on a 16Mhz AVR assuming that the PIC32 peripheral
+** bus clock is operating at 80Mhz
+*/
+#define SPI_CLOCK_DIV2		4		// 8 Mhz
+#define SPI_CLOCK_DIV4		9		// 4 Mhz
+#define SPI_CLOCK_DIV8		19		// 2 Mhz
+#define SPI_CLOCK_DIV16		39		// 1 Mhz
+#define SPI_CLOCK_DIV32		79		// 500 Khz
+#define SPI_CLOCK_DIV64		159		// 250 Khz
+#define SPI_CLOCK_DIV128	319		// 125 Khz
 
-#define SPI_CLOCK_DIV2 0x00
-#define SPI_CLOCK_DIV4 0x01
-#define SPI_CLOCK_DIV8 0x03
-#define SPI_CLOCK_DIV16 0x07
-#define SPI_CLOCK_DIV32 0x0F
-#define SPI_CLOCK_DIV64 0x1F
-#define SPI_CLOCK_DIV128 0x3F
-
-#define SPI_MODE0 0x100 // CKP = 0 CKE = 1
-#define SPI_MODE1 0x00  // CKP = 0 CKE = 0
-#define SPI_MODE2 0x140 // CKP = 1 CKE = 1 
-#define SPI_MODE3 0x40  // CKP = 1 CKE = 0
+/* The following produce an equivlalent operating mode as these
+** symbols specify on the AVR part in Arduino
+*/
+#define SPI_MODE0 0x100		// CKP = 0 CKE = 1
+#define SPI_MODE1 0x00		// CKP = 0 CKE = 0
+#define SPI_MODE2 0x140		// CKP = 1 CKE = 1 
+#define SPI_MODE3 0x40		// CKP = 1 CKE = 0
 
 class SPIClass {
+private:
+	static p32_spi *	spi;
+	static p32_regset *	iec;
+	static p32_regset *	ifs;
+	static int			irq;
+	static int			vec;
+
 public:
+		SPIClass(p32_spi * spiP, int irqP, int vecP);
+
   inline static uint8_t transfer(uint8_t _data);
 
   // SPI Configuration methods
@@ -107,7 +106,7 @@ public:
   inline static void attachInterrupt();
   inline static void detachInterrupt(); // Default
 
-  static void begin(); // Default
+  static void begin();					// Default
   static void end();
 
   static void setBitOrder(uint8_t);
@@ -117,19 +116,29 @@ public:
 
 extern SPIClass SPI;
 
-uint8_t SPIClass::transfer(uint8_t _data) {
-  while( ((1 << bnTbe) & SPI2STAT) == 0 );
-  SPI2BUF = _data;
-  while( ((1 << bnRbf) & SPI2STAT) == 0 );
-  return SPI2BUF;
+/* SPIClass inline functions definitions
+*/
+uint8_t SPIClass::transfer(uint8_t _data)
+{
+	while ((spi->sxStat.reg & (1 << _SPISTAT_SPITBE)) == 0 );
+	spi->sxBuf.reg = _data;
+
+	while ((spi->sxStat.reg & (1 << _SPISTAT_SPIRBF)) == 0 );
+	return spi->sxBuf.reg;
 }
 
-void SPIClass::attachInterrupt() {
-  IEC1SET = ( 1 << bnSPI2RXIE ) | ( 1 << bnSPI2TXIE ); // Setting Interupt Enable
+void SPIClass::attachInterrupt()
+{
+	/* Enable transmit and receive interrupts
+	*/
+	iec->set = ((1 << ((irq+1) % 32)) | (1 << ((irq+2) % 32)));
 }
 
-void SPIClass::detachInterrupt() {
-  IEC1CLR = ( 1 << bnSPI2RXIE ) | ( 1 << bnSPI2TXIE ); // Setting Interrupt Disable
+void SPIClass::detachInterrupt()
+{
+	/* Disable transmit and receive interrupts
+	*/
+	iec->clr = ((1 << ((irq+1) % 32)) | (1 << ((irq+2) % 32)));
 }
 
 #endif

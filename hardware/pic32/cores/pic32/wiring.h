@@ -41,9 +41,6 @@
 #include <inttypes.h>
 #include "binary.h"
 
-#include "cpudefs.h"	//*		This file is designed to provide some of the cpu specific definitions
-						//*		that are available for avr chips and not for other chips (i.e. pic32)
-
 #ifdef __cplusplus
 extern "C"{
 #endif
@@ -53,6 +50,7 @@ extern "C"{
 
 #define INPUT 0x0
 #define OUTPUT 0x1
+#define OPEN 0x02
 
 #define true 0x1
 #define false 0x0
@@ -168,7 +166,6 @@ void loop(void);
 
 	#define	strcpy_P		strcpy
 	#define	strcat_P		strcat
-
 
 	#define	prog_void		const void
 	#define	prog_char		const char

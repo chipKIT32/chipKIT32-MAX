@@ -38,22 +38,40 @@
 //*	Aug  7,	2011	<MarcMaccomb> fixed bug in Anaglog Read (Issue (#67)
 //*	Aug  7,	2011	<Gene Apperson> fixed bug in Anaglog Write (Issue #70)
 //*	Aug  7,	2011	<Gene Apperson> Added necessary code for analogReference (Issue #69)
+//* Nov 12, 2011	<Gene Apperson> modified for board variant support
 //************************************************************************
 
 // Master header file for all peripheral library includes
 #include <plib.h>
 
-
 #include "wiring_private.h"
+
+#define OPT_BOARD_INTERNAL	//pull in internal symbol definitons
+#include "p32_defs.h"
 #include "pins_arduino.h"
 
-//uint8_t analog_reference	=	DEFAULT;
-uint32_t analog_reference	=	0;      //default to AVDD, AVSS
+#define	PWM_TIMER_PERIOD	((F_CPU / 256) / 490)
+
+uint32_t	analog_reference = 0;	//default to AVDD, AVSS
+
+uint8_t		pwm_active = 0;			//keeps track of active PWM outputs
 
 
 //*********************************************************************
 void analogReference(uint8_t mode)
 {
+
+#if (OPT_BOARD_ANALOG_READ != 0)
+	/* Peform any board specific processing.
+	*/
+int _board_analogReference(uint8_t mode);
+
+	if (_board_analogReference(mode) != 0)
+	{
+		return;
+	}
+#endif
+
 	// can't actually set the register here because the default setting
 	// will connect AVCC and the AREF pin, which would cause a short if
 	// there's something connected to AREF.
@@ -92,19 +110,40 @@ int analogRead(uint8_t pin)
 	int analogValue;
 	uint8_t	channelNumber;
 
-	#if defined(_BOARD_MEGA_) || defined(_BOARD_MAX32_)
-		if (pin >= 54) pin -= 54; // allow for channel or pin numbers
+#if (OPT_BOARD_ANALOG_READ != 0)
+	/* Peform any board specific processing.
+	*/
+int _board_analogRead(uint8_t pin, int * val);
+int	tmp;
 
-	#else
-		if (pin >= 14) pin -= 14; // allow for channel or pin numbers
-	#endif
+	if (_board_analogRead(pin, &tmp) != 0)
+	{
+		return tmp;
+	}
+#endif
 
+	/* Pin number is allowed to be either the digital pin number or the
+	** analog pin number. Map the input so that it is guaranteed to be
+	** an analog pin number.
+	*/
+	pin = (pin < NUM_DIGITAL_PINS) ? digitalPinToAnalog(pin) : NOT_ANALOG_PIN;
+	if (pin == NOT_ANALOG_PIN) {
+		return 0;
+	}
 
-	//in most cases (except the uno board) this will be a 1 to 1 mapping
-	channelNumber	=	analogInPinToBit(pin);
+	/* Map the analog pin number to the correct analog mux channel in the
+	** A/D converter. In some cases this is a direct mapping. In that case,
+	** the conversion macro just returns it parameter.
+	*/
+	channelNumber = analogInPinToChannel(pin);
 
+	/* Ensure that the pin associated with the analog channel is in analog
+	** input mode, and select the channel in the input mux.
+	*/
+	AD1PCFG = ~(1 << channelNumber);
+	AD1CHS = (channelNumber & 0xFFFF) << 16;
 
-
+#if defined(DEAD)
 	switch(channelNumber)
 	{
 		case 0:
@@ -189,7 +228,7 @@ int analogRead(uint8_t pin)
 			break;
 
 	}
-
+#endif
 
 	AD1CON1	=	0; //Ends sampling, and starts converting
 
@@ -221,17 +260,6 @@ int analogRead(uint8_t pin)
 }
 
 //*********************************************************************
-//* PWM output only works on the pins with hardware support.
-//* These are defined in the appropriate pins_.c file.
-// For the rest of the pins, we default to digital output.
-//*********************************************************************
-
-#define	PWM_TIMER_PERIOD	((F_CPU / 256) / 490)
-
-uint8_t pwm_active = 0; //keep track of active PWM outputs
-
-
-//*********************************************************************
 //*	PWM output only works on the pins with hardware support. 
 //*	These are defined in the appropriate pins_*.c file.
 //*	For the rest of the pins, we default to digital output.
@@ -243,8 +271,20 @@ uint8_t pwm_active = 0; //keep track of active PWM outputs
 //*********************************************************************
 void analogWrite(uint8_t pin, int val)
 {
-	uint8_t timer;
-	uint8_t pwm_mask;
+	uint16_t	timer;
+	uint8_t		pwm_mask;
+	p32_oc *	ocp;
+
+#if (OPT_BOARD_ANALOG_WRITE != 0)
+	/* Peform any board specific processing.
+	*/
+int	_board_analogWrite(uint8_t, int val);
+
+	if (_board_analogWrite(pin, val) != 0)
+	{
+		return;
+	}
+#endif
 
 	// Ensure that the pin is an output
 	pinMode(pin, OUTPUT);
@@ -260,17 +300,13 @@ void analogWrite(uint8_t pin, int val)
 	    digitalWrite(pin, HIGH);
 	}
 
-	// Otherwise for pins that aren't timer pins, just set the pin
-	// state based on the requested value. If it really is a timer
+	// For pins that aren't timer pins, set the pin state based
+	// on the requested value. If it really is a timer
 	// pin then we can set up the proper PWM behavior.
 	else
 	{
-	    timer = digitalPinToTimer(pin);
-	    if (timer != NOT_ON_TIMER)
-	    {
-	        //should assert(timer < 8) here, but assertions aren't being used
-	        pwm_mask = (1 << timer);
-	    }
+		// Determine which output compare is on this pin.
+	    timer = digitalPinToTimerOC(pin);
 
 	    // For pins that aren't actually PWM output pins, set the pin
 	    // state based on the requested duty cycle.
@@ -289,6 +325,7 @@ void analogWrite(uint8_t pin, int val)
 	    // It's an actual PWM pin.
 	    else
 	    {
+
 	        // If no PWM are currently active, then init Timer2
 	        if (pwm_active == 0)
 	        {
@@ -298,68 +335,30 @@ void analogWrite(uint8_t pin, int val)
 	            T2CONSET = T2_ON;
 	       }
 
+			//generate bit mask for this output compare
+	        //should assert(timer < 8) here, but assertions aren't being used
+	        pwm_mask = (1 << (timer - _TIMER_OC1));
+
+			//Obtain a pointer to the output compare being being used
+			//NOTE: as of 11/15/2011 All existing PIC32 devices
+			// (PIC32MX1XX/2XX/3XX/4XX/5XX/6XX/7XX) have the output compares
+			// at the same addresses. The base address is _OCMP1_BASE_ADDRESS
+			// and the distance between their addresses is 0x200.
+			ocp = (p32_oc *)(_OCMP1_BASE_ADDRESS + (0x200 * (timer - _TIMER_OC1)));
+
 	        // If the requested PWM isn't active, init its output compare
 	        if ((pwm_active & pwm_mask) == 0) 
 	        {
-	            switch (timer)
-	            {
-	                case TIMER_OC1:
-	                    OC1R = ((PWM_TIMER_PERIOD*val)/256);
-	                    OC1CON = OC_TIMER2_SRC | OC_PWM_FAULT_PIN_DISABLE;
-	                    OC1CONSET = OC_ON;
-	                    break;
-
-	                case TIMER_OC2:
-	                    OC2R = ((PWM_TIMER_PERIOD*val)/256);
-	                    OC2CON = OC_TIMER2_SRC | OC_PWM_FAULT_PIN_DISABLE;
-	                    OC2CONSET = OC_ON;
-	                    break;
-
-	                case TIMER_OC3:
-	                    OC3R = ((PWM_TIMER_PERIOD*val)/256);
-	                    OC3CON = OC_TIMER2_SRC | OC_PWM_FAULT_PIN_DISABLE;
-	                    OC3CONSET = OC_ON;
-	                    break;
-
-	                case TIMER_OC4:
-	                    OC4R = ((PWM_TIMER_PERIOD*val)/256);
-	                    OC4CON = OC_TIMER2_SRC | OC_PWM_FAULT_PIN_DISABLE;
-	                    OC4CONSET = OC_ON;
-	                    break;
-
-	                case TIMER_OC5:
-	                    OC5R = ((PWM_TIMER_PERIOD*val)/256);
-	                    OC5CON = OC_TIMER2_SRC | OC_PWM_FAULT_PIN_DISABLE;
-	                    OC5CONSET = OC_ON;
-	                    break;
-	            }
+	            ocp->ocxR.reg   = ((PWM_TIMER_PERIOD*val)/256);
+				ocp->ocxCon.reg = OC_TIMER2_SRC | OC_PWM_FAULT_PIN_DISABLE;
+	            ocp->ocxCon.set = OC_ON;
 
 	            pwm_active |= pwm_mask;
 	        }
 
 	        // Set the duty cycle register for the requested output compare
-	        switch (timer)
-	        {
-	            case TIMER_OC1:
-	                OC1RS = ((PWM_TIMER_PERIOD*val)/256);
-	                break;
+			ocp->ocxRs.reg = ((PWM_TIMER_PERIOD*val)/256);
 
-	            case TIMER_OC2:
-	                OC2RS = ((PWM_TIMER_PERIOD*val)/256);
-	                break;
-
-	            case TIMER_OC3:
-	                OC3RS = ((PWM_TIMER_PERIOD*val)/256);
-	                break;
-
-	            case TIMER_OC4:
-	                OC4RS = ((PWM_TIMER_PERIOD*val)/256);
-	                break;
-
-	            case TIMER_OC5:
-	                OC5RS = ((PWM_TIMER_PERIOD*val)/256);
-	                break;
-	        }
 	    }
 
 	}    
@@ -370,50 +369,19 @@ void analogWrite(uint8_t pin, int val)
 //************************************************************************
 void turnOffPWM(uint8_t timer)
 {
-	switch(timer)
-	{
-	#ifdef _OCMP1
-		case TIMER_OC1:	
-		//-	CloseOC1();	
-        OC1CONCLR	=	OC_ON;
-		break;
-	#endif
+	p32_oc *	ocp;
 
-	#ifdef _OCMP2
-		case TIMER_OC2:	
-		//-	CloseOC2();
-	        OC2CONCLR	=	OC_ON;
-			break;
-	#endif
+	/* Disable the output compare.
+	*/
+	ocp = (p32_oc *)(_OCMP1_BASE_ADDRESS + (0x200 * (timer - _TIMER_OC1)));
+	ocp->ocxCon.clr = OC_ON;
 
-	#ifdef _OCMP3
-		case TIMER_OC3:
-		//-	CloseOC3();
-	        OC3CONCLR	=	OC_ON;
-			break;
-	#endif
-
-	#ifdef _OCMP4
-		case TIMER_OC4:
-		//-	CloseOC4();
-	        OC4CONCLR	=	OC_ON;
-			break;
-	#endif
-
-	#ifdef _OCMP5
-		case TIMER_OC5:
-		//-	CloseOC5();
-	        OC5CONCLR	=	OC_ON;
-			break;
-	#endif
-
-	}
 	// Turn off the bit saying that this PWM is active.
-	pwm_active &=	~(1 << timer);
+	pwm_active &= ~(1 << (timer - _TIMER_OC1));
 
 	// If no PWM are active, turn off the timer.
 	if (pwm_active == 0)
 	{
-    	T2CONCLR	=	T2_ON;
+    	T2CONCLR = T2_ON;
 	}
 }

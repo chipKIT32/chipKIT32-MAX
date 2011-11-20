@@ -20,7 +20,11 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
+#define OPT_BOARD_INTERNAL
 #include <plib.h>
+#include <p32xxxx.h>
+#include <p32_defs.h>
+#include <pins_arduino.h>
 #include "twi.h"
 
 static volatile uint8_t twi_state;
@@ -45,14 +49,83 @@ static volatile uint8_t twi_rxBufferLength;
 
 static volatile uint8_t twi_error;
 
+/* Forware declarations for internal utility functions.
+*/
+uint32_t twi_computeBrg(uint32_t frqReq);
+
+
+/* Variables used to manage access to the I2C controller and interrupt
+** registers.
+*/
+static p32_i2c *	ptwi;			// pointer to I2C controller registers
+static p32_regset *	pregIfs;		// pointer to the interrupt flag register
+static p32_regset *	pregIec;		// pointer to the interrupt enable register		
+static uint32_t		bitBus;			// IEC/IFS bit for BUS interrupt
+static uint32_t		bitSlv;			// IEC/IFS bit for SLAVE interrupt
+static uint32_t		bitMst;			// IEC/IFS bit for MASTER interrupt
+
 /* 
  * Function twi_init
- * Desc     readys twi pins and sets twi bitrate
+ * Desc     readys twi pins and sets twi bit rate
  * Input    none
  * Output   none
  */
-void twi_init( void )
+void twi_init(p32_i2c * ptwiT, uint8_t irqBus, uint8_t irqSlv, uint8_t irqMst, uint8_t vec)
 {
+	p32_regset *	pregIpc;
+	int				bnVec;
+
+	ptwi = ptwiT;
+
+	/* Compute the address of the interrupt enable and interrupt flag registers.
+	** This can be computed from the IRQ numbers. The assumption is made that
+	** all of the enable and flag bits for the I2C interrupts for this port are
+	** in the same IEC and IFS registers.
+	*/
+	pregIec = ((p32_regset *)&IEC0) + (irqBus / 32);	// interrupt enable control register
+	pregIfs = ((p32_regset *)&IFS0) + (irqBus / 32);	// interrupt flag register
+
+	bitBus	= 1 << (irqBus % 32);	// bus interrupt flag/enable bit
+	bitSlv	= 1 << (irqSlv % 32);	// slave interrupt flag/enable bit
+	bitMst	= 1 << (irqMst % 32);	// master interrupt flag/enable bit
+
+	/* Compute the address of the interrupt priority control register
+	** for the specified interrupt vector. Each IPC register contains the
+	** the priority bits for four vectors. Each byte of an IPC registger contains
+	** the priority and sub-priority bits arranged such that bits 0-1 are
+	** the sub-priority, bits 2-4 the priority, and bits 5-7 unused.
+	*/
+	pregIpc = ((p32_regset *)&IPC0) + (vec / 4);
+
+	/* Compute the bit position of the interrupt priority bits for
+	** this interrupt vector.
+	*/
+	bnVec = 8 * (vec % 4);
+
+	/* Enable the interrupt controller and turn on clock stretching.
+	*/
+	ptwi->ixCon.reg = (1 << _I2CCON_ON) | (1 << _I2CCON_STREN);
+
+	/* Clear the interrupt flags and enable I2C interrupts
+	*/
+	pregIfs->clr = bitBus + bitSlv + bitMst;
+	pregIec->set = bitBus + bitSlv + bitMst;
+
+	/* Set the interrupt priority and sub-priority bits.
+	*/
+	pregIpc->clr = (0x1F << bnVec);
+	pregIpc->set = ((_IPL_TWI_IPC << 2) + _SPL_TWI_IPC) << bnVec;
+
+	/* Clear the interrupt bits and enable I2C interrupts
+	*/
+	pregIfs->clr = bitBus + bitSlv + bitMst;
+	pregIec->set = bitBus + bitSlv + bitMst;
+
+	/* Set the baud rate generator for the default frequency.
+	*/
+	ptwi->ixBrg.reg = twi_computeBrg(TWI_FREQ);
+
+#if defined(DEAD)
 	// Enable the I2C1 module and turn on clock stretching.
 	I2C1CONSET = ( 1 << bnOn ) | ( 1 << bnStren );
 	// Enable Interrupts
@@ -67,6 +140,7 @@ void twi_init( void )
 	IFS0CLR = ( 1 << bnI2c1mif ) | ( 1 << bnI2c1sif ) | ( 1 << bnI2c1bif );
 	INTEnableSystemMultiVectoredInt ();
 	INTEnableInterrupts ();
+#endif
 }
 
 /* 
@@ -78,7 +152,11 @@ void twi_init( void )
 void twi_setAddress(uint8_t address)
 {
   // set twi slave address
+	ptwi->ixAdd.reg = address;
+
+#if defined(DEAD)
   I2C1ADDSET = address;
+#endif
 }
 
 /* 
@@ -94,13 +172,13 @@ uint8_t twi_readFrom(uint8_t address, uint8_t* data, uint8_t length)
 {
   unsigned int i;
 
-  if(address < 8)
+  if (address < 8)
   {
 	  return 0;
   }
 
   // Ensure data will fit into buffer
-  if(TWI_BUFFER_LENGTH < length){
+  if (TWI_BUFFER_LENGTH < length){
     return 0;
   }
 
@@ -113,10 +191,10 @@ uint8_t twi_readFrom(uint8_t address, uint8_t* data, uint8_t length)
 
    // send start condition
   TW_STATUS = TW_START;
-  twi_slarw = ( address << 1 ) + 1;
-  I2C1CONSET = ( 1 << bnSen );
+  twi_slarw = (address << 1) + 1;
+  ptwi->ixCon.set = (1 << _I2CCON_SEN);
 
-  // wait for write operation to complete
+  // wait for read operation to complete
   while(TW_IDLE != TW_STATUS)
   {
 	asm volatile("nop");
@@ -157,7 +235,8 @@ uint8_t twi_writeTo(uint8_t address, uint8_t* data, uint8_t length, uint8_t wait
   }
 
   // ensure data will fit into buffer
-  if(TWI_BUFFER_LENGTH < length){
+  if (TWI_BUFFER_LENGTH < length)
+  {
     return 1;
   }
 
@@ -169,29 +248,38 @@ uint8_t twi_writeTo(uint8_t address, uint8_t* data, uint8_t length, uint8_t wait
   twi_masterBufferLength = length;
   
   // copy data to twi buffer
-  for(i = 0; i < length; ++i){
+  for (i = 0; i < length; ++i)
+  {
     twi_masterBuffer[i] = data[i];
   }
   
   // send start condition
   TW_STATUS = TW_START;
-  twi_slarw = ( address << 1 );
-  I2C1CONSET = ( 1 << bnSen );
+  twi_slarw = (address << 1);
+  ptwi->ixCon.set = (1 << _I2CCON_SEN);
 
   // wait for write operation to complete
-  while(wait && TW_IDLE != TW_STATUS)
+  while (wait && TW_IDLE != TW_STATUS)
   {
 	asm volatile("nop");
   }
 
   if (twi_error == 0xFF)
+  {
     return 0;	// success
+  }
   else if (twi_error == TW_MT_SLA_NACK)
+  {
     return 2;	// error: address send, nack received
+  }
   else if (twi_error == TW_MT_DATA_NACK)
+  {
     return 3;	// error: data send, nack received
+  }
   else
+  {
     return 4;	// other twi error
+  }
 }
 
 /* 
@@ -209,13 +297,15 @@ uint8_t twi_transmit(uint8_t* data, uint8_t length)
   uint8_t i;
 
   // ensure data will fit into buffer
-  if(TWI_BUFFER_LENGTH < length){
+  if(TWI_BUFFER_LENGTH < length)
+  {
     return 1;
   }
   
   // set length and copy data into tx buffer
   twi_txBufferLength = length;
-  for(i = 0; i < length; ++i){
+  for(i = 0; i < length; ++i
+ ){
     twi_txBuffer[i] = data[i];
   }
   
@@ -244,34 +334,58 @@ void twi_attachSlaveTxEvent( void (*function)(void) )
   twi_onSlaveTransmit = function;
 }
 
+/* ---------- Internal Utility Functions ---------- */
+/* 
+ * Function twi_computeBrg
+ * Desc     compute the baud rate value for a given I2C clock frequency
+ * Input    requested clock frequency
+ * Output   value to load into baud rate generator register
+ */
 
+uint32_t twi_computeBrg(uint32_t frqReq)
+{
+	uint32_t	tpgd;
+
+	/* The formula is slightly modified from what is shown in the
+	** PIC32 Family Reference Manual. It is rewritten as follows:
+	**	I2CxBRG = (PBCLK / (2*FSCK) - (PBCLK * Tpgd)) - 2;
+	** The calculation of (PBCLK * Tpgd) will overflow if done in
+	** the obvious way: ((PBCLK * 104) / 1000000000)
+	** It is done instead as follows:
+	*/
+	tpgd = ((CLK_PBUS / 8) * 104) / 125000000;
+
+	return (CLK_PBUS / (2 * TWI_FREQ) - tpgd) - 2;
+}		
+
+/* ---------- Interrupt Service Routine ---------- */
 /* 
  * Function I2CHandler
  * Desc     Handler for slave and master interrupt requests
  * Input    none
  * Output   none
  */
-void __ISR(_I2C_1_VECTOR , ipl6) I2CHandler(void)
+void __ISR(_TWI_VECTOR, _IPL_TWI_ISR) I2CHandler(void)
 {
-	if ( I2C1STAT & ( 1 << bnBcl ) ) 
+	if (ptwi->ixStat.reg & (1 << _I2CSTAT_BCL) ) 
 	{
-		// Bus collusion occured exit
-		I2C1STATCLR = ( 1 << bnBcl );
+		// Bus collision occurred exit
+		ptwi->ixStat.clr = (1 << _I2CSTAT_BCL);
 		TW_STATUS = TW_ARB_LOST;
 	}
-	else if( IFS0 & ( 1 << bnI2c1mif ) )
+	else if (pregIfs->reg & bitMst)
 	{
 		asm volatile("nop");
 	}
-	else if( IFS0 & ( 1 << bnI2c1sif ) )
+	else if (pregIfs->reg & bitSlv)
 	{
-		// Slave interrupt ocurred
-		if( !( I2C1STAT & ( 1 << bnDa )) )
+		// Slave interrupt occurred
+		if(!(ptwi->ixStat.reg & (1 << _I2CSTAT_DA)))
 		{
-			// Clear recieve register
-			twi_slarw = I2C1RCV;
+			// Clear receive register
+			twi_slarw = ptwi->ixRcv.reg;
 
-			if( twi_slarw & 1 )
+			if(twi_slarw & 1)
 			{
 				// Data was Requested
 				TW_STATUS = TW_ST_SLA;
@@ -284,11 +398,11 @@ void __ISR(_I2C_1_VECTOR , ipl6) I2CHandler(void)
 		}
 	}
 
-	switch(TW_STATUS)
+	switch (TW_STATUS)
 	{
 		case TW_START: // sent start condition
-			// Check if data will be sent or recieved
-			if( twi_slarw & 1 )
+			// Check if data will be sent or received
+			if (twi_slarw & 1)
 			{
 				TW_STATUS = TW_MR_SLA;
 			}
@@ -296,7 +410,7 @@ void __ISR(_I2C_1_VECTOR , ipl6) I2CHandler(void)
 			{
 				TW_STATUS = TW_MT_SLA;
 			}
-			I2C1TRN = twi_slarw;
+			ptwi->ixTrn.reg = twi_slarw;
 			break;
 
 		case TW_STOP:
@@ -307,29 +421,29 @@ void __ISR(_I2C_1_VECTOR , ipl6) I2CHandler(void)
 		//Master Transmitter
 		case TW_MT_SLA:
   		    // Check if adress was acked or nacked
-			if ( I2C1STAT & ( 1 << bnAckstat ) )
+			if (ptwi->ixStat.reg & (1 << _I2CSTAT_ACKSTAT))
 			{	
 				twi_error = TW_MT_SLA_NACK;		
 				TW_STATUS = TW_STOP;
-				I2C1CONSET = ( 1 << bnPen );
+				ptwi->ixCon.set = (1 << _I2CCON_PEN);
 				break;
 			}
 			TW_STATUS = TW_MT_DATA; //No break, immediately send data
 		case TW_MT_DATA:
-			if ( I2C1STAT & ( 1 << bnAckstat ) )
+			if (ptwi->ixStat.reg & (1 << _I2CSTAT_ACKSTAT))
 			{
 				// Data was nacked send stop bit
 				twi_error = TW_MT_DATA_NACK;
 				TW_STATUS = TW_STOP;
-				I2C1CONSET = ( 1 << bnPen );
+				ptwi->ixCon.set = (1 << _I2CCON_PEN);
 			}
 			else
 			{
 				// Check if there is more data to send
-				if(twi_masterBufferIndex < twi_masterBufferLength)
+				if (twi_masterBufferIndex < twi_masterBufferLength)
 				{
 					// More data to send load transmit buffer
-					I2C1TRN = twi_masterBuffer[twi_masterBufferIndex];
+					ptwi->ixTrn.reg = twi_masterBuffer[twi_masterBufferIndex];
 					twi_masterBufferIndex++;
 				}
 				else
@@ -337,7 +451,7 @@ void __ISR(_I2C_1_VECTOR , ipl6) I2CHandler(void)
 					// No more data to send
 					TW_STATUS = TW_STOP;
 					// Send stop condition
-					I2C1CONSET = ( 1 << bnPen );
+					ptwi->ixCon.set = (1 << _I2CCON_PEN);
 				}
 			}	
 			break;
@@ -345,45 +459,45 @@ void __ISR(_I2C_1_VECTOR , ipl6) I2CHandler(void)
 		//Master Receiver
 		case TW_MR_SLA: // address sent, ack received
 			// Check if adress was acked or nacked
-			if ( I2C1STAT & ( 1 << bnAckstat ) )
+			if (ptwi->ixStat.reg & (1 << _I2CSTAT_ACKSTAT))
 			{	
 				twi_error = TW_MR_SLA_NACK;		
 				TW_STATUS = TW_STOP;
-				I2C1CONSET = ( 1 << bnPen );
+				ptwi->ixCon.set = (1 << _I2CCON_PEN);
 				break;
 			}
-			I2C1CONSET = ( 1 << bnRcen );
+			ptwi->ixCon.set = ( 1 << _I2CCON_RCEN);
 			TW_STATUS = TW_MR_DATA;
 			break;
 
 		case TW_MR_DATA: // data received
 			// put byte into buffer
-			twi_masterBuffer[twi_masterBufferIndex] = I2C1RCV;
+			twi_masterBuffer[twi_masterBufferIndex] = ptwi->ixRcv.reg;
 			twi_masterBufferIndex++;
 			// ack if more bytes are expected, otherwise nack
-			if(twi_masterBufferIndex < twi_masterBufferLength)
+			if (twi_masterBufferIndex < twi_masterBufferLength)
 			{
-				I2C1CONCLR = ( 1 << bnAckdt ); // Send Ack
-				I2C1CONSET = ( 1 << bnAcken );
+				ptwi->ixCon.clr = (1 << _I2CCON_ACKDT); // Send Ack
+				ptwi->ixCon.set = (1 << _I2CCON_ACKEN);
 				TW_STATUS = TW_MR_ACK_SENT;
 			}
 			else
 			{		
-				I2C1CONSET = ( 1 << bnAckdt ); // Send Nack
-				I2C1CONSET = ( 1 << bnAcken );
+				ptwi->ixCon.set = (1 << _I2CCON_ACKDT); // Send Nack
+				ptwi->ixCon.set = (1 << _I2CCON_ACKEN);
 				TW_STATUS = TW_MR_NACK_SENT;
 			}
 			break;
 
 		case TW_MR_ACK_SENT:
 			// Set I2C for recieving
-			I2C1CONSET = ( 1 << bnRcen );
+			ptwi->ixCon.set = (1 << _I2CCON_RCEN);
 			TW_STATUS = TW_MR_DATA;
 			break;
 
 		case TW_MR_NACK_SENT:
 			// Send stop bit
-			I2C1CONSET = ( 1 << bnPen );
+			ptwi->ixCon.set = (1 << _I2CCON_PEN);
 			TW_STATUS = TW_STOP;
 			break;
 
@@ -392,15 +506,15 @@ void __ISR(_I2C_1_VECTOR , ipl6) I2CHandler(void)
 			twi_rxBufferIndex = 0;
 			TW_STATUS = TW_SR_DATA;
 			// Release clock line
-			I2C1CONSET = ( 1 << bnSclrel );
+			ptwi->ixCon.set = (1 << _I2CCON_SCLREL);
 			break;
 
 		case TW_SR_DATA:
 			twi_rxBuffer[0] = I2C1RCV;
 			twi_onSlaveReceive(twi_rxBuffer, 1);
 			// Release clock line
-			I2C1CONSET = ( 1 << bnSclrel );
-			I2C1STATCLR = ( 1 << bnI2cov ) | ( 1 << bnRbf );
+			ptwi->ixCon.set = (1 << _I2CCON_SCLREL);
+			ptwi->ixStat.clr = (1 << _I2CSTAT_I2COV) | (1 << _I2CSTAT_RBF);
 			break;
 
 		//Slave Transmitter
@@ -411,29 +525,29 @@ void __ISR(_I2C_1_VECTOR , ipl6) I2CHandler(void)
 			
 			twi_onSlaveTransmit();
 
-			if(0 == twi_txBufferLength)
+			if (0 == twi_txBufferLength)
 			{
 				twi_txBufferLength = 1;
 				twi_txBuffer[0] = 0x00;
 			} // No break, immediately send data
 		case TW_ST_DATA:
-			if ( I2C1STAT & ( 1 << bnAckstat ) )
+			if (ptwi->ixStat.reg & (1 << _I2CSTAT_ACKSTAT))
 			{
-				I2C1CONSET = ( 1 << bnSclrel );
+				ptwi->ixCon.set = (1 << _I2CCON_SCLREL);
 				break; // Master requires no more data
 			}
 			else
 			{
-				// Check if ther is more data to send otherwise send null
+				// Check if there is more data to send otherwise send null
 				if(twi_txBufferIndex < twi_txBufferLength)
 				{
-					I2C1TRN = twi_txBuffer[twi_txBufferIndex++];			
+					ptwi->ixTrn.reg = twi_txBuffer[twi_txBufferIndex++];			
 				}
 				else
 				{
-					I2C1TRN = 0;
+					ptwi->ixTrn.reg = 0;
 				}
-				I2C1CONSET = ( 1 << bnSclrel );	
+				ptwi->ixCon.set = (1 << _I2CCON_SCLREL);
 			}
 			break;
 
@@ -442,7 +556,7 @@ void __ISR(_I2C_1_VECTOR , ipl6) I2CHandler(void)
 			twi_error = TW_ARB_LOST;
 			break;
 	}
-	IFS0CLR = ( 1 << bnI2c1mif ) | ( 1 << bnI2c1sif) | ( 1 << bnI2c1bif );
+	pregIfs->clr = bitBus + bitSlv + bitMst;
 }
 
 

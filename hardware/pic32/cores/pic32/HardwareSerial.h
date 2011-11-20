@@ -17,6 +17,7 @@
 //*	Sep  2,	2011	<MLS> Issue #111, changed include <plib.h> to include <p32xxxx.h>
 //*	Nov  1,	2011	<MLS> Issue #140, HardwareSerial not derived from Stream 
 //*	Nov  1,	2011	<MLS> Also fixed some other compatibilty issues
+//* Nov 12, 2001	<GeneApperson> Rewrite for board variant support
 //************************************************************************
 /*
   HardwareSerial.h - Hardware serial library for Wiring
@@ -42,9 +43,9 @@
 #define __LANGUAGE_C__
 
 #include <inttypes.h>
-#ifndef _P32XXXX_H
-	#include <p32xxxx.h>
-#endif
+#include <p32xxxx.h>
+
+#include "p32_defs.h"
 
 #ifdef __cplusplus
 	#include "Print.h"
@@ -52,97 +53,19 @@
 #endif
 
 
-#if defined(_BOARD_UBW32_MX460_) || defined(_BOARD_UBW32_MX795_)
-//	#define _USE_USB_FOR_SERIAL_
-#endif
-#if defined(_BOARD_CEREBOT_32MX4_) || defined(_BOARD_CEREBOT_32MX7_)
-//	#define _USE_USB_FOR_SERIAL_
-#endif
-#if defined(_BOARD_CUI32_)
-//	#define _USE_USB_FOR_SERIAL_
-#endif
-#if defined(_BOARD_PIC32_ETHERNET_STARTER_KIT_) || defined(_BOARD_PIC32_USB_STARTER_KIT_)
-//	#define _USE_USB_FOR_SERIAL_
-#endif
-#if defined(_BOARD_MIKROE_MIKROMEDIA_)
-//	#define _USE_USB_FOR_SERIAL_
-#endif
-
-
-
-//#undef _UART3A
-//#undef _UART3B
-
-//************************************************************************
-//*	this defines which serial ports are present
-enum 
-{
-	kSerialPort_dummy	=	0,
-#if defined (_UART1) && !defined(_UART1A)
-	kSerialPort_1,
-#endif
-
-#if defined (_UART1A)
-	kSerialPort_1A,
-#endif
-
-#if defined (_UART1B)
-	kSerialPort_1B,
-#endif
-
-#if defined (_UART2) && !defined(_UART2A)
-	kSerialPort_2,
-#endif
-
-#if defined (_UART2A)
-	kSerialPort_2A,
-#endif
-
-#if defined (_UART2B)
-	kSerialPort_2B,
-#endif
-	
-#if defined (_UART3) && !defined(_UART3A)
-	kSerialPort_3,
-#endif
-
-#if defined (_UART3A)
-	kSerialPort_3A,
-#endif
-
-#if defined (_UART3B)
-	kSerialPort_3B,
-#endif
-
-#if defined (_UART4) 
-	kSerialPort_4,
-#endif
-
-#if defined (_UART5) 
-	kSerialPort_5,
-#endif
-
-#if defined (_UART6) 
-	kSerialPort_6,
-#endif
-
-	kSerialPort_extra
-
-};
-
-#define	kSerialPort_Count	(kSerialPort_extra - 1)
-
-//************************************************************************
-
+/* ------------------------------------------------------------ */
+/*			General Declarations								*/
+/* ------------------------------------------------------------ */
 
 // Define constants and variables for buffering incoming serial data.  We're
 // using a ring buffer, in which rx_buffer_head is the index of the
 // location to which to write the next incoming character and rx_buffer_tail
 // is the index of the location from which to read.
+// The algorithms used to operate on the head and tail assume that the
+// size is a power of 2. (e.g. 32, 64, 128, etc)
 #define RX_BUFFER_SIZE 128
 
-typedef struct 
-{
+typedef struct {
 	unsigned char buffer[RX_BUFFER_SIZE];
 	int head;
 	int tail;
@@ -150,39 +73,39 @@ typedef struct
 
 #ifdef __cplusplus
 
-//*******************************************************************************************
-//class HardwareSerial : public Print
+/* ------------------------------------------------------------ */
+/*			Object Class Declarations							*/
+/* ------------------------------------------------------------ */
+
 class HardwareSerial : public Stream
 {
 	private:
-		ring_buffer				*_rx_buffer;
-		uint8_t					_uartNumber;
-		//*	pic32 registers
-		volatile uint32_t		*_UxBRG;
-		volatile uint32_t		*_UxMODE;
-		volatile uint32_t		*_UxSTA;
-		volatile uint32_t		*_UxTXREG;
+		p32_uart *		uart;		//uart register map
+		int				irq;		//base IRQ number for the UART
+		int				vec;		//interrupt vector for the UART
+		p32_regset *	ifs;		//interrupt flag register set
+		p32_regset *	iec;		//interrupt enable control register set
+		uint32_t		bit_err;	//err interrupt flag bit
+		uint32_t		bit_rx;		//rx interrupt flag bit
+		uint32_t		bit_tx;		//tx interrupt flag bit
+		ring_buffer		rx_buffer;	//queue used for UART rx data
 
 	public:
-		HardwareSerial(	uint8_t					uartNumber,
-						ring_buffer				*rx_buffer,
-						volatile uint32_t		*uxbrg_reg,
-						volatile uint32_t		*uxmode_reg,
-						volatile uint32_t		*uxsta_reg,
-						volatile uint32_t		*uxtxreg_reg
-						);
+		HardwareSerial(p32_uart * uartP, int irq, int vec);
 
-		void	begin(unsigned long baudRate);
-		void	end();
-		virtual int 	available(void);
-		virtual	int		peek();
-		virtual	int		read(void);
-		virtual	void	flush(void);
+		void			doSerialInt(void);
+
+		void			begin(unsigned long baudRate);
+		void			end();
+		virtual int		available(void);
+		virtual int		peek();
+		virtual int		read(void);
+		virtual void	flush(void);
 		virtual	void	write(uint8_t);
 		using	Print::write; // pull in write(str) and write(buf, size) from Print
 };
 
-#if defined(_USB)
+#if defined(_USB) && defined(_USE_USB_FOR_SERIAL_)
 //*******************************************************************************************
 class USBSerial : public Stream
 {
@@ -192,7 +115,7 @@ class USBSerial : public Stream
 	public:
 		USBSerial	(ring_buffer	*rx_buffer);
 
-		void			begin(unsigned long baudRate);
+		void			begin(long baudRate);
 		void			end();
 		virtual int		available(void);
 		virtual int		peek();
@@ -205,76 +128,64 @@ class USBSerial : public Stream
 		using	Print::write; // pull in write(str) and write(buf, size) from Print
 };
 
-#endif	//	USB
+#endif	//	defined(_USB) && defined(_USE_USB_FOR_SERIAL_)
 
-
-
+/* ------------------------------------------------------------ */
+/*			Declaare Serial Port Objects						*/
+/* ------------------------------------------------------------ */
 
 #if defined(_USB) && defined(_USE_USB_FOR_SERIAL_)
-#define	INTERRUPT	1
-
-		extern USBSerial Serial;
-		extern HardwareSerial Serial0;
-		extern HardwareSerial Serial1;
-		extern HardwareSerial Serial2;
-		extern HardwareSerial Serial3;
-	#if defined (_UART2A)
-		extern HardwareSerial Serial4;
-	#endif
-	#if defined (_UART2B)
-		extern HardwareSerial Serial5;
-	#endif
-
-
-#elif defined(_BOARD_MEGA_)
-	extern HardwareSerial Serial;
-	extern HardwareSerial Serial1;
-	extern HardwareSerial Serial2;
-	extern HardwareSerial Serial3;
-	extern HardwareSerial Serial4;
-	extern HardwareSerial Serial5;
-
-	#define	_HARDWARE_SERIAL_1_AVAILABLE_	
-	#define	_HARDWARE_SERIAL_2_AVAILABLE_	
-	#define	_HARDWARE_SERIAL_3_AVAILABLE_	
-	#define	_HARDWARE_SERIAL_4_AVAILABLE_	
-	#define	_HARDWARE_SERIAL_5_AVAILABLE_	
-	
-	#define	_HARDWARE_SERIAL_PORT_COUNT_	6
-#else
-
-	#if defined (_UART1) || defined(_UART1A)
-		extern HardwareSerial Serial;
-		#define	_HARDWARE_SERIAL_0_AVAILABLE_	
-	#endif
-
-	#ifdef _UART2
-		extern HardwareSerial Serial1;
-		#define	_HARDWARE_SERIAL_1_AVAILABLE_	
-	#endif
-
-	#ifdef _UART3
-		extern HardwareSerial Serial2;
-		#define	_HARDWARE_SERIAL_2_AVAILABLE_	
-	#endif
-
-	#ifdef _UART4
-		extern HardwareSerial Serial3;
-		#define	_HARDWARE_SERIAL_3_AVAILABLE_	
-	#endif
-
-	#ifdef _UART5
-		extern HardwareSerial Serial4;
-		#define	_HARDWARE_SERIAL_4_AVAILABLE_	
-	#endif
-
-	#ifdef _UART6
-		extern HardwareSerial Serial5;
-		#define	_HARDWARE_SERIAL_5_AVAILABLE_	
-	#endif
+/* If we're using USB for serial, the USB serial port gets
+** instantiated as Serial and hardware serial port 0 gets
+** instantiated as Serial0.
+*/
+extern USBSerial Serial;
+#if (NUM_SERIAL_PORTS > 0)
+extern HardwareSerial Serial0;
 #endif
+
+#else
+/* If we're not using USB for serial, then hardware serial port 0
+** gets instantiated as Serial.
+*/
+#if (NUM_SERIAL_PORTS > 0)
+extern HardwareSerial Serial;
+#endif
+#endif
+
+#if (NUM_SERIAL_PORTS > 1)
+extern HardwareSerial Serial1;
+#endif
+
+#if (NUM_SERIAL_PORTS > 2)
+extern HardwareSerial Serial2;
+#endif
+
+#if (NUM_SERIAL_PORTS > 3)
+extern HardwareSerial Serial3;
+#endif
+
+#if (NUM_SERIAL_PORTS > 4)
+extern HardwareSerial Serial4;
+#endif
+
+#if (NUM_SERIAL_PORTS > 5)
+extern HardwareSerial Serial5;
+#endif
+
+#if (NUM_SERIAL_PORTS > 6)
+extern HardwareSerial Serial6;
+#endif
+
+#if (NUM_SERIAL_PORTS > 7)
+extern HardwareSerial Serial7;
+#endif
+
+/* ------------------------------------------------------------ */
 
 #endif	//	__cplusplus
 
 
 #endif		//	HardwareSerial_h
+
+/************************************************************************/

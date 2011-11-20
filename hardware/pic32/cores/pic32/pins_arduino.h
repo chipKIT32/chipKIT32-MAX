@@ -1,5 +1,5 @@
 //************************************************************************
-//*	Pins_arduinohc
+//*	pins_arduino.h
 //*
 //*	Arduino core files for PIC32
 //*		Copyright (c) 2010, 2011 by Mark Sproul
@@ -30,79 +30,101 @@
 //*	Edit History
 //************************************************************************
 //*	May  5,	2011	<MLS> added analog_pin_to_channel_PGM
+//* Nov 12, 2001	<GeneApperson> Rewrite for board variant support
 //************************************************************************
 
-#ifndef Pins_Arduino_h
-#define Pins_Arduino_h
+#if !defined(PINS_ARDUINO_H)
+#define PINS_ARDUINO_H
+
+/* ------------------------------------------------------------ */
+/*					General Declarations						*/
+/* ------------------------------------------------------------ */
+/* The following declarations are invariant between boards and
+** define symbols used by the board definition files.
+*/
+
 #define _BV(bit) (1ul << (bit))
 
-#define PA 1
-#define PB 2
-#define PC 3
-#define PD 4
-#define PE 5
-#define PF 6
-#define PG 7
+#if defined(OPT_BOARD_INTERNAL)
 
-
+/* Symbols used in pin mapping.
+*/
 #define	NOT_A_PIN		0
 #define	NOT_A_PORT		0
 #define	NOT_ON_TIMER	0
+#define	NOT_ANALOG_PIN	0xFF
 
-//*	these are PIC32 timer definitions
-#define	NOT_ON_TIMER	0
-#define	TIMER_OC1		1
-#define	TIMER_OC2		2
-#define	TIMER_OC3		3
-#define	TIMER_OC4		4
-#define	TIMER_OC5		5
+/* Define the port symbols used to index into the port address and
+** bit tables.
+*/
+#define _IOPORT_PA	1
+#define _IOPORT_PB	2
+#define _IOPORT_PC	3
+#define _IOPORT_PD	4
+#define _IOPORT_PE	5
+#define _IOPORT_PF	6
+#define _IOPORT_PG	7
 
+/* Symbols to define the bit position of the timer fields within the
+** timer mapping table.
+*/
+#define _BN_TIMER_OC	0
+#define	_BN_TIMER_IC	4
+#define _BN_TIMER_TCK	8
 
-//*	these are AVR timer definitions
-//#define NOT_ON_TIMER 0
-#define TIMER0A 1
-#define TIMER0B 2
-#define TIMER1A 3
-#define TIMER1B 4
-#define TIMER2  5
-#define TIMER2A 6
-#define TIMER2B 7
+#define	_MSK_TIMER_OC	0x000F
+#define	_MSK_TIMER_IC	0x00F0
+#define	_MSK_TIMER_TCK	0x0F00
+		
+/* Symbols used for timer related peripherals. These are used in
+** the table that maps digital pin to timer related pin.
+*/
+#define	_TIMER_OC1		(1 << _BN_TIMER_OC)
+#define	_TIMER_OC2		(2 << _BN_TIMER_OC)
+#define	_TIMER_OC3		(3 << _BN_TIMER_OC)
+#define	_TIMER_OC4		(4 << _BN_TIMER_OC)
+#define	_TIMER_OC5		(5 << _BN_TIMER_OC)
 
-#define TIMER3A 8
-#define TIMER3B 9
-#define TIMER3C 10
-#define TIMER4A 11
-#define TIMER4B 12
-#define TIMER4C 13
-#define TIMER5A 14
-#define TIMER5B 15
-#define TIMER5C 16
+#define	_TIMER_IC1		(1 << _BN_TIMER_IC)
+#define	_TIMER_IC2		(2 << _BN_TIMER_IC)
+#define	_TIMER_IC3		(3 << _BN_TIMER_IC)
+#define	_TIMER_IC4		(4 << _BN_TIMER_IC)
+#define	_TIMER_IC5		(5 << _BN_TIMER_IC)
 
+#define	_TIMER_TCK1		(1 << _BN_TIMER_TCK)
+#define	_TIMER_TCK2		(2 << _BN_TIMER_TCK)
+#define	_TIMER_TCK3		(3 << _BN_TIMER_TCK)
+#define	_TIMER_TCK4		(4 << _BN_TIMER_TCK)
+#define	_TIMER_TCK5		(5 << _BN_TIMER_TCK)
 
-// On the ATmega1280, the addresses of some of the port registers are
-// greater than 255, so we can't store them in uint8_t's.
-extern const uint32_t	port_to_mode_PGM[];
-extern const uint32_t	port_to_input_PGM[];
-extern const uint32_t	port_to_output_PGM[];
-extern const uint8_t	analog_pin_to_channel_PGM[];
+/* Analog pin definition symbols. Used in the digital pin
+** to analog pin mapping table.
+*/
+#define	_BOARD_AN0		0
+#define	_BOARD_AN1		1
+#define	_BOARD_AN2		2
+#define	_BOARD_AN3		3
+#define	_BOARD_AN4		4
+#define	_BOARD_AN5		5
+#define	_BOARD_AN6		6
+#define	_BOARD_AN7		7
+#define	_BOARD_AN8		8
+#define	_BOARD_AN9		9
+#define	_BOARD_AN10		10
+#define	_BOARD_AN11		11
+#define	_BOARD_AN12		12
+#define	_BOARD_AN13		13
+#define	_BOARD_AN14		14
+#define	_BOARD_AN15		15
 
-extern const uint8_t	digital_pin_to_port_PGM[];
+#endif		//OPT_BOARD_INTERNAL
 
-// extern const uint8_t PROGMEM digital_pin_to_bit_PGM[];
-extern const uint16_t	digital_pin_to_bit_mask_PGM[];
-extern const uint8_t	digital_pin_to_timer_PGM[];
+/* ------------------------------------------------------------ */
+/* Include the board definition file for the specified variant.
+*/
 
-// Get the bit location within the hardware port of the given virtual pin.
-// This comes from the pins_*.c file for the active board configuration.
-//
-// These perform slightly better as macros compared to inline functions
-//
-#define digitalPinToPort(P) ( digital_pin_to_port_PGM[P]  )
-#define digitalPinToBitMask(P) ( digital_pin_to_bit_mask_PGM[P]  )
-#define digitalPinToTimer(P) ( digital_pin_to_timer_PGM[P]  )
-#define analogInPinToBit(P) ( analog_pin_to_channel_PGM[P]  )
-#define portOutputRegister(P) ( (volatile uint32_t *)(  port_to_output_PGM[P]) )
-#define portInputRegister(P) ( (volatile uint32_t *)(  port_to_input_PGM[P]) )
-#define portModeRegister(P) ( (volatile uint32_t *)(  port_to_mode_PGM[P]) )
+#include <Board_Defs.h>
 
-#endif
+/* ------------------------------------------------------------ */
+
+#endif		// PINS_ARDUINO_H
