@@ -235,7 +235,6 @@ void	_board_init(void);
 
 
 //************************************************************************
-
 #define read_count(dest) __asm__ __volatile__("mfc0 %0,$9" : "=r" (dest))
 #define read_comp(dest) __asm__ __volatile__("mfc0 %0,$11" : "=r" (dest))
 #define write_comp(src) __asm__ __volatile__("mtc0 %0,$11" : "=r" (src))
@@ -244,7 +243,7 @@ void __ISR(_CORE_TIMER_VECTOR, ipl2) CoreTimerHandler(void)
 {
     uint32_t compare, count, millisLocal;
     uint32_t softPWMreturnFlag = 1;
-
+    
     millisLocal = gTimer0_millis;  // defeat volatility
 
     // Only call the SoftPMW update function if it has been hooked into by the
@@ -280,13 +279,16 @@ void __ISR(_CORE_TIMER_VECTOR, ipl2) CoreTimerHandler(void)
              * up for the miss, and try again.
              */
         } while (compare < count);
-        write_comp(compare);           /* A compare val that is about 1ms past cur count */
+        // The SoftPWMServoUpdate() writes a new compare value, so don't duplicate
+        if (gSoftPWMServoUpdate == NULL) {
+            write_comp(compare);           /* A compare val that is about 1ms past cur count */
+        }
         gCore_timer_last_val = count;  /* Save the count, too, for calculating micros() */
         gTimer0_millis = millisLocal;  /* update millis */
     }
-
-	// clear the interrupt flag
-	mCTClearIntFlag();
+    
+    // clear the interrupt flag
+    mCTClearIntFlag();
 }
 
 
