@@ -191,7 +191,7 @@ HardwareSerial::HardwareSerial(ring_buffer *rx_buffer,
 
 // Public Methods //////////////////////////////////////////////////////////////
 
-void HardwareSerial::begin(unsigned long baud)
+void HardwareSerial::begin(long baud)
 {
   uint16_t baud_setting;
   bool use_u2x = true;

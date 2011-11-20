@@ -2,8 +2,6 @@
   HardwareSerial.h - Hardware serial library for Wiring
   Copyright (c) 2006 Nicholas Zambetti.  All right reserved.
 
-
-
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
   License as published by the Free Software Foundation; either
@@ -50,7 +48,7 @@ class HardwareSerial : public Stream
       volatile uint8_t *ucsra, volatile uint8_t *ucsrb,
       volatile uint8_t *udr,
       uint8_t rxen, uint8_t txen, uint8_t rxcie, uint8_t udre, uint8_t u2x);
-    void begin(unsigned long);
+    void begin(long);
     void end();
     virtual int available(void);
     virtual int peek(void);
