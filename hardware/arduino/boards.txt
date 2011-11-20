@@ -2,7 +2,6 @@
 
 uno.name=Arduino Uno
 uno.platform=avr
-uno.board=ARDUINO
 uno.upload.protocol=arduino
 uno.upload.maximum_size=32256
 uno.upload.speed=115200
@@ -21,7 +20,6 @@ uno.build.core=arduino
 
 atmega328.name=Arduino Duemilanove or Nano w/ ATmega328
 atmega328.platform=avr
-atmega328.board=ARDUINO
 atmega328.upload.protocol=stk500
 atmega328.upload.maximum_size=30720
 atmega328.upload.speed=57600
@@ -42,7 +40,6 @@ atmega328.build.core=arduino
 
 diecimila.name=Arduino Diecimila, Duemilanove, or Nano w/ ATmega168
 diecimila.platform=avr
-diecimila.board=ARDUINO
 diecimila.upload.protocol=stk500
 diecimila.upload.maximum_size=14336
 diecimila.upload.speed=19200
@@ -63,7 +60,6 @@ diecimila.build.core=arduino
 
 mega2560.name=Arduino Mega 2560
 mega2560.platform=avr
-mega2560..board=ARDUINO
 
 mega2560.upload.protocol=stk500v2
 mega2560.upload.maximum_size=258048
