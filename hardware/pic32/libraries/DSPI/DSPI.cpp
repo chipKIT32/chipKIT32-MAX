@@ -38,7 +38,7 @@
 /* ------------------------------------------------------------ */
 
 #define OPT_BOARD_INTERNAL
-#include	<sys\attribs.h>
+#include	<sys/attribs.h>
 #include	<DSPI.h>
 
 /* ------------------------------------------------------------ */
