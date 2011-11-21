@@ -313,7 +313,7 @@ const static uint8_t SCK  = 11;		// PIC32 SCK2
 #define	_TWI_VECTOR		_I2C_2_VECTOR
 
 /* Declarations for Digilent DTWI library.
-**		DTWI0 is on IC21, connector J2
+**		DTWI0 is on I2C1, connector J2
 **		DTWI1 is on I2C2, connector J6.
 **
 ** DTWI1 has the I2C EEPROM and DAC.
@@ -445,14 +445,14 @@ const uint8_t	digital_pin_to_port_PGM[] = {
 	_IOPORT_PB,		// 15 RB14		PMALH/PMA1/AN14/RB14
 
     // Connector JC
-	_IOPORT_PG,		// 16 RG12		TRD1/RG12
-	_IOPORT_PG,		// 17 RG13		TRD0/RG13
-	_IOPORT_PG,		// 18 RG14		TRD2/RG14
-	_IOPORT_PG,		// 19 RG15		RG15		
-	_IOPORT_PG,		// 20 RG0		PMD8/RG0
-	_IOPORT_PG,		// 21 RG1		PMD9/RG1
-	_IOPORT_PF,		// 22 RF0		PMD11/RF0
-	_IOPORT_PF,		// 23 RF1		PMD10/RF1
+	_IOPORT_PG,		// 16 RG12		TRD1/RG12				(S1)
+	_IOPORT_PG,		// 17 RG13		TRD0/RG13				(S2)
+	_IOPORT_PG,		// 18 RG14		TRD2/RG14				(S3)
+	_IOPORT_PG,		// 19 RG15		RG15					(S4)
+	_IOPORT_PG,		// 20 RG0		PMD8/RG0				(S5)
+	_IOPORT_PG,		// 21 RG1		PMD9/RG1				(S6)
+	_IOPORT_PF,		// 22 RF0		PMD11/RF0				(S7)
+	_IOPORT_PF,		// 23 RF1		PMD10/RF1				(S8)
 
     // Connector JD
 	_IOPORT_PD,		// 24 RD7		PMD15/CN16/RD7
@@ -477,8 +477,8 @@ const uint8_t	digital_pin_to_port_PGM[] = {
     // Connector JF
 	_IOPORT_PA,		// 40 RA14		SCL1/INT3/RA14
 	_IOPORT_PA,		// 41 RA15		SDA1/INT4/RA15
-	_IOPORT_PA,		// 42 RA6		TRCLK/RA6
-	_IOPORT_PA,		// 43 RA7		TRD3/RA7
+	_IOPORT_PA,		// 42 RA6		TRCLK/RA6				(BTN1)
+	_IOPORT_PA,		// 43 RA7		TRD3/RA7				(BTN2)
 	_IOPORT_PA,		// 44 RA0		TMS/RA0
 	_IOPORT_PA,		// 45 RA1		TCK/RA1
 	_IOPORT_PA,		// 46 RA4		TDI/RA4
@@ -505,18 +505,18 @@ const uint8_t	digital_pin_to_port_PGM[] = {
 	_IOPORT_PB,		// 63 RB9		C2OUT/AN9/RB9
 
     // Connector JK
-	_IOPORT_PB,		// 64 RB10		CVREFOUT/PMA13/AN10/RB10	LD1
-	_IOPORT_PB,		// 65 RB11		PMA12/AN11/RB11				LD2
-	_IOPORT_PB,		// 66 RB12		PMA11/AN12/RB12				LD3
-	_IOPORT_PB,		// 67 RB13		PMA10/AN13/RB13				LD4
+	_IOPORT_PB,		// 64 RB10		CVREFOUT/PMA13/AN10/RB10	(LD1)
+	_IOPORT_PB,		// 65 RB11		PMA12/AN11/RB11				(LD2)
+	_IOPORT_PB,		// 66 RB12		PMA11/AN12/RB12				(LD3)
+	_IOPORT_PB,		// 67 RB13		PMA10/AN13/RB13				(LD4)
 	_IOPORT_PA,		// 68 RA9		PMA7/VREF-/CVREF-/RA9
 	_IOPORT_PA,		// 69 RA10		PMA6/VREF+/CVREF+/RA10
 	_IOPORT_PD,		// 70 RD12		PMD12/IC5/RD12
 	_IOPORT_PC,		// 71 RC4		SDI1/T5CK/RC4
 	
 	//J6 /I2C PORT 2
-	_IOPORT_PA,		// 72 SCL		SCL2/RA2
-	_IOPORT_PA		// 73 SDA		SDA2/RA3
+	_IOPORT_PA,		// 72 RA2		SCL2/RA2
+	_IOPORT_PA		// 73 RA3		SDA2/RA3
 };
 
 /* ------------------------------------------------------------ */
@@ -615,13 +615,14 @@ const uint16_t	digital_pin_to_bit_mask_PGM[] = {
 	_BV( 4 ) ,	// 71 RC4		SDI1/T5CK/RC4
 	
 	//J6 /I2C PORT 2
-	_BV( 2 ) ,	// 72 SCL		SCL2/RA2
-	_BV( 3 ) 	// 73 SDA		SDA2/RA3	
+	_BV( 2 ) ,	// 72 RA2		SCL2/RA2
+	_BV( 3 ) 	// 73 RA3		SDA2/RA3	
 };
 
 /* ------------------------------------------------------------ */
 /* This table is used to map from digital pin number to the output
-** compare number associated with that pin.
+** compare number, input capture number, and timer external clock
+** input associated with that pin.
 */
 const uint16_t	digital_pin_to_timer_PGM[] = {
     // Connector JA
@@ -715,8 +716,8 @@ const uint16_t	digital_pin_to_timer_PGM[] = {
 	_TIMER_TCK5,	// 71 RC4		SDI1/T5CK/RC4	
 	
 	//J6 /I2C PORT 2
-	NOT_ON_TIMER,	// 72 SCL		SCL2/RA2
-	NOT_ON_TIMER	// 73 SDA		SDA2/RA3
+	NOT_ON_TIMER,	// 72 RA2		SCL2/RA2
+	NOT_ON_TIMER	// 73 RA3		SDA2/RA3
 };
 
 /* ------------------------------------------------------------ */
@@ -815,8 +816,8 @@ const uint8_t digital_pin_to_analog_PGM[] = {
 	NOT_ANALOG_PIN,	// 71 RC4		SDI1/T5CK/RC4	
 	
 	//J6 /I2C PORT 2
-	NOT_ANALOG_PIN,	// 72 SCL		SCL2/RA2
-	NOT_ANALOG_PIN	// 73 SDA		SDA2/RA3
+	NOT_ANALOG_PIN,	// 72 RA2		SCL2/RA2
+	NOT_ANALOG_PIN	// 73 RA3		SDA2/RA3
 };
 
 /* ------------------------------------------------------------ */

@@ -533,7 +533,8 @@ const uint16_t digital_pin_to_bit_mask_PGM[] = {
 
 /* ------------------------------------------------------------ */
 /* This table is used to map from digital pin number to the output
-** compare number associated with that pin.
+** compare number, input capture number, and timer external clock
+** input associated with that pin.
 */
 const uint16_t digital_pin_to_timer_PGM[] = {
 	// Connector JA

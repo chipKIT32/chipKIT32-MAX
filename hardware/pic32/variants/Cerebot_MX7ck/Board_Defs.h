@@ -153,11 +153,12 @@
 /* ------------------------------------------------------------ */
 /* These symbols are defined for compatibility with the original
 ** SPI library and the original pins_arduino.h
+** The default SPI port is on connector JF.
 */
-const static uint8_t SS   = 40;		// PIC32 SS2
-const static uint8_t MOSI = 41;		// PIC32 SDO2
-const static uint8_t MISO = 42;		// PIC32 SDI2
-const static uint8_t SCK  = 43;		// PIC32 SCK2
+const static uint8_t SS   = 40;		// PIC32 SS4
+const static uint8_t MOSI = 41;		// PIC32 SDO4
+const static uint8_t MISO = 42;		// PIC32 SDI4
+const static uint8_t SCK  = 43;		// PIC32 SCK4
 
 /* The Digilent DSPI library uses these ports.
 **		DSPI0	connector JD
@@ -242,13 +243,13 @@ const static uint8_t SCK  = 43;		// PIC32 SCK2
 #define	_IPL_UART_IPC	2		//interrupt priority for IPC register
 #define	_SPL_UART_IPC	0		//interrupt subpriority for IPC register
 
-/* Serial port 0 uses UART1
+/* Serial port 0 uses UART1. Connector JE
 */
 #define	_SER0_BASE		_UART1_BASE_ADDRESS
 #define	_SER0_IRQ		_UART1_ERR_IRQ
 #define	_SER0_VECTOR	_UART_1_VECTOR
 
-/* Serial port 1 uses UART2
+/* Serial port 1 uses UART2. Connector JF
 */
 #define	_SER1_BASE		_UART2_BASE_ADDRESS
 #define	_SER1_IRQ		_UART2_ERR_IRQ
@@ -312,7 +313,7 @@ const static uint8_t SCK  = 43;		// PIC32 SCK2
 #define	_TWI_MST_IRQ	_I2C2_MASTER_IRQ
 #define	_TWI_VECTOR		_I2C_2_VECTOR
 
-/* Declarations for Digilent DTWI library. DTWI0 and DTWI0 are
+/* Declarations for Digilent DTWI library. DTWI0 and DTWI1 are
 ** connected to the 2x4 I2C daisy chain connectors. The pins for the
 ** other DTWI are on Pmod connectors.
 **		DTWI0 is on J7, has jumperable current mirrors for pull-ups
@@ -509,13 +510,13 @@ const uint8_t	digital_pin_to_port_PGM[] = {
 	_IOPORT_PG,		// 53 LD3		TRD2/RG14
 	_IOPORT_PG,		// 54 LD4		AERXERR/RG15
 	
-	//J8 /I2C PORT 2 
-	_IOPORT_PA,		// 55 SCL2		SCL2/RA2
-	_IOPORT_PA,		// 56 SDA2		SDA2/RA3	
+	//J8 I2C PORT 2 
+	_IOPORT_PA,		// 55 RA2		SCL2/RA2
+	_IOPORT_PA,		// 56 RA3		SDA2/RA3	
 	
-	//J7 /I2C PORT 1
-	_IOPORT_PA,		// 57 SCL1		SCL1/INT3/RA14
-	_IOPORT_PA,		// 58 SDA1		SDA1/INT4/RA15	
+	//J7 I2C PORT 1
+	_IOPORT_PA,		// 57 RA14		SCL1/INT3/RA14
+	_IOPORT_PA,		// 58 RA15		SDA1/INT4/RA15	
 	
 	//MISC
 	_IOPORT_PB,		// 59 RB5		AN5/C1IN+/VBUSON/CN7/RB5 (P32_VBUSON)
@@ -613,7 +614,8 @@ const uint16_t	digital_pin_to_bit_mask_PGM[] = {
 
 /* ------------------------------------------------------------ */
 /* This table is used to map from digital pin number to the output
-** compare number associated with that pin.
+** compare number, input capture number, and timer external clock
+** input associated with that pin.
 */
 const uint16_t	digital_pin_to_timer_PGM[] = {
     // Connector JA

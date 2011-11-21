@@ -9,8 +9,8 @@
 /*  File Description:													*/
 /*																		*/
 /* This file contains the board specific declartions and data structure	*/
-/* to customize the chipKIT MPIDE for use with the Digilent Cerebot		*/
-/* MX4ck board.															*/
+/* to customize the chipKIT MPIDE for use with a generic board using a	*/
+/* PIC32 part in a 64-pin package.										*/
 /*																		*/
 /* This code is based on earlier work:									*/
 /*		Copyright (c) 2010, 2011 by Mark Sproul							*/
@@ -50,20 +50,27 @@
 ** refer to periperhals on the board generically.
 */
 
+#define	_BOARD_NAME_	"64 Pin Default"
+
+#include "cpudefs.h"
+
 /* ------------------------------------------------------------ */
 /*				Board Specific Declarations						*/
 /* ------------------------------------------------------------ */
 
-#define	NUM_DIGITAL_PINS	61
+#define	NUM_DIGITAL_PINS	112
 #define	NUM_ANALOG_PINS		16
 #define NUM_OC_PINS			5
 #define	NUM_IC_PINS			5
 #define	NUM_TCK_PINS		5
 #define	NUM_INT_PINS		5
 
-#define	NUM_SERIAL_PORTS	1
+#define	NUM_SERIAL_PORTS	2
 #define	NUM_SPI_PORTS		1
 #define	NUM_I2C_PORTS		1
+
+#define NUM_DSPI_PORTS		1
+#define NUM_DTWI_PORTS		2
 
 /* Define I/O devices on the board.
 */
@@ -115,23 +122,40 @@
 #define PIN_IC2		57
 #define PIN_IC3		58
 #define PIN_IC4		59
-#define	PIN_IC5		60
+#define	PIN_IC5		52
 
-#define	PIN_TCK1	
-#define	PIN_TCK2	
-#define	PIN_TCK3	
-#define	PIN_TCK4	
-#define	PIN_TCK5	
+#define	PIN_TCK1	46
+//#define	PIN_TCK2	not available on the chip
+//#define	PIN_TCK3	not available on the chip
+//#define	PIN_TCK4	not available on the chip
+//#define	PIN_TCK5	not available on the chip
 
 /* ------------------------------------------------------------ */
 /*					Interrupt Pin Declarations					*/
 /* ------------------------------------------------------------ */
 
-#define	PIN_INT0	
-#define	PIN_INT1	
-#define PIN_INT2	
-#define	PIN_INT3	
-#define	PIN_INT4	
+#define	PIN_INT0	86
+#define	PIN_INT1	56
+#define PIN_INT2	57
+#define	PIN_INT3	58
+#define	PIN_INT4	59
+
+/* ------------------------------------------------------------ */
+/*					SPI Pin Declarations						*/
+/* ------------------------------------------------------------ */
+/* These symbols are defined for compatibility with the original
+** SPI library and the original pins_arduino.h. SPI2 is used for
+** the default SPI port as it's pin numbers stay constant on all
+** devices.
+*/
+const static uint8_t SS   = 105;		// PIC32 SS2
+const static uint8_t MOSI =	104;		// PIC32 SDO2
+const static uint8_t MISO = 103;		// PIC32 SDI2
+const static uint8_t SCK  = 102;		// PIC32 SCK2
+
+/* The Digilent DSPI library uses these ports.
+*/
+#define	PIN_DSPI0_SS	105
 
 /* ------------------------------------------------------------ */
 /*					Analog Pins									*/
@@ -219,37 +243,82 @@
 /*					Serial Port Declarations					*/
 /* ------------------------------------------------------------ */
 
+#define	_IPL_UART_ISR	ipl2	//interrupt priority for ISR
+#define	_IPL_UART_IPC	2		//interrupt priority for IPC register
+#define	_SPL_UART_IPC	0		//interrupt subpriority for IPC register
+
 /* Serial port 0 uses UART1
 */
 #define	_SER0_BASE		_UART1_BASE_ADDRESS
 #define	_SER0_IRQ		_UART1_ERR_IRQ
 #define	_SER0_VECTOR	_UART_1_VECTOR
 
+/* Serial port 1 uses UART2
+*/
+#define	_SER1_BASE		_UART2_BASE_ADDRESS
+#define	_SER1_IRQ		_UART2_ERR_IRQ
+#define	_SER1_VECTOR	_UART_2_VECTOR
+
 /* ------------------------------------------------------------ */
 /*					SPI Port Declarations						*/
 /* ------------------------------------------------------------ */
 
-/* These symbols are defined for compatibility with the original
-** SPI library and the original pins_arduino.h
-*/
-const static uint8_t SS   = 105;		// for SPI master operation, this
-										// is actually RD4 (JP4 in RD4 pos)
-const static uint8_t MOSI = 104;		// PIC32 SDO2
-const static uint8_t MISO = 103;		// PIC32 SDI2
-const static uint8_t SCK  = 102;		// PIC32 SCK2
+#define	_IPL_SPI_ISR	ipl3	//interrupt priority for the ISR
+#define	_IPL_SPI_IPC	3		//interrupt priority for the IPC register
+#define	_SPL_SPI_IPC	0		//interrupt subpriority for the IPC register
 
 /* The default SPI port uses SPI2. The pins for SPI2 stay the
 ** same on all PIC32 devices. The pins for SPI1 move around,
 ** and the ports beyond SPI2 aren't defined on some parts.
 */
-#define	_SPI_BASE	_SPI2_BASE_ADDRESS
-#define _SPI_IRQ	_SPI2_ERR_IRQ
-#define	_SPI_VECTOR	_SPI_2_VECTOR
+#define	_SPI_BASE		_SPI2_BASE_ADDRESS
+#define _SPI_ERR_IRQ	_SPI2_ERR_IRQ
+#define	_SPI_RX_IRQ		_SPI2_RX_IRQ
+#define	_SPI_TX_IRQ		_SPI2_TX_IRQ
+#define	_SPI_VECTOR		_SPI_2_VECTOR
+
+/* The Digilent DSPI library uses the same port.
+*/
+#define	_DSPI0_BASE			_SPI2_BASE_ADDRESS
+#define	_DSPI0_ERR_IRQ		_SPI2_ERR_IRQ
+#define	_DSPI0_RX_IRQ		_SPI2_RX_IRQ
+#define	_DSPI0_TX_IRQ		_SPI2_TX_IRQ
+#define	_DSPI0_VECTOR		_SPI_2_VECTOR
 
 /* ------------------------------------------------------------ */
 /*					I2C Port Declarations						*/
 /* ------------------------------------------------------------ */
 
+#define	_IPL_TWI_ISR	ipl3	//interrupt priority for ISR
+#define	_IPL_TWI_IPC	3		//interrupt priority for IPC register
+#define	_SPL_TWI_IPC	0		//interrupt subpriority for IPC register
+
+/* The standard I2C port uses I2C1 (SCL1/SDA1). These come to pins
+** A4/A5 on the analog connector. It is necessary to have jumpers
+** JP6/JP8 set appropriately (RG2/RG3 position) to access the I2C
+** signals.
+*/
+#define	_TWI_BASE		_I2C1_BASE_ADDRESS
+#define	_TWI_BUS_IRQ	_I2C1_BUS_IRQ
+#define	_TWI_SLV_IRQ	_I2C1_SLAVE_IRQ
+#define	_TWI_MST_IRQ	_I2C1_MASTER_IRQ
+#define	_TWI_VECTOR		_I2C_1_VECTOR
+
+/* Declarations for Digilent DTWI library.
+**		DTWI0 is on A4/A5 (see above comment).
+**		DTWI1 is on digital pins 38 & 39.
+*/
+#define	_DTWI0_BASE		_I2C1_BASE_ADDRESS
+#define	_DTWI0_BUS_IRQ	_I2C1_BUS_IRQ
+#define	_DTWI0_SLV_IRQ	_I2C1_SLAVE_IRQ
+#define	_DTWI0_MST_IRQ	_I2C1_MASTER_IRQ
+#define	_DTWI0_VECTOR	_I2C_1_VECTOR
+
+#define	_DTWI1_BASE		_I2C2_BASE_ADDRESS
+#define	_DTWI1_BUS_IRQ	_I2C2_BUS_IRQ
+#define	_DTWI1_SLV_IRQ	_I2C2_SLAVE_IRQ
+#define	_DTWI1_MST_IRQ	_I2C2_MASTER_IRQ
+#define	_DTWI1_VECTOR	_I2C_2_VECTOR
 
 /* ------------------------------------------------------------ */
 /*					A/D Converter Declarations					*/
@@ -348,11 +417,10 @@ const uint32_t	port_to_tris_PGM[] = {
 
 /* ------------------------------------------------------------ */
 /* This table is used to map the digital pin number to the port
-** containing that pin.
+** containing that pin. The default mapping is to assign pin numbers
+** for every possible port bit in order from PORTA to PORTG.
 */
 const uint8_t	digital_pin_to_port_PGM[] = {
-	// PORTLIST
-	// -------------------------------------------
 #if defined(_PORTA)
 	_IOPORT_PA,		// 0 RA 0
 	_IOPORT_PA,
@@ -611,8 +679,6 @@ const uint8_t	digital_pin_to_port_PGM[] = {
 ** for the corresponding bit within the port.
 */
 const uint16_t	digital_pin_to_bit_mask_PGM[] = {
-	// PIN IN PORT
-	// -------------------------------------------
 //#ifdef _PORTA
 	_BV( 0 ) ,	// 0 RA 0
 	_BV( 1 ) ,	// 1 RA 1
@@ -749,11 +815,10 @@ const uint16_t	digital_pin_to_bit_mask_PGM[] = {
 
 /* ------------------------------------------------------------ */
 /* This table is used to map from digital pin number to the output
-** compare number associated with that pin.
+** compare number, input capture number, and timer external clock
+** input associated with that pin.
 */
 const uint8_t	digital_pin_to_timer_PGM[] = {
-	// TIMERS
-	// -------------------------------------------
 //#ifdef _PORTA
 	NOT_ON_TIMER ,	// 0 RA 0
 	NOT_ON_TIMER ,	// 1 RA 1
@@ -774,117 +839,117 @@ const uint8_t	digital_pin_to_timer_PGM[] = {
 //#endif
 
 //#ifdef _PORTB
-	NOT_ON_TIMER ,	// 0 RB 0
-	NOT_ON_TIMER ,	// 1 RB 1
-	NOT_ON_TIMER ,	// 2 RB 2
-	NOT_ON_TIMER ,	// 3 RB 3
-	NOT_ON_TIMER ,	// 4 RB 4
-	NOT_ON_TIMER ,	// 5 RB 5
-	NOT_ON_TIMER ,	// 6 RB 6
-	NOT_ON_TIMER ,	// 7 RB 7
-	NOT_ON_TIMER ,	// 8 RB 8
-	NOT_ON_TIMER ,	// 9 RB 9
-	NOT_ON_TIMER ,	// 10 RB 10
-	NOT_ON_TIMER,	// 11 RB 11
-	NOT_ON_TIMER ,	// 12 RB 12
-	NOT_ON_TIMER ,	// 13 RB 13
-	NOT_ON_TIMER ,	// 14 RB 14
-	NOT_ON_TIMER ,	// 15 RB 15
+	NOT_ON_TIMER ,	// 16 RB 0
+	NOT_ON_TIMER ,	// 17 RB 1
+	NOT_ON_TIMER ,	// 18 RB 2
+	NOT_ON_TIMER ,	// 19 RB 3
+	NOT_ON_TIMER ,	// 20 RB 4
+	NOT_ON_TIMER ,	// 21 RB 5
+	NOT_ON_TIMER ,	// 22 RB 6
+	NOT_ON_TIMER ,	// 23 RB 7
+	NOT_ON_TIMER ,	// 24 RB 8
+	NOT_ON_TIMER ,	// 25 RB 9
+	NOT_ON_TIMER ,	// 26 RB 10
+	NOT_ON_TIMER,	// 27 RB 11
+	NOT_ON_TIMER ,	// 28 RB 12
+	NOT_ON_TIMER ,	// 29 RB 13
+	NOT_ON_TIMER ,	// 30 RB 14
+	NOT_ON_TIMER ,	// 31 RB 15
 //#endif
 
 //#ifdef _PORTC
-	NOT_ON_TIMER ,	// 0 RC 0
-	NOT_ON_TIMER ,	// 1 RC 1
-	NOT_ON_TIMER ,	// 2 RC 2
-	NOT_ON_TIMER ,	// 3 RC 3
-	NOT_ON_TIMER ,	// 4 RC 4
-	NOT_ON_TIMER ,	// 5 RC 5
-	NOT_ON_TIMER ,	// 6 RC 6
-	NOT_ON_TIMER ,	// 7 RC 7
-	NOT_ON_TIMER ,	// 8 RC 8
-	NOT_ON_TIMER ,	// 9 RC 9
-	NOT_ON_TIMER ,	// 10 RC 10
-	NOT_ON_TIMER,	// 11 RC 11
-	NOT_ON_TIMER ,	// 12 RC 12
-	NOT_ON_TIMER ,	// 13 RC 13
-	NOT_ON_TIMER ,	// 14 RC 14
-	NOT_ON_TIMER ,	// 15 RC 15
+	NOT_ON_TIMER ,	// 32 RC 0
+	NOT_ON_TIMER ,	// 33 RC 1
+	NOT_ON_TIMER ,	// 34 RC 2
+	NOT_ON_TIMER ,	// 35 RC 3
+	NOT_ON_TIMER ,	// 36 RC 4
+	NOT_ON_TIMER ,	// 37 RC 5
+	NOT_ON_TIMER ,	// 38 RC 6
+	NOT_ON_TIMER ,	// 39 RC 7
+	NOT_ON_TIMER ,	// 40 RC 8
+	NOT_ON_TIMER ,	// 41 RC 9
+	NOT_ON_TIMER ,	// 42 RC 10
+	NOT_ON_TIMER,	// 43 RC 11
+	NOT_ON_TIMER ,	// 44 RC 12
+	NOT_ON_TIMER ,	// 45 RC 13
+	_TIMER_TCK1 ,	// 46 RC 14
+	NOT_ON_TIMER ,	// 47 RC 15
 //#endif
 
 //#ifdef _PORTD
-	_TIMER_OC1 ,	// 0 RD 0
-	_TIMER_OC2 ,	// 1 RD 1
-	_TIMER_OC3 ,	// 2 RD 2
-	_TIMER_OC4 ,	// 3 RD 3
-	_TIMER_OC5 ,	// 4 RD 4
-	NOT_ON_TIMER ,	// 5 RD 5
-	NOT_ON_TIMER ,	// 6 RD 6
-	NOT_ON_TIMER ,	// 7 RD 7
-	NOT_ON_TIMER ,	// 8 RD 8
-	NOT_ON_TIMER ,	// 9 RD 9
-	NOT_ON_TIMER ,	// 10 RD 10
-	NOT_ON_TIMER,	// 11 RD 11
-	NOT_ON_TIMER ,	// 12 RD 12
-	NOT_ON_TIMER ,	// 13 RD 13
-	NOT_ON_TIMER ,	// 14 RD 14
-	NOT_ON_TIMER ,	// 15 RD 15
+	_TIMER_OC1 ,			// 48 RD 0
+	_TIMER_OC2 ,			// 49 RD 1
+	_TIMER_OC3 ,			// 50 RD 2
+	_TIMER_OC4 ,			// 51 RD 3
+	_TIMER_OC5|_TIMER_IC5 ,	// 52 RD 4
+	NOT_ON_TIMER ,			// 53 RD 5
+	NOT_ON_TIMER ,			// 54 RD 6
+	NOT_ON_TIMER ,			// 55 RD 7
+	_TIMER_IC1 ,			// 56 RD 8
+	_TIMER_IC2 ,			// 57 RD 9
+	_TIMER_IC3 ,			// 58 RD 10
+	_TIMER_IC4,				// 59 RD 11
+	NOT_ON_TIMER ,			// 60 RD 12
+	NOT_ON_TIMER ,			// 61 RD 13
+	NOT_ON_TIMER ,			// 62 RD 14
+	NOT_ON_TIMER ,			// 63 RD 15
 //#endif
 
 //#ifdef _PORTE
-	NOT_ON_TIMER ,	// 0 RE 0
-	NOT_ON_TIMER ,	// 1 RE 1
-	NOT_ON_TIMER ,	// 2 RE 2
-	NOT_ON_TIMER ,	// 3 RE 3
-	NOT_ON_TIMER ,	// 4 RE 4
-	NOT_ON_TIMER ,	// 5 RE 5
-	NOT_ON_TIMER ,	// 6 RE 6
-	NOT_ON_TIMER ,	// 7 RE 7
-	NOT_ON_TIMER ,	// 8 RE 8
-	NOT_ON_TIMER ,	// 9 RE 9
-	NOT_ON_TIMER ,	// 10 RE 10
-	NOT_ON_TIMER,	// 11 RE 11
-	NOT_ON_TIMER ,	// 12 RE 12
-	NOT_ON_TIMER ,	// 13 RE 13
-	NOT_ON_TIMER ,	// 14 RE 14
-	NOT_ON_TIMER ,	// 15 RE 15
+	NOT_ON_TIMER ,	// 64 RE 0
+	NOT_ON_TIMER ,	// 65 RE 1
+	NOT_ON_TIMER ,	// 66 RE 2
+	NOT_ON_TIMER ,	// 67 RE 3
+	NOT_ON_TIMER ,	// 68 RE 4
+	NOT_ON_TIMER ,	// 69 RE 5
+	NOT_ON_TIMER ,	// 70 RE 6
+	NOT_ON_TIMER ,	// 71 RE 7
+	NOT_ON_TIMER ,	// 72 RE 8
+	NOT_ON_TIMER ,	// 73 RE 9
+	NOT_ON_TIMER ,	// 74 RE 10
+	NOT_ON_TIMER,	// 75 RE 11
+	NOT_ON_TIMER ,	// 76 RE 12
+	NOT_ON_TIMER ,	// 77 RE 13
+	NOT_ON_TIMER ,	// 78 RE 14
+	NOT_ON_TIMER ,	// 79 RE 15
 //#endif
 
 //#ifdef _PORTF
-	NOT_ON_TIMER ,	// 0 RF 0
-	NOT_ON_TIMER ,	// 1 RF 1
-	NOT_ON_TIMER ,	// 2 RF 2
-	NOT_ON_TIMER ,	// 3 RF 3
-	NOT_ON_TIMER ,	// 4 RF 4
-	NOT_ON_TIMER ,	// 5 RF 5
-	NOT_ON_TIMER ,	// 6 RF 6
-	NOT_ON_TIMER ,	// 7 RF 7
-	NOT_ON_TIMER ,	// 8 RF 8
-	NOT_ON_TIMER ,	// 9 RF 9
-	NOT_ON_TIMER ,	// 10 RF 10
-	NOT_ON_TIMER,	// 11 RF 11
-	NOT_ON_TIMER ,	// 12 RF 12
-	NOT_ON_TIMER ,	// 13 RF 13
-	NOT_ON_TIMER ,	// 14 RF 14
-	NOT_ON_TIMER ,	// 15 RF 15
+	NOT_ON_TIMER ,	// 80 RF 0
+	NOT_ON_TIMER ,	// 81 RF 1
+	NOT_ON_TIMER ,	// 82 RF 2
+	NOT_ON_TIMER ,	// 83 RF 3
+	NOT_ON_TIMER ,	// 84 RF 4
+	NOT_ON_TIMER ,	// 85 RF 5
+	NOT_ON_TIMER ,	// 86 RF 6
+	NOT_ON_TIMER ,	// 87 RF 7
+	NOT_ON_TIMER ,	// 88 RF 8
+	NOT_ON_TIMER ,	// 89 RF 9
+	NOT_ON_TIMER ,	// 90 RF 10
+	NOT_ON_TIMER,	// 91 RF 11
+	NOT_ON_TIMER ,	// 92 RF 12
+	NOT_ON_TIMER ,	// 93 RF 13
+	NOT_ON_TIMER ,	// 94 RF 14
+	NOT_ON_TIMER ,	// 95 RF 15
 //#endif
 
 //#ifdef _PORTG
-	NOT_ON_TIMER ,	// 0 RG 0
-	NOT_ON_TIMER ,	// 1 RG 1
-	NOT_ON_TIMER ,	// 2 RG 2
-	NOT_ON_TIMER ,	// 3 RG 3
-	NOT_ON_TIMER ,	// 4 RG 4
-	NOT_ON_TIMER ,	// 5 RG 5
-	NOT_ON_TIMER ,	// 6 RG 6
-	NOT_ON_TIMER ,	// 7 RG 7
-	NOT_ON_TIMER ,	// 8 RG 8
-	NOT_ON_TIMER ,	// 9 RG 9
-	NOT_ON_TIMER ,	// 10 RG 10
-	NOT_ON_TIMER,	// 11 RG 11
-	NOT_ON_TIMER ,	// 12 RG 12
-	NOT_ON_TIMER ,	// 13 RG 13
-	NOT_ON_TIMER ,	// 14 RG 14
-	NOT_ON_TIMER ,	// 15 RG 15
+	NOT_ON_TIMER ,	// 96 RG 0
+	NOT_ON_TIMER ,	// 97 RG 1
+	NOT_ON_TIMER ,	// 98 RG 2
+	NOT_ON_TIMER ,	// 99 RG 3
+	NOT_ON_TIMER ,	// 100 RG 4
+	NOT_ON_TIMER ,	// 101 RG 5
+	NOT_ON_TIMER ,	// 102 RG 6
+	NOT_ON_TIMER ,	// 103 RG 7
+	NOT_ON_TIMER ,	// 104 RG 8
+	NOT_ON_TIMER ,	// 105 RG 9
+	NOT_ON_TIMER ,	// 106 RG 10
+	NOT_ON_TIMER,	// 107 RG 11
+	NOT_ON_TIMER ,	// 108 RG 12
+	NOT_ON_TIMER ,	// 109 RG 13
+	NOT_ON_TIMER ,	// 110 RG 14
+	NOT_ON_TIMER ,	// 111 RG 15
 //#endif
 };
 
@@ -1056,6 +1121,260 @@ const uint8_t analog_pin_to_channel_PGM[] = {
 	14,		//*	A14
 	15,		//*	A15
 };
+#endif
+
+/* ------------------------------------------------------------ */
+/*				Board Customization Functions					*/
+/* ------------------------------------------------------------ */
+/*																*/
+/* The following can be used to customize the behavior of some	*/
+/* of the core API functions. These provide hooks that can be	*/
+/* used to extend or replace the default behavior of the core	*/
+/* functions. To use one of these functions, add the desired	*/
+/* code to the function skeleton below and then set the value	*/
+/* of the appropriate compile switch above to 1. This will		*/
+/* cause the hook function to be compiled into the build and	*/
+/* to cause the code to call the hook function to be compiled	*/
+/* into the appropriate core function.							*/
+/*																*/
+/* ------------------------------------------------------------ */
+/***	_board_init
+**
+**	Parameters:
+**		none
+**
+**	Return Value:
+**		none
+**
+**	Errors:
+**		none
+**
+**	Description:
+**		This function is called from the core init() function.
+**		This can be used to perform any board specific init
+**		that needs to be done when the processor comes out of
+**		reset and before the user sketch is run.
+*/
+#if	(OPT_BOARD_INIT != 0)
+
+void _board_init(void) {
+	
+}
+
+#endif
+
+/* ------------------------------------------------------------ */
+/***	_board_pinMode
+**
+**	Parameters:
+**		pin		- digital pin number to configure
+**		mode	- mode to which the pin should be configured
+**
+**	Return Value:
+**		Returns 0 if not handled, !0 if handled.
+**
+**	Errors:
+**		none
+**
+**	Description:
+**		This function is called at the beginning of the pinMode
+**		function. It can perform any special processing needed
+**		when setting the pin mode. If this function returns zero,
+**		control will pass through the normal pinMode code. If
+**		it returns a non-zero value the normal pinMode code isn't
+**		executed.
+*/
+#if	(OPT_BOARD_DIGITAL_IO != 0)
+
+int	_board_pinMode(uint8_t pin, uint8_t mode) {
+	
+	return 0;
+
+}
+
+#endif
+
+/* ------------------------------------------------------------ */
+/***	_board_getPinMode
+**
+**	Parameters:
+**		pin		- digital pin number
+**		mode	- pointer to variable to receive mode value
+**
+**	Return Value:
+**		Returns 0 if not handled, !0 if handled.
+**
+**	Errors:
+**		none
+**
+**	Description:
+**		This function is called at the beginning of the getPinMode
+**		function. It can perform any special processing needed
+**		when getting the pin mode. If this function returns zero,
+**		control will pass through the normal getPinMode code. If
+**		it returns a non-zero value the normal getPinMode code isn't
+**		executed.
+*/
+#if	(OPT_BOARD_DIGITAL_IO != 0)
+
+int	_board_getPinMode(uint8_t pin, uint8_t * mode) {
+	
+	return 0;
+
+}
+
+#endif
+
+/* ------------------------------------------------------------ */
+/***	_board_digitalWrite
+**
+**	Parameters:
+**		pin		- digital pin number
+**		val		- value to write to the pin
+**
+**	Return Value:
+**		Returns 0 if not handled, !0 if handled.
+**
+**	Errors:
+**		none
+**
+**	Description:
+**		This function is called at the beginning of the digitalWrite
+**		function. It can perform any special processing needed
+**		in writing to the pin. If this function returns zero,
+**		control will pass through the normal digitalWrite code. If
+**		it returns a non-zero value the normal digitalWrite code isn't
+**		executed.
+*/#if	(OPT_BOARD_DIGITAL_IO != 0)
+
+int	_board_digitalWrite(uint8_t pin, uint8_t val) {
+	
+	return 0;
+
+}
+
+#endif
+
+/* ------------------------------------------------------------ */
+/***	_board_digitalRead
+**
+**	Parameters:
+**		pin		- digital pin number
+**		val		- pointer to variable to receive pin value
+**
+**	Return Value:
+**		Returns 0 if not handled, !0 if handled.
+**
+**	Errors:
+**		none
+**
+**	Description:
+**		This function is called at the beginning of the digitalRead
+**		function. It can perform any special processing needed
+**		in reading from the pin. If this function returns zero,
+**		control will pass through the normal digitalRead code. If
+**		it returns a non-zero value the normal digitalRead code isn't
+**		executed.
+*/
+#if	(OPT_BOARD_DIGITAL_IO != 0)
+
+int	_board_digitalRead(uint8_t pin, uint8_t * val) {
+	
+	return 0;
+
+}
+
+#endif
+
+/* ------------------------------------------------------------ */
+/***	_board_analogRead
+**
+**	Parameters:
+**		pin		- analog channel number
+**		val		- pointer to variable to receive analog value
+**
+**	Return Value:
+**		Returns 0 if not handled, !0 if handled.
+**
+**	Errors:
+**		none
+**
+**	Description:
+**		This function is called at the beginning of the analogRead
+**		function. It can perform any special processing needed
+**		in reading from the pin. If this function returns zero,
+**		control will pass through the normal analogRead code. If
+**		it returns a non-zero value the normal analogRead code isn't
+**		executed.
+*/
+#if (OPT_BOARD_ANALOG_READ != 0)
+
+int	_board_analogRead(uint8_t pin, int * val) {
+
+	return 0;
+
+}
+
+#endif
+
+/* ------------------------------------------------------------ */
+/***	_board_analogReference
+**
+**	Parameters:
+**
+**	Return Value:
+**		Returns 0 if not handled, !0 if handled.
+**
+**	Errors:
+**		none
+**
+**	Description:
+**		This function is called at the beginning of the analogReference
+**		function. It can perform any special processing needed
+**		to set the reference voltage. If this function returns zero,
+**		control will pass through the normal analogReference code. If
+**		it returns a non-zero value the normal analogReference code isn't
+**		executed.
+*/
+#if (OPT_BOARD_ANALOG_READ != 0)
+
+int	_board_analogReference(uint8_t mode) {
+
+	return 0;
+
+}
+
+#endif
+
+/* ------------------------------------------------------------ */
+/***	_board_analogWrite
+**
+**	Parameters:
+**		pin		- pin number
+**		val		- analog value to write
+**
+**	Return Value:
+**		Returns 0 if not handled, !0 if handled.
+**
+**	Errors:
+**		none
+**
+**	Description:
+**		This function is called at the beginning of the analogWrite
+**		function. It can perform any special processing needed
+**		in writing to the pin. If this function returns zero,
+**		control will pass through the normal analogWrite code. If
+**		it returns a non-zero value the normal analogWrite code isn't
+**		executed.
+*/
+#if (OPT_BOARD_ANALOG_WRITE != 0)
+
+int	_board_analogWrite(uint8_t pin, int val) {
+
+	return 0;
+
+}
+
 #endif
 
 #endif	// _BOARD_DATA_

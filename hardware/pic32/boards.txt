@@ -30,6 +30,7 @@ uno_pic32.bootloader.lock_bits=0x0F
 uno_pic32.build.mcu=32MX320F128H
 uno_pic32.build.f_cpu=80000000L
 uno_pic32.build.core=pic32
+uno_pic32.build.variant=Uno32
 #uno_pic32.upload.using=
 
 ############################################################
@@ -58,6 +59,7 @@ mega_pic32.bootloader.lock_bits=0x0F
 mega_pic32.build.mcu=32MX795F512L
 mega_pic32.build.f_cpu=80000000L
 mega_pic32.build.core=pic32
+mega_pic32.build.variant=Max32
 #mega_pic32.upload.using=
 
 ############################################################
@@ -86,6 +88,7 @@ mega_usb_pic32.bootloader.lock_bits=0x0F
 mega_usb_pic32.build.mcu=32MX795F512L
 mega_usb_pic32.build.f_cpu=80000000L
 mega_usb_pic32.build.core=pic32
+mega_pic32.build.variant=Max32
 #mega_usb_pic32.upload.using=
 
 ############################################################
@@ -120,6 +123,7 @@ cerebot_mx3ck.bootloader.lock_bits=0x0F
 cerebot_mx3ck.build.mcu=32MX320F128H
 cerebot_mx3ck.build.f_cpu=80000000L
 cerebot_mx3ck.build.core=pic32
+cerebot_mx3ck.build.variant=Cerebot_MX3ck
 #cerebot_mx3ck.upload.using=
 
 ############################################################
@@ -148,6 +152,7 @@ cerebot_mx4ck.bootloader.lock_bits=0x0F
 cerebot_mx4ck.build.mcu=32MX460F512L
 cerebot_mx4ck.build.f_cpu=80000000L
 cerebot_mx4ck.build.core=pic32
+cerebot_mx4ck.build.variant=Cerebot_MX4ck
 #cerebot_mx4ck.upload.using=
 
 ############################################################
@@ -176,6 +181,7 @@ cerebot_mx7ck.bootloader.lock_bits=0x0F
 cerebot_mx7ck.build.mcu=32MX795F512L
 cerebot_mx7ck.build.f_cpu=80000000L
 cerebot_mx7ck.build.core=pic32
+cerebot_mx7ck.build.variant=Cerebot_MX7ck
 #cerebot_mx7ck.upload.using=
 
 ############################################################
@@ -204,6 +210,7 @@ cerebot32mx4.bootloader.lock_bits=0x0F
 cerebot32mx4.build.mcu=32MX460F512L
 cerebot32mx4.build.f_cpu=80000000L
 cerebot32mx4.build.core=pic32
+cerebot32mx4.build.variant=Cerebot_32MX4
 #cerebot32mx4.upload.using=
 
 ############################################################
@@ -232,6 +239,7 @@ cerebot32mx7.bootloader.lock_bits=0x0F
 cerebot32mx7.build.mcu=32MX795F512L
 cerebot32mx7.build.f_cpu=80000000L
 cerebot32mx7.build.core=pic32
+cerebot32mx7.build.variant=Cerebot_32MX7
 #cerebot32mx7.upload.using=
 
 ############################################################
@@ -260,6 +268,7 @@ mc_pic32_starterkit.bootloader.lock_bits=0x0F
 mc_pic32_starterkit.build.mcu=32MX360F512L
 mc_pic32_starterkit.build.f_cpu=80000000L
 mc_pic32_starterkit.build.core=pic32
+mc_pic32_starterkit.build.variant=Default_100
 #mc_pic32_starterkit.upload.using=
 
 ############################################################
@@ -288,6 +297,7 @@ mc_pic32_ethernet_starterkit.bootloader.lock_bits=0x0F
 mc_pic32_ethernet_starterkit.build.mcu=32MX795F512L
 mc_pic32_ethernet_starterkit.build.f_cpu=80000000L
 mc_pic32_ethernet_starterkit.build.core=pic32
+mc_pic32_ethernet_starterkit.build.variant=Default_100
 #mc_pic32_ethernet_starterkit.upload.using=
 
 ############################################################
@@ -316,6 +326,7 @@ mc_pic32_usb_starterkit.bootloader.lock_bits=0x0F
 mc_pic32_usb_starterkit.build.mcu=32MX795F512L
 mc_pic32_usb_starterkit.build.f_cpu=80000000L
 mc_pic32_usb_starterkit.build.core=pic32
+mc_pic32_usb_starterkit.build.variant=Default_100
 #mc_pic32_usb_starterkit.upload.using=
 
 ############################################################
@@ -344,6 +355,7 @@ mc_pic32_explorer16.bootloader.lock_bits=0x0F
 mc_pic32_explorer16.build.mcu=32MX360F512L
 mc_pic32_explorer16.build.f_cpu=80000000L
 mc_pic32_explorer16.build.core=pic32
+mc_pic32_explorer16.build.variant=Default_100
 #mc_pic32_explorer16.upload.using=
 
 ############################################################
@@ -372,6 +384,7 @@ mikroe_multimedia.bootloader.lock_bits=0x0F
 mikroe_multimedia.build.mcu=32MX460F512L
 mikroe_multimedia.build.f_cpu=80000000L
 mikroe_multimedia.build.core=pic32
+mikroe_multimedia.build.variant=Default_100
 #mikroe_multimedia.upload.using=
 
 ############################################################
@@ -400,6 +413,7 @@ mikroe_mikromedia.bootloader.lock_bits=0x0F
 mikroe_mikromedia.build.mcu=32MX460F512L
 mikroe_mikromedia.build.f_cpu=80000000L
 mikroe_mikromedia.build.core=pic32
+mikroe_mikromedia.build.variant=Default_100
 #mikroe_mikromedia.upload.using=
 
 ############################################################
@@ -428,6 +442,7 @@ ubw32_mx460.bootloader.lock_bits=0x0F
 ubw32_mx460.build.mcu=32MX460F512L
 ubw32_mx460.build.f_cpu=80000000L
 ubw32_mx460.build.core=pic32
+ubw32_mx460.build.variant=Default_100
 #ubw32_mx460.upload.using=
 
 ############################################################
@@ -456,6 +471,7 @@ ubw32_mx795.bootloader.lock_bits=0x0F
 ubw32_mx795.build.mcu=32MX795F512L
 ubw32_mx795.build.f_cpu=80000000L
 ubw32_mx795.build.core=pic32
+ubw32_mx795.build.variant=Default_100
 #ubw32_mx795.upload.using=
 
 ############################################################
@@ -484,5 +500,6 @@ cui32.bootloader.lock_bits=0x0F
 cui32.build.mcu=32MX440F512H
 cui32.build.f_cpu=80000000L
 cui32.build.core=pic32
+cui32.build.variant=Default_64
 #cui32.upload.using=
 
