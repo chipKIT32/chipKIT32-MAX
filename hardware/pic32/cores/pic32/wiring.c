@@ -241,7 +241,8 @@ void	_board_init(void);
 
 void __ISR(_CORE_TIMER_VECTOR, ipl2) CoreTimerHandler(void)
 {
-    uint32_t compare, count, millisLocal;
+    static uint32_t compare = 0;
+    uint32_t count, millisLocal;
     uint32_t softPWMreturnFlag = 1;
     
     millisLocal = gTimer0_millis;  // defeat volatility
@@ -255,7 +256,6 @@ void __ISR(_CORE_TIMER_VECTOR, ipl2) CoreTimerHandler(void)
 
     if (softPWMreturnFlag)
     {
-        read_comp(compare);
         // Handle updates that need to happen at the 1ms rate:
         do {
             millisLocal++;                  /* At least one tick */
