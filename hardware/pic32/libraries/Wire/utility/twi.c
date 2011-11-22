@@ -102,24 +102,19 @@ void twi_init(p32_i2c * ptwiT, uint8_t irqBus, uint8_t irqSlv, uint8_t irqMst, u
 	*/
 	bnVec = 8 * (vec % 4);
 
-	/* Enable the interrupt controller and turn on clock stretching.
+	/* Set the interrupt priority and sub-priority bits.
 	*/
-	ptwi->ixCon.reg = (1 << _I2CCON_ON) | (1 << _I2CCON_STREN);
+	pregIpc->clr = (0x1F << bnVec);
+	pregIpc->set = ((_IPL_TWI_IPC << 2) + _SPL_TWI_IPC) << bnVec;
 
 	/* Clear the interrupt flags and enable I2C interrupts
 	*/
 	pregIfs->clr = bitBus + bitSlv + bitMst;
 	pregIec->set = bitBus + bitSlv + bitMst;
 
-	/* Set the interrupt priority and sub-priority bits.
+	/* Enable the interrupt controller and turn on clock stretching.
 	*/
-	pregIpc->clr = (0x1F << bnVec);
-	pregIpc->set = ((_IPL_TWI_IPC << 2) + _SPL_TWI_IPC) << bnVec;
-
-	/* Clear the interrupt bits and enable I2C interrupts
-	*/
-	pregIfs->clr = bitBus + bitSlv + bitMst;
-	pregIec->set = bitBus + bitSlv + bitMst;
+	ptwi->ixCon.reg = (1 << _I2CCON_ON) | (1 << _I2CCON_STREN);
 
 	/* Set the baud rate generator for the default frequency.
 	*/
@@ -510,7 +505,7 @@ void __ISR(_TWI_VECTOR, _IPL_TWI_ISR) I2CHandler(void)
 			break;
 
 		case TW_SR_DATA:
-			twi_rxBuffer[0] = I2C1RCV;
+			twi_rxBuffer[0] = ptwi->ixRcv.reg;
 			twi_onSlaveReceive(twi_rxBuffer, 1);
 			// Release clock line
 			ptwi->ixCon.set = (1 << _I2CCON_SCLREL);
