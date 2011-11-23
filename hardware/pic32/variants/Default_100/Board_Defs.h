@@ -200,10 +200,14 @@ const static uint8_t SCK  = 102;		// PIC32 SCK2
 */
 #define digitalPinToPort(P) ( digital_pin_to_port_PGM[P]  )
 #define digitalPinToBitMask(P) ( digital_pin_to_bit_mask_PGM[P]  )
-#define digitalPinToTimer(P) ( digital_pin_to_timer_PGM[P]  )
-#define portOutputRegister(P) ( (volatile uint32_t *)(  port_to_output_PGM[P]) )
-#define portInputRegister(P) ( (volatile uint32_t *)(  port_to_input_PGM[P]) )
-#define portModeRegister(P) ( (volatile uint32_t *)(  port_to_mode_PGM[P]) )
+#define digitalPinToTimerOC(P)  ( (digital_pin_to_timer_PGM[P] & _MSK_TIMER_OC)  )
+#define digitalPinToTimerIC(P)  ( (digital_pin_to_timer_PGM[P] & _MSK_TIMER_IC)  )
+#define digitalPinToTimerTCK(P) ( (digital_pin_to_timer_PGM[P] & _MSK_TIMER_TCK) )
+#define	digitalPinToTimer(P)	digitalPinToTimerOC(P)
+#define portRegisters(P) ( port_to_tris_PGM[P] )
+#define portModeRegister(P) ( (volatile uint32_t *)port_to_tris_PGM[P] )
+#define portInputRegister(P) ( (volatile uint32_t *)(port_to_tris_PGM[P] + 0x0010) )
+#define portOutputRegister(P) ( (volatile uint32_t *)(port_to_tris_PGM[P] + 0x0020) )
 
 // This definition can be used for the default mapping.
 #define	digitalPinToAnalog(P) ( (((P) > 15) && ((P) < 32)) ? (P)-16 : NOT_ANALOG_PIN )

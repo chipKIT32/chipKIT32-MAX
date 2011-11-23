@@ -202,7 +202,11 @@ const static uint8_t SCK  = 13;		// PIC32 SCK2
 #define digitalPinToTimerOC(P)  ( (digital_pin_to_timer_PGM[P] & _MSK_TIMER_OC)  )
 #define digitalPinToTimerIC(P)  ( (digital_pin_to_timer_PGM[P] & _MSK_TIMER_IC)  )
 #define digitalPinToTimerTCK(P) ( (digital_pin_to_timer_PGM[P] & _MSK_TIMER_TCK) )
+#define	digitalPinToTimer(P)	digitalPinToTimerOC(P)
 #define portRegisters(P) ( port_to_tris_PGM[P] )
+#define portModeRegister(P) ( (volatile uint32_t *)port_to_tris_PGM[P] )
+#define portInputRegister(P) ( (volatile uint32_t *)(port_to_tris_PGM[P] + 0x0010) )
+#define portOutputRegister(P) ( (volatile uint32_t *)(port_to_tris_PGM[P] + 0x0020) )
 #define	digitalPinToAnalog(P) ( (P) < 12 ? (P) : ((P) >= 14) && ((P) < 26) ? (P)-14 : NOT_ANALOG_PIN )
 #define analogInPinToChannel(P) ( analog_pin_to_channel_PGM[P]  )
 

@@ -8,6 +8,9 @@
 /************************************************************************/
 /*  Module Description: 												*/
 /*																		*/
+/* This is the main program module for the Digilent SPI library for use	*/
+/* with the chipKIT system. This library supports access to all of the	*/
+/* SPI ports defined on the board in use.								*/
 /*																		*/
 /************************************************************************/
 /*  Revision History:													*/
@@ -480,7 +483,7 @@ DSPI::transfer(uint16_t cbReq, uint8_t * pbSnd, uint8_t * pbRcv) {
 **
 **	Parameters:
 **		cbReq	- number of bytes to send to the slave
-**		pbSnd
+**		pbSnd	- buffer containing bytes to send
 **
 **	Return Value:
 **		none
@@ -508,6 +511,7 @@ DSPI::transfer(uint16_t cbReq, uint8_t * pbSnd) {
 **
 **	Parameters:
 **		cbReq	- number of bytes to receive from the slave
+**		bPad	- pad byte to send to slave
 **		pbRcv	- buffer to hold received bytes
 **
 **	Return Value:
@@ -519,7 +523,7 @@ DSPI::transfer(uint16_t cbReq, uint8_t * pbSnd) {
 **	Description:
 **		This function will receive the specified number of bytes
 **		from the slave. The given pad byte will be sent to the
-**		slave to cause the receive bytes to be sent.
+**		slave to cause the received bytes to be sent.
 */
 
 void

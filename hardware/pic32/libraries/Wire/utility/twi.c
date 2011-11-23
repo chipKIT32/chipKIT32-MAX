@@ -120,22 +120,6 @@ void twi_init(p32_i2c * ptwiT, uint8_t irqBus, uint8_t irqSlv, uint8_t irqMst, u
 	*/
 	ptwi->ixBrg.reg = twi_computeBrg(TWI_FREQ);
 
-#if defined(DEAD)
-	// Enable the I2C1 module and turn on clock stretching.
-	I2C1CONSET = ( 1 << bnOn ) | ( 1 << bnStren );
-	// Enable Interrupts
-	IEC0SET = ( 1 << bnI2c1mie ) | ( 1 << bnI2c1sie) | ( 1 << bnI2c1bie); // Enable interrupts
-	IPC6SET = ( 1 << bnI2c1ip2) | ( 1 << bnI2c1ip1); // Setup Interupt Priority
-	
-	// Configure the I2C1 baud rate generator to output the appropriate
-	// clock.
-	I2C1BRGSET = ( CLK_PBUS/ ( 2 * TWI_FREQ ) ) - 2;
-	
-	// Clear the interrupt flags associated with the I2C1 module.
-	IFS0CLR = ( 1 << bnI2c1mif ) | ( 1 << bnI2c1sif ) | ( 1 << bnI2c1bif );
-	INTEnableSystemMultiVectoredInt ();
-	INTEnableInterrupts ();
-#endif
 }
 
 /* 
@@ -149,9 +133,6 @@ void twi_setAddress(uint8_t address)
   // set twi slave address
 	ptwi->ixAdd.reg = address;
 
-#if defined(DEAD)
-  I2C1ADDSET = address;
-#endif
 }
 
 /* 

@@ -92,6 +92,7 @@
 **	Parameters:
 **		uartP		- pointer to base register for UART
 **		irqP		- base IRQ number for the UART
+**		vecP		- interrupt vector number used by this UART
 **
 **	Return Value:
 **		none
@@ -109,11 +110,6 @@ HardwareSerial::HardwareSerial(p32_uart * uartP, int irqP, int vecP)
 	uart = uartP;
 	irq  = irqP;
 	vec  = vecP;
-
-	/* Make sure that the UART is disabled until the user wants to
-	** use it.
-	*/
-	//uart->uxMode.reg = 0;
 
 	/* The interrupt flag and enable control register addresses and
 	** the bit numbers for the flag bits can be computed from the
@@ -394,8 +390,8 @@ void HardwareSerial::write(uint8_t theChar)
 
 void HardwareSerial::doSerialInt(void)
 {
-int		bufIndex;
-uint8_t	ch;
+	int		bufIndex;
+	uint8_t	ch;
 
 	/* If it's a receive interrupt, get the character and store
 	** it in the receive buffer.

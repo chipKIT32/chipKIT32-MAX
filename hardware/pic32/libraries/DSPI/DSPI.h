@@ -8,6 +8,8 @@
 /************************************************************************/
 /*  File Description:													*/
 /*																		*/
+/* This header file contains interface declarations for use of the		*/
+/* Digilent chipKIT SPI library.										*/
 /*																		*/
 /************************************************************************/
 /*  Revision History:													*/
