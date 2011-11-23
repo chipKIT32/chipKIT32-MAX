@@ -62,7 +62,7 @@
 #define DIRECT_WRITE_HIGH(base, mask)   ((*(base+2)) |= (mask))
 
 #elif defined(__PIC32MX__)
-#include <plib.h>  // is this necessary?
+//- #include <plib.h>  // is this necessary?
 #define PIN_TO_BASEREG(pin)             (portModeRegister(digitalPinToPort(pin)))
 #define PIN_TO_BITMASK(pin)             (digitalPinToBitMask(pin))
 #define IO_REG_TYPE uint32_t

@@ -36,12 +36,12 @@
 */
 #include <plib.h>
 
+#define OPT_BOARD_INTERNAL
 #include <WProgram.h>
 #include <wiring.h>
 #include <inttypes.h>
 #include "SoftPWMServo.h"
 #include "wiring_private.h"
-#include "pins_arduino.h"
 
 /************ local defines **************************************************/
 #define EXTRA_ISR_ENTRY_CYCLES              (48)
