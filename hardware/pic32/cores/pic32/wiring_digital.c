@@ -68,6 +68,12 @@ int	_board_pinMode(uint8_t pin, uint8_t mode)
 		return;
 	}
 
+	//* Obtain pointer to the registers for this io port.
+	iop = (p32_regset *)portRegisters(port);
+
+	//* Obtain bit mask for the specific bit for this pin.
+	bit = digitalPinToBitMask(pin);
+
 	//*	is it an analog port?
 	if (port == _IOPORT_PB)
 	{
@@ -80,12 +86,6 @@ int	_board_pinMode(uint8_t pin, uint8_t mode)
 		AD1PCFGSET = bit;
 
 	}
-
-	//* Obtain pointer to the registers for this io port.
-	iop = (p32_regset *)portRegisters(port);
-
-	//* Obtain bit mask for the specific bit for this pin.
-	bit = digitalPinToBitMask(pin);
 
 	//*	the registers are 32 bits and in this order
 	//*	therefore the CLR register is +1 and the SET register is +2
