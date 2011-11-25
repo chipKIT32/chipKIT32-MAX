@@ -27,62 +27,74 @@
 //*	Jul 25,	2011	<MLS> Modifing for 16 bit I/O ports on pic32 chip
 //* Nov 12, 2011	<GeneApperson> revise for board variant support
 //* Nov 16, 2011	<GeneApperson> revised to use p32_defs.h structure definitions
+//*	Nov 25,	2011	<MLS> Fixed pulsIn as per Issue#63
 //************************************************************************
 
 #define OPT_BOARD_INTERNAL	//pull in internal symbol definitons
-#include "wiring_private.h"
-#include "p32_defs.h"
-#include "pins_arduino.h"
+#include	"wiring_private.h"
+#include	"p32_defs.h"
+#include	"pins_arduino.h"
 
-/* Measures the length (in microseconds) of a pulse on the pin; state is HIGH
- * or LOW, the type of pulse to measure.  Works on pulses from 2-3 microseconds
- * to 3 minutes in length, but must be called at least a few dozen microseconds
- * before the start of the pulse. */
+//************************************************************************
+//*	Measures the length (in microseconds) of a pulse on the pin; state is HIGH
+//*	or LOW, the type of pulse to measure.  Works on pulses from 2-3 microseconds
+//*	to 3 minutes in length, but must be called at least a few dozen microseconds
+//*	before the start of the pulse.
 //************************************************************************
 unsigned long pulseIn(uint8_t pin, uint8_t state, unsigned long timeout)
 {
-uint16_t		bit;
-uint8_t			port;
-p32_ioport *	iop;
-uint8_t			stateMask;
-unsigned long	width;
+int16_t	bit;
+int16_t	port;
+int16_t	stateMask;
+unsigned long width;
 unsigned long	numloops;
 unsigned long	maxloops;
 
+
 	// cache the port and bit of the pin in order to speed up the
-	// pulse width measuring loop and achieve finer resolution.  calling
+	// pulse width measuring loop and achieve finer resolution. calling
 	// digitalRead() instead yields much coarser resolution.
-	bit	=	digitalPinToBitMask(pin);
-	port = digitalPinToPort(pin);
-	iop = (p32_ioport *)portRegisters(pin);
-	stateMask = (state ? bit : 0);
-	width = 0; // keep initialization out of time critical area
-	
+
+	bit			=	digitalPinToBitMask(pin);
+
+	port		=	digitalPinToPort(pin);
+	stateMask	=	(state ? bit : 0);
+	width		=	0;	// keep initialization out of time critical area
+
 	// convert the timeout from microseconds to a number of times through
 	// the initial loop; it takes 16 clock cycles per iteration.
-	numloops = 0;
-	maxloops = microsecondsToClockCycles(timeout) / 16;
-	
+	numloops	=	0;
+	maxloops	=	microsecondsToClockCycles(timeout/7) + 10;
+
 	// wait for any previous pulse to end
-	while ((iop->port.reg & bit) == stateMask)
+	while ((*portInputRegister(port) & bit) == stateMask)
+	{
 		if (numloops++ == maxloops)
-			return 0;
-	
-	// wait for the pulse to start
-	while ((iop->port.reg & bit) != stateMask)
-		if (numloops++ == maxloops)
-			return 0;
-	
-	// wait for the pulse to stop
-	while ((iop->port.reg & bit) == stateMask) {
-		if (numloops++ == maxloops)
-			return 0;
-		width++;
+			return(0);
 	}
+
+	// wait for the pulse to start
+	while ((*portInputRegister(port) & bit) != stateMask)
+	{
+		if (numloops++ == maxloops)
+			return(0);
+	}
+		
+	width	=	micros();
+	// wait for the pulse to stop
+	while ((*portInputRegister(port) & bit) == stateMask)
+	{
+		if (numloops++ == maxloops)
+			return(0);
+	}
+	width	=	micros()-width;
 
 	// convert the reading to microseconds. The loop has been determined
 	// to be 20 clock cycles long and have about 16 clocks between the edge
 	// and the start of the loop. There will be some error introduced by
 	// the interrupt handlers.
-	return clockCyclesToMicroseconds(width * 21 + 16); 
+
+	return (width+4);
+
 }
+
