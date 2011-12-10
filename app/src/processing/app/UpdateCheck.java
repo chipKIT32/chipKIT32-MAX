@@ -49,7 +49,7 @@ import processing.core.PApplet;
  */
 public class UpdateCheck implements Runnable {
   Base base;
-  String downloadURL = "http://www.arduino.cc/latest.txt";
+  String downloadURL = "https://raw.github.com/chipKIT32/chipKIT32-MAX/master/latest.txt";
 
   static final long ONE_DAY = 24 * 60 * 60 * 1000;
 
@@ -99,8 +99,8 @@ public class UpdateCheck implements Runnable {
       Preferences.set("update.last", String.valueOf(now));
 
       String prompt =
-        "A new version of Arduino is available,\n" +
-        "would you like to visit the Arduino download page?";
+        "A new version of MPIDE is available,\n" +
+        "would you like to visit the MPIDE download page?";
         
       if (base.activeEditor != null) {
         if (latest > Base.REVISION) {
@@ -114,7 +114,7 @@ public class UpdateCheck implements Runnable {
                                                     options,
                                                     options[0]);
           if (result == JOptionPane.YES_OPTION) {
-            Base.openURL("http://www.arduino.cc/en/Main/Software");
+            Base.openURL("https://github.com/chipKIT32/chipKIT-builds/downloads");
           }
         }
       }
