@@ -142,7 +142,7 @@ public class Preferences {
       load(Base.getLibStream("preferences.txt"));
     } catch (Exception e) {
       Base.showError(null, "Could not read default settings.\n" +
-                           "You'll need to reinstall Arduino.", e);
+                           "You'll need to reinstall MPIDE.", e);
     }
 
     // check for platform-specific properties in the defaults
@@ -194,7 +194,7 @@ public class Preferences {
                          "Error reading the preferences file. " +
                          "Please delete (or move)\n" +
                          preferencesFile.getAbsolutePath() +
-                         " and restart Arduino.", ex);
+                         " and restart MPIDE.", ex);
         }
       }
     }    
@@ -269,7 +269,7 @@ public class Preferences {
     box.add(label);
     fontSizeField = new JTextField(4);
     box.add(fontSizeField);
-    label = new JLabel("  (requires restart of Arduino)");
+    label = new JLabel("  (requires restart of MPIDE)");
     box.add(label);
     pain.add(box);
     d = box.getPreferredSize();
@@ -314,7 +314,7 @@ public class Preferences {
 
     if (Base.isWindows()) {
       autoAssociateBox =
-        new JCheckBox("Automatically associate .pde files with Arduino");
+        new JCheckBox("Automatically associate .pde files with MPIDE");
       pain.add(autoAssociateBox);
       d = autoAssociateBox.getPreferredSize();
       autoAssociateBox.setBounds(left, top, d.width + 10, d.height);
@@ -354,7 +354,7 @@ public class Preferences {
     right = Math.max(right, left + d.width);
     top += d.height;
 
-    label = new JLabel("(edit only when Arduino is not running)");
+    label = new JLabel("(edit only when MPIDE is not running)");
     pain.add(label);
     d = label.getPreferredSize();
     label.setForeground(Color.gray);
