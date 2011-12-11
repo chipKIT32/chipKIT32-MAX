@@ -267,61 +267,73 @@
 		#define _CPU_NAME_	"32MX110F016B"
 		#define	FLASHEND	(((16 - 4) * 1024L) - 1)
 		#define	RAMEND		((4 * 1024L) - 1)
+		#define	__PIC32MX1XX__
 
 	#elif defined(__32MX110F016C__)
 		#define _CPU_NAME_	"32MX110F016C"
 		#define	FLASHEND	(((16 - 4) * 1024L) - 1)
 		#define	RAMEND		((4 * 1024L) - 1)
+		#define	__PIC32MX1XX__
 
 	#elif defined(__32MX110F016D__)
 		#define _CPU_NAME_	"32MX110F016D"
 		#define	FLASHEND	(((16 - 4) * 1024L) - 1)
 		#define	RAMEND		((4 * 1024L) - 1)
+		#define	__PIC32MX1XX__
 
 	#elif defined(__32MX120F032B__)
 		#define _CPU_NAME_	"32MX120F032B"
 		#define	FLASHEND	(((32 - 4) * 1024L) - 1)
 		#define	RAMEND		((8 * 1024L) - 1)
+		#define	__PIC32MX1XX__
 
 	#elif defined(__32MX120F032C__)
 		#define _CPU_NAME_	"32MX120F032C"
 		#define	FLASHEND	(((32 - 4) * 1024L) - 1)
 		#define	RAMEND		((8 * 1024L) - 1)
+		#define	__PIC32MX1XX__
 
 	#elif defined(__32MX120F032D__)
 		#define _CPU_NAME_	"32MX120F032D"
 		#define	FLASHEND	(((32 - 4) * 1024L) - 1)
 		#define	RAMEND		((8 * 1024L) - 1)
+		#define	__PIC32MX1XX__
 
 	#elif defined(__32MX130F064B__)
 		#define _CPU_NAME_	"32MX130F064B"
 		#define	FLASHEND	(((64 - 4) * 1024L) - 1)
 		#define	RAMEND		((16 * 1024L) - 1)
+		#define	__PIC32MX1XX__
 
 	#elif defined(__32MX130F064C__)
 		#define _CPU_NAME_	"32MX130F064C"
 		#define	FLASHEND	(((64 - 4) * 1024L) - 1)
 		#define	RAMEND		((16 * 1024L) - 1)
+		#define	__PIC32MX1XX__
 
 	#elif defined(__32MX130F064D__)
 		#define _CPU_NAME_	"32MX130F064D"
 		#define	FLASHEND	(((64 - 4) * 1024L) - 1)
 		#define	RAMEND		((16 * 1024L) - 1)
+		#define	__PIC32MX1XX__
 
 	#elif defined(__32MX150F128B__)
 		#define _CPU_NAME_	"32MX150F128B"
 		#define	FLASHEND	(((128 - 4) * 1024L) - 1)
 		#define	RAMEND		((32 * 1024L) - 1)
+		#define	__PIC32MX1XX__
 
 	#elif defined(__32MX150F128C__)
 		#define _CPU_NAME_	"32MX150F128C"
 		#define	FLASHEND	(((128 - 4) * 1024L) - 1)
 		#define	RAMEND		((32 * 1024L) - 1)
+		#define	__PIC32MX1XX__
 
 	#elif defined(__32MX150F128D__)
 		#define _CPU_NAME_	"32MX150F128D"
 		#define	FLASHEND	(((128 - 4) * 1024L) - 1)
 		#define	RAMEND		((32 * 1024L) - 1)
+		#define	__PIC32MX1XX__
 
 	//************************************************************************
 	//*	200 series
@@ -330,61 +342,73 @@
 		#define _CPU_NAME_	"32MX210F016B"
 		#define	FLASHEND	(((16 - 4) * 1024L) - 1)
 		#define	RAMEND		((4 * 1024L) - 1)
+		#define	__PIC32MX2XX__
 
 	#elif defined(__32MX210F016C__)
 		#define _CPU_NAME_	"32MX210F016C"
 		#define	FLASHEND	(((16 - 4) * 1024L) - 1)
 		#define	RAMEND		((4 * 1024L) - 1)
+		#define	__PIC32MX2XX__
 
 	#elif defined(__32MX210F016D__)
 		#define _CPU_NAME_	"32MX210F016D"
 		#define	FLASHEND	(((16 - 4) * 1024L) - 1)
 		#define	RAMEND		((4 * 1024L) - 1)
+		#define	__PIC32MX2XX__
 
 	#elif defined(__32MX220F032B__)
 		#define _CPU_NAME_	"32MX220F032B"
 		#define	FLASHEND	(((32 - 4) * 1024L) - 1)
 		#define	RAMEND		((8 * 1024L) - 1)
+		#define	__PIC32MX2XX__
 
 	#elif defined(__32MX220F032C__)
 		#define _CPU_NAME_	"32MX220F032C"
 		#define	FLASHEND	(((32 - 4) * 1024L) - 1)
 		#define	RAMEND		((8 * 1024L) - 1)
+		#define	__PIC32MX2XX__
 
 	#elif defined(__32MX220F032D__)
 		#define _CPU_NAME_	"32MX220F032D"
 		#define	FLASHEND	(((32 - 4) * 1024L) - 1)
 		#define	RAMEND		((8 * 1024L) - 1)
+		#define	__PIC32MX2XX__
 
 	#elif defined(__32MX230F064B__)
 		#define _CPU_NAME_	"32MX230F064B"
 		#define	FLASHEND	(((64 - 4) * 1024L) - 1)
 		#define	RAMEND		((16 * 1024L) - 1)
+		#define	__PIC32MX2XX__
 
 	#elif defined(__32MX230F064C__)
 		#define _CPU_NAME_	"32MX230F064C"
 		#define	FLASHEND	(((64 - 4) * 1024L) - 1)
 		#define	RAMEND		((16 * 1024L) - 1)
+		#define	__PIC32MX2XX__
 
 	#elif defined(__32MX230F064D__)
 		#define _CPU_NAME_	"32MX230F064D"
 		#define	FLASHEND	(((64 - 4) * 1024L) - 1)
 		#define	RAMEND		((16 * 1024L) - 1)
+		#define	__PIC32MX2XX__
 
 	#elif defined(__32MX250F128B__)
 		#define _CPU_NAME_	"32MX250F128B"
 		#define	FLASHEND	(((128 - 4) * 1024L) - 1)
 		#define	RAMEND		((32 * 1024L) - 1)
+		#define	__PIC32MX2XX__
 
 	#elif defined(__32MX250F128C__)
 		#define _CPU_NAME_	"32MX250F128C"
 		#define	FLASHEND	(((128 - 4) * 1024L) - 1)
 		#define	RAMEND		((32 * 1024L) - 1)
+		#define	__PIC32MX2XX__
 
 	#elif defined(__32MX250F128D__)
 		#define _CPU_NAME_	"32MX250F128D"
 		#define	FLASHEND	(((128 - 4) * 1024L) - 1)
 		#define	RAMEND		((32 * 1024L) - 1)
+		#define	__PIC32MX2XX__
 
 	//************************************************************************
 	//*	300 series
@@ -393,51 +417,61 @@
 		#define _CPU_NAME_	"32MX320F032H"
 		#define	FLASHEND	(((32 - 4) * 1024L) - 1)
 		#define	RAMEND		((8 * 1024L) - 1)
+		#define	__PIC32MX3XX__
 
 	#elif defined(__32MX320F064H__)
 		#define	_CPU_NAME_	"32MX320F064H"
 		#define	FLASHEND	(((64 - 4) * 1024L) - 1)
 		#define	RAMEND		((16 * 1024L) - 1)
+		#define	__PIC32MX3XX__
 
 	#elif defined(__32MX320F128H__)
 		#define	_CPU_NAME_	"32MX320F128H"
 		#define	FLASHEND	(((128 - 4) * 1024L) - 1)
 		#define	RAMEND		((16 * 1024L) - 1)
+		#define	__PIC32MX3XX__
 
 	#elif defined(__32MX340F128H__)
 		#define	_CPU_NAME_	"32MX340F128H"
 		#define	FLASHEND	(((128 - 4) * 1024L) - 1)
 		#define	RAMEND		((32 * 1024L) - 1)
+		#define	__PIC32MX3XX__
 
 	#elif defined(__32MX340F256H__)
 		#define	_CPU_NAME_	"32MX340F256H"
 		#define	FLASHEND	(((256 - 4) * 1024L) - 1)
 		#define	RAMEND		((32 * 1024L) - 1)
+		#define	__PIC32MX3XX__
 
 	#elif defined(__32MX340F512H__)
 		#define	_CPU_NAME_	"32MX340F512H"
 		#define	FLASHEND	(((512 - 4) * 1024L) - 1)
 		#define	RAMEND		((32 * 1024L) - 1)
+		#define	__PIC32MX3XX__
 
 	#elif defined(__32MX320F128L__)
 		#define	_CPU_NAME_	"32MX320F128L"
 		#define	FLASHEND	(((128 - 4) * 1024L) - 1)
 		#define	RAMEND		((16 * 1024L) - 1)
+		#define	__PIC32MX3XX__
 
 	#elif defined(__32MX340F128L__)
 		#define	_CPU_NAME_	"32MX340F128L"
 		#define	FLASHEND	(((128 - 4) * 1024L) - 1)
 		#define	RAMEND		((32 * 1024L) - 1)
+		#define	__PIC32MX3XX__
 
 	#elif defined(__32MX360F256L__)
 		#define	_CPU_NAME_	"32MX360F256L"
 		#define	FLASHEND	(((256 - 4) * 1024L) - 1)
 		#define	RAMEND		((32 * 1024L) - 1)
+		#define	__PIC32MX3XX__
 
 	#elif defined(__32MX360F512L__)
 		#define	_CPU_NAME_	"32MX360F512L"
 		#define	FLASHEND	(((512 - 4) * 1024L) - 1)
 		#define	RAMEND		((32 * 1024L) - 1)
+		#define	__PIC32MX3XX__
 
 	//************************************************************************
 	//*	400 series
@@ -446,36 +480,43 @@
 		#define	_CPU_NAME_	"32MX420F032H"
 		#define	FLASHEND	(((32 - 4) * 1024L) - 1)
 		#define	RAMEND		((8 * 1024L) - 1)
+		#define	__PIC32MX4XX__
 
 	#elif defined(__32MX440F128H__)
 		#define	_CPU_NAME_	"32MX440F128H"
 		#define	FLASHEND	(((128 - 4) * 1024L) - 1)
 		#define	RAMEND		((32 * 1024L) - 1)
+		#define	__PIC32MX4XX__
 
 	#elif defined(__32MX440F256H__)
 		#define	_CPU_NAME_	"32MX440F256H"
 		#define	FLASHEND	(((256 - 4) * 1024L) - 1)
 		#define	RAMEND		((32 * 1024L) - 1)
+		#define	__PIC32MX4XX__
 
 	#elif defined(__32MX440F512H__)
 		#define	_CPU_NAME_	"32MX440F512H"
 		#define	FLASHEND	(((512 - 4) * 1024L) - 1)
 		#define	RAMEND		((32 * 1024L) - 1)
+		#define	__PIC32MX4XX__
 
 	#elif defined(__32MX440F128L__)
 		#define	_CPU_NAME_	"32MX440F128L"
 		#define	FLASHEND	(((128 - 4) * 1024L) - 1)
 		#define	RAMEND		((32 * 1024L) - 1)
+		#define	__PIC32MX4XX__
 
 	#elif defined(__32MX460F256L__)
 		#define	_CPU_NAME_	"32MX460F256L"
 		#define	FLASHEND	(((256 - 4) * 1024L) - 1)
 		#define	RAMEND		((32 * 1024L) - 1)
+		#define	__PIC32MX4XX__
 
 	#elif defined(__32MX460F512L__)
 		#define	_CPU_NAME_	"32MX460F512L"
 		#define	FLASHEND	(((512 - 4) * 1024L) - 1)
 		#define	RAMEND		((32 * 1024L) - 1)
+		#define	__PIC32MX4XX__
 
 	//************************************************************************
 	//*	500 series
@@ -484,51 +525,61 @@
 		#define	_CPU_NAME_	"32MX534F064H"
 		#define	FLASHEND	(((64 - 4) * 1024L) - 1)
 		#define	RAMEND		((16 * 1024L) - 1)
+		#define	__PIC32MX5XX__
 
 	#elif defined(__32MX564F064H__)
 		#define	_CPU_NAME_	"32MX564F064H"
 		#define	FLASHEND	(((64 - 4) * 1024L) - 1)
 		#define	RAMEND		((32 * 1024L) - 1)
+		#define	__PIC32MX5XX__
 
 	#elif defined(__32MX564F128H__)
 		#define	_CPU_NAME_	"32MX564F128H"
 		#define	FLASHEND	(((128 - 4) * 1024L) - 1)
 		#define	RAMEND		((32 * 1024L) - 1)
+		#define	__PIC32MX5XX__
 
 	#elif defined(__32MX575F256H__)
 		#define	_CPU_NAME_	"32MX575F256H"
 		#define	FLASHEND	(((256 - 4) * 1024L) - 1)
 		#define	RAMEND		((64 * 1024L) - 1)
+		#define	__PIC32MX5XX__
 
 	#elif defined(__32MX575F512H__)
 		#define	_CPU_NAME_	"32MX575F512H"
 		#define	FLASHEND	(((512 - 4) * 1024L) - 1)
 		#define	RAMEND		((64 * 1024L) - 1)
+		#define	__PIC32MX5XX__
 
 	#elif defined(__32MX534F064L__)
 		#define	_CPU_NAME_	"32MX534F064L"
 		#define	FLASHEND	(((64 - 4) * 1024L) - 1)
 		#define	RAMEND		((16 * 1024L) - 1)
+		#define	__PIC32MX5XX__
 
 	#elif defined(__32MX564F064L__)
 		#define	_CPU_NAME_	"32MX564F064L"
 		#define	FLASHEND	(((64 - 4) * 1024L) - 1)
 		#define	RAMEND		((32 * 1024L) - 1)
+		#define	__PIC32MX5XX__
 
 	#elif defined(__32MX564F128L__)
 		#define	_CPU_NAME_	"32MX564F128L"
 		#define	FLASHEND	(((128 - 4) * 1024L) - 1)
 		#define	RAMEND		((32 * 1024L) - 1)
+		#define	__PIC32MX5XX__
 
 	#elif defined(__32MX575F256L__)
 		#define	_CPU_NAME_	"32MX575F256L"
 		#define	FLASHEND	(((256 - 4) * 1024L) - 1)
 		#define	RAMEND		((64 * 1024L) - 1)
+		#define	__PIC32MX5XX__
 
 	#elif defined(__32MX575F512L__)
 		#define	_CPU_NAME_	"32MX575F512L"
 		#define	FLASHEND	(((512 - 4) * 1024L) - 1)
 		#define	RAMEND		((64 * 1024L) - 1)
+		#define	__PIC32MX5XX__
 
 	//************************************************************************
 	//*	600 series
@@ -537,51 +588,61 @@
 		#define	_CPU_NAME_	"32MX664F064H"
 		#define	FLASHEND	(((64 - 4) * 1024L) - 1)
 		#define	RAMEND		((32 * 1024L) - 1)
+		#define	__PIC32MX6XX__
 
 	#elif defined(__32MX664F128H__)
 		#define	_CPU_NAME_	"32MX664F128H"
 		#define	FLASHEND	(((128 - 4) * 1024L) - 1)
 		#define	RAMEND		((32 * 1024L) - 1)
+		#define	__PIC32MX6XX__
 
 	#elif defined(__32MX675F256H__)
 		#define	_CPU_NAME_	"32MX675F256H"
 		#define	FLASHEND	(((256 - 4) * 1024L) - 1)
 		#define	RAMEND		((64 * 1024L) - 1)
+		#define	__PIC32MX6XX__
 
 	#elif defined(__32MX675F512H__)
 		#define	_CPU_NAME_	"32MX675F512H"
 		#define	FLASHEND	(((512 - 4) * 1024L) - 1)
 		#define	RAMEND		((64 * 1024L) - 1)
+		#define	__PIC32MX6XX__
 
 	#elif defined(__32MX695F512H__)
 		#define	_CPU_NAME_	"32MX695F512H"
 		#define	FLASHEND	(((512 - 4) * 1024L) - 1)
 		#define	RAMEND		((128 * 1024L) - 1)
+		#define	__PIC32MX6XX__
 
 	#elif defined(__32MX664F064L__)
 		#define	_CPU_NAME_	"32MX664F064L"
 		#define	FLASHEND	(((64 - 4) * 1024L) - 1)
 		#define	RAMEND		((32 * 1024L) - 1)
+		#define	__PIC32MX6XX__
 
 	#elif defined(__32MX664F128L__)
 		#define	_CPU_NAME_	"32MX664F128L"
 		#define	FLASHEND	(((128 - 4) * 1024L) - 1)
 		#define	RAMEND		((32 * 1024L) - 1)
+		#define	__PIC32MX6XX__
 
 	#elif defined(__32MX675F256L__)
 		#define	_CPU_NAME_	"32MX675F256L"
 		#define	FLASHEND	(((256 - 4) * 1024L) - 1)
 		#define	RAMEND		((64 * 1024L) - 1)
+		#define	__PIC32MX6XX__
 
 	#elif defined(__32MX675F512L__)
 		#define	_CPU_NAME_	"32MX675F512L"
 		#define	FLASHEND	(((512 - 4) * 1024L) - 1)
 		#define	RAMEND		((64 * 1024L) - 1)
+		#define	__PIC32MX6XX__
 
 	#elif defined(__32MX695F512L__)
 		#define	_CPU_NAME_	"32MX695F512L"
 		#define	FLASHEND	(((512 - 4) * 1024L) - 1)
 		#define	RAMEND		((128 * 1024L) - 1)
+		#define	__PIC32MX6XX__
 
 	//************************************************************************
 	//*	700 series
@@ -590,41 +651,49 @@
 		#define	_CPU_NAME_	"32MX764F128H"
 		#define	FLASHEND	(((128 - 4) * 1024L) - 1)
 		#define	RAMEND		((32 * 1024L) - 1)
+		#define	__PIC32MX7XX__
 
 	#elif defined(__32MX775F256H__)
 		#define	_CPU_NAME_	"32MX775F256H"
 		#define	FLASHEND	(((256 - 4) * 1024L) - 1)
 		#define	RAMEND		((64 * 1024L) - 1)
+		#define	__PIC32MX7XX__
 
 	#elif defined(__32MX775F512H__)
 		#define	_CPU_NAME_	"32MX775F512H"
 		#define	FLASHEND	(((512 - 4) * 1024L) - 1)
 		#define	RAMEND		((64 * 1024L) - 1)
+		#define	__PIC32MX7XX__
 
 	#elif defined(__32MX795F512H__)
 		#define	_CPU_NAME_	"32MX795F512H"
 		#define	FLASHEND	(((512 - 4) * 1024L) - 1)
 		#define	RAMEND		((128 * 1024L) - 1)
+		#define	__PIC32MX7XX__
 
 	#elif defined(__32MX764F128L__)
 		#define	_CPU_NAME_	"32MX764F128L"
 		#define	FLASHEND	(((128 - 4) * 1024L) - 1)
 		#define	RAMEND		((32 * 1024L) - 1)
+		#define	__PIC32MX7XX__
 
 	#elif defined(__32MX775F256L__)
 		#define	_CPU_NAME_	"32MX775F256L"
 		#define	FLASHEND	(((256 - 4) * 1024L) - 1)
 		#define	RAMEND		((64 * 1024L) - 1)
+		#define	__PIC32MX7XX__
 
 	#elif defined(__32MX775F512L__)
 		#define	_CPU_NAME_	"32MX775F512L"
 		#define	FLASHEND	(((512 - 4) * 1024L) - 1)
 		#define	RAMEND		((64 * 1024L) - 1)
+		#define	__PIC32MX7XX__
 
 	#elif defined(__32MX795F512L__)
 		#define	_CPU_NAME_	"32MX795F512L"
 		#define	FLASHEND	(((512 - 4) * 1024L) - 1)
 		#define	RAMEND		((128 * 1024L) - 1)
+		#define	__PIC32MX7XX__
 
 	//************************************************************************
 	#else

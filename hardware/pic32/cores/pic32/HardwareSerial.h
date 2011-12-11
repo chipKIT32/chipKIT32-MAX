@@ -81,8 +81,10 @@ class HardwareSerial : public Stream
 {
 	private:
 		p32_uart *		uart;		//uart register map
-		int				irq;		//base IRQ number for the UART
-		int				vec;		//interrupt vector for the UART
+		uint8_t			irq;		//base IRQ number for the UART
+		uint8_t			vec;		//interrupt vector for the UART
+		uint8_t			ipl;		//interrupt priority level
+		uint8_t			spl;		//interrupt sub-priority level
 		p32_regset *	ifs;		//interrupt flag register set
 		p32_regset *	iec;		//interrupt enable control register set
 		uint32_t		bit_err;	//err interrupt flag bit
@@ -91,7 +93,7 @@ class HardwareSerial : public Stream
 		ring_buffer		rx_buffer;	//queue used for UART rx data
 
 	public:
-		HardwareSerial(p32_uart * uartP, int irq, int vec);
+		HardwareSerial(p32_uart * uartP, int irq, int vec, int ipl, int spl);
 
 		void			doSerialInt(void);
 
@@ -115,7 +117,7 @@ class USBSerial : public Stream
 	public:
 		USBSerial	(ring_buffer	*rx_buffer);
 
-		void			begin(long baudRate);
+		void			begin(unsigned long baudRate);
 		void			end();
 		virtual int		available(void);
 		virtual int		peek();

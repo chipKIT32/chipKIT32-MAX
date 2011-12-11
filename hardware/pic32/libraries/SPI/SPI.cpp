@@ -108,7 +108,7 @@ void SPIClass::begin()
 	ipc = ((p32_regset *)&IPC0) + (vec / 4);	//interrupt priority control reg
 	ipl_shift = 8 * (vec % 4);
 	ipc->clr = (0x1F << ipl_shift);
-	ipc->set = ((_IPL_SPI_IPC << 2) + _SPL_SPI_IPC) << ipl_shift;
+	ipc->set = ((_SPI_IPL << 2) + _SPI_SPL) << ipl_shift;
 
 	/* Set the clock frequency. An Arduino board with a 16Mhz clock defaults
 	** the SPI clock speed to SPI_CLOCK_DIV4, resulting in a 4Mhz SPI clock.

@@ -39,15 +39,15 @@
 #include <inttypes.h>
 #include <stdio.h>
 
+#define	OPT_SYSTEM_INTERNAL
+#define OPT_BOARD_INTERNAL	//pull in internal symbol definitons
+#include "p32_defs.h"
+#include "pins_arduino.h"
+
 #include "WConstants.h"
 #include "wiring_private.h"
 
-volatile static voidFuncPtr intFunc[EXTERNAL_NUM_INTERRUPTS];
-
-// Interrupt privilege and sub-privilege level for external interrupts
-// This is an arbitrary selection.
-#define	EXT_INT_IPL		4
-#define	EXT_INT_SPL		1
+volatile static voidFuncPtr intFunc[NUM_EXTERNAL_INTERRUPTS];
 
 //************************************************************************
 // PIC32 devices only support rising and falling edge triggered interrupts
@@ -58,7 +58,7 @@ void attachInterrupt(uint8_t interruptNum, void (*userFunc)(void), int mode)
 {
 	int		edge;
 
-	if ((interruptNum < EXTERNAL_NUM_INTERRUPTS) && ((mode == FALLING)||(mode == RISING)))
+	if ((interruptNum < NUM_EXTERNAL_INTERRUPTS) && ((mode == FALLING)||(mode == RISING)))
 	{
 	    intFunc[interruptNum]	=	userFunc;
 
@@ -77,48 +77,48 @@ void attachInterrupt(uint8_t interruptNum, void (*userFunc)(void), int mode)
 		// and enable the interrupt.	      
 	    switch (interruptNum)
 	    {
-	    	case 0:
+	    	case EXT_INT0:
 				IEC0bits.INT0IE		=	0;
 				IFS0bits.INT0IF		=	0;
 				INTCONbits.INT0EP	=	edge;
-				IPC0bits.INT0IP		=	EXT_INT_IPL;
-				IPC0bits.INT0IS		=	EXT_INT_SPL;
+				IPC0bits.INT0IP		=	_INT0_IPL_IPC;
+				IPC0bits.INT0IS		=	_INT0_SPL_IPC;
 				IEC0bits.INT0IE		=	1;
 	    		break;
 
-			case 1:
+			case EXT_INT1:
 				IEC0bits.INT1IE		=	0;
 				IFS0bits.INT1IF		=	0;
 				INTCONbits.INT1EP	=	edge;
-				IPC1bits.INT1IP		=	EXT_INT_IPL;
-				IPC1bits.INT1IS		=	EXT_INT_SPL;
+				IPC1bits.INT1IP		=	_INT1_IPL_IPC;
+				IPC1bits.INT1IS		=	_INT1_SPL_IPC;
 				IEC0bits.INT1IE		=	1;
 				break;
 
-			case 2:
+			case EXT_INT2:
 				IEC0bits.INT2IE		=	0;
 				IFS0bits.INT2IF		=	0;
 				INTCONbits.INT2EP	=	edge;
-				IPC2bits.INT2IP		=	EXT_INT_IPL;
-				IPC2bits.INT2IS		=	EXT_INT_SPL;
+				IPC2bits.INT2IP		=	_INT2_IPL_IPC;
+				IPC2bits.INT2IS		=	_INT2_SPL_IPC;
 				IEC0bits.INT2IE		=	1;
 				break;
 
-			case 3:
+			case EXT_INT3:
 				IEC0bits.INT3IE		=	0;
 				IFS0bits.INT3IF		=	0;
 				INTCONbits.INT3EP	=	edge;
-				IPC3bits.INT3IP		=	EXT_INT_IPL;
-				IPC3bits.INT3IS		=	EXT_INT_SPL;
+				IPC3bits.INT3IP		=	_INT3_IPL_IPC;
+				IPC3bits.INT3IS		=	_INT3_SPL_IPC;
 				IEC0bits.INT3IE		=	1;
 				break;
 
-			case 4:
+			case EXT_INT4:
 				IEC0bits.INT4IE		=	0;
 				IFS0bits.INT4IF		=	0;
 				INTCONbits.INT4EP	=	edge;
-				IPC4bits.INT4IP		=	EXT_INT_IPL;
-				IPC4bits.INT4IS		=	EXT_INT_SPL;
+				IPC4bits.INT4IP		=	_INT4_IPL_IPC;
+				IPC4bits.INT4IS		=	_INT4_SPL_IPC;
 				IEC0bits.INT4IE		=	1;
 				break;
 		}
@@ -132,23 +132,23 @@ void detachInterrupt(uint8_t interruptNum)
 	{
 		switch (interruptNum) 
 		{
-	    	case 0:
+	    	case EXT_INT0:
 				IEC0bits.INT0IE	=	0;
 	    		break;
 
-			case 1:
+			case EXT_INT1:
 				IEC0bits.INT1IE	=	0;
 				break;
 
-			case 2:
+			case EXT_INT2:
 				IEC0bits.INT2IE	=	0;
 				break;
 
-			case 3:
+			case EXT_INT3:
 				IEC0bits.INT3IE	=	0;
 				break;
 
-			case 4:
+			case EXT_INT4:
 				IEC0bits.INT4IE	=	0;
 				break;
 		}
@@ -159,60 +159,60 @@ void detachInterrupt(uint8_t interruptNum)
 
 //************************************************************************
 // INT0 ISR
-void __ISR(_EXTERNAL_0_VECTOR, ipl4) ExtInt0Handler(void)
+void __ISR(_EXTERNAL_0_VECTOR, _INT0_IPL_ISR) ExtInt0Handler(void)
 {
 
-	if (intFunc[0] != 0)
+	if (intFunc[EXT_INT0] != 0)
 	{
-		(*intFunc[0])();
+		(*intFunc[EXT_INT0])();
 	}
 	IFS0bits.INT0IF	=	0;
 }
 
 //************************************************************************
 // INT1 ISR
-void __ISR(_EXTERNAL_1_VECTOR, ipl4) ExtInt1Handler(void)
+void __ISR(_EXTERNAL_1_VECTOR, _INT1_IPL_ISR) ExtInt1Handler(void)
 {
 
-	if (intFunc[1] != 0)
+	if (intFunc[EXT_INT1] != 0)
 	{
-		(*intFunc[1])();
+		(*intFunc[EXT_INT1])();
 	}
 	IFS0bits.INT1IF	=	0;
 }
 
 //************************************************************************
 // INT2 ISR
-void __ISR(_EXTERNAL_2_VECTOR, ipl4) ExtInt2Handler(void)
+void __ISR(_EXTERNAL_2_VECTOR, _INT2_IPL_ISR) ExtInt2Handler(void)
 {
 
-	if (intFunc[2] != 0)
+	if (intFunc[EXT_INT2] != 0)
 	{
-		(*intFunc[2])();
+		(*intFunc[EXT_INT2])();
 	}
 	IFS0bits.INT2IF	=	0;
 }
 
 //************************************************************************
 // INT3 ISR
-void __ISR(_EXTERNAL_3_VECTOR, ipl4) ExtInt3Handler(void)
+void __ISR(_EXTERNAL_3_VECTOR, _INT3_IPL_ISR) ExtInt3Handler(void)
 {
 
-	if (intFunc[3] != 0)
+	if (intFunc[EXT_INT3] != 0)
 	{
-		(*intFunc[3])();
+		(*intFunc[EXT_INT3])();
 	}
 	IFS0bits.INT3IF	=	0;
 }
 
 //************************************************************************
 // INT4 ISR
-void __ISR(_EXTERNAL_4_VECTOR, ipl4) ExtInt4Handler(void)
+void __ISR(_EXTERNAL_4_VECTOR, _INT4_IPL_ISR) ExtInt4Handler(void)
 {
 
-	if (intFunc[4] != 0)
+	if (intFunc[EXT_INT4] != 0)
 	{
-		(*intFunc[4])();
+		(*intFunc[EXT_INT4])();
 	}
 	IFS0bits.INT4IF	=	0;
 }

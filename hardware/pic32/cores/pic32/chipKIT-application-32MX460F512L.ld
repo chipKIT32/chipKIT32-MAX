@@ -68,9 +68,9 @@ SECTIONS
     KEEP(*(.reset))
   } > kseg0_program_mem
   
-  .eeprom_pic32 _EEPROM_ADDR :
+  .eeprom_pic32 _EEPROM_ADDR (NOLOAD):
   { 
-    . += 0x1000;
+    KEEP(*(.eeprom_pic32 .eeprom_pic32.*))
   } > kseg0_eeprom_mem
 
   /DISCARD/ : { *(.bev_handler) }

@@ -3,7 +3,7 @@
 /*  PmodJstkDspiInt  --  Illustrate Use of DSPI Library with PmodJSTK   */
 /*                                                                      */
 /************************************************************************/
-/*  Author:                                                             */
+/*  Author:  Gene Apperson                                              */
 /*  Copyright 2011, Digilent Inc, All rights reserved.                  */
 /************************************************************************/
 /*
@@ -25,16 +25,17 @@
 /*  Module Description:                                                 */
 /*                                                                      */
 /* This example illustrates using the Digilent DSPI library to          */
-/* communicate with a Digilent PmodJSTK from a Digilent Cerebot board.  */
-/* The PmodJSTK iss assumed to be connected to DSPI port 0. This sketch */
+/* communicate with a Digilent PmodJSTK.                                */
+/* The PmodJSTK is assumed to be connected to DSPI port 0. This sketch  */
 /* illustrates the use of the interrupt driven DSPI data transfer       */
 /* functions.                                                           */
 /*                                                                      */
-/* This demo blinks LED3 and LED4 on the Cerebot MX4cK, and at the same */
-/* time, blinks the two LEDs on the PmodJSTK. It reads the state of the */
-/* two buttons on the PmodJSTK, and turns LED1 and LED2 on and off      */
-/* based on the button state. The X and Y joystick position is read and */
-/* placed into global variables, but not used by the demo itself.       */
+/* This demo blinks LED3 and LED4 on boards that have four LEDs, and at */
+/* the same time, blinks the two LEDs on the PmodJSTK. It reads the     */
+/* state of the two buttons on the PmodJSTK, and turns LED1 and LED2 on */
+/* and off based on the button state. The X and Y joystick position is  */
+/* read and placed into global variables, but not used by the demo      */
+/* itself.                                                              */
 /*                                                                      */
 /************************************************************************/
 /*  Revision History:                                                   */
@@ -47,10 +48,6 @@
 /* ------------------------------------------------------------ */
 /*                Include File Definitions                      */
 /* ------------------------------------------------------------ */
-
-/* Pull in the pin definitions from the board definitions files.
-*/
-#include <pins_arduino.h>
 
 /* Pull in the SPI library
 */
@@ -175,21 +172,24 @@ void
 DeviceInit()
 {
 
-  /* Set the LED pins to be outputs.
+  /* Set the LED pins to be outputs. Some boards support more
+  ** than two LEDs. On those boards, also blink the additional
+  ** LEDs.
   */
   pinMode(PIN_LED1, OUTPUT);
   pinMode(PIN_LED2, OUTPUT);
+  
+  #if defined(PIN_LED3)
   pinMode(PIN_LED3, OUTPUT);
+  #endif
+  
+  #if defined(PIN_LED4)
   pinMode(PIN_LED4, OUTPUT);
-
-  /* Set the button pins to be inputs.
-  */
-  pinMode(PIN_BTN1, INPUT);
-  pinMode(PIN_BTN2, INPUT);
+  #endif
 
   /* Initialize the SPI port.
   ** Setting the SPI clock speed to 250khz will satisfy the 
-  ** PmodJSTK requirement of having at least 10us of delay between
+  ** PmodJSTK requirement of having at least 6us of delay between
   ** bytes sent.
   */
   spi.begin();
@@ -280,10 +280,16 @@ AppTask()
   */
   cntBtnBlink -= 1;
   if (cntBtnBlink == 0) {
+    
+  #if defined(PIN_LED3)
     digitalWrite(PIN_LED3, fLed3);
-    digitalWrite(PIN_LED4, fLed4);
     fLed3 = (fLed3 == HIGH) ? LOW : HIGH;
+  #endif
+  
+  #if defined(PIN_LED4)
+    digitalWrite(PIN_LED4, fLed4);
     fLed4 = (fLed4 == HIGH) ? LOW : HIGH;
+  #endif
 
     /* Toggle the state for the LEDs on the Pmod.
     */

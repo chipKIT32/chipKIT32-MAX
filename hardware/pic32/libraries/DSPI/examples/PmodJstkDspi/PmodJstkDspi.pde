@@ -1,9 +1,9 @@
 /************************************************************************/
 /*                                                                      */
-/*  PmodJSTKdemo  --  Illustrate Use of DSPI Library with PmodJSTK      */
+/*  PmodJSTKDspi  --  Illustrate Use of DSPI Library with PmodJSTK      */
 /*                                                                      */
 /************************************************************************/
-/*  Author:                                                             */
+/*  Author: Gene Apperson                                               */
 /*  Copyright 2011, Digilent Inc, All rights reserved.                  */
 /************************************************************************/
 /*
@@ -27,11 +27,12 @@
 /* This example illustrates using the Digilent DSPI library to          */
 /* communicate with a PmodJSTK from a Cerebot MX4cK.                    */
 /*                                                                      */
-/* This demo blinks LED3 and LED4 on the Cerebot MX4cK, and at the same */
-/* time, blinks the two LEDs on the PmodJSTK. It reads the state of the */
-/* two buttons on the PmodJSTK, and turns LED1 and LED2 on and off      */
-/* based on the button state. The X and Y joystick position is read and */
-/* placed into global variables, but not used by the demo itself.       */
+/* This demo blinks LED3 and LED4 on boards that have four LEDs, and at */
+/* the same time, blinks the two LEDs on the PmodJSTK. It reads the     */
+/* state of the two buttons on the PmodJSTK, and turns LED1 and LED2 on */
+/* and off based on the button state. The X and Y joystick position is  */
+/* read and placed into global variables, but not used by the demo      */
+/* itself.                                                              */
 /*                                                                      */
 /************************************************************************/
 /*  Revision History:                                                   */
@@ -45,11 +46,7 @@
 /*                Include File Definitions                      */
 /* ------------------------------------------------------------ */
 
-/* Pull in the pin definitions from the board definitions files.
-*/
-#include <pins_arduino.h>
-
-/* Pull in the SPI library
+/* Pull in the DSPI library
 */
 #include <DSPI.h>
 
@@ -75,8 +72,8 @@ int      fLed4;
 ** automatically instantiate any interface objects. It is necessary
 ** to declare an instance of one of the interface objects in the
 ** sketch. This creates an object to talk to SPI port 0. Similarly,
-** declaring a variable of type DSPI1, DSPI2 or DSPI3 will create
-** an object to talk to SPI port 1, 2, or 3.
+** declaring a variable of type DSPI1, DSPI2, DSPI3, etc. will create
+** an object to talk to DSPI port 1, 2, or 3.
 */
 DSPI0    spi;
 
@@ -159,19 +156,25 @@ void
 DeviceInit()
 {
 
-  /* Set the LED pins to be outputs.
+  /* Set the LED pins to be outputs. Some boards support more
+  ** than two LEDs. On those boards, also blink the additional
+  ** LEDs.
   */
   pinMode(PIN_LED1, OUTPUT);
   pinMode(PIN_LED2, OUTPUT);
+  
+  #if defined(PIN_LED3)
   pinMode(PIN_LED3, OUTPUT);
+  #endif
+  
+  #if defined(PIN_LED4)
   pinMode(PIN_LED4, OUTPUT);
+  #endif
 
-  /* Set the button pins to be inputs.
-  */
-  pinMode(PIN_BTN1, INPUT);
-  pinMode(PIN_BTN2, INPUT);
-
-  /* Initialize SPI port 2.
+  /* Initialize the SPI port.
+  ** Setting the SPI clock speed to 250khz will satisfy the 
+  ** PmodJSTK requirement of having at least 6us of delay between
+  ** bytes sent.
   */
   spi.begin();
   spi.setSpeed(250000);
@@ -261,10 +264,16 @@ AppTask()
   */
   cntBtnBlink -= 1;
   if (cntBtnBlink == 0) {
+    
+  #if defined(PIN_LED3)
     digitalWrite(PIN_LED3, fLed3);
-    digitalWrite(PIN_LED4, fLed4);
     fLed3 = (fLed3 == HIGH) ? LOW : HIGH;
+  #endif
+  
+  #if defined(PIN_LED4)
+    digitalWrite(PIN_LED4, fLed4);
     fLed4 = (fLed4 == HIGH) ? LOW : HIGH;
+  #endif
 
     /* Toggle the setting for the LEDs on the joystick.
     */
@@ -306,7 +315,7 @@ ReadJoystick(uint8_t fbLed, uint8_t * pfbBtn, int * pxco, int * pyco)
   /* Initialize the transmit buffer.
   */
   for (ib = 0; ib < 5; ib++) {
-    rgbSnd[ib] = 0;
+    rgbSnd[ib] = 0x50 + ib;
   }
   rgbSnd[0] = fbLedPmod + 0x80;  //first byte sent sets the LEDs
   

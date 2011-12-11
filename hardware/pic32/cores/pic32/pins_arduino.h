@@ -45,14 +45,14 @@
 
 #define _BV(bit) (1ul << (bit))
 
-#if defined(OPT_BOARD_INTERNAL)
-
 /* Symbols used in pin mapping.
 */
 #define	NOT_A_PIN		0
 #define	NOT_A_PORT		0
 #define	NOT_ON_TIMER	0
 #define	NOT_ANALOG_PIN	0xFF
+
+#if defined(OPT_BOARD_INTERNAL)
 
 /* Define the port symbols used to index into the port address and
 ** bit tables.
@@ -122,9 +122,12 @@
 /* ------------------------------------------------------------ */
 /* Include the board definition file for the specified variant.
 */
-
+#include <System_Config.h>
+#include <System_Defs.h>
 #include <Board_Defs.h>
 
 /* ------------------------------------------------------------ */
 
 #endif		// PINS_ARDUINO_H
+
+//************************************************************************

@@ -40,10 +40,11 @@
 //************************************************************************
 #include <plib.h>
 #include <p32xxxx.h>
-#include <p32_defs.h>
 
-#define OPT_BOARD_INTERNAL
-#include <pins_arduino.h>
+#define	OPT_SYSTEM_INTERNAL
+#define OPT_BOARD_INTERNAL	//pull in internal symbol definitons
+#include "p32_defs.h"
+#include "pins_arduino.h"
 
 #include "wiring_private.h"
 //#define _ENABLE_PIC_RTC_
@@ -195,7 +196,7 @@ void init()
 	OpenCoreTimer(CORE_TICK_RATE);
 
 	// set up the core timer interrupt with a prioirty of 2 and zero sub-priority
-	mConfigIntCoreTimer((CT_INT_ON | CT_INT_PRIOR_2 | CT_INT_SUB_PRIOR_0));
+	mConfigIntCoreTimer(CT_INT_ON | _CT_IPL_IPC | (_CT_SPL_IPC << 4));
 
 	// enable multi-vector interrupts
 	INTEnableSystemMultiVectoredInt();
@@ -239,7 +240,7 @@ void	_board_init(void);
 #define read_comp(dest) __asm__ __volatile__("mfc0 %0,$11" : "=r" (dest))
 #define write_comp(src) __asm__ __volatile__("mtc0 %0,$11" : "=r" (src))
 
-void __ISR(_CORE_TIMER_VECTOR, ipl2) CoreTimerHandler(void)
+void __ISR(_CORE_TIMER_VECTOR, _CT_IPL_ISR) CoreTimerHandler(void)
 {
     static uint32_t compare = 0;
     uint32_t count, millisLocal;

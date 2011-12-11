@@ -117,12 +117,9 @@ DSPI::DSPI() {
 /***	DSPI::init
 **
 **	Parameters:
-**		pspiT		- pointer to the SPI controller register set
 **		irqErr		- IRQ for the SPI error interrupt
 **		irqRx		- IRQ for the SPI receive interrupt
 **		irqTx		- IRQ for the SPI transmit interrupt
-**		vecT		- the interrupt vector for this SPI controller
-**		pinT		- default SS pin for this SPI port
 **
 **	Return Value:
 **		none
@@ -136,12 +133,7 @@ DSPI::DSPI() {
 */
 
 void
-DSPI::init(p32_spi * pspiT, uint8_t irqErr, uint8_t irqRx, uint8_t irqTx,
-						uint8_t vecT, uint8_t pinT) {
-
-	pspi = pspiT;
-	vec	 = vecT;
-	pinSS = pinT;
+DSPI::init(uint8_t irqErr, uint8_t irqRx, uint8_t irqTx) {
 
 	/* The interrupt flag and enable control register addresses and
 	** the bit numbers for the flag bits can be computed from the
@@ -252,7 +244,7 @@ DSPI::begin(uint8_t pinT) {
 	** the sub-priority, bits 2-4 the priority, and bits 5-7 unused.
 	*/
 	pregIpc->clr = (0x1F << bnVec);
-	pregIpc->set = ((_IPL_SPI_IPC << 2) + _SPL_SPI_IPC) << bnVec;
+	pregIpc->set = ipl << bnVec;
 
 	/* Set the default baud rate.
 	*/
@@ -843,8 +835,13 @@ DSPI::doDspiInterrupt() {
 
 DSPI0::DSPI0()
 	{
-	init((p32_spi *) _DSPI0_BASE, _DSPI0_ERR_IRQ, _DSPI0_RX_IRQ, _DSPI0_TX_IRQ,
-								_DSPI0_VECTOR, PIN_DSPI0_SS);
+
+	pspi = (p32_spi *) _DSPI0_BASE;
+	vec = _DSPI0_VECTOR;
+	ipl = ((_DSPI0_IPL & 0x07) << 2) + (_DSPI0_SPL & 0x03);
+	pinSS = PIN_DSPI0_SS;
+
+	init(_DSPI0_ERR_IRQ, _DSPI0_RX_IRQ, _DSPI0_TX_IRQ);
 }
 
 /* ------------------------------------------------------------ */
@@ -919,8 +916,13 @@ DSPI0::disableInterruptTransfer() {
 
 DSPI1::DSPI1()
 	{
-	init((p32_spi *) _DSPI1_BASE, _DSPI1_ERR_IRQ, _DSPI1_RX_IRQ, _DSPI1_TX_IRQ,
-							_DSPI1_VECTOR, PIN_DSPI1_SS);
+
+	pspi = (p32_spi *) _DSPI1_BASE;
+	vec = _DSPI1_VECTOR;
+	ipl = ((_DSPI1_IPL & 0x07) << 2) + (_DSPI1_SPL & 0x03);
+	pinSS = PIN_DSPI1_SS;
+
+	init(_DSPI1_ERR_IRQ, _DSPI1_RX_IRQ, _DSPI1_TX_IRQ);
 }
 
 /* ------------------------------------------------------------ */
@@ -996,8 +998,13 @@ DSPI1::disableInterruptTransfer() {
 
 DSPI2::DSPI2()
 	{
-	init((p32_spi *) _DSPI2_BASE, _DSPI2_ERR_IRQ, _DSPI2_RX_IRQ, _DSPI2_TX_IRQ,
-							_DSPI2_VECTOR, PIN_DSPI2_SS);
+
+	pspi = (p32_spi *) _DSPI2_BASE;
+	vec = _DSPI2_VECTOR;
+	ipl = ((_DSPI2_IPL & 0x07) << 2) + (_DSPI2_SPL & 0x03);
+	pinSS = PIN_DSPI2_SS;
+
+	init(_DSPI2_ERR_IRQ, _DSPI2_RX_IRQ, _DSPI2_TX_IRQ);
 }
 
 /* ------------------------------------------------------------ */
@@ -1072,8 +1079,13 @@ DSPI2::disableInterruptTransfer() {
 
 DSPI3::DSPI3()
 	{
-	init((p32_spi *) _DSPI3_BASE, _DSPI3_ERR_IRQ, _DSPI3_RX_IRQ, _DSPI3_TX_IRQ,
-							_DSPI3_VECTOR, PIN_DSPI3_SS);
+
+	pspi = (p32_spi *) _DSPI3_BASE;
+	vec = _DSPI3_VECTOR;
+	ipl = ((_DSPI3_IPL & 0x07) << 2) + (_DSPI3_SPL & 0x03);
+	pinSS = PIN_DSPI3_SS;
+
+	init(_DSPI3_ERR_IRQ, _DSPI3_RX_IRQ, _DSPI3_TX_IRQ);
 }
 
 /* ------------------------------------------------------------ */
@@ -1149,7 +1161,7 @@ extern "C" {
 */
 #if defined(_DSPI0_VECTOR)
 
-void __ISR(_DSPI0_VECTOR, _IPL_SPI_ISR) IntDspi0Handler(void) {
+void __ISR(_DSPI0_VECTOR, _DSPI0_IPL_ISR) IntDspi0Handler(void) {
 	if (pdspi0 != 0) {
 		pdspi0->doDspiInterrupt();
 	}
@@ -1174,7 +1186,7 @@ void __ISR(_DSPI0_VECTOR, _IPL_SPI_ISR) IntDspi0Handler(void) {
 */
 #if defined(_DSPI1_VECTOR)
 
-void __ISR(_DSPI1_VECTOR, _IPL_SPI_ISR) IntDspi1Handler(void) {
+void __ISR(_DSPI1_VECTOR, _DSPI1_IPL_ISR) IntDspi1Handler(void) {
 	if (pdspi1 != 0) {
 		pdspi1->doDspiInterrupt();
 	}
@@ -1199,7 +1211,7 @@ void __ISR(_DSPI1_VECTOR, _IPL_SPI_ISR) IntDspi1Handler(void) {
 */
 #if defined(_DSPI2_VECTOR)
 
-void __ISR(_DSPI2_VECTOR, _IPL_SPI_ISR) IntDspi2Handler(void) {
+void __ISR(_DSPI2_VECTOR, _DSPI2_IPL_ISR) IntDspi2Handler(void) {
 	if (pdspi2 != 0) {
 		pdspi2->doDspiInterrupt();
 	}
@@ -1224,7 +1236,7 @@ void __ISR(_DSPI2_VECTOR, _IPL_SPI_ISR) IntDspi2Handler(void) {
 */
 #if defined(_DSPI3_VECTOR)
 
-void __ISR(_DSPI3_VECTOR, _IPL_SPI_ISR) IntDspi3Handler(void) {
+void __ISR(_DSPI3_VECTOR, _DSPI3_IPL_ISR) IntDspi3Handler(void) {
 	if (pdspi3 != 0) {
 		pdspi3->doDspiInterrupt();
 	}
@@ -1232,19 +1244,6 @@ void __ISR(_DSPI3_VECTOR, _IPL_SPI_ISR) IntDspi3Handler(void) {
 #endif
 
 };		// extern "C"
-
-/* ------------------------------------------------------------ */
-/***	ProcName
-**
-**	Parameters:
-**
-**	Return Value:
-**
-**	Errors:
-**
-**	Description:
-**
-*/
 
 /* ------------------------------------------------------------ */
 

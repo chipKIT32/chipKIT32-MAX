@@ -25,15 +25,11 @@
 #include <stdint.h>
 #include <peripheral/nvm.h>
 #include <alloca.h>
-#include "Deeprom.h"
 
-#if defined (_BOARD_UNO_)
-	#define PAGE_SIZE 1024
-	#define PAGE_COUNT 1
-#elif defined (_BOARD_MEGA_)
-	#define PAGE_SIZE 1024
-	#define PAGE_COUNT 1
-#endif
+#define	OPT_BOARD_INTERNAL
+#include <pins_arduino.h>
+
+#include "Deeprom.h"
 
 /* ------------------------------------------------------------ */
 /*				Global Variables								*/
@@ -41,7 +37,7 @@
 
 //Aligns the flash memory used for eeprom emulation in the linker script
 __attribute__ ((aligned(4096),section(".eeprom_pic32")))
-unsigned int eedata_addr[PAGE_COUNT][1024];
+unsigned int eedata_addr[_EEPROM_PAGE_COUNT][1024];
 
 static uint8_t tempBuffer[1024];
 static uint32_t MAX_ADDRESS = 512;
@@ -66,7 +62,7 @@ static uint32_t MAX_ADDRESS = 512;
 */
 BOOL setMax(uint32_t value)
 {
-	if(value > PAGE_SIZE - 1) {
+	if(value > _EEPROM_PAGE_SIZE - 1) {
 		return fFalse;
 	}
 
@@ -115,7 +111,7 @@ void clearEeprom()
 	int i;
 
 	//Clear page
-	for(i=0; i < PAGE_COUNT; i++) {
+	for(i=0; i < _EEPROM_PAGE_COUNT; i++) {
 		NVMErasePage(&eedata_addr[i][0]);
 	}
 }
@@ -146,13 +142,13 @@ BOOL writeEeprom(uint32_t address, uint8_t data)
 	}
 
 	//Try writting data to flash
-	for(i=0; i < PAGE_COUNT; i++) {
+	for(i=0; i < _EEPROM_PAGE_COUNT; i++) {
 		if(putEeprom(&eedata_addr[i][0], address, data)) {
 			return fTrue;
 		}
 	}
 	
-	for(i=0; i < PAGE_COUNT; i++) {
+	for(i=0; i < _EEPROM_PAGE_COUNT; i++) {
 		//Put page to buffer
 		putBuffer(&eedata_addr[i][0], tempBuffer);
 
@@ -164,7 +160,7 @@ BOOL writeEeprom(uint32_t address, uint8_t data)
 	}
 
 	//Try writting data to flash again
-	for(i=0; i < PAGE_COUNT; i++) {
+	for(i=0; i < _EEPROM_PAGE_COUNT; i++) {
 		if(putEeprom(&eedata_addr[i][0], address, data)) {
 			return fTrue;
 		}
@@ -201,7 +197,7 @@ BOOL readEeprom(uint32_t address, uint8_t * data)
 	}
 
 	//Search through all pages to find specified address
-	for(i=0; i < PAGE_COUNT; i++) {
+	for(i=0; i < _EEPROM_PAGE_COUNT; i++) {
 		if(getEeprom(&eedata_addr[i][0], address, data)) {
 			return fTrue;
 		}
@@ -239,7 +235,7 @@ BOOL putEeprom(eeSeg * eeprom, uint32_t address, uint8_t data)
 	uint32_t nextAvalible;
 
 	//Check if address exists 
-	for(i=0; i < PAGE_SIZE; i++) {
+	for(i=0; i < _EEPROM_PAGE_SIZE; i++) {
 		
 		//Check if eeSeg is valid and address matches
 		if(getValid(eeprom[i]) && !getTaken(eeprom[i]) && 
@@ -269,7 +265,7 @@ BOOL putEeprom(eeSeg * eeprom, uint32_t address, uint8_t data)
 	}
 
 	//If I == max size no valid segments exist
-	if(i == PAGE_SIZE) {
+	if(i == _EEPROM_PAGE_SIZE) {
 		return fFalse;
 	}
 
@@ -305,7 +301,7 @@ BOOL getEeprom(eeSeg * eeprom, uint32_t address,uint8_t * data)
 	int i;
 
 	//Check if address exists
-	for(i=0; i < PAGE_SIZE; i++) {
+	for(i=0; i < _EEPROM_PAGE_SIZE; i++) {
 		//Check if eeSeg is valid and address matches
 		if(getValid(eeprom[i]) && !getTaken(eeprom[i]) &&
 		   getAddress(eeprom[i]) == address) {
@@ -348,12 +344,12 @@ uint32_t putBuffer(eeSeg * eeprom, uint8_t * buffer)
 	int i;
 
 	//Initialize each byte in buffer to 0xFF
-	for(i=0; i < PAGE_SIZE; i++) {
+	for(i=0; i < _EEPROM_PAGE_SIZE; i++) {
 		buffer[i] = 0xFF;
 	}
 	
 	//Find all valid addresses and load them to buffer
-	for(i=0; i < PAGE_SIZE; i++) {
+	for(i=0; i < _EEPROM_PAGE_SIZE; i++) {
 		if(getValid(eeprom[i]) && !getTaken(eeprom[i])) {
 			tempAddress = getAddress(eeprom[i]);
 			buffer[tempAddress] = getData(eeprom[i]);
@@ -387,7 +383,7 @@ void getBuffer(eeSeg * eeprom, uint8_t * buffer)
  	int i;
 
 	//Cycle through buffer
-	for(i=0; i < PAGE_SIZE; i++)
+	for(i=0; i < _EEPROM_PAGE_SIZE; i++)
 	{
 		//If data in buffer does not equal 0xFF write to flash
 		if(buffer[i] != 0xFF) {

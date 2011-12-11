@@ -92,7 +92,7 @@ mega_pic32.build.variant=Max32
 #mega_usb_pic32.upload.using=
 
 ############################################################
-cerebot_mx3ck.name=Cerebot MX3ck
+cerebot_mx3ck.name=Cerebot MX3cK
 
 # new items
 cerebot_mx3ck.platform=pic32
@@ -123,11 +123,11 @@ cerebot_mx3ck.bootloader.lock_bits=0x0F
 cerebot_mx3ck.build.mcu=32MX320F128H
 cerebot_mx3ck.build.f_cpu=80000000L
 cerebot_mx3ck.build.core=pic32
-cerebot_mx3ck.build.variant=Cerebot_MX3ck
+cerebot_mx3ck.build.variant=Cerebot_MX3cK
 #cerebot_mx3ck.upload.using=
 
 ############################################################
-cerebot_mx4ck.name=Cerebot MX4ck
+cerebot_mx4ck.name=Cerebot MX4cK
 
 # new items
 cerebot_mx4ck.platform=pic32
@@ -152,15 +152,15 @@ cerebot_mx4ck.bootloader.lock_bits=0x0F
 cerebot_mx4ck.build.mcu=32MX460F512L
 cerebot_mx4ck.build.f_cpu=80000000L
 cerebot_mx4ck.build.core=pic32
-cerebot_mx4ck.build.variant=Cerebot_MX4ck
+cerebot_mx4ck.build.variant=Cerebot_MX4cK
 #cerebot_mx4ck.upload.using=
 
 ############################################################
-cerebot_mx7ck.name=Cerebot MX7ck
+cerebot_mx7ck.name=Cerebot MX7cK
 
 # new items
 cerebot_mx7ck.platform=pic32
-cerebot_mx7ck.board=_BOARD_CEREBOT_32MX7_
+cerebot_mx7ck.board=_BOARD_CEREBOT_MX7CK_
 cerebot_mx7ck.compiler.define=-Danything_you_want::-Danything=1
 cerebot_mx7ck.ccflags=ffff
 cerebot_mx7ck.ldscript=chipKIT-MAX32-application-32MX795F512L.ld
@@ -181,7 +181,7 @@ cerebot_mx7ck.bootloader.lock_bits=0x0F
 cerebot_mx7ck.build.mcu=32MX795F512L
 cerebot_mx7ck.build.f_cpu=80000000L
 cerebot_mx7ck.build.core=pic32
-cerebot_mx7ck.build.variant=Cerebot_MX7ck
+cerebot_mx7ck.build.variant=Cerebot_MX7cK
 #cerebot_mx7ck.upload.using=
 
 ############################################################

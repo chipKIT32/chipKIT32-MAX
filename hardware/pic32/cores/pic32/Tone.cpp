@@ -58,6 +58,7 @@
 
 #include "wiring.h"
 
+#define	OPT_SYSTEM_INTERNAL
 #define OPT_BOARD_INTERNAL	//pull in internal symbol definitons
 #include "p32_defs.h"
 #include "pins_arduino.h"
@@ -101,7 +102,7 @@ uint8_t port;
 			// No tone currently playing. Init the timer.
 			T1CON	=	T1_PS_1_256;
 			mT1ClearIntFlag();
-			ConfigIntTimer1(T1_INT_ON | T1_INT_PRIOR_3 | T1_INT_SUB_PRIOR_1);
+			ConfigIntTimer1(T1_INT_ON | _T1_IPL_IPC | (_T1_SPL_IPC << 4));
 		}
 		else if (_pin != tone_pin)
 		{
@@ -162,7 +163,7 @@ extern "C"
 
 //*	not done yet
 //************************************************************************
-void __ISR(_TIMER_1_VECTOR, ipl3) Timer1Handler(void)
+void __ISR(_TIMER_1_VECTOR, _T1_IPL_ISR) Timer1Handler(void)
 {
 
 	if (timer1_toggle_count != 0)

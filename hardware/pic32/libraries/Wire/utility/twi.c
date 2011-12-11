@@ -20,6 +20,7 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
+#define OPT_SYSTEM_INTERNAL
 #define OPT_BOARD_INTERNAL
 #include <plib.h>
 #include <p32xxxx.h>
@@ -105,7 +106,7 @@ void twi_init(p32_i2c * ptwiT, uint8_t irqBus, uint8_t irqSlv, uint8_t irqMst, u
 	/* Set the interrupt priority and sub-priority bits.
 	*/
 	pregIpc->clr = (0x1F << bnVec);
-	pregIpc->set = ((_IPL_TWI_IPC << 2) + _SPL_TWI_IPC) << bnVec;
+	pregIpc->set = ((_TWI_IPL << 2) + _TWI_SPL) << bnVec;
 
 	/* Clear the interrupt flags and enable I2C interrupts
 	*/
@@ -341,7 +342,7 @@ uint32_t twi_computeBrg(uint32_t frqReq)
  * Input    none
  * Output   none
  */
-void __ISR(_TWI_VECTOR, _IPL_TWI_ISR) I2CHandler(void)
+void __ISR(_TWI_VECTOR, _TWI_IPL_ISR) I2CHandler(void)
 {
 	if (ptwi->ixStat.reg & (1 << _I2CSTAT_BCL) ) 
 	{

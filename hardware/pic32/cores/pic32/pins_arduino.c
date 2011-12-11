@@ -30,11 +30,13 @@
 //*	Edit History
 //************************************************************************
 //*	May  5,	2011	<MLS> added analog_pin_to_channel_PGM
-//* Nov 12, 2001	<GeneApperson> Rewrite for board variant support
+//* Nov 12, 2011	<GeneApperson> Rewrite for board variant support
+//* Nov 28, 2011	<GeneApperson> split board data out into Board_Data.c
 //************************************************************************
 
 #define OPT_BOARD_INTERNAL
 #define OPT_BOARD_DATA
 #include <p32xxxx.h>
 #include "pins_arduino.h"
+#include "Board_Data.c"
 

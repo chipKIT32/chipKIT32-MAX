@@ -41,6 +41,9 @@
 #include <inttypes.h>
 #include "binary.h"
 
+#include "cpudefs.h"	//*		This file is designed to provide some of the cpu specific definitions
+						//*		that are available for avr chips and not for other chips (i.e. pic32)
+
 #ifdef __cplusplus
 extern "C"{
 #endif

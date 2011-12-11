@@ -86,7 +86,6 @@ class DSPI {
 	friend		void __attribute__((nomips16)) IntDspi3Handler(void);
 
 private:
-	p32_spi *			pspi;
 	p32_regset *		pregIfs;	//pointer to interrupt flag register
 	p32_regset *		pregIec;	//pointer to interrupt enable control register
 	uint32_t			bitErr;		//overrun error interrupt flag bit
@@ -95,17 +94,19 @@ private:
 	volatile uint8_t *	pbSndCur;	//current point in transmit buffer
 	volatile uint8_t *	pbRcvCur;	//current point in receive buffer
 	volatile uint16_t	cbCur;		//count of bytes left to transfer
-	uint8_t				vec;
-	uint8_t				pinSS;		//digital pin number for slave select pin
 	uint8_t				bPad;		//pad byte for some transfers
 	uint8_t				fRov;		//receive overflow error flag
 
 	void	doDspiInterrupt();
 
 protected:
+	p32_spi *			pspi;		//pointer to the SPI object
+	uint8_t				vec;		//interrupt vector number
+	uint8_t				ipl;		//interrupt priority and sub-priority
+	uint8_t				pinSS;		//digital pin number for slave select pin
+
 			DSPI();
-	void	init(p32_spi * pspiT, uint8_t irqErr, uint8_t irqRx, uint8_t irqTx, 
-								uint8_t vecT, uint8_t pinT);
+	void	init(uint8_t irqErr, uint8_t irqRx, uint8_t irqTx);
 
 public:
 
