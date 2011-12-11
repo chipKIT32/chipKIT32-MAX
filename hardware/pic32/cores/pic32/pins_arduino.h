@@ -52,6 +52,17 @@
 #define	NOT_ON_TIMER	0
 #define	NOT_ANALOG_PIN	0xFF
 
+/* Symbols to define the bit position of the timer fields within the
+** timer mapping table.
+*/
+#define _BN_TIMER_OC	0
+#define	_BN_TIMER_IC	4
+#define _BN_TIMER_TCK	8
+
+#define	_MSK_TIMER_OC	0x000F
+#define	_MSK_TIMER_IC	0x00F0
+#define	_MSK_TIMER_TCK	0x0F00
+
 #if defined(OPT_BOARD_INTERNAL)
 
 /* Define the port symbols used to index into the port address and
@@ -65,16 +76,6 @@
 #define _IOPORT_PF	6
 #define _IOPORT_PG	7
 
-/* Symbols to define the bit position of the timer fields within the
-** timer mapping table.
-*/
-#define _BN_TIMER_OC	0
-#define	_BN_TIMER_IC	4
-#define _BN_TIMER_TCK	8
-
-#define	_MSK_TIMER_OC	0x000F
-#define	_MSK_TIMER_IC	0x00F0
-#define	_MSK_TIMER_TCK	0x0F00
 		
 /* Symbols used for timer related peripherals. These are used in
 ** the table that maps digital pin to timer related pin.
