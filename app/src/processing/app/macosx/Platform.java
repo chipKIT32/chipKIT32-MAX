@@ -89,7 +89,7 @@ public class Platform extends processing.app.Platform {
 
 
   public File getDefaultSketchbookFolder() throws Exception {
-    return new File(getDocumentsFolder(), "Arduino");
+    return new File(getDocumentsFolder(), "mpide");
     /*
     // looking for /Users/blah/Documents/Processing
     try {
