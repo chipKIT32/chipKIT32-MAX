@@ -53,9 +53,9 @@ public class Base {
   static Logger logger = Logger.getLogger(Base.class.getName());
 
 	
-  public static final int REVISION = 22;
+  public static final int REVISION = 23;
   /** This might be replaced by main() if there's a lib/version.txt file. */
-  static String VERSION_NAME = "0022";
+  static String VERSION_NAME = "0023";
   /** Set true if this a proper release rather than a numbered revision. */
   static public boolean RELEASE = false;
   
