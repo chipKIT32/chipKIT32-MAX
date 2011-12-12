@@ -53,9 +53,9 @@
 #endif
 
 
-/* ------------------------------------------------------------ */
-/*			General Declarations								*/
-/* ------------------------------------------------------------ */
+//* ------------------------------------------------------------
+//* 		General Declarations
+//* ------------------------------------------------------------
 
 // Define constants and variables for buffering incoming serial data.  We're
 // using a ring buffer, in which rx_buffer_head is the index of the
@@ -73,9 +73,9 @@ typedef struct {
 
 #ifdef __cplusplus
 
-/* ------------------------------------------------------------ */
-/*			Object Class Declarations							*/
-/* ------------------------------------------------------------ */
+//* ------------------------------------------------------------
+//* 		Object Class Declarations
+//* ------------------------------------------------------------
 
 class HardwareSerial : public Stream
 {
@@ -132,58 +132,60 @@ class USBSerial : public Stream
 
 #endif	//	defined(_USB) && defined(_USE_USB_FOR_SERIAL_)
 
-/* ------------------------------------------------------------ */
-/*			Declaare Serial Port Objects						*/
-/* ------------------------------------------------------------ */
+//* ------------------------------------------------------------
+//* 		Declaare Serial Port Objects
+//* ------------------------------------------------------------
+
+//*	NUM_SERIAL_PORTS is defined in Board_Defs.h
 
 #if defined(_USB) && defined(_USE_USB_FOR_SERIAL_)
 /* If we're using USB for serial, the USB serial port gets
 ** instantiated as Serial and hardware serial port 0 gets
 ** instantiated as Serial0.
 */
-extern USBSerial Serial;
-#if (NUM_SERIAL_PORTS > 0)
-extern HardwareSerial Serial0;
-#endif
+	extern USBSerial Serial;
+	#if (NUM_SERIAL_PORTS > 0)
+		extern HardwareSerial Serial0;
+	#endif
 
 #else
-/* If we're not using USB for serial, then hardware serial port 0
-** gets instantiated as Serial.
-*/
-#if (NUM_SERIAL_PORTS > 0)
-extern HardwareSerial Serial;
-#endif
+	/* If we're not using USB for serial, then hardware serial port 0
+	** gets instantiated as Serial.
+	*/
+	#if (NUM_SERIAL_PORTS > 0)
+		extern HardwareSerial Serial;
+	#endif
 #endif
 
 #if (NUM_SERIAL_PORTS > 1)
-extern HardwareSerial Serial1;
+	extern HardwareSerial Serial1;
 #endif
 
 #if (NUM_SERIAL_PORTS > 2)
-extern HardwareSerial Serial2;
+	extern HardwareSerial Serial2;
 #endif
 
 #if (NUM_SERIAL_PORTS > 3)
-extern HardwareSerial Serial3;
+	extern HardwareSerial Serial3;
 #endif
 
 #if (NUM_SERIAL_PORTS > 4)
-extern HardwareSerial Serial4;
+	extern HardwareSerial Serial4;
 #endif
 
 #if (NUM_SERIAL_PORTS > 5)
-extern HardwareSerial Serial5;
+	extern HardwareSerial Serial5;
 #endif
 
 #if (NUM_SERIAL_PORTS > 6)
-extern HardwareSerial Serial6;
+	extern HardwareSerial Serial6;
 #endif
 
 #if (NUM_SERIAL_PORTS > 7)
-extern HardwareSerial Serial7;
+	extern HardwareSerial Serial7;
 #endif
 
-/* ------------------------------------------------------------ */
+//* ------------------------------------------------------------
 
 #endif	//	__cplusplus
 
