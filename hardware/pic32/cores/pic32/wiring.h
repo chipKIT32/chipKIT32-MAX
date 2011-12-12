@@ -133,6 +133,8 @@ int		digitalRead(uint8_t pin);
 int		analogRead(uint8_t);
 void	analogReference(uint8_t mode);
 void	analogWrite(uint8_t, int);
+unsigned int __attribute__((nomips16))  INTEnableInterrupts(void);
+unsigned int __attribute__((nomips16)) INTDisableInterrupts(void);
 
 
 unsigned long	millis(void);
