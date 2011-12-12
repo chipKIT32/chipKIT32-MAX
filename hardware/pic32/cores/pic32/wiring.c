@@ -37,6 +37,7 @@
 //* Nov 12, 2011	<GeneApperson> revised for board variant support
 //* Nov 19, 2011    <BPS> Added WestfW's code from ChipKit forum - fixes
 //*                 lost millisecond and microsecond times during rollover
+//*	Dec 11,	2011	<MLS> Issue #151 added INTEnableInterrupts and INTDisableInterrupts
 //************************************************************************
 #include <plib.h>
 #include <p32xxxx.h>
@@ -293,4 +294,27 @@ void __ISR(_CORE_TIMER_VECTOR, _CT_IPL_ISR) CoreTimerHandler(void)
 }
 
 
+//************************************************************************
+//*	Interrupts are enabled by setting the IE bit in the status register
+//************************************************************************
+unsigned int __attribute__((nomips16))  INTEnableInterrupts(void)
+{
+    unsigned int status = 0;
 
+    asm volatile("ei    %0" : "=r"(status));
+
+    return status;
+}
+
+
+//************************************************************************
+//*	Interrupts are disabled by clearing the IE bit in the status register
+//************************************************************************
+unsigned int __attribute__((nomips16)) INTDisableInterrupts(void)
+{
+    unsigned int status = 0;
+
+    asm volatile("di    %0" : "=r"(status));
+
+    return status;
+}
