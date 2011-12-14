@@ -22,42 +22,46 @@
 #ifndef Sd2PinMap_h
 #define Sd2PinMap_h
 
-#if defined(_BOARD_MEGA_)
+#if defined(_BOARD_MEGA_) || defined(_BOARD_UNO_)
 
-#define prtSDO				IOPORT_G
-#define	trisSDO				TRISG
-#define	latSDO				LATG
-#define	bnSDO				BIT_8
+	//Pin 11
+	#define prtSDO				IOPORT_G
+	#define	trisSDO				TRISG
+	#define	latSDO				LATG
+	#define	bnSDO				BIT_8
 
-#define prtSDI				IOPORT_G
-#define trisSDI				TRISG
-#define	latSDI				LATG
-#define bnSDI				BIT_7
+	//Pin 12
+	#define prtSDI				IOPORT_G
+	#define trisSDI				TRISG
+	#define	latSDI				LATG
+	#define bnSDI				BIT_7
 
-#define prtSCK				IOPORT_G
-#define trisSCK				TRISG
-#define latSCK				LATG
-#define bnSCK				BIT_6
+	//Pin 13
+	#define prtSCK				IOPORT_G
+	#define trisSCK				TRISG
+	#define latSCK				LATG
+	#define bnSCK				BIT_6
 
-#elif defined(_BOARD_UNO_)
+#else
+//*	Dec 14, 2011	<MLS>	Issue #160 this is the same, but we have to have a default, this still needs work
 
-//Pin 11
-#define prtSDO				IOPORT_G
-#define	trisSDO				TRISG
-#define	latSDO				LATG
-#define	bnSDO				BIT_8
+	//Pin 11
+	#define prtSDO				IOPORT_G
+	#define	trisSDO				TRISG
+	#define	latSDO				LATG
+	#define	bnSDO				BIT_8
 
-//Pin 12
-#define prtSDI				IOPORT_G
-#define trisSDI				TRISG
-#define	latSDI				LATG
-#define bnSDI				BIT_7
+	//Pin 12
+	#define prtSDI				IOPORT_G
+	#define trisSDI				TRISG
+	#define	latSDI				LATG
+	#define bnSDI				BIT_7
 
-//Pin 13
-#define prtSCK				IOPORT_G
-#define trisSCK				TRISG
-#define latSCK				LATG
-#define bnSCK				BIT_6
+	//Pin 13
+	#define prtSCK				IOPORT_G
+	#define trisSCK				TRISG
+	#define latSCK				LATG
+	#define bnSCK				BIT_6
 
 #endif
 
