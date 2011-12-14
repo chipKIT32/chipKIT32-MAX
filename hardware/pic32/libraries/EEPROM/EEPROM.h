@@ -30,7 +30,7 @@ class EEPROMClass
 	unsigned int getMaxAddress();
 	void clear();
     uint8_t read(unsigned int address);
-    void write(unsigned int address, unsigned int value);
+    void write(unsigned int address, uint8_t value);
 };
 
 extern EEPROMClass EEPROM;

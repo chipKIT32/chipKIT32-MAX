@@ -16,6 +16,11 @@
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
+//************************************************************************
+//*	Edit History
+//************************************************************************
+//*	Dec 14,	2011	<MLS> Issue #165 the 'value' parameter in write() should be uint8_t.
+//************************************************************************
 
 /******************************************************************************
  * Includes
@@ -27,25 +32,30 @@ extern "C" {
 
 #include "EEPROM.h"
 
+//************************************************************************
 EEPROMClass::EEPROMClass()
 {
 }
 
+//************************************************************************
 void EEPROMClass::setMaxAddress(unsigned int value)
 {
 	setMax(value);
 }
 
+//************************************************************************
 unsigned int EEPROMClass::getMaxAddress()
 {
 	return getMax();
 }
 
+//************************************************************************
 void EEPROMClass::clear()
 {
 	clearEeprom();
 }
 
+//************************************************************************
 uint8_t EEPROMClass::read(unsigned int address)
 {
 	uint8_t data;
@@ -55,7 +65,8 @@ uint8_t EEPROMClass::read(unsigned int address)
 	return data;
 }
 
-void EEPROMClass::write(unsigned int address, unsigned int value)
+//************************************************************************
+void EEPROMClass::write(unsigned int address, uint8_t value)
 {
 	writeEeprom((uint32_t)address, (uint8_t)value);
 }
