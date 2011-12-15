@@ -1124,7 +1124,7 @@ static Logger logger = Logger.getLogger(Base.class.getName());
     // macosx already has its own about menu
     if (!Base.isMacOS()) {
       menu.addSeparator();
-      item = new JMenuItem("About Arduino");
+      item = new JMenuItem("About MPIDE");
       item.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
             base.handleAbout();
