@@ -1817,7 +1817,8 @@ static public Map<String, String> getPlatformPreferences() {
    * Give this Frame a Processing icon.
    */
   static public void setIcon(Frame frame) {
-    Image image = Toolkit.getDefaultToolkit().createImage(PApplet.ICON_IMAGE);
+    File imageLocation = new File(getContentFile("lib/theme"), "mpide-icon.png");
+    Image image = Toolkit.getDefaultToolkit().createImage(imageLocation.getAbsolutePath());
     frame.setIconImage(image);
   }
 
@@ -2156,6 +2157,7 @@ static public Map<String, String> getPlatformPreferences() {
 
     File imageLocation = new File(getContentFile("lib"), name);
     image = tk.getImage(imageLocation.getAbsolutePath());
+    logger.debug("DEBUG: Image location: "+ imageLocation.getAbsolutePath()); 
     MediaTracker tracker = new MediaTracker(who);
     tracker.addImage(image, 0);
     try {
