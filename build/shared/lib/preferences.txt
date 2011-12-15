@@ -237,8 +237,8 @@ run.present.exclusive = false
 run.present.exclusive.macosx = true
 
 # ARDUINO PREFERENCES
-board = uno
-target = arduino
+board = uno_pic32
+target = pic32
 platform = avr
 software=ARDUINO
 

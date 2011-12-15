@@ -53,9 +53,9 @@ public class Base {
   static Logger logger = Logger.getLogger(Base.class.getName());
 
 	
-  public static final int REVISION = 22;
+  public static final int REVISION = 23;
   /** This might be replaced by main() if there's a lib/version.txt file. */
-  static String VERSION_NAME = "0022";
+  static String VERSION_NAME = "0023";
   /** Set true if this a proper release rather than a numbered revision. */
   static public boolean RELEASE = false;
   
@@ -171,7 +171,7 @@ public class Base {
       String mess = e.getMessage();
       if (mess.indexOf("ch.randelshofer.quaqua.QuaquaLookAndFeel") == -1) {
         System.err.println("Non-fatal error while setting the Look & Feel.");
-        System.err.println("The error message follows, however Arduino should run fine.");
+        System.err.println("The error message follows, however MPIDE should run fine.");
         System.err.println(mess);
       }
     }
@@ -220,7 +220,7 @@ public class Base {
     } catch (ClassNotFoundException cnfe) {
       Base.showPlatforms();
       Base.showError("Please install JDK 1.5 or later",
-                     "Arduino requires a full JDK (not just a JRE)\n" +
+                     "MPIDE requires a full JDK (not just a JRE)\n" +
                      "to run. Please install JDK 1.5 or later.\n" +
                      "More information can be found in the reference.", cnfe);
     }
@@ -246,9 +246,9 @@ public class Base {
       if (!skechbookFolder.exists()) {
         Base.showWarning("Sketchbook folder disappeared",
                          "The sketchbook folder no longer exists.\n" +
-                         "Arduino will switch to the default sketchbook\n" +
+                         "MPIDE will switch to the default sketchbook\n" +
                          "location, and create a new sketchbook folder if\n" +
-                         "necessary. Arduino will then stop talking about\n" +
+                         "necessary. MPIDE will then stop talking about\n" +
                          "himself in the third person.", null);
         sketchbookPath = null;
       }
@@ -769,7 +769,7 @@ public class Base {
           "p { font: 11pt \"Lucida Grande\"; margin-top: 8px }"+
           "</style> </head>" +
           "<b>Are you sure you want to Quit?</b>" +
-          "<p>Closing the last open sketch will quit Arduino.";
+          "<p>Closing the last open sketch will quit MPIDE.";
 
         int result = JOptionPane.showOptionDialog(editor,
                                                   prompt,
@@ -1147,7 +1147,7 @@ public class Base {
           } else {
             showWarning("Sketch Does Not Exist",
                         "The selected sketch no longer exists.\n" +
-                        "You may need to restart Arduino to update\n" +
+                        "You may need to restart MPIDE to update\n" +
                         "the sketchbook menu.", null);
           }
         }
@@ -1487,7 +1487,7 @@ public class Base {
         settingsFolder = platform.getSettingsFolder();
       } catch (Exception e) {
         showError("Problem getting data folder",
-                  "Error getting the Arduino data folder.", e);
+                  "Error getting the MPIDE data folder.", e);
       }
     }
 
@@ -1495,7 +1495,7 @@ public class Base {
     if (!settingsFolder.exists()) {
       if (!settingsFolder.mkdirs()) {
         showError("Settings issues",
-                  "Arduino cannot run because it could not\n" +
+                  "MPIDE cannot run because it could not\n" +
                   "create a folder to store your settings.", null);
       }
     }
@@ -1691,7 +1691,7 @@ static public Map<String, String> getPlatformPreferences() {
 
     if (!result) {
       showError("You forgot your sketchbook",
-                "Arduino cannot run because it could not\n" +
+                "MPIDE cannot run because it could not\n" +
                 "create a folder to store your sketchbook.", null);
     }
 
@@ -1817,7 +1817,8 @@ static public Map<String, String> getPlatformPreferences() {
    * Give this Frame a Processing icon.
    */
   static public void setIcon(Frame frame) {
-    Image image = Toolkit.getDefaultToolkit().createImage(PApplet.ICON_IMAGE);
+    File imageLocation = new File(getContentFile("lib/theme"), "mpide-icon.png");
+    Image image = Toolkit.getDefaultToolkit().createImage(imageLocation.getAbsolutePath());
     frame.setIconImage(image);
   }
 
@@ -2156,6 +2157,7 @@ static public Map<String, String> getPlatformPreferences() {
 
     File imageLocation = new File(getContentFile("lib"), name);
     image = tk.getImage(imageLocation.getAbsolutePath());
+    logger.debug("DEBUG: Image location: "+ imageLocation.getAbsolutePath()); 
     MediaTracker tracker = new MediaTracker(who);
     tracker.addImage(image, 0);
     try {
