@@ -41,4 +41,4 @@ pic32.library.path=./hardware/pic32/cores/pic32
 pic32.ldscript=chipKIT-BL-mega.ld
 pic32.library.core.path=./hardware/pic32/libraries
 pic32.compiler.define=::
-pic32.build.variant=Default_64
+pic32.build.variant=Default_100
