@@ -1,17 +1,17 @@
-/************************************************************************/
-/*																		*/
-/*	LiquidCrystal.h                                               		*/
-/*																		*/
-/************************************************************************/
-/*  Revision History:													*/
-/*																		*/
-/*	08/18/2011(MichelleY): file header comment block reformatted		*/
-/*																		*/
-/************************************************************************/
+//******************************************************************************************
+//*	LiquidCrystal library for Arduino
+//******************************************************************************************
+//*	Edit History
+//******************************************************************************************
+//*	Dec  4, 2011	<MLS> Added setRowOffsets
+//******************************************************************************************
 
 
 #ifndef LiquidCrystal_h
 #define LiquidCrystal_h
+
+#define	_SETROWOFFSET_SUPPORTED_
+
 
 #ifndef WProgram_h
 	#include	"WProgram.h"
@@ -94,6 +94,7 @@ public:
   void autoscroll();
   void noAutoscroll();
 
+  void setRowOffsets(int row1, int row2, int row3, int row4);
   void createChar(uint8_t, uint8_t[]);
   void setCursor(uint8_t, uint8_t); 
   virtual void write(uint8_t);
@@ -116,6 +117,7 @@ private:
   uint8_t _initialized;
 
   uint8_t _numlines,_currline;
+  int	row_offsets[4];
 };
 
 #endif

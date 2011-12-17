@@ -1,19 +1,17 @@
-/************************************************************************/
-/*																		*/
-/*	LiquidCrystal.cpp                                              		*/
-/*																		*/
-/************************************************************************/
-/*  Revision History:													*/
-/*																		*/
-/*	08/18/2011(MichelleY): file header comment block reformatted		*/
-/*																		*/
-/************************************************************************/
+//******************************************************************************************
+//*	LiquidCrystal library for Arduino
+//******************************************************************************************
+//*	Edit History
+//******************************************************************************************
+//*	Dec  4, 2011	<MLS> Added setRowOffsets
+//******************************************************************************************
+
+#include "LiquidCrystal.h"
+
 #include <stdio.h>
 #include <string.h>
 #include <inttypes.h>
 #include "WProgram.h"
-
-#include <LiquidCrystal.h>
 
 // When the display powers up, it is configured as follows:
 //
@@ -36,38 +34,38 @@
 
 //************************************************************************
 LiquidCrystal::LiquidCrystal(uint8_t rs, uint8_t rw, uint8_t enable,
-				 uint8_t d0, uint8_t d1, uint8_t d2, uint8_t d3,
-				 uint8_t d4, uint8_t d5, uint8_t d6, uint8_t d7)
+					uint8_t d0, uint8_t d1, uint8_t d2, uint8_t d3,
+					uint8_t d4, uint8_t d5, uint8_t d6, uint8_t d7)
 {
 	init(0, rs, rw, enable, d0, d1, d2, d3, d4, d5, d6, d7);
 }
 
 //************************************************************************
 LiquidCrystal::LiquidCrystal(uint8_t rs, uint8_t enable,
-			 uint8_t d0, uint8_t d1, uint8_t d2, uint8_t d3,
-				 uint8_t d4, uint8_t d5, uint8_t d6, uint8_t d7)
+					uint8_t d0, uint8_t d1, uint8_t d2, uint8_t d3,
+					uint8_t d4, uint8_t d5, uint8_t d6, uint8_t d7)
 {
 	init(0, rs, 255, enable, d0, d1, d2, d3, d4, d5, d6, d7);
 }
 
 //************************************************************************
 LiquidCrystal::LiquidCrystal(uint8_t rs, uint8_t rw, uint8_t enable,
-				 uint8_t d0, uint8_t d1, uint8_t d2, uint8_t d3)
+					uint8_t d0, uint8_t d1, uint8_t d2, uint8_t d3)
 {
 	init(1, rs, rw, enable, d0, d1, d2, d3, 0, 0, 0, 0);
 }
 
 //************************************************************************
 LiquidCrystal::LiquidCrystal(uint8_t rs, uint8_t enable,
-				 uint8_t d0, uint8_t d1, uint8_t d2, uint8_t d3)
+					uint8_t d0, uint8_t d1, uint8_t d2, uint8_t d3)
 {
 	init(1, rs, 255, enable, d0, d1, d2, d3, 0, 0, 0, 0);
 }
 
 //************************************************************************
 void LiquidCrystal::init(uint8_t fourbitmode, uint8_t rs, uint8_t rw, uint8_t enable,
-			 uint8_t d0, uint8_t d1, uint8_t d2, uint8_t d3,
-			 uint8_t d4, uint8_t d5, uint8_t d6, uint8_t d7)
+				uint8_t d0, uint8_t d1, uint8_t d2, uint8_t d3,
+				uint8_t d4, uint8_t d5, uint8_t d6, uint8_t d7)
 {
 	_rs_pin = rs;
 	_rw_pin = rw;
@@ -94,6 +92,8 @@ void LiquidCrystal::init(uint8_t fourbitmode, uint8_t rs, uint8_t rw, uint8_t en
 		_displayfunction = LCD_4BITMODE | LCD_1LINE | LCD_5x8DOTS;
 	else 
 		_displayfunction = LCD_8BITMODE | LCD_1LINE | LCD_5x8DOTS;
+	
+	setRowOffsets(0x00, 0x40, 0x14, 0x54);
 	
 	begin(16, 1);
 }
@@ -199,14 +199,29 @@ void LiquidCrystal::home()
 //************************************************************************
 void LiquidCrystal::setCursor(uint8_t col, uint8_t row)
 {
-	int row_offsets[] = { 0x00, 0x40, 0x14, 0x54 };
+//*	moved to class definition
+//	int row_offsets[] = { 0x00, 0x40, 0x14, 0x54 };	//*	default
+//	int row_offsets[] = { 0x00, 0x40, 0x10, 0x50 };
 	if ( row > _numlines )
 	{
-		row = _numlines-1;	// we count rows starting w/0
+		row = _numlines-1;		// we count rows starting w/0
 	}
 	
 	command(LCD_SETDDRAMADDR | (col + row_offsets[row]));
 }
+
+//************************************************************************
+//*	added by MLS Dec 2011
+//*	this allows support for non standard LCD displays
+//************************************************************************
+void LiquidCrystal::setRowOffsets(int row0, int row1, int row2, int row3)
+{
+	row_offsets[0]	=	row0;
+	row_offsets[1]	=	row1;
+	row_offsets[2]	=	row2;
+	row_offsets[3]	=	row3;
+}
+
 
 //************************************************************************
 // Turn the display on/off (quickly)
@@ -350,11 +365,11 @@ void LiquidCrystal::send(uint8_t value, uint8_t mode)
 void LiquidCrystal::pulseEnable(void)
 {
 	digitalWrite(_enable_pin, LOW);
-	delayMicroseconds(1);	
+	delayMicroseconds(1);
 	digitalWrite(_enable_pin, HIGH);
-	delayMicroseconds(1);	// enable pulse must be >450ns
+	delayMicroseconds(1);			// enable pulse must be >450ns
 	digitalWrite(_enable_pin, LOW);
-	delayMicroseconds(100);	// commands need > 37us to settle
+	delayMicroseconds(100);			// commands need > 37us to settle
 }
 
 //************************************************************************
