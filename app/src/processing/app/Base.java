@@ -1000,7 +1000,7 @@ public class Base {
         boolean found = addSketches(menu, examplesFolder, false);
 
         logger.debug("DEBUG: Find examples in library.core.path  = " + libraryPath);
-    	JMenuItem platformItem = new JMenuItem("test: " + targetname);
+    	JMenuItem platformItem = new JMenuItem("Platform: " + targetname);
     	platformItem.setEnabled(false);
     	menu.add(platformItem);
 	menu.addSeparator();
