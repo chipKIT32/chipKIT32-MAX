@@ -19,7 +19,8 @@
 // These constants won't change.  They're used to give names
 // to the pins used:
 const int lowestPin = 0;
-const int highestPin = 85;
+// Use highestPin = 85 for the Max32 board, and highestPin = 41 for the Uno32
+const int highestPin = 41;
 
 
 void setup() {
