@@ -142,7 +142,7 @@ void		clearOverflow() { fRov = 0; };
 
 /* Object class for DSPI port 0
 */
-#if (NUM_DTWI_PORTS > 0)
+#if (NUM_DSPI_PORTS > 0)
 class DSPI0 : public DSPI {
 public:
 			DSPI0();
@@ -153,7 +153,7 @@ void		disableInterruptTransfer();
 
 /* Object class for DSPI port 1
 */
-#if (NUM_DTWI_PORTS > 1)
+#if (NUM_DSPI_PORTS > 1)
 class DSPI1 : public DSPI {
 public:
 			DSPI1();
@@ -164,7 +164,7 @@ void		disableInterruptTransfer();
 
 /* Object class for DSPI port 2
 */
-#if (NUM_DTWI_PORTS > 2)
+#if (NUM_DSPI_PORTS > 2)
 class DSPI2 : public DSPI {
 public:
 			DSPI2();
@@ -175,7 +175,7 @@ void		disableInterruptTransfer();
 
 /* Object class for DSPI port 3
 */
-#if (NUM_DTWI_PORTS > 3)
+#if (NUM_DSPI_PORTS > 3)
 class DSPI3 : public DSPI {
 public:
 			DSPI3();
