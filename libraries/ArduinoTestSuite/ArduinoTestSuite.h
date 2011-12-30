@@ -3,7 +3,7 @@
 //*	Aug 31,	2010	<MLS> Started on TestArduino
 //************************************************************************
 
-#ifndef _AVR_IO_H_
+#if defined(__AVR__) && !defined(_AVR_IO_H_)
 	#include	<avr/io.h>
 #endif
 
@@ -15,10 +15,14 @@
 #endif
 
 
-#if defined(USART3_RX_vect)
-	#define	SERIAL_PORT_COUNT		4
-#elif  defined(USART1_RX_vect)
-	#define	SERIAL_PORT_COUNT		2
+#if defined(__AVR__)
+	#if defined(USART3_RX_vect)
+		#define	SERIAL_PORT_COUNT		4
+	#elif  defined(USART1_RX_vect)
+		#define	SERIAL_PORT_COUNT		2
+	#else
+		#define	SERIAL_PORT_COUNT		1
+	#endif
 #else
 	#define	SERIAL_PORT_COUNT		1
 #endif

@@ -15,11 +15,18 @@
 //************************************************************************
 //*	Aug 31,	2010	<MLS> Started on TestArduino
 //*	Oct 18,	2010	<MLS> Added memory testing
+//*	Sep 20,	2011	<MLS> Adding support for non-avr cpus
+//*	Sep 21,	2011	<MLS> fixed buffer overflow for PIC32 in ATS_PrintProperty
 //************************************************************************
-2
-#include	<avr/pgmspace.h>
-#include	<avr/io.h>
-#include	<avr/eeprom.h>
+
+#if defined(__AVR__)
+	#include	<avr/pgmspace.h>
+	#include	<avr/io.h>
+	#include	<avr/eeprom.h>
+#else
+	#define	strcpy_P	strcpy
+	#define	strcat_P	strcat
+#endif
 
 
 
@@ -31,7 +38,7 @@
 #include	"pins_arduino.h"
 
 
-#include	"avr_cpunames.h"
+#include	"cpudefs.h"
 
 #if defined(USART3_RX_vect)
 	#define	SERIAL_PORT_COUNT		4
@@ -111,7 +118,7 @@ static void	ATS_PrintProperty(	int		propertyTagNum,
 								char	*propertyName,
 								char	*propertyValue)
 {
-char	lineBuffer[64];
+char	lineBuffer[256];
 
 	strcpy_P(lineBuffer, gTextMsg_info);
 	switch(propertyTagNum)
@@ -185,9 +192,11 @@ char	memoryMsg[48];
 	Serial.println();
 
 	ATS_PrintProperty(ATS_Manufacturer,		0,	manufName);
-	ATS_PrintProperty(ATS_CPU,				0,	_AVR_CPU_NAME_);
+	ATS_PrintProperty(ATS_CPU,				0,	_CPU_NAME_);
 	ATS_PrintProperty(ATS_GCC_version,		0,	__VERSION__);
+#ifdef __AVR_LIBC_VERSION_STRING__
 	ATS_PrintProperty(ATS_LIBC_version,		0,	__AVR_LIBC_VERSION_STRING__);
+#endif
 	ATS_PrintProperty(ATS_CompiledDate,		0,	__DATE__);
 	ATS_PrintProperty(ATS_TestSuiteName,	0,	testSuiteName);
 
@@ -472,7 +481,7 @@ uint8_t helperpin;
 }
 
 
-#if defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__)
+#if  defined(_BOARD_MEGA_) || defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__)
 	#define	kAnalogPinOffset	54
 #else
 	#define	kAnalogPinOffset	14
@@ -613,6 +622,7 @@ short	timeOutLoopCtr;
 #endif
 
 
+#if defined(__AVR__)
 //************************************************************************
 boolean	ATS_Test_EEPROM(void)
 {
@@ -683,9 +693,10 @@ char		reportString[48];
 
 	return(passedOK);
 }
+#endif	//*	defined(__AVR__)
 
 
-
+#if defined(__AVR__)
 //************************************************************************
 extern unsigned int __data_start;
 extern unsigned int __data_end;
@@ -693,6 +704,7 @@ extern unsigned int __bss_start;
 extern unsigned int __bss_end;
 extern unsigned int __heap_start;
 extern void *__brkval;
+#endif	//*	defined(__AVR__)
 
 
 
@@ -701,6 +713,7 @@ int	ATS_GetFreeMemory()
 {
 int free_memory;
 
+#if defined(__AVR__)
 	if((int)__brkval == 0)
 	{
 		free_memory = ((int)&free_memory) - ((int)&__bss_end);
@@ -709,6 +722,10 @@ int free_memory;
 	{
 		free_memory = ((int)&free_memory) - ((int)__brkval);
 	}
+#else
+	free_memory	=	0;
+#endif
+
 	return free_memory;
 }
 
