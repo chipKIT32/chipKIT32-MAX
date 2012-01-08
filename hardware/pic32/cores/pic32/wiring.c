@@ -38,6 +38,7 @@
 //* Nov 19, 2011    <BPS> Added WestfW's code from ChipKit forum - fixes
 //*                 lost millisecond and microsecond times during rollover
 //*	Dec 11,	2011	<MLS> Issue #151 added INTEnableInterrupts and INTDisableInterrupts
+//* Dec 12, 2011	<GeneApperson> added call to _scheduleTask in delay()
 //************************************************************************
 #include <plib.h>
 #include <p32xxxx.h>
@@ -161,7 +162,7 @@ unsigned long	startMillis;
 	startMillis	=	gTimer0_millis;
 	while ((gTimer0_millis - startMillis) < ms)
 	{
-		//*	do nothing
+		_scheduleTask();
 	}
 }
 
@@ -225,6 +226,9 @@ void init()
 void	_board_init(void);
 	_board_init();
 #endif
+
+	//* Initialize the periodic task manager
+	_initTaskManager();
 
 	//*	Issue #84
 	//*	disable the uart so that the pins can be used as general purpose I/O

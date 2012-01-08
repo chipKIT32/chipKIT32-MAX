@@ -28,8 +28,12 @@
 //*	Edit History
 //************************************************************************
 //*	Oct 12,	2010	Got MPLAB X working on MacOSX 1.6 for the first time
+//* Dec 12, 2011 <GeneApperson> added call to _scheduleTask() before call
+//*					to loop().
 //************************************************************************
 
+#define OPT_SYSTEM_INTERNAL
+#include <System_Defs.h>
 
 #if (ARDUINO >= 100)
 	#include <Arduino.h>
@@ -47,6 +51,7 @@ int main(void)
 
 	while (1)
 	{
+		_scheduleTask();
 		loop();
 	}
 	return 0;
