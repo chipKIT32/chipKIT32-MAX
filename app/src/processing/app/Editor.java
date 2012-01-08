@@ -2069,35 +2069,38 @@ static Logger logger = Logger.getLogger(Base.class.getName());
     // check to make sure that this .pde file is
     // in a folder of the same name
     File file = new File(path);
-    File parentFile = new File(file.getParent());
-    String parentName = parentFile.getName();
+    String fileName = file.getName();
+    File parent = file.getParentFile();
+    String parentName = parent.getName();
     String pdeName = parentName + ".pde";
-    File altFile = new File(file.getParent(), pdeName);
-
-    if (pdeName.equals(file.getName())) {
+    File altPdeFile = new File(parent, pdeName);
+    String inoName = parentName + ".ino";
+    File altInoFile = new File(parent, pdeName);
+    
+    if (pdeName.equals(fileName) || inoName.equals(fileName)) {
       // no beef with this guy
 
-    } else if (altFile.exists()) {
-      // user selected a .java from the same sketch,
-      // but open the .pde instead
-      path = altFile.getAbsolutePath();
-      //System.out.println("found alt file in same folder");
-
-    } else if (!path.endsWith(".pde")) {
+    } else if (altPdeFile.exists()) {
+      // user selected a .java from the same sketch, but open the .pde instead
+      path = altPdeFile.getAbsolutePath();
+    } else if (altInoFile.exists()) {
+      path = altInoFile.getAbsolutePath();
+    } else if (!path.endsWith(".ino") && !path.endsWith(".pde")) {
       Base.showWarning("Bad file selected",
                        "Processing can only open its own sketches\n" +
-                       "and other files ending in .pde", null);
+                         "and other files ending in .ino or .pde", null);
       return false;
 
     } else {
       String properParent =
-        file.getName().substring(0, file.getName().length() - 4);
+        fileName.substring(0, fileName.length() - 4);
 
       Object[] options = { "OK", "Cancel" };
-      String prompt =
-        "The file \"" + file.getName() + "\" needs to be inside\n" +
-        "a sketch folder named \"" + properParent + "\".\n" +
-        "Create this folder, move the file, and continue?";
+      String prompt = "The file \"{0}\" needs to be inside\n" +
+	  "a sketch folder named \"{1}\".\n" +
+	  "Create this folder, move the file, and continue?" +
+	fileName +
+	properParent;
 
       int result = JOptionPane.showOptionDialog(this,
                                                 prompt,
@@ -2191,6 +2194,7 @@ static Logger logger = Logger.getLogger(Base.class.getName());
 
     } else if (immediately) {
       handleSave2();
+      return handleSave2();
 
     } else {
       SwingUtilities.invokeLater(new Runnable() {
@@ -2203,15 +2207,16 @@ static Logger logger = Logger.getLogger(Base.class.getName());
   }
 
 
-  protected void handleSave2() {
+  protected boolean handleSave2() {
     toolbar.activate(EditorToolbar.SAVE);
     statusNotice("Saving...");
+    boolean saved = false;
     try {
-      if (sketch.save()) {
+      saved = sketch.save();
+      if (saved)
         statusNotice("Done Saving.");
-      } else {
+      else
         statusEmpty();
-      }
       // rebuild sketch menu in case a save-as was forced
       // Disabling this for 0125, instead rebuild the menu inside
       // the Save As method of the Sketch object, since that's the
@@ -2230,6 +2235,7 @@ static Logger logger = Logger.getLogger(Base.class.getName());
     }
     //toolbar.clear();
     toolbar.deactivate(EditorToolbar.SAVE);
+    return saved;
   }
 
 
