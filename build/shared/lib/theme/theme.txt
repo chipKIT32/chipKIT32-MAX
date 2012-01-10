@@ -1,35 +1,40 @@
+#
+# GUI with chipKIT related colours
+#
+
+
 # GUI - STATUS
 status.notice.fgcolor = #000000
-status.notice.bgcolor = #54919e
+status.notice.bgcolor = #666666
 status.error.fgcolor = #ffffff
-status.error.bgcolor = #662000
+status.error.bgcolor = #666666
 status.edit.fgcolor = #000000
-status.edit.bgcolor = #cc9900
+status.edit.bgcolor = #660000
 status.font = SansSerif,plain,12
 
 # GUI - TABS
 # settings for the tabs at the top
 # (tab images are stored in the lib/theme folder)
-header.bgcolor = #216886
-header.text.selected.color = #1a1a00
-header.text.unselected.color = #ffffff
+header.bgcolor = #666666
+header.text.selected.color = #ffffff
+header.text.unselected.color = #000000
 header.text.font = SansSerif,plain,12
 
 # GUI - CONSOLE
-console.font = Monospaced,plain,11
-console.font.macosx = Monaco,plain,10
+console.font = Monospaced,plain,10
+console.font.macosx = Monaco,plain,12
 console.color = #000000
 console.output.color = #cccccc
-console.error.color = #ff3000
+console.error.color = #ffffff
 
 # GUI - BUTTONS
-buttons.bgcolor = #044f6f
+buttons.bgcolor = #660000
 buttons.status.font = SansSerif,plain,12
 buttons.status.color = #ffffff
 
 # GUI - LINESTATUS
 linestatus.color = #ffffff
-linestatus.bgcolor = #044f6f
+linestatus.bgcolor = #660000
 
 # EDITOR - DETAILS
 
@@ -66,26 +71,25 @@ editor.brackethighlight.color = #006699
 # TEXT - KEYWORDS
 
 # e.g abstract, final, private
-editor.keyword1.style = #cc6600,plain
+editor.keyword1.style = #ff0000,plain
 
 # e.g. beginShape, point, line
-editor.keyword2.style = #cc6600,plain
+editor.keyword2.style = #ff8000,plain
 
 # e.g. byte, char, short, color
-editor.keyword3.style = #cc6600,bold
+editor.keyword3.style = #8b308b,bold
 
 
 # TEXT - LITERALS
 
 # constants: e.g. null, true, this, RGB, TWO_PI
-editor.literal1.style = #006699,plain
-
+editor.literal1.style = #0066FF,plain
 
 # http://arduino.cc/
 editor.url.style = #0000ff,underlined
 
 # p5 built in variables: e.g. mouseX, width, pixels
-editor.literal2.style = #006699,plain
+editor.literal2.style = #ffcc00,plain
 
 # e.g. + - = /
 editor.operator.style = #000000,plain
@@ -96,8 +100,8 @@ editor.label.style = #7e7e7e,bold
 
 
 # TEXT - COMMENTS
-editor.comment1.style = #7e7e7e,plain
-editor.comment2.style = #7e7e7e,plain
+editor.comment1.style = #007f00,plain
+editor.comment2.style = #007f00,plain
 
 
 # LINE STATUS - editor line number status bar at the bottom of the screen
