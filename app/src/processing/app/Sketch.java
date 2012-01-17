@@ -727,7 +727,7 @@ public class Sketch {
         }
       });
       
-      if (pdeFiles != null && pdeFiles.length > 0) {
+      if (pdeFiles != null && pdeFiles.length > 0) {/*
         if (Preferences.get("editor.update_extension") == null) {
           Object[] options = { "OK", "Cancel" };
           int result = JOptionPane.showOptionDialog(editor,
@@ -755,6 +755,7 @@ public class Sketch {
           for (File pdeFile : pdeFiles)
             renameCodeToInoExtension(pdeFile);
         }
+      */
       }
  }
     for (int i = 0; i < codeCount; i++) {

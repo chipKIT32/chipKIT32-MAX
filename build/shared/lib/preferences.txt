@@ -249,3 +249,6 @@ serial.databits=8
 serial.stopbits=1
 serial.parity=N
 serial.debug_rate=9600
+
+editor.update_extension=false
+
