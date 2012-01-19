@@ -9,13 +9,13 @@ For more information, see the website at: http://www.arduino.cc/
 or the forums at: http://www.arduino.cc/cgi-bin/yabb2/YaBB.pl
 
 To report a bug or a make a suggestions, go to:
-[hardware] http://www.arduino.cc/cgi-bin/yabb2/YaBB.pl?board=hwbugs
-[software] http://www.arduino.cc/cgi-bin/yabb2/YaBB.pl?board=swbugs
+[hardware] https://github.com/chipKIT32/chipKIT32-MAX/issues
+[software] https://github.com/chipKIT32/chipKIT32-MAX/issues
 
 INSTALLATION
 Detailed instructions are in reference/Guide_Windows.html and
 reference/Guide_MacOSX.html.  For Linux, see the Arduino playground:
-http://www.arduino.cc/playground/Learning/Linux
+http://chipkit.org/wiki
 
 If you are using a USB Arduino, you will need to install the drivers for the
 FTDI chip on the board. These can be found in the drivers/ directory.
