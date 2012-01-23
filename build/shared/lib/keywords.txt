@@ -1,3 +1,5 @@
+# Added: [u]int{8|16|32|64}_t types
+
 # LITERAL1 specifies constants
 
 HIGH	LITERAL1	Constants
@@ -106,6 +108,14 @@ float	KEYWORD2	float_
 int	KEYWORD2	int_
 long	KEYWORD2	long_
 word	KEYWORD2	word_
+int8_t	KEYWORD2
+int16_t	KEYWORD2
+int32_t	KEYWORD2
+int64_t	KEYWORD2
+uint8_t	KEYWORD2
+uint16_t	KEYWORD2
+uint32_t	KEYWORD2
+uint64_t	KEYWORD2
 
 # KEYWORD2 specifies methods and functions
 
