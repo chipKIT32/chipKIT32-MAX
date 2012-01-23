@@ -121,16 +121,14 @@ the edge in question.
 
 However, some generalities can be stated:
 
-    * Each falling edge (if just one edge happens at a time) requires about 2us 
-      of CPU time.
+    * Each falling edge (if just one edge happens at a time) requires about 250ns 
+      of CPU time. Thus 41 edges all falling at once take up about 10.3us.
 
-    * If just one pin is active, the rising edge also consumes about 2us of CPU 
-      time.
-
-    * For each additional active pin that needs to be set high, an additional 
-      272ns of CPU time is needed.
+    * The above time does not include the time needed to get into the ISR and out
+      again. This adds about 1.8uS to the total, no matter how many pins fire
+      at once.      
       
-So for a single pin of PWM, 4us of CPU time (out of a 2ms Frame Time) are needed.
+So for a single pin of PWM, about 4us of CPU time (out of a 2ms Frame Time) is needed.
 This works out to about 0.2% CPU overhead.
 
 If all 85 pins are active and are generating PWM pulses, about 24us will be needed

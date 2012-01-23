@@ -39,6 +39,9 @@
 //*                 lost millisecond and microsecond times during rollover
 //*	Dec 11,	2011	<MLS> Issue #151 added INTEnableInterrupts and INTDisableInterrupts
 //* Dec 12, 2011	<GeneApperson> added call to _scheduleTask in delay()
+//* Jan  9, 2012    <KeithV> Added CoreTimer Services to the CoreTimerHandler and fixed bugs where CT would be missed.
+//                  Also fixed write_comp() inline assembler
+//                  Also added countdown debug mask to stop the core timer when debugging.
 //************************************************************************
 #include <plib.h>
 #include <p32xxxx.h>
@@ -75,12 +78,9 @@
 #pragma config BWP		=	OFF
 #pragma config PWP		=	OFF
 
-
 //************************************************************************
 //*	globals
 unsigned int	__PIC32_pbClk;
-
-
 
 // the prescaler is set so that timer0 ticks every 64 clock cycles, and the
 // the overflow handler is called every 256 ticks.
@@ -148,8 +148,6 @@ unsigned int micros_delta	=	0;
 
 }
 
-
-
 //#define mCTClearIntFlag()					(IFS0CLR = _IFS0_CTIF_MASK)
 //#define mCTGetIntFlag()					 (IFS0bits.CTIF)
 //#define GetSystemClock() (80000000ul)
@@ -209,6 +207,9 @@ void init()
 //	while(RtccGetClkStat() != RTCC_CLK_ON);		// wait for the SOSC to be actually running and RTCC to have its clock source
 												// could wait here at most 32ms
 
+   // allow for debugging, this will stop the core timer when the debugger takes control
+    _CP0_BIC_DEBUG(_CP0_DEBUG_COUNTDM_MASK); 
+
 	delay(50);
 	// time is MSb: hour, min, sec, rsvd. date is MSb: year, mon, mday, wday.
 	RtccOpen(0x10073000, 0x11010901, 0);
@@ -241,64 +242,6 @@ void	_board_init(void);
 
 
 //************************************************************************
-#define read_count(dest) __asm__ __volatile__("mfc0 %0,$9" : "=r" (dest))
-#define read_comp(dest) __asm__ __volatile__("mfc0 %0,$11" : "=r" (dest))
-#define write_comp(src) __asm__ __volatile__("mtc0 %0,$11" : "=r" (src))
-
-void __ISR(_CORE_TIMER_VECTOR, _CT_IPL_ISR) CoreTimerHandler(void)
-{
-    static uint32_t compare = 0;
-    uint32_t count, millisLocal;
-    uint32_t softPWMreturnFlag = 1;
-    
-    millisLocal = gTimer0_millis;  // defeat volatility
-
-    // Only call the SoftPMW update function if it has been hooked into by the
-    // SoftPWM library. Otherwise, always just do the normal 1ms update stuff
-    if (gSoftPWMServoUpdate != NULL)
-    {
-        softPWMreturnFlag       =       gSoftPWMServoUpdate();
-    }
-
-    if (softPWMreturnFlag)
-    {
-        // Handle updates that need to happen at the 1ms rate:
-        do {
-            millisLocal++;                  /* At least one tick */
-            read_count(count);              /* keep current count current */
-            compare += CORE_TICK_RATE;      /* increment next compare */
-            /*
-             * In the common case, we're done.  Now we check special
-             * circumstances.  1st, see if the next target compare value has
-             * wrapped around, but the current count hasn't.  That means the
-             * counter is behind the target, and will deliver another interrupt.
-             */
-            if (compare < CORE_TICK_RATE) { // next compare overflow?
-                if (count > 32*CORE_TICK_RATE) { // but count hasn't overflowed
-                    break;
-                }
-            }
-            /*
-             * Next check for having missed one or more clock ticks entirely,
-             * in which case out next computer compare value will be "before"
-             * the current count.  In this case we add an extra count to make
-             * up for the miss, and try again.
-             */
-        } while (compare < count);
-        // The SoftPWMServoUpdate() writes a new compare value, so don't duplicate
-        if (gSoftPWMServoUpdate == NULL) {
-            write_comp(compare);           /* A compare val that is about 1ms past cur count */
-        }
-        gCore_timer_last_val = count;  /* Save the count, too, for calculating micros() */
-        gTimer0_millis = millisLocal;  /* update millis */
-    }
-    
-    // clear the interrupt flag
-    mCTClearIntFlag();
-}
-
-
-//************************************************************************
 //*	Interrupts are enabled by setting the IE bit in the status register
 //************************************************************************
 unsigned int __attribute__((nomips16))  INTEnableInterrupts(void)
@@ -321,4 +264,312 @@ unsigned int __attribute__((nomips16)) INTDisableInterrupts(void)
     asm volatile("di    %0" : "=r"(status));
 
     return status;
+}
+
+
+
+//************************************************************************
+//*	CoreTimerHandler Services (KeithV)
+//************************************************************************
+
+uint32_t millisecondCoreTimerService(uint32_t curTime);
+
+/*
+    uint32_t CoreTimerService(uint32_t count)
+
+    A CoreTimer Service is a callback routine that will get called when the core timer value equals the last value returned by your service; 
+    also known as your requested compare time. When registering a CoreTimerService callback routine, the routine will be called on the next regularly 
+    scheduled event currently waiting the CoreTimerHandler. From system start, there is a millisecond CoreTimerService running, so in most cases once you 
+    register your callback serivce it should be called within 1 ms of attaching (registering). In some cases if interrupts are diaabled it may be as 
+    long as 50 ms before your first call is made. Passed in to your Service is the current value of the CoreTimer count register, this is a rolling count 
+    that rolls once every 2^32 / 40000000 ~ 107seconds. The return value from your service should be the next value of count that you want to be notified; 
+    logically like setting the compare register; however, CoreTimerHandler is managing several services and will notify you when your value has been hit. 
+    You will totally screw up CoreTimerHandler if you set the compare register directly. Here are the rules for writing a CoreTimerService callback routine.
+
+    The rules:
+
+    1.	You do NOT set “compare”!
+    2.  Do not do anything that could cause CoreTimerHandler to be called recursively. For example, do not enable interrupts as the CT flag is still set
+        and will immeditely cause the system to call CoreTimerHandler.
+    3.	The value of the count register is passed to you, however this could be several ticks old. Usually this is not a problem. It is allowed 
+        for you to read the count register directly, however you must return a compare value that is greater in time (so it can be a uint32 wrapped value) 
+        than the count value passed to you. 
+    4.	You will NOT be called before your compare value has been hit; however you may be called late should interrupts get disabled.
+    5.	Unfortunately, because of things like the EEProm writes, you can be called late and you must “catch-up” however best you can and return 
+        the next requested “compare” time on your next call.
+    6.	There are limits to how far in the future you can set your next "compare" time. Right now this is limited to 90 seconds. If you need a longer delay you
+        should be using something other than a CoreTimer Services to do this. You probably should really limit your next "compare" time to less than few seconds.
+    7.	Your next requested “compare” time MUST be equal to or after (in time) the “current” time as passed in to you. You may add up to 90 seconds to the 
+        current time, even if this causes uint32 wrap; but do not subtract from the current time and return that. There is a region known to CoreTimerHandler 
+        that is before the current time, but that uint32 "value" is after the current time + 90 seconds.
+     8.	CoreTimerHandler will keep looping until count is less than whatever the next compare is “after” CT was cleared to insure that CT is not missed. 
+        It is possible that you could be called a second time before exiting the CoreTimerHandler ISR if you request a new compare time that is very close to 
+        the current time.
+    9.	After attaching, your service will be called on the next schedule call to CoreTimerHandler. Since there is always a ms service that gets triggered, 
+        this will typically mean your first call to your Service will be within 1 ms of attaching, unless interrupts are disabled and you are delayed; 
+        it could then be as much as 50ms.
+    10. Understand, your callback is being called while executing inside the CoreTimerHandler ISR. Your code should be as fast as possible. If too much
+        time is taken, the ISR may never exit and no sketch will ever run!
+*/
+typedef  uint32_t (*CoreTimerService)(uint32_t);
+
+typedef struct
+{
+    uint32_t            nextInt;
+    CoreTimerService    serivce;
+} CoreTimerInfo;
+
+// make sure our ms timer is always in the list; so we initialize it into the list
+// the rest of the slots are open for CoreTimer callback attachments.
+CoreTimerInfo gCoreTimerInfo[] = {{0, millisecondCoreTimerService}, {0, NULL}, {0, NULL}};
+#define MaxNbrOfCoreTimerServices   (sizeof(gCoreTimerInfo) / sizeof(CoreTimerInfo))
+
+// This is a base value used to put our conditional logic into the linear range of an uint32, it also
+// is used as the initial trigger time so that newly attached serices are called on the next call to CoreTimerHandler.
+static uint32_t gLastBaseCount = 0;
+
+/***	unsigned int attachCoreTimerService(uint32_t (* service)(uint32_t))
+**
+**	Synopsis:   
+**      Attaches a CoreTimer service to the CoreTimerHandler so that you can get direct
+**      notifiaitons when the core timer hits specific values.
+**
+**	Parameters:
+**      service - A function pointer to the callback routine to be called; with function signature of "uint32_t service(uint32_t count);" See rules above.
+**
+**	Return Values:
+**      true if there is room in the sevice list to add your callback routine, false if all stots are taken
+**
+**	Errors:
+**      returns false if all slots in the list are currently in use.
+**
+**  Notes:
+**
+**      This allows you to register a callback routine that will be called when the core timer clock == to the
+**      compare value you requested as the return parameter from your callback serivce. 
+**
+**      The first call to your callback will usually be within 1 ms of attaching, but if interrupts are disabled may be 
+**      significantly long, even as much as 50 ms or so.
+**
+*/
+unsigned int attachCoreTimerService(uint32_t (* service)(uint32_t))
+{
+    int i;
+
+    // make sure we are not already registered
+    for(i = 0; i<MaxNbrOfCoreTimerServices; i++)
+    {
+        // found it, do nothing
+        if(gCoreTimerInfo[i].serivce == service)
+        {
+            return(true);
+        }
+    }
+
+    // we are not register, find an open slot
+    // look for a open slot
+    for(i = 0; i<MaxNbrOfCoreTimerServices; i++)
+    {
+        // found one, add the service
+        if(gCoreTimerInfo[i].serivce == NULL)
+        {
+            // make sure we trigger on the next call to CoreTimerHandler
+            // by setting the compare time to the last know, and lowest known time.
+            gCoreTimerInfo[i].nextInt = gLastBaseCount;
+            gCoreTimerInfo[i].serivce = service;
+            return(true);
+        }
+    }
+    return(false);
+}
+
+/***	unsigned int detachCoreTimerService(uint32_t (* service)(uint32_t))
+**
+**	Synopsis:   
+**      Removes your service from the CoreTimerHandler callback list.
+**
+**	Parameters:
+**      service - A function pointer to the service to remove, this is the same function pointer that was used when adding the service
+**
+**	Return Values:
+**      true if the service was found and removed. False if the service pointer was not found; then nothing was removed from the list.
+**
+**	Errors:
+**      returns false if the function pointer was not found.
+**
+**  Notes:
+*/
+unsigned int detachCoreTimerService(uint32_t (* service)(uint32_t))
+{
+    int i;
+
+    // look for this serivce in the list
+    for(i = 0; i<MaxNbrOfCoreTimerServices; i++)
+    {
+        // found it
+        if(gCoreTimerInfo[i].serivce == service)
+        {
+            // remove it from the slot
+            gCoreTimerInfo[i].serivce = NULL;
+            return(true);
+        }
+    }
+    return(false);
+}
+
+/***	uint32_t millisecondCoreTimerService(uint32_t curTime)
+**
+**	Synopsis:   
+**      This is the millisecond CoreTimer Service that keeps track of milliseconds for such functions as millis().
+**
+**	Parameters:
+**      curTime - the current time as presented by CoreTimerHandler. This is basically the value of the count register when the ISR is called.
+**
+**	Return Values:
+**      The value of count when I want this routine to be called again. It is logically like setting the compare register.
+**
+**	Errors:
+**      Can not have any.
+**
+**  Notes:
+**      This Service is critical to the operation of the system and should never be removed from the CoreTimerHandler list.
+**
+*/
+uint32_t millisecondCoreTimerService(uint32_t curTime)
+{
+    static nextInt = 0;
+    uint32_t relWait = 0;
+    uint32_t relTime = curTime - nextInt;
+    uint32_t millisLocal = gTimer0_millis;  // defeat volatility
+
+    // catch-up up to current time; we may have fallen behind due to interrupts being diabled.
+    while(relWait <= relTime)
+    {
+        millisLocal++;                      // add a ms to our time
+        relWait += CORE_TICK_RATE;          // add a ms to our next ISR time
+     }
+
+    // set when we want to be called again
+    nextInt += relWait;                     // calculate the absolute interrupt time we want.
+
+    // we want to sync gCore_timer_last_val with the last millisecond "count" value
+    // curTime may not be exactly on a millisecond boundary, but we know where that is
+    // we know nextInt is our next millisecond boundary, so less 1 CORE_TICK_RATE will be our last one
+    // gCore_timer_last_val = curTime;         // This is the original bogus code
+    gCore_timer_last_val =  nextInt - CORE_TICK_RATE;
+
+    // update the global millisecond counter.
+    gTimer0_millis = millisLocal;           // Total number of ms
+
+    return(nextInt);
+}
+
+//************************************************************************
+#define read_count(dest) __asm__ __volatile__("mfc0 %0,$9" : "=r" (dest))
+#define read_comp(dest) __asm__ __volatile__("mfc0 %0,$11" : "=r" (dest))
+#define write_comp(src) __asm__ __volatile__("mtc0 %0,$11" : : "r" (src))
+
+/***	void __ISR(_CORE_TIMER_VECTOR, _CT_IPL_ISR) CoreTimerHandler(void)
+**
+**	Synopsis:   
+**      The CoreTimerHandler ISR. This manages timer events off of the core timer counter using the 
+**      count and compare system register and the CT interrupt.
+**
+**	Parameters:
+**      none, but has the effect of know that count >= compare.
+**
+**	Return Values:
+**      none, but compare is set for the next interrupt to take place
+**
+**	Errors:
+**      none
+**
+**  Notes:
+**      This ISR will walk the list of all attached CoreTimer Services and will call all serivces where count has exceeded 
+**      each service's logical compare values. And then the next and soonest logical compare value is searched for and set as
+**      the real compare value to be interrupted to notify the Serivces when count hits that value.
+**
+*/
+void __ISR(_CORE_TIMER_VECTOR, _CT_IPL_ISR) CoreTimerHandler(void)
+{
+    uint32_t curTime;
+    uint32_t compare;
+    uint32_t nextBase;
+
+    uint32_t relNextInt;
+    uint32_t relCurTime;
+    uint32_t relInt;
+
+    int i;
+
+    // we know that count >= compare, otherwise we would not have been interrupted
+    // we also know that count and compare >= gLastBaseCount as this was our last count value.
+
+    // get our current time; this will establish our next base
+    read_count(curTime); 
+    relCurTime = curTime - gLastBaseCount;
+    nextBase = curTime;
+
+    do
+    {
+        // make sure we find the lowest int to set
+        relNextInt = 0xFFFFFFFF;
+
+        // check to see who all we need to call
+        for(i=0; i<MaxNbrOfCoreTimerServices; i++)
+        {
+            // if the serivce exists
+            if(gCoreTimerInfo[i].serivce != NULL)
+            {
+                // if their time has come up
+                relInt = gCoreTimerInfo[i].nextInt - gLastBaseCount;
+                if(relInt <= relCurTime)
+                {
+                    // call their routine to get their next interrupt time
+                    gCoreTimerInfo[i].nextInt = gCoreTimerInfo[i].serivce(curTime);
+
+                    // recalculate the relative time of thier next int
+                    // so we can see if this is the next int we need to set
+                    relInt = gCoreTimerInfo[i].nextInt - gLastBaseCount;
+                }
+
+                // see if this is the next interrupt we want to set
+                // we are looking for the closest/lowest int to set.
+                if(relInt < relNextInt)
+                {
+                    relNextInt = relInt;
+                }
+            }
+        }
+      
+        // at this point we have checked all of the serivces and found the next interrupt time (compare value) to set. 
+        // The millisecondCoreTimerService is alway active and will always have a compare time no more than 1 ms away. However
+        // other service may cause the compare value to be set for an earlier time; but we always know there will be a compare time
+        // to set, so we know that relNextInt has a value other than 0xFFFFFFFF in it.
+
+        // Go ahead and set the compare register to the next interrupt we want.
+        // we need to apply our base to convert from relative values to an absolute time.
+        compare = relNextInt + gLastBaseCount;
+        write_comp(compare); 
+
+        // clear the CT flag
+        mCTClearIntFlag();
+
+        // read the count after the CT flag has been set so we can make sure count has not passed compare
+        // during our processing of this int
+        read_count(curTime); 
+
+        // get the relative time so we can operate in the linear portion of our uint32.
+        relCurTime = curTime - gLastBaseCount;
+
+        // if the current time has passed our interrupt time, then we basically hit the interrupt again
+        // so we probabaly missed the CT flag being set and we need to reprocess this interrupt and find the next one to set.
+    } while(relNextInt <= relCurTime);
+ 
+    // otherwise the next interrupt time (compare time) is after the current time and CT will catch it when count == compare.
+    // we can safely exit the ISR.
+
+    // but first we must set our new base so the next time we come into this routine we
+    // have a valid lower base to shift our times to for comparisons.
+    gLastBaseCount = nextBase;
 }

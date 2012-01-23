@@ -114,8 +114,8 @@
 
 /* Core Timer
 */
-#define	_CT_IPL_ISR		ipl2
-#define	_CT_IPL_IPC		2
+#define	_CT_IPL_ISR		IPL7SRS
+#define	_CT_IPL_IPC		CT_INT_PRIOR_7
 #define	_CT_SPL_IPC		0
 
 /* Core Software Interrupts

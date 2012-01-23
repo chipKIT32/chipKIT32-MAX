@@ -28,6 +28,9 @@
     * Fixed a compile error introduced when the include of plib.h was
       removed from HardwareSerial.h (included by WProgram.h). Added
       include of plib.h here.
+  01/12/2011 <BrianSchmalz>:
+    * Re-wrote ISR and helper functions to utilize the new core timer
+      attach() and detach() functions that Keith put into wiring.c
 */
 
 /* Note: plib.h must be included before WProgram.h. There is a fundamental
@@ -48,13 +51,12 @@
 #define EXTRA_ISR_EXIT_CYCLES               (50)
 
 /************ local prototypes ***********************************************/
-static uint32_t HandlePWMServo(void);
+uint32_t HandlePWMServo(uint32_t count);     // Can't be static because we pass it in to attach()
 static void CopyBuffers(void);
 void Add(uint32_t Channel);
 void Remove(uint32_t Channel);
 
 /************ external prototypes ********************************************/
-extern uint32_t (*gSoftPWMServoUpdate)(void);
 
 /************ local variables ************************************************/
 
@@ -84,15 +86,13 @@ static uint32_t ServoFrames = SOFTPWMSERVO_DEFAULT_SERVO_FRAMES; // Number of Fr
 // These are only touched inside the ISR
 static bool RisingEdge;                         // True if we are about to set all active channels high
 static uint32_t CurrentTime;                    // Number of 40MHz ticks into the frame we are right now
-static uint32_t MS1Time;                        // Time into 1ms 'frame'
-static uint32_t MS1Remainder;                   // Number of 40MHz ticks left before start of next 1ms 'frame'
 static uint32_t ActiveBuffer;                   // Current buffer index (0 or 1), used to index Chan and FirstChanP, for double buffering
 static ChanType * ISRFirstChanP = NULL;         // Stores ISR copy of pointer to first channel
 static uint32_t ServoFrameCounter;              // When zero, set all servo channels high, then reset to ServoFrames and count frames down
 
 // These are not touched by the ISR in any way
-static uint32_t InactiveBuffer;              // Non used buffer (0 or 1), used to index SoftPWMChan and FirstChanP, for double buffering
-static uint32_t (*SoftPWMServoPreviousISR)(void); // Pointer to old ISR function
+static uint32_t InactiveBuffer;                 // Non used buffer (0 or 1), used to index SoftPWMChan and FirstChanP, for double buffering
+static bool Initalized;                         // Set true once we've installed our ISR handler
 
 /****************** Public Functions ******************************/
 
@@ -120,9 +120,7 @@ int32_t SoftPWMServoInit(void)
     }
 
     RisingEdge = true;
-    MS1Time = 100;
     CurrentTime = 0;
-    MS1Remainder = 0;
     InactiveBuffer = 1;
     ActiveBuffer = 0;
     ISRFirstChanP = NULL;
@@ -131,22 +129,24 @@ int32_t SoftPWMServoInit(void)
     ServoFrames = SOFTPWMSERVO_DEFAULT_SERVO_FRAMES;    // Start out with default of 10 frames (20ms)
     
     // Insert our ISR handler, if it's not already there
-    if (gSoftPWMServoUpdate != &HandlePWMServo)
+    if (attachCoreTimerService(HandlePWMServo))
     {
-        // Save off the old function pointer, if there was one
-        SoftPWMServoPreviousISR = gSoftPWMServoUpdate;
-        // Now substitute our own
-        gSoftPWMServoUpdate = &HandlePWMServo;
+        Initalized = true;
+        return SOFTPWMSERVO_OK;
     }
-    
-    return SOFTPWMSERVO_OK;
+    else
+    {
+        Initalized = false;
+        return SOFTPWMSERVO_ERROR;
+    }
 }
 
 // Remove SoftPWM ISR from main Core Timer ISR
 int32_t SoftPWMServoUnload(void)
 {
     // Remove our ISR handler, and replace with what was there
-    gSoftPWMServoUpdate = SoftPWMServoPreviousISR;
+    detachCoreTimerService(HandlePWMServo);
+    Initalized = false;
     
     return SOFTPWMSERVO_OK;
 }
@@ -211,7 +211,7 @@ int32_t SoftPWMServoRawWrite(uint32_t Pin, uint32_t Value, bool PinType)
     int32_t intr;
 
     // Insert our ISR handler, if it's not already there
-    if (gSoftPWMServoUpdate != &HandlePWMServo)
+    if (!Initalized)
     {
         SoftPWMServoInit();
     }
@@ -330,221 +330,176 @@ int32_t SoftPWMServoSetServoFrames(uint32_t NewFrameCount)
 // Is called from within CoreTimer interrupt from wiring.c
 // Schedules next CoreTimer interrupt based upon what needs to happen next 
 // - another falling edge, or all rising edges, or 1ms CoreTimer interrupt.
-static uint32_t HandlePWMServo(void)
+uint32_t HandlePWMServo(uint32_t CurrentCount)
 {
     uint32_t NextTime = 0;                  // The number of CoreTimer counts into the future when our next edge should occur
-    uint32_t RetVal = 0;                    // A 1 if the wiring.c ISR should run the 1ms ISR code, zero otherwise
     uint32_t OldPeriod;                     // The CoreTimer value that caused the ISR to fire
     static ChanType * CurChanP = NULL;      // Pointer to the current channel we're operating on
     bool DoItAgain = FALSE;                 // True if we don't have time to leave the ISR and come back in
-    uint32_t NextTimeAcc = 0;               // Records the sum of NextTime values while we stay in the do-while loop
+    uint32_t NextTimeAcc = CurrentCount;    // Records the sum of NextTime values while we stay in the do-while loop
+
     
     // This do-while loop keeps us inside this function as long as there are
     // edges to process. Only once we have enough time to leave and get back
     // in for the next edge do we break out of the while loop.
     do 
     {
-        // Tell the main core timer ISR to run the 1ms code, every 1ms
-        // Can we make the PWM tick rate variable? How could we guarentee 
-        // that the 1ms stuff happens, on average, every 1ms if the 1ms
-        // isn't an integer number of PWM ticks?
-        if (MS1Time == 0)
+        // If it's time to do the rising edge of all enabled channels-
+        if (RisingEdge)
         {
-            // Schedule the next ISR to fire at the right time
-            NextTime = MS1Remainder;
-                        
-            // Return 1 so we tell the main wire.c ISR to do it's 1ms stuff
-            RetVal = 1;
+            // Start at the first channel
+            CurChanP = ISRFirstChanP;
+            
+            // Check to see if we have zero channels actually loaded with data
+            if (CurChanP != NULL)
+            {
+                // For each channel that's active, set its pin high
+                while (CurChanP != NULL)
+                {
+                    // But only if it is not at %0
+                    if (CurChanP->PWMValue != 0)
+                    {
+                        // Make an exception for servos - only set them
+                        // high when ServoFrameCounter is zero.
+                        if (
+                            (CurChanP->IsServo && !ServoFrameCounter)
+                            ||
+                            (!CurChanP->IsServo)
+                        )
+                        {
+                            *(CurChanP->SetPort) |= CurChanP->Bit;
+                        }
+                    }
+                    // Advance to next channel to check it
+                    CurChanP = CurChanP->NextChanP;
+                }
+                // Now start back at the beginning again, for the setting pins low part
+                CurChanP = ISRFirstChanP;
+                // And load up the time for the next (first) edge (falling edge of first channel)
+                NextTime = CurChanP->PWMValue;
+                CurChanP->NextEdgeTime = NextTime;
+                // And mark this time as the beginning of the PWM cycle
+                CurrentTime = 0;
+                // We don't want to do this again until next time
+                RisingEdge = FALSE;
+            }
+            else
+            {
+                // We have no channels actually turned on (enabled or otherwise)
+                // So just load the NextTime with the duraction of the whole PWM cycle and do this
+                // all over again.
+                NextTime = FrameTime;
+                // Don't set SoftPWMRisingEdge to FALSE - leave it TRUE so we just keep doing this
+
+                // If it's time to swap buffers, then do that here
+                if (InactiveBufferReady)
+                {
+                    if (ActiveBuffer)
+                    {
+                        ActiveBuffer = 0;
+                        InactiveBuffer = 1;
+                    }
+                    else
+                    {
+                        ActiveBuffer = 1;
+                        InactiveBuffer = 0;
+                    }
+                    // And have ISR use FirstChanP from new active buffer
+                    ISRFirstChanP = FirstChanP[ActiveBuffer];
+                    // Tell mainline code we've swapped
+                    InactiveBufferReady = false;
+                }
+            }
+
+            // Count this frame, for the serov pins
+            ServoFrameCounter++;
+            // If we're reached our ServoFrames, limit, then set to zero to mark that
+            // the next frame will have all servos do their rising edges.
+            if (ServoFrameCounter == ServoFrames)
+            {
+                ServoFrameCounter = 0;
+            }
         }
         else
         {
-            // If it's time to do the rising edge of all enabled channels-
-            if (RisingEdge)
+            // Now we have a falling edge. So we need to set some channel's pin low here.
+
+            // Always set the next bit low, if the channel is not at 100%
+            // But if it's a servo, always set it low.
+            if (CurChanP->PWMValue < FrameTime || CurChanP->IsServo)
             {
-                // Start at the first channel
-                CurChanP = ISRFirstChanP;
+                *(CurChanP->ClearPort) |= CurChanP->Bit;
+            }
+
+            // Record how much time has passed (where are we in the frame)
+            CurrentTime += CurChanP->NextEdgeTime;
+            
+            // Check for more channels that have this same time - but only if we
+            // haven't hit the end of the list yet. (Channels with same edges
+            // will have PWMValues that are the same.)
+            while (
+                (CurChanP->NextChanP != NULL)
+                &&
+                (CurChanP->PWMValue == CurChanP->NextChanP->PWMValue)
+            ) 
+            {
+                // Now start working on the next channel in the linked list
+                CurChanP = CurChanP->NextChanP;
+
+                // Only touch the output if it's not at 100% or if it is a servo
+                // pin (they always go low).
+                if (CurChanP->PWMValue < FrameTime || CurChanP->IsServo)
+                {
+                    // Set this bit low
+                    *(CurChanP->ClearPort) |= CurChanP->Bit;
+                }
+            }
+            
+            // Have we run out of active channels?
+            if (CurChanP->NextChanP == NULL)
+            {
+                // Yup, so set the next interrupt should happen at the beginning of the next frame
+                NextTime = FrameTime - CurrentTime;
                 
-                // Check to see if we have zero channels actually loaded with data
-                if (CurChanP != NULL)
+                // And make all of our channels go high then
+                RisingEdge = TRUE;
+                
+                // If it's time to swap buffers, then do that here
+                if (InactiveBufferReady)
                 {
-                    // For each channel that's active, set its pin high
-                    while (CurChanP != NULL)
+                    if (ActiveBuffer)
                     {
-                        // But only if it is not at %0
-                        if (CurChanP->PWMValue != 0)
-                        {
-                            // Make an exception for servos - only set them
-                            // high when ServoFrameCounter is zero.
-                            if (
-                                (CurChanP->IsServo && !ServoFrameCounter)
-                                ||
-                                (!CurChanP->IsServo)
-                            )
-                            {
-                                *(CurChanP->SetPort) |= CurChanP->Bit;
-                            }
-                        }
-                        // Advance to next channel to check it
-                        CurChanP = CurChanP->NextChanP;
+                        ActiveBuffer = 0;
+                        InactiveBuffer = 1;
                     }
-                    // Now start back at the beginning again, for the setting pins low part
-                    CurChanP = ISRFirstChanP;
-                    // And load up the time for the next (first) edge (falling edge of first channel)
-                    NextTime = CurChanP->PWMValue;
-                    CurChanP->NextEdgeTime = NextTime;
-                    // And mark this time as the beginning of the PWM cycle
-                    CurrentTime = 0;
-                    // We don't want to do this again until next time
-                    RisingEdge = FALSE;
-                }
-                else
-                {
-                    // We have no channels actually turned on (enabled or otherwise)
-                    // So just load the NextTime with the duraction of the whole PWM cycle and do this
-                    // all over again.
-                    NextTime = FrameTime;
-                    // Don't set SoftPWMRisingEdge to FALSE - leave it TRUE so we just keep doing this
-
-                    // If it's time to swap buffers, then do that here
-                    if (InactiveBufferReady)
+                    else
                     {
-                        if (ActiveBuffer)
-                        {
-                            ActiveBuffer = 0;
-                            InactiveBuffer = 1;
-                        }
-                        else
-                        {
-                            ActiveBuffer = 1;
-                            InactiveBuffer = 0;
-                        }
-                        // And have ISR use FirstChanP from new active buffer
-                        ISRFirstChanP = FirstChanP[ActiveBuffer];
-                        // Tell mainline code we've swapped
-                        InactiveBufferReady = false;
+                        ActiveBuffer = 1;
+                        InactiveBuffer = 0;
                     }
-                }
-
-                // Count this frame, for the serov pins
-                ServoFrameCounter++;
-                // If we're reached our ServoFrames, limit, then set to zero to mark that
-                // the next frame will have all servos do their rising edges.
-                if (ServoFrameCounter == ServoFrames)
-                {
-                    ServoFrameCounter = 0;
+                    // And have ISR use FirstChanP from new active buffer
+                    ISRFirstChanP = FirstChanP[ActiveBuffer];
+                    // Tell mainline code we've swapped
+                    InactiveBufferReady = false;
                 }
             }
             else
             {
-                // Now we have a falling edge. So we need to set some channel's pin low here.
+                // Now start working on the next channel in the linked list
+                CurChanP = CurChanP->NextChanP;
 
-                // Always set the next bit low, if the channel is not at 100%
-                // But if it's a servo, always set it low.
-                if (CurChanP->PWMValue < FrameTime || CurChanP->IsServo)
+                // Time to compute the NextEdgeTime for the next channel
+                // But only if we're not at the end.
+                if (CurChanP != NULL)
                 {
-                    *(CurChanP->ClearPort) |= CurChanP->Bit;
+                    // Compute the next channel's NextEdgeTime based upon our current time and it's PWMValue
+                    CurChanP->NextEdgeTime = CurChanP->PWMValue - CurrentTime;
                 }
 
-                // Record how much time has passed (where are we in the frame)
-                CurrentTime += CurChanP->NextEdgeTime;
-                
-                // Check for more channels that have this same time - but only if we
-                // haven't hit the end of the list yet. (Channels with same edges
-                // will have PWMValues that are the same.)
-                while (
-                    (CurChanP->NextChanP != NULL)
-                    &&
-                    (CurChanP->PWMValue == CurChanP->NextChanP->PWMValue)
-                ) 
-                {
-                    // Now start working on the next channel in the linked list
-                    CurChanP = CurChanP->NextChanP;
-
-                    // Only touch the output if it's not at 100% or if it is a servo
-                    // pin (they always go low).
-                    if (CurChanP->PWMValue < FrameTime || CurChanP->IsServo)
-                    {
-                        // Set this bit low
-                        *(CurChanP->ClearPort) |= CurChanP->Bit;
-                    }
-                }
-                
-                // Have we run out of active channels?
-                if (CurChanP->NextChanP == NULL)
-                {
-                    // Yup, so set the next interrupt should happen at the beginning of the next frame
-                    NextTime = FrameTime - CurrentTime;
-                    
-                    // And make all of our channels go high then
-                    RisingEdge = TRUE;
-                    
-                    // If it's time to swap buffers, then do that here
-                    if (InactiveBufferReady)
-                    {
-                        if (ActiveBuffer)
-                        {
-                            ActiveBuffer = 0;
-                            InactiveBuffer = 1;
-                        }
-                        else
-                        {
-                            ActiveBuffer = 1;
-                            InactiveBuffer = 0;
-                        }
-                        // And have ISR use FirstChanP from new active buffer
-                        ISRFirstChanP = FirstChanP[ActiveBuffer];
-                        // Tell mainline code we've swapped
-                        InactiveBufferReady = false;
-                    }
-                }
-                else
-                {
-                    // Now start working on the next channel in the linked list
-                    CurChanP = CurChanP->NextChanP;
-
-                    // Time to compute the NextEdgeTime for the next channel
-                    // But only if we're not at the end.
-                    if (CurChanP != NULL)
-                    {
-                        // Compute the next channel's NextEdgeTime based upon our current time and it's PWMValue
-                        CurChanP->NextEdgeTime = CurChanP->PWMValue - CurrentTime;
-                    }
- 
-                    // Just load up the time of the next falling edge
-                    NextTime = CurChanP->NextEdgeTime;
-                }
+                // Just load up the time of the next falling edge
+                NextTime = CurChanP->NextEdgeTime;
             }
-        }
-
-        // Check to see if, in the time between now and the next firing of the ISR,
-        // we need to have a 1ms tick happen. If so, break up the time into two parts.
-        MS1Time += NextTime;
-
-        // If our next edge is going to fall after the time that we need to have the
-        // next 1ms ISR firing, then we need to break apart our NextTime and place
-        // the 1ms ISR time at the appropriate place in time. 
-        if (MS1Time > CORE_TICK_RATE)
-        {
-            // Compute the remaining time (between the 1ms ISR fire and when
-            // our next PWM edge needs to happen);
-            MS1Remainder = (MS1Time - CORE_TICK_RATE);
-            
-            // And subtract that time from when we are going to schedule our
-            // next ISR firing.
-            NextTime = NextTime - MS1Remainder;
-
-            // We clear this hear to indicate that the next time this ISR fires,
-            // we will be doing the 1ms stuff rather than PWM stuff.
-            MS1Time = 0;
-        }
-       
-        
-        // get the old compare time (the Core Timer value when we entered this ISR)
-        // Note that we may stay in this ISR for a long time if there are a lot of
-        // edges that need to happen and we don't have time to leave and come back
-        // in again, so this OldPeriod may be quite far in the past. I couldn't
-        // find a way to do this without using assembly.
-        asm volatile("mfc0   %0, $11" : "=r"(OldPeriod));
+        }       
 
         // Each time through the main do-while loop, keep adding in the times between
         // edges (that would have caused CoreTimer fires if we had left the ISR). Then,
@@ -564,7 +519,7 @@ static uint32_t HandlePWMServo(void)
         // off the OldPeriod from our current CoreTimer value. This subtraction will
         // eleminate problems where adding NextTimeAcc rolls OldPeriod over, or where
         // the CoreTimer has rolled over from OldPeriod.
-        if ((ReadCoreTimer() - OldPeriod + EXTRA_ISR_EXIT_CYCLES) > NextTimeAcc)
+        if (NextTimeAcc  < (ReadCoreTimer() + EXTRA_ISR_EXIT_CYCLES))
         {
             DoItAgain = true;
 
@@ -572,28 +527,27 @@ static uint32_t HandlePWMServo(void)
             // CoreTimer fire has come and gone. We also put a fuge factor in here to
             // simulate the number of cycles necessary to get into the ISR and to the 
             // point where the top of the do-while loop starts executing.
-            while(ReadCoreTimer() < (OldPeriod + NextTimeAcc + EXTRA_ISR_ENTRY_CYCLES))
+            while(ReadCoreTimer() < (NextTimeAcc + EXTRA_ISR_ENTRY_CYCLES))
             {
             }
         }
         else
         {
             DoItAgain = false;
-            // Do the scheduling of the time for this ISR to fire in the future
-            UpdateCoreTimer(NextTimeAcc);
         }
     }
     // We will continue to stay in this loop (which encompases almost the entire function)
     // until our next edge (PWM or 1ms) is far enough in the future that we can spend the
     // cycles leaving the ISR and coming back in again.
     while (DoItAgain);
+    
 
     // Return 0 so we don't run the 1ms 'stuff' in the main Core Timer ISR, or 1
     // so that we do (this is set only once, to a 1, if we have the 1ms tick
     // fire off. Since we don't clear RetVal during this ISR, any time we enter
     // the ISR and have the 1ms tick happen, we will be telling the wiring.c code
     // to run the 1ms code.)
-    return(RetVal);
+    return(NextTimeAcc);
 }
 
 // Remove a channel from the linked list of channels

@@ -148,6 +148,9 @@ void			shiftOut(uint8_t dataPin, uint8_t clockPin, uint8_t bitOrder, byte val);
 void attachInterrupt(uint8_t, void (*)(void), int mode);
 void detachInterrupt(uint8_t);
 
+unsigned int attachCoreTimerService(uint32_t (*)(uint32_t count));
+unsigned int detachCoreTimerService(uint32_t (*)(uint32_t count));
+
 void setup(void);
 void loop(void);
 
