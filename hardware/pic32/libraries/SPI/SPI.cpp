@@ -87,7 +87,7 @@ void SPIClass::begin()
 	** Disable all SPI interrupts.
 	*/
 	iec = ((p32_regset *)&IEC0) + (irq / 32);	//interrupt enable control reg
-	iec->clr = 0x07 << (irq & 32);
+	iec->clr = 0x07 << (irq % 32);
 
 	/* Disable and reset the SPI controller.
 	*/
