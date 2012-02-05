@@ -3,10 +3,6 @@
   <!--echo message="os.name = ${os.name}" /-->
   <!--echo message="os.arch = ${os.arch}" /-->
   <!--echo message="os.version = ${os.version}" /-->
-  <!-- set time propert -->	
-  <tstamp>
-    <format property="TODAY" pattern="yyyyMMdd" />
-  </tstamp>
   
   <!-- Sets properties for macosx/windows/linux depending on current system -->
   <condition property="macosx"><os family="mac" /></condition>
@@ -47,21 +43,10 @@
   <target name="dist" depends="revision-check"
 	  description="Build mpide for distribution.">
     <input message="Enter version number:" 
-	addproperty="version"
-	defaultvalue="${revision}" />
+	   addproperty="version"
+	   defaultvalue="${revision}" />
     <antcall target="${platform}-dist" />
   </target>
-
-  <target name="dist-test" depends="revision-check"
-          description="Build mpide for distribution.">
-    <input message="Enter version number:"
-           addproperty="version"
-           defaultvalue="${revision}-${platform}-${TODAY}-test" />
-    <antcall target="${platform}-dist" />
-  </target>
-
-
-
 
   <!-- "§$§$&, ant doesn't have a built-in help target :(  -->
   <target name="help" description="Show project help">
