@@ -221,7 +221,7 @@
       <arg value="macosx/dist/tools-universal.zip" />
     </exec>
      
-<unzip dest="macosx/work/mpide.app/Contents/Resources/Java/hardware/pic32/compiler" src="macosx/dist/cpp-chipKIT-newlibtest-mac-20111010.zip" overwrite="false"/>
+<unzip dest="macosx/work/mpide.app/Contents/Resources/Java/hardware/pic32/compiler" src="macosx/dist/cpp-chipKIT-Mac-20110609.zip" overwrite="false"/>
 <chmod perm="+x">
       <fileset dir="macosx/work/mpide.app/Contents/Resources/Java/hardware/pic32/compiler" includes="**/*" />
 </chmod>
@@ -350,7 +350,7 @@
 
     <copy todir="linux/work" file="linux/dist/mpide" />
     <chmod perm="755" file="linux/work/mpide" />
-    <unzip dest="linux/work/hardware/pic32/compiler" src="linux/dist/cpp-chipKIT-newlibtest-linux32-20111010.zip" overwrite="false"/>
+    <unzip dest="linux/work/hardware/pic32/compiler" src="linux/dist/cpp-chipKIT-linux-x86-20110609.zip" overwrite="false"/>
     <chmod perm="+x">
       <fileset dir="linux/work/hardware/pic32/compiler" includes="**/*" />
     </chmod>
@@ -473,7 +473,7 @@
     <!-- Unzip AVR tools -->
     <unzip dest="windows/work/hardware" src="windows/avr_tools.zip" overwrite="false"/>
     <!-- pic32 compiler -->
-   <unzip dest="windows/work/hardware/pic32/compiler" src="windows/dist/cpp-chipKIT-newlibtest-win32-20111010.zip" overwrite="false"/>
+   <unzip dest="windows/work/hardware/pic32/compiler" src="windows/dist/cpp-chipKIT-win32-20110609.zip" overwrite="false"/>
     <chmod perm="+x">
       <fileset dir="windows/work/hardware/pic32/compiler" includes="**/*" />
     </chmod>
