@@ -40,7 +40,7 @@ inline int toAscii(int c) __attribute__((always_inline));
 inline int toLowerCase(int c) __attribute__((always_inline));
 inline int toUpperCase(int c)__attribute__((always_inline));
 
-#if defined(__PIC32MX__)
+#if defined(__PIC32MX__) && !defined(__CTYPE_NEWLIB)
 //************************************************************************
 inline boolean isblank(int c)
 {
