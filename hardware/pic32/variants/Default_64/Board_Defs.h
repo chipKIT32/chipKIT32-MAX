@@ -302,6 +302,7 @@ extern const uint8_t	analog_pin_to_channel_PGM[];
 #define	_SER0_BASE		_UART1_BASE_ADDRESS
 #define	_SER0_IRQ		_UART1_ERR_IRQ
 #define	_SER0_VECTOR	_UART_1_VECTOR
+#define	_SER0_IPL_ISR	_UART1_IPL_ISR
 #define	_SER0_IPL		_UART1_IPL_IPC
 #define	_SER0_SPL		_UART1_SPL_IPC
 
@@ -310,6 +311,7 @@ extern const uint8_t	analog_pin_to_channel_PGM[];
 #define	_SER1_BASE		_UART2_BASE_ADDRESS
 #define	_SER1_IRQ		_UART2_ERR_IRQ
 #define	_SER1_VECTOR	_UART_2_VECTOR
+#define	_SER1_IPL_ISR	_UART2_IPL_ISR
 #define	_SER1_IPL		_UART2_IPL_IPC
 #define	_SER1_SPL		_UART2_SPL_IPC
 
@@ -368,6 +370,7 @@ extern const uint8_t	analog_pin_to_channel_PGM[];
 #define	_DTWI0_SLV_IRQ	_I2C1_SLAVE_IRQ
 #define	_DTWI0_MST_IRQ	_I2C1_MASTER_IRQ
 #define	_DTWI0_VECTOR	_I2C_1_VECTOR
+#define	_DTWI0_IPL_ISR	_I2C1_IPL_ISR
 #define	_DTWI0_IPL		_I2C1_IPL_IPC
 #define	_DTWI0_SPL		_I2C1_SPL_IPC
 
@@ -376,6 +379,7 @@ extern const uint8_t	analog_pin_to_channel_PGM[];
 #define	_DTWI1_SLV_IRQ	_I2C2_SLAVE_IRQ
 #define	_DTWI1_MST_IRQ	_I2C2_MASTER_IRQ
 #define	_DTWI1_VECTOR	_I2C_2_VECTOR
+#define	_DTWI1_IPL_ISR	_I2C2_IPL_ISR
 #define	_DTWI1_IPL		_I2C2_IPL_IPC
 #define	_DTWI1_SPL		_I2C2_SPL_IPC
 
