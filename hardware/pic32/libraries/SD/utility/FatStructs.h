@@ -41,6 +41,9 @@ uint8_t const BOOTSIG1 = 0XAA;
  * A partition table entry for a MBR formatted storage device.
  * The MBR partition table has four entries.
  */
+
+#pragma pack(push, 1)
+
 struct partitionTable {
           /**
            * Boot Indicator . Indicates whether the volume is the active
@@ -102,8 +105,6 @@ typedef struct partitionTable part_t;
  *
  * The first block of a storage device that is formatted with a MBR.
  */
-
-#pragma pack(1)
 
 struct masterBootRecord {
            /** Code Area for master boot program. */
@@ -372,6 +373,9 @@ struct directoryEntry {
            /** 32-bit unsigned holding this file's size in bytes. */
   uint32_t fileSize;
 };
+
+#pragma pack(pop)
+
 //------------------------------------------------------------------------------
 // Definitions for directory entries
 //

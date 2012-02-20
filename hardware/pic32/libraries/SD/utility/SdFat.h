@@ -405,6 +405,8 @@ class SdFile : public Print {
 /**
  * \brief Cache for an SD data block
  */
+#pragma pack(push, 1)
+
 union cache_t {
            /** Used to access cached file data blocks. */
   uint8_t  data[512];
@@ -419,6 +421,9 @@ union cache_t {
            /** Used to access to a cached FAT boot sector. */
   fbs_t    fbs;
 };
+
+#pragma pack(pop)
+
 //------------------------------------------------------------------------------
 /**
  * \class SdVolume

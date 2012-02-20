@@ -83,6 +83,9 @@ uint8_t const DATA_RES_MASK = 0X1F;
 /** write data accepted token */
 uint8_t const DATA_RES_ACCEPTED = 0X05;
 //------------------------------------------------------------------------------
+
+#pragma pack(push 1)
+
 typedef struct CID {
   // byte 0
   uint8_t mid;  // Manufacturer ID
@@ -223,6 +226,9 @@ typedef struct CSDV2 {
   unsigned always1 : 1;
   unsigned crc : 7;
 }csd2_t;
+
+#pragma pack(pop)
+
 //------------------------------------------------------------------------------
 // union of old and new style CSD register
 union csd_t {
