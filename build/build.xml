@@ -3,9 +3,9 @@
   <!--echo message="os.name = ${os.name}" /-->
   <!--echo message="os.arch = ${os.arch}" /-->
   <!--echo message="os.version = ${os.version}" /-->
-  
   <!-- Sets properties for macosx/windows/linux depending on current system -->
-  <condition property="macosx"><os family="mac" /></condition>
+
+ <condition property="macosx"><os family="mac" /></condition>
   <condition property="windows"><os family="windows" /></condition>
   <condition property="linux"><os family="unix" /></condition>
   <condition property="linux64"><os family="unix" arch="amd64" /></condition>
@@ -18,6 +18,11 @@
 	     value="linux"><os family="unix" arch="i386" /></condition>
   <condition property="platform" 
 	     value="linux64"><os family="unix" arch="amd64" /></condition>
+  
+  <!-- set time propert -->  
+  <tstamp>
+    <format property="TODAY" pattern="yyyyMMdd" />
+  </tstamp>
 
   <!-- Libraries required for running mpide -->
   <fileset dir=".." id="runtime.jars">
@@ -40,13 +45,22 @@
     <antcall target="${platform}-run" />
   </target>
 
-  <target name="dist" depends="revision-check"
+<target name="dist" depends="revision-check"
 	  description="Build mpide for distribution.">
     <input message="Enter version number:" 
-	   addproperty="version"
-	   defaultvalue="${revision}" />
+	addproperty="version"
+	defaultvalue="${revision}" />
+    <antcall target="${platform}-dist" />
+</target>
+
+  <target name="dist-test" depends="revision-check"
+          description="Build mpide for distribution.">
+    <input message="Enter version number:"
+           addproperty="version"
+           defaultvalue="${revision}-${platform}-${TODAY}-test" />
     <antcall target="${platform}-dist" />
   </target>
+
 
   <!-- "§$§$&, ant doesn't have a built-in help target :(  -->
   <target name="help" description="Show project help">
@@ -54,26 +68,26 @@
       <arg value="-p" />
     </java>
   </target>
-  
+
   <!-- - - - - - - - - - - - - - - - - - -->
   <!-- Subprojects: Core, App, Libraries -->
   <!-- - - - - - - - - - - - - - - - - - -->
-  
+
   <target name="subprojects-clean">
     <subant buildpath="../core" target="clean"/>
     <subant buildpath="../app" target="clean"/>
   </target>
-  
+
   <target name="subprojects-build">
     <subant buildpath="../core" target="build"/>
     <subant buildpath="../app" target="build"/>
   </target>
-  
+
 
   <!-- - - - - - - - - -->
   <!-- Basic Assembly  -->
   <!-- - - - - - - - - -->
-  
+
   <target name="assemble">
     <fail unless="target.path" 
 	  message="Do not call assemble from the command line." />
