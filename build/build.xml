@@ -9,16 +9,16 @@
   <condition property="windows"><os family="windows" /></condition>
   <condition property="linux"><os family="unix" /></condition>
   <condition property="linux64"><os family="unix" arch="amd64" /></condition>
-  
+
   <condition property="platform" 
-	     value="macosx"><os family="mac" /></condition>
+   value="macosx"><os family="mac" /></condition>
   <condition property="platform" 
-	     value="windows"><os family="windows" /></condition>
+    value="windows"><os family="windows" /></condition>
   <condition property="platform" 
-	     value="linux"><os family="unix" arch="i386" /></condition>
+     value="linux"><os family="unix" arch="i386" /></condition>
   <condition property="platform" 
-	     value="linux64"><os family="unix" arch="amd64" /></condition>
-  
+     value="linux64"><os family="unix" arch="amd64" /></condition>
+
   <!-- set time propert -->  
   <tstamp>
     <format property="TODAY" pattern="yyyyMMdd" />
@@ -229,6 +229,9 @@
       <fileset file="macosx/dist/eeprom.h" />
     </copy>
 
+    <antcall target="update-avrdude-macosx">
+    </antcall>
+
     <antcall target="assemble">
       <param name="target.path" value="macosx/work/mpide.app/Contents/Resources/Java" />
     </antcall>
@@ -276,7 +279,7 @@
 	 errors when ejecting the disk in the next step.
          You may need to set this value higher for your system. -->
     <sleep seconds="3" />
-    
+
     <exec executable="hdiutil">
       <!--<arg line="detach macosx/working_dir -quiet -force" />-->
       <arg line="detach macosx/working_dir" />
@@ -488,7 +491,11 @@
 
     <antcall target="assemble">
       <param name="target.path" value="windows/work" />
-    </antcall>
+  </antcall>
+
+  <antcall target="update-avrdude-windows">
+  </antcall>
+
     
     <property name="launch4j.dir" value="windows/launcher/launch4j/" />
     <taskdef name="launch4j" 
@@ -595,5 +602,26 @@
   <target name="clean" description="Perform a spring cleaning" 
 	  depends="linux-clean, windows-clean, macosx-clean, subprojects-clean">
   </target>
+
+
+  <target name="update-avrdude-macosx" description="Update the avrdude configuration to latest version." depends="">
+      <copy todir="macosx/work/mpide.app/Contents/Resources/Java/hardware/tools/avr/etc/">
+        <fileset file="macosx/dist/avrdude.conf" />
+    </copy>
+  </target>
+
+  <target name="update-avrdude-windows" description="Update the avrdude configuration to latest version." depends="">
+      <copy todir="windows/work/hardware/tools/avr/etc/">
+        <fileset file="windows/dist/avrdude.conf" />
+    </copy>
+  </target>
+  <!-- not need linux does this already.
+    <target name="update-avrdude-linux" description="Update the avrdude configuration to latest version." depends="">
+      <copy todir="macosx/work/mpide.app/Contents/Resources/Java/hardware/tools/avr/etc/">
+        <fileset file="linux/dist/tools/avrdude.conf" />
+    </copy>
+  </target>
+    -->
+
 
 </project>

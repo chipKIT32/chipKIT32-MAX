@@ -503,3 +503,33 @@ cui32.build.core=pic32
 cui32.build.variant=Default_64
 #cui32.upload.using=
 
+
+############################################################
+fubarino.name=Fubarino
+
+# new items
+fubarino.platform=pic32
+fubarino.board=_BOARD_FUBARINO_
+fubarino.compiler.define=-D_USE_USB_FOR_SERIAL_
+fubarino.ccflags=ffff
+fubarino.ldscript=chipKIT-application-32MX440F256H.ld
+# end of new items
+
+fubarino.upload.protocol=stk500v2
+fubarino.upload.maximum_size=520192
+fubarino.upload.speed=115200
+
+fubarino.bootloader.low_fuses=0xff
+fubarino.bootloader.high_fuses=0xdd
+fubarino.bootloader.extended_fuses=0x00
+fubarino.bootloader.path=not-supported
+fubarino.bootloader.file=not-supported
+fubarino.bootloader.unlock_bits=0x3F
+fubarino.bootloader.lock_bits=0x0F
+
+fubarino.build.mcu=32MX440F256H
+fubarino.build.f_cpu=80000000L
+fubarino.build.core=pic32
+fubarino.build.variant=Fubarino
+
+
