@@ -8,13 +8,15 @@ IDE can be downloaded for free.
 For more information, see the website at: http://www.arduino.cc/
 or the forums at: http://www.arduino.cc/cgi-bin/yabb2/YaBB.pl
 
+This project if the MPIDE, Multi Platform IDE that supports AVR, and pic32 MCUs.
+
 To report a bug or a make a suggestions, go to:
 [hardware] https://github.com/chipKIT32/chipKIT32-MAX/issues
 [software] https://github.com/chipKIT32/chipKIT32-MAX/issues
 
 INSTALLATION
 Detailed instructions are in reference/Guide_Windows.html and
-reference/Guide_MacOSX.html.  For Linux, see the Arduino playground:
+reference/Guide_MacOSX.html.  For Linux, see the Chipkit Wiki:
 http://chipkit.org/wiki
 
 If you are using a USB Arduino, you will need to install the drivers for the
@@ -29,7 +31,7 @@ FTDI chip on the board. These can be found in the drivers/ directory.
 * On Linux, drivers are included in kernel versions 2.4.20 or greater.
 
 CREDITS
-Arduino is an open source project, supported by many.
+Arduino is an open source project, and so is MPIDE supported by many.
 
 The Arduino team is composed of Massimo Banzi, David Cuartielles, Tom Igoe,
 Gianluca Martino, and David A. Mellis.
@@ -37,6 +39,8 @@ Gianluca Martino, and David A. Mellis.
 Arduino uses the GNU avr-gcc toolchain, avrdude, avr-libc, and code from
 Processing and Wiring.
 
+MPIDE is a multiplatform enhancement that allows multiple toolchains, and different kinds of MCUs to work with the Arduino API.
+
 Icon designed by ToDo: http://www.todo.to.it/
 "About" image created by Thomas Glaser (envis precisely).
-
+MPIDE Icon designed by Rick Anderson and the ChipKit forum members. http://chipkit.org
