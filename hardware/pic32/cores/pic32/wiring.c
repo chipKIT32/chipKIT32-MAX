@@ -241,6 +241,7 @@ void	_board_init(void);
 }
 
 
+
 //************************************************************************
 //*	Interrupts are enabled by setting the IE bit in the status register
 //************************************************************************
@@ -311,12 +312,19 @@ uint32_t millisecondCoreTimerService(uint32_t curTime);
     10. Understand, your callback is being called while executing inside the CoreTimerHandler ISR. Your code should be as fast as possible. If too much
         time is taken, the ISR may never exit and no sketch will ever run!
 */
+//************************************************************************
+#define read_count(dest) __asm__ __volatile__("mfc0 %0,$9" : "=r" (dest))
+#define read_comp(dest) __asm__ __volatile__("mfc0 %0,$11" : "=r" (dest))
+#define write_comp(src) __asm__ __volatile__("mtc0 %0,$11" : : "r" (src))
+
+#define mCTSetIntFlag() (IFS0SET = _IFS0_CTIF_MASK)
+
 typedef  uint32_t (*CoreTimerService)(uint32_t);
 
 typedef struct
 {
-    uint32_t            nextInt;
-    CoreTimerService    serivce;
+    volatile uint32_t            nextInt;
+    CoreTimerService			serivce;
 } CoreTimerInfo;
 
 // make sure our ms timer is always in the list; so we initialize it into the list
@@ -326,7 +334,7 @@ CoreTimerInfo gCoreTimerInfo[] = {{0, millisecondCoreTimerService}, {0, NULL}, {
 
 // This is a base value used to put our conditional logic into the linear range of an uint32, it also
 // is used as the initial trigger time so that newly attached serices are called on the next call to CoreTimerHandler.
-static uint32_t gLastBaseCount = 0;
+static volatile uint32_t gLastBaseCount = 0;
 
 /***	unsigned int attachCoreTimerService(uint32_t (* service)(uint32_t))
 **
@@ -373,10 +381,57 @@ unsigned int attachCoreTimerService(uint32_t (* service)(uint32_t))
         // found one, add the service
         if(gCoreTimerInfo[i].serivce == NULL)
         {
-            // make sure we trigger on the next call to CoreTimerHandler
-            // by setting the compare time to the last know, and lowest known time.
-            gCoreTimerInfo[i].nextInt = gLastBaseCount;
-            gCoreTimerInfo[i].serivce = service;
+			 uint32_t lastBaseCount;
+
+			// this has a very specific order...
+			// first we initialize the nextInt time to something
+			// that is in the begining part or our linear time range
+			lastBaseCount = gLastBaseCount;
+			gCoreTimerInfo[i].nextInt = lastBaseCount;
+
+			// it is possible that the core timer handler was called here, and that
+			// would put gLastBaseCount more like 100+ sec in the future, rather than than
+			// at the bottom or our linear time. But since the serice is still NULL, our serivce was
+			// not called and we missed it. But assign the service pointer and we will have to check to see
+			// if we missed it.
+			gCoreTimerInfo[i].serivce = service;
+
+			// at this point our serice is ready to be called by the core timer handler and
+			// there are 3 conditions at this point...
+			//
+			//	1. the isr was called right before we assigned the serice pointer and we missed it, and gCoreTimerInfo[i].nextInt is really far in the future; and we will miss more
+			//	2. the isr was called right after we assigned the service pointer, the serices has already been processed and nextInt has our next interrupt time in it
+			//		and we don't want to screw with that.
+			//	3. the most likely case, the isr was not called yet.
+
+			// we know if the serivce was run already:
+			//  1. lastBaseCount != gLastBaseCount, as gLastBaseCount was just updated by the isr
+			//	2. lastBaseCount != gCoreTimerInfo[i].nextInt, as the serivce was run and the nextInt was set to something less than 90s in the future  by the service
+			//		which won't be the old base time as that is much closer to 107s in the future (outside of our allowable future time range for the serivce).
+
+			// we know if nothing has happened
+			//  1. lastBaseCount == gLastBaseCount, as gLastBaseCount was not updated by the isr
+			//	2. lastBaseCount == gCoreTimerInfo[i].nextInt, as the serivce was not run and nothing changed nextInt
+
+			// the case of concern is case 1 where we missed it; and we want to make sure we run it quickly
+			// if we missed it we know:
+			//  1. lastBaseCount != gLastBaseCount, as gLastBaseCount was just updated by the isr
+			//	2. lastBaseCount == gCoreTimerInfo[i].nextInt, as the serivce was not run (missed) and nothing changed nextInt
+
+			// we also know that the isr can be run at any time and we can keep missing it even while we are trying to fix it.
+			// so go into a loop checking for the "we missed it" case until we don't miss it.
+			while(lastBaseCount != gLastBaseCount  &&  lastBaseCount == gCoreTimerInfo[i].nextInt)
+			{
+				lastBaseCount = gLastBaseCount;
+				gCoreTimerInfo[i].nextInt = lastBaseCount;
+			}
+
+			// at this point we know either the serice has been run, or nothing has happened at all
+			// we know we didn't miss it because of the while loop.
+			// now just trigger the isr for good measure. If we have run it already, nothing bad will
+			// happen except the isr will run with nothing to do
+			// otherwise it will trigger the serice immediately.
+			mCTSetIntFlag();
             return(true);
         }
     }
@@ -411,6 +466,49 @@ unsigned int detachCoreTimerService(uint32_t (* service)(uint32_t))
         {
             // remove it from the slot
             gCoreTimerInfo[i].serivce = NULL;
+            return(true);
+        }
+    }
+    return(false);
+}
+
+/***	unsigned int callCoreTimerServiceNow(uint32_t (* service)(uint32_t))
+**
+**	Synopsis:
+**      Will update your next isr time to the next regularly scheduled isr time
+**
+**	Parameters:
+**      service - A function pointer to the service to update the next isr time, this is the same function pointer that was used when adding the service
+**
+**	Return Values:
+**      true if the service was found and updated. False if the service pointer was not found; then nothing was updated.
+**
+**	Errors:
+**      returns false if the function pointer was not found.
+**
+**  Notes:
+*/
+unsigned int callCoreTimerServiceNow(uint32_t (* service)(uint32_t))
+{
+    int i;
+
+    // look for this serivce in the list
+    for(i = 0; i<MaxNbrOfCoreTimerServices; i++)
+    {
+        // found it
+        if(gCoreTimerInfo[i].serivce == service)
+        {
+			 uint32_t lastBaseCount;
+
+			 // this is a very specific sequence of events as the isr can occur at anytime here
+			 // to understand it look in the attach code for the sequence
+			 do
+			 {
+				lastBaseCount = gLastBaseCount;
+				gCoreTimerInfo[i].nextInt = lastBaseCount;
+			 } while(lastBaseCount != gLastBaseCount  &&  lastBaseCount == gCoreTimerInfo[i].nextInt);
+
+			mCTSetIntFlag();
             return(true);
         }
     }
@@ -463,11 +561,6 @@ uint32_t millisecondCoreTimerService(uint32_t curTime)
 
     return(nextInt);
 }
-
-//************************************************************************
-#define read_count(dest) __asm__ __volatile__("mfc0 %0,$9" : "=r" (dest))
-#define read_comp(dest) __asm__ __volatile__("mfc0 %0,$11" : "=r" (dest))
-#define write_comp(src) __asm__ __volatile__("mtc0 %0,$11" : : "r" (src))
 
 /***	void __ISR(_CORE_TIMER_VECTOR, _CT_IPL_ISR) CoreTimerHandler(void)
 **

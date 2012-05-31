@@ -154,6 +154,7 @@ void detachInterrupt(uint8_t);
 
 unsigned int attachCoreTimerService(uint32_t (*)(uint32_t count));
 unsigned int detachCoreTimerService(uint32_t (*)(uint32_t count));
+unsigned int callCoreTimerServiceNow(uint32_t (* service)(uint32_t));
 
 void setup(void);
 void loop(void);
