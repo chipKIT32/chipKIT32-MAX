@@ -50,7 +50,7 @@ public class Target {
   static Logger logger = Logger.getLogger(Base.class.getName());
   
   public Target(String name, File folder) {
-  	logger.debug("Target initiated: name = " + name + " folder= " + folder.getName());
+  	logger.debug("Target: initiated: name = " + name + " folder= " + folder.getName());
 
   
     this.name = name;
@@ -122,15 +122,15 @@ public class Target {
   public String getName() { return name; }
   public File getFolder() { return folder; }
   public Map<String, Map<String, String>> getBoards() {
-  	logger.debug("Get boards for: " + this.name);
+  	logger.debug("Target: getBoards(): " + this.name);
     return boards;
   }
   public Map<String, Map<String, String>> getProgrammers() {
-  	logger.debug("Get programmers for: " + this.name);
+  	logger.debug("Target: getProgrammers() for: " + this.name);
     return programmers;
   }
   public Map<String, Map<String, String>> getPlatforms() {
-  	logger.debug("Get platformsfor: " + this.name);
+  	logger.debug("Target: getPlatforms(): " + this.name);
     return platforms;
   }
 
@@ -157,7 +157,7 @@ public class Target {
                       sketchprefsFile + ": " + e);
         // System.exit(0);
     }  
-    logger.debug("Get sketchprefs for: " + this.name);
+    logger.debug("Target: getSketchPreferences() for: " + this.name);
     return sketchprefs;
   }
 

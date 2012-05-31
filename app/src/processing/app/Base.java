@@ -268,9 +268,12 @@ public class Base {
     loadHardware(getSketchbookHardwareFolder());
 
    //Issue: 104 Need to support loading examples, and libraries based on platform
-    String platformname =  this.getBoardPreferences().get("platform");
-    librariesFolder = getContentFile(this.getPlatformPreferences(platformname).get("library.core.path"));
-    logger.debug("librariesFolder: " + librariesFolder);
+    String platformname =  getBoardPreferences().get("platform");
+    logger.debug("!!!Base: Platform Name: " + platformname);    
+    String libraryPath = getPlatformPreferences(platformname).get("library.core.path");
+    logger.debug("!!!Base: Library Path: " + libraryPath);        
+    librariesFolder = getContentFile(libraryPath);
+    logger.debug("Base: librariesFolder: " + librariesFolder);
 
     // Check if there were previously opened sketches to be restored
     boolean opened = restoreSketches();
@@ -922,7 +925,7 @@ public class Base {
       found = addSketches(menu, getSketchbookLibrariesFolder(), true);
       if (found) menu.addSeparator();
       addSketches(menu, librariesFolder, true);
-      logger.debug("addsketches librariesFolder: true: " + librariesFolder); 
+      logger.debug("Base: addsketches librariesFolder: true: " + librariesFolder); 
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -942,7 +945,7 @@ public class Base {
 
 
   public void rebuildImportMenu(JMenu importMenu) {
-    logger.debug("DEBUG:start: rebuilding import menu");
+    logger.debug("Base: DEBUG:start: rebuilding import menu");
     
     importMenu.removeAll();
 
@@ -961,8 +964,8 @@ public class Base {
 	    	String targetname = this.getPlatformPreferences(platformname).get("name");
 	        String libraryPath = this.getPlatformPreferences(platformname).get("library.core.path");
 
-	        logger.debug("library.core.path  = " + libraryPath);
-	    	logger.debug("DEBUG: add libraries.");
+	        logger.debug("Base: library.core.path  = " + libraryPath);
+	    	logger.debug("Base: DEBUG: add libraries.");
 	    	JMenuItem platformItem = new JMenuItem(targetname);
 	    	platformItem.setEnabled(false);
 	    	importMenu.add(platformItem);
@@ -990,17 +993,21 @@ public class Base {
 
 
   public void rebuildExamplesMenu(JMenu menu) {
-        logger.debug("DEBUG: Enter: rebuildExamplesMenu"); 
+        logger.debug("Base: rebuildExamplesMenu: DEBUG: Enter: rebuildExamplesMenu"); 
     try {
 	//Find the current target. Get the platform, and then select the correct name and core path.
     	String platformname = this.getBoardPreferences().get("platform");
+        logger.debug("Base: rebuildExamplesMenu: Platform Name: " + platformname);    
+        
     	String targetname = this.getPlatformPreferences(platformname).get("name");
+        logger.debug("Base: rebuildExamplesMenu: Target Name: " + targetname);    
+        
         String libraryPath = this.getPlatformPreferences(platformname).get("library.core.path");
 
         menu.removeAll();
         boolean found = addSketches(menu, examplesFolder, false);
 
-        logger.debug("DEBUG: Find examples in library.core.path  = " + libraryPath);
+        logger.debug("Base: RebuildExamplesMenu: DEBUG: Find examples in library.core.path  = " + libraryPath);
     	JMenuItem platformItem = new JMenuItem("Platform: " + targetname);
     	platformItem.setEnabled(false);
     	menu.add(platformItem);
@@ -1023,7 +1030,7 @@ public class Base {
  
  
   public void rebuildBoardsMenu(JMenu menu) {
-    logger.debug("DEBUG: start: rebuilding boards menu.");
+    logger.debug("Base: rebuildBoardsMenu: DEBUG: start: rebuilding boards menu.");
   
     menu.removeAll();      
     ButtonGroup group = new ButtonGroup();
@@ -1032,13 +1039,13 @@ public class Base {
         AbstractAction action = 
           new AbstractAction(target.getBoards().get(board).get("name")) {
             public void actionPerformed(ActionEvent actionevent) {
-              logger.debug("DEBUG: start: " + "Switching to " + (String) getValue("target") + ":" + (String) getValue("board"));
+              logger.debug("Base: rebuildBoardsMenu: DEBUG: start: " + "Switching to " + (String) getValue("target") + ":" + (String) getValue("board"));
               Preferences.set("target", (String) getValue("target"));
               Preferences.set("board", (String) getValue("board"));
               onBoardOrPortChange();
           	  //Debug: created new imports menu based on board
               rebuildImportMenu(activeEditor.importMenu);
-	      logger.debug("Rebuilding examples menu base on board.");
+	      logger.debug("Base: rebuildBoardsMenu: Rebuilding examples menu base on board.");
 	      rebuildExamplesMenu(activeEditor.examplesMenu);
             }
           };
@@ -1054,7 +1061,7 @@ public class Base {
       }
     }
   
-    logger.debug("DEBUG: end: rebuilding boards menu.");
+    logger.debug("Base: rebuildBoardsMenu: DEBUG: end: rebuilding boards menu.");
 
   }
   
@@ -1218,7 +1225,7 @@ public class Base {
 
 
   protected boolean addLibraries(JMenu menu, File folder) throws IOException {
-  	 logger.debug("DEBUG: start: addLibraries.");
+  	 logger.debug("Base: addLibraries: DEBUG: start: addLibraries.");
 
     if (!folder.isDirectory()) return false;
 
@@ -1280,7 +1287,7 @@ public class Base {
 		
         libraries.add(subfolder);
         //Debug subfolder
-        logger.debug("Base.subfolder: " + subfolder);
+        logger.debug("Base: addLibraries: Base.subfolder: " + subfolder);
 
         String packages[] =
           Compiler.headerListFromIncludePath(subfolder.getAbsolutePath());
@@ -1613,7 +1620,9 @@ public class Base {
   
   
   static public Target getTarget() {
-    return Base.targetsTable.get(Preferences.get("target"));
+      Target target =  Base.targetsTable.get(Preferences.get("target"));
+      logger.debug("Base: getTarget() : Target Name: " + target.getName());
+    return target;
   }
   
 static public Map<String, String> getSketchPreferences(File folder) {
@@ -1641,13 +1650,15 @@ static public Map<String, String> getPlatformPreferences() {
 
   //Get a specific platform
   static public Map<String, String> getPlatformPreferences(String platformname) {
+    logger.debug("Base: getPlatformPreferences: platformname: " + platformname);
   	Target target = getTarget();
   	Map map = target.getPlatforms();
     map =  (Map) map.get(platformname);
     return map;
   }
- 
-  static public Map<String, String> getBoardPreferences() {
+
+
+static public Map<String, String> getBoardPreferences() {
     Target target = getTarget();
     if (target == null) return new LinkedHashMap();
     Map map = target.getBoards();
@@ -1656,7 +1667,7 @@ static public Map<String, String> getPlatformPreferences() {
     if (map == null) return new LinkedHashMap();
     return map;
   }
-  
+
 
   static public File getSketchbookFolder() {
     return new File(Preferences.get("sketchbook.path"));
@@ -2162,7 +2173,7 @@ static public Map<String, String> getPlatformPreferences() {
 
     File imageLocation = new File(getContentFile("lib"), name);
     image = tk.getImage(imageLocation.getAbsolutePath());
-    logger.debug("DEBUG: Image location: "+ imageLocation.getAbsolutePath()); 
+    logger.debug("Base: getLibImage: DEBUG: Image location: "+ imageLocation.getAbsolutePath()); 
     MediaTracker tracker = new MediaTracker(who);
     tracker.addImage(image, 0);
     try {

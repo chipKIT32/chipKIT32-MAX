@@ -99,8 +99,18 @@ public class Compiler implements MessageConsumer {
 		// the pms object isn't used for anything but storage
 		MessageStream pms = new MessageStream(this);
 
+
+
+
 		boardPreferences = new HashMap(Base.getBoardPreferences());
-		//Check for null platform, and use system default if not found
+
+        String buildCore = boardPreferences.get("build.core");
+        if (buildCore == null) {
+    	    RunnerException re = new RunnerException("No board selected; please choose a board from the Tools > Board menu.");
+        re.hideStackTrace();
+        throw re;
+        }
+        //Check for null platform, and use system default if not found
 		platform = boardPreferences.get("platform");
 		if (platform == null)
 		{

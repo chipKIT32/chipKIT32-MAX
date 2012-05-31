@@ -534,86 +534,59 @@ CUI32stem.build.variant=Default_64
 
 
 ############################################################
-fubarino_v10.name=Fubarino_v10
+fubarino_sd.name=FubarinoSD
 
 # new items
-fubarino_v10.platform=pic32
-fubarino_v10.board=_BOARD_FUBARINO_
-fubarino_v10.compiler.define=-D_USE_USB_FOR_SERIAL_
-fubarino_v10.ccflags=ffff
-fubarino_v10.ldscript=chipKIT-application-32MX440F256H.ld
+fubarino_sd.platform=pic32
+fubarino_sd.board=_BOARD_FUBARINO_SD_
+fubarino_sd.compiler.define=-D_USE_USB_FOR_SERIAL_
+fubarino_sd.ccflags=ffff
+fubarino_sd.ldscript=chipKIT-application-32MX440F256H.ld
 # end of new items
 
-fubarino_v10.upload.protocol=stk500v2
-fubarino_v10.upload.maximum_size=520192
-fubarino_v10.upload.speed=115200
+fubarino_sd.upload.protocol=stk500v2
+fubarino_sd.upload.maximum_size=258048
+fubarino_sd.upload.speed=115200
 
-fubarino_v10.bootloader.low_fuses=0xff
-fubarino_v10.bootloader.high_fuses=0xdd
-fubarino_v10.bootloader.extended_fuses=0x00
-fubarino_v10.bootloader.path=not-supported
-fubarino_v10.bootloader.file=not-supported
-fubarino_v10.bootloader.unlock_bits=0x3F
-fubarino_v10.bootloader.lock_bits=0x0F
+fubarino_sd.bootloader.low_fuses=0xff
+fubarino_sd.bootloader.high_fuses=0xdd
+fubarino_sd.bootloader.extended_fuses=0x00
+fubarino_sd.bootloader.path=not-supported
+fubarino_sd.bootloader.file=not-supported
+fubarino_sd.bootloader.unlock_bits=0x3F
+fubarino_sd.bootloader.lock_bits=0x0F
 
-fubarino_v10.build.mcu=32MX440F256H
-fubarino_v10.build.f_cpu=80000000L
-fubarino_v10.build.core=pic32
-fubarino_v10.build.variant=Fubarino_v10
+fubarino_sd.build.mcu=32MX440F256H
+fubarino_sd.build.f_cpu=80000000L
+fubarino_sd.build.core=pic32
+fubarino_sd.build.variant=fubarino_sd_v11
 
 ############################################################
-fubarino_v11_128K.name=Fubarino_v11_128K
+fubarino_sd_v11_128K.name=FubarinoSD_v11_128K
 
 # new items
-fubarino_v11_128K.platform=pic32
-fubarino_v11_128K.board=_BOARD_FUBARINO_
-fubarino_v11_128K.compiler.define=-D_USE_USB_FOR_SERIAL_
-fubarino_v11_128K.ccflags=ffff
-fubarino_v11_128K.ldscript=chipKIT-application-32MX440F128H.ld
+fubarino_sd_v11_128K.platform=pic32
+fubarino_sd_v11_128K.board=_BOARD_FUBARINO_SD_V11_128K_
+fubarino_sd_v11_128K.compiler.define=-D_USE_USB_FOR_SERIAL_
+fubarino_sd_v11_128K.ccflags=ffff
+fubarino_sd_v11_128K.ldscript=chipKIT-application-32MX440F128H.ld
 # end of new items
 
-fubarino_v11_128K.upload.protocol=stk500v2
-fubarino_v11_128K.upload.maximum_size=126976
-fubarino_v11_128K.upload.speed=115200
+fubarino_sd_v11_128K.upload.protocol=stk500v2
+fubarino_sd_v11_128K.upload.maximum_size=126976
+fubarino_sd_v11_128K.upload.speed=115200
 
-fubarino_v11_128K.bootloader.low_fuses=0xff
-fubarino_v11_128K.bootloader.high_fuses=0xdd
-fubarino_v11_128K.bootloader.extended_fuses=0x00
-fubarino_v11_128K.bootloader.path=not-supported
-fubarino_v11_128K.bootloader.file=not-supported
-fubarino_v11_128K.bootloader.unlock_bits=0x3F
-fubarino_v11_128K.bootloader.lock_bits=0x0F
+fubarino_sd_v11_128K.bootloader.low_fuses=0xff
+fubarino_sd_v11_128K.bootloader.high_fuses=0xdd
+fubarino_sd_v11_128K.bootloader.extended_fuses=0x00
+fubarino_sd_v11_128K.bootloader.path=not-supported
+fubarino_sd_v11_128K.bootloader.file=not-supported
+fubarino_sd_v11_128K.bootloader.unlock_bits=0x3F
+fubarino_sd_v11_128K.bootloader.lock_bits=0x0F
 
-fubarino_v11_128K.build.mcu=32MX440F128H
-fubarino_v11_128K.build.f_cpu=80000000L
-fubarino_v11_128K.build.core=pic32
-fubarino_v11_128K.build.variant=Fubarino_v11
+fubarino_sd_v11_128K.build.mcu=32MX440F128H
+fubarino_sd_v11_128K.build.f_cpu=80000000L
+fubarino_sd_v11_128K.build.core=pic32
+fubarino_sd_v11_128K.build.variant=fubarino_sd_v11
 
-############################################################
-fubarino.name=Fubarino
-
-# new items
-fubarino.platform=pic32
-fubarino.board=_BOARD_FUBARINO_
-fubarino.compiler.define=-D_USE_USB_FOR_SERIAL_
-fubarino.ccflags=ffff
-fubarino.ldscript=chipKIT-application-32MX440F256H.ld
-# end of new items
-
-fubarino.upload.protocol=stk500v2
-fubarino.upload.maximum_size=258048
-fubarino.upload.speed=115200
-
-fubarino.bootloader.low_fuses=0xff
-fubarino.bootloader.high_fuses=0xdd
-fubarino.bootloader.extended_fuses=0x00
-fubarino.bootloader.path=not-supported
-fubarino.bootloader.file=not-supported
-fubarino.bootloader.unlock_bits=0x3F
-fubarino.bootloader.lock_bits=0x0F
-
-fubarino.build.mcu=32MX440F256H
-fubarino.build.f_cpu=80000000L
-fubarino.build.core=pic32
-fubarino.build.variant=Fubarino_v11
 
