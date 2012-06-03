@@ -288,11 +288,6 @@ extern const uint8_t	analog_pin_to_channel_PGM[];
 /*					Serial Port Declarations					*/
 /* ------------------------------------------------------------ */
 
-/* This board uses the USB port for the serial interface to
-** talk to the IDE.
-*/
-#define	_USE_USB_FOR_SERIAL_
-
 /* Serial port 0 uses UART1. Connector JE
 */
 #define	_SER0_BASE		_UART1_BASE_ADDRESS

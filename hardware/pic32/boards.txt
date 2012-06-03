@@ -190,7 +190,7 @@ cerebot32mx4.name=Cerebot 32MX4
 # new items
 cerebot32mx4.platform=pic32
 cerebot32mx4.board=_BOARD_CEREBOT_32MX4_
-cerebot32mx4.compiler.define=-D_USE_USB_FOR_SERIAL_
+cerebot32mx4.compiler.define=-Danything_you_want
 cerebot32mx4.ccflags=ffff
 cerebot32mx4.ldscript=chipKIT-application-32MX460F512L.ld
 # end of new items
@@ -219,7 +219,7 @@ cerebot32mx7.name=Cerebot 32MX7
 # new items
 cerebot32mx7.platform=pic32
 cerebot32mx7.board=_BOARD_CEREBOT_32MX7_
-cerebot32mx7.compiler.define=-D_USE_USB_FOR_SERIAL_
+cerebot32mx7.compiler.define=-Danything_you_want
 cerebot32mx7.ccflags=ffff
 cerebot32mx7.ldscript=chipKIT-MAX32-application-32MX795F512L.ld
 # end of new items
