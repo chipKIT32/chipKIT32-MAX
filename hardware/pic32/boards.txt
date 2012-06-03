@@ -4,7 +4,7 @@ uno_pic32.name=chipKIT UNO32
 # new items
 uno_pic32.platform=pic32
 uno_pic32.board=_BOARD_UNO_
-uno_pic32.compiler.define=-Danything_you_want::-Danything=1
+uno_pic32.compiler.define=-DMPIDE=23
 uno_pic32.ccflags=ffff
 uno_pic32.ldscript=chipKIT-UNO32-application-32MX320F128L.ld
 # end of new items
@@ -39,7 +39,7 @@ mega_pic32.name=chipKIT MAX32
 # new items
 mega_pic32.platform=pic32
 mega_pic32.board=_BOARD_MEGA_
-mega_pic32.compiler.define=-Danything_you_want
+mega_pic32.compiler.define=-DMPIDE=23
 mega_pic32.ccflags=ffff
 mega_pic32.ldscript=chipKIT-MAX32-application-32MX795F512L.ld
 # end of new items
