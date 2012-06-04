@@ -561,32 +561,4 @@ fubarino_sd.build.f_cpu=80000000L
 fubarino_sd.build.core=pic32
 fubarino_sd.build.variant=fubarino_sd_v11
 
-############################################################
-fubarino_sd_v11_128K.name=FubarinoSD_v11_128K
-
-# new items
-fubarino_sd_v11_128K.platform=pic32
-fubarino_sd_v11_128K.board=_BOARD_FUBARINO_SD_V11_128K_
-fubarino_sd_v11_128K.compiler.define=-D_USE_USB_FOR_SERIAL_
-fubarino_sd_v11_128K.ccflags=ffff
-fubarino_sd_v11_128K.ldscript=chipKIT-application-32MX440F128H.ld
-# end of new items
-
-fubarino_sd_v11_128K.upload.protocol=stk500v2
-fubarino_sd_v11_128K.upload.maximum_size=126976
-fubarino_sd_v11_128K.upload.speed=115200
-
-fubarino_sd_v11_128K.bootloader.low_fuses=0xff
-fubarino_sd_v11_128K.bootloader.high_fuses=0xdd
-fubarino_sd_v11_128K.bootloader.extended_fuses=0x00
-fubarino_sd_v11_128K.bootloader.path=not-supported
-fubarino_sd_v11_128K.bootloader.file=not-supported
-fubarino_sd_v11_128K.bootloader.unlock_bits=0x3F
-fubarino_sd_v11_128K.bootloader.lock_bits=0x0F
-
-fubarino_sd_v11_128K.build.mcu=32MX440F128H
-fubarino_sd_v11_128K.build.f_cpu=80000000L
-fubarino_sd_v11_128K.build.core=pic32
-fubarino_sd_v11_128K.build.variant=fubarino_sd_v11
-
 
