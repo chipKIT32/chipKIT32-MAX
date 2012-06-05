@@ -265,7 +265,9 @@
     <!-- The ant copy command does not preserve permissions. -->
     <chmod file="macosx/working_dir/mpide.app/Contents/MacOS/JavaApplicationStub" perm="+x" />
     <chmod perm="+x">
-      <fileset dir="macosx/working_dir/mpide.app/Contents/Resources/Java/hardware/pic32/compiler" includes="**/*" />
+        <fileset dir="macosx/working_dir/mpide.app/Contents/Resources/Java/hardware/pic32/compiler" includes="**/*" />
+    </chmod>
+    <chmod perm="+x">
       <fileset dir="macosx/working_dir/mpide.app/Contents/Resources/Java/hardware/tools/avr/bin" includes="**/*" />
       <fileset dir="macosx/working_dir/mpide.app/Contents/Resources/Java/hardware/tools/avr/avr/bin" includes="**/*" />
       <fileset dir="macosx/working_dir/mpide.app/Contents/Resources/Java/hardware/tools/avr/avr-3/bin" includes="**/*" />
