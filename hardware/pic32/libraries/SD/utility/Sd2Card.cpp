@@ -377,7 +377,7 @@ uint8_t Sd2Card::readData(uint32_t block,
     spiRec();
   }
 
-  n = count - 1;
+  n = count;
 
   // transfer data
   for (uint16_t i = 0; i < n; i++) {
@@ -400,7 +400,7 @@ uint8_t Sd2Card::readData(uint32_t block,
 /** Skip remaining data in a block when in partial block read mode. */
 void Sd2Card::readEnd(void) {
   if (inBlock_) {
-    while (offset_++ < 514) spiRec();
+    while (offset_++ < 512) spiRec();
     chipSelectHigh();
     inBlock_ = 0;
   }

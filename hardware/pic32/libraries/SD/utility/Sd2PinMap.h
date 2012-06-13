@@ -22,7 +22,7 @@
 #ifndef Sd2PinMap_h
 #define Sd2PinMap_h
 
-#if defined(_BOARD_MEGA_) || defined(_BOARD_UNO_)
+#if defined(_BOARD_MEGA_) || defined(_BOARD_UNO_) || defined(_BOARD_UC32_)
 
 	//Pin 11
 	#define prtSDO				IOPORT_G
@@ -41,6 +41,57 @@
 	#define trisSCK				TRISG
 	#define latSCK				LATG
 	#define bnSCK				BIT_6
+
+#elif defined(_BOARD_CEREBOT_MX3CK_)
+
+	#define	prtSDO				IOPORT_F	//JC
+	#define	trisSDO				TRISF
+	#define	latSDO				LATF
+	#define	bnSDO				BIT_5
+
+	#define	prtSDI				IOPORT_F
+	#define	trisSDI				TRISF
+	#define	latSDI				LATF
+	#define	bnSDI				BIT_4
+
+	#define	prtSCK				IOPORT_B
+	#define	trisSCK				TRISB
+	#define	latSCK				LATB
+	#define	bnSCK				BIT_14
+
+#elif defined(_BOARD_CEREBOT_MX4CK_)
+
+	#define	prtSDO				IOPORT_B	//JK
+	#define	trisSDO				TRISB
+	#define	latSDO				LATB
+	#define	bnSDO				BIT_11
+
+	#define	prtSDI				IOPORT_B
+	#define	trisSDI				TRISB
+	#define	latSDI				LATB
+	#define	bnSDI				BIT_12
+
+	#define	prtSCK				IOPORT_B
+	#define	trisSCK				TRISB
+	#define	latSCK				LATB
+	#define	bnSCK				BIT_13
+
+#elif defined(_BOARD_CEREBOT_MX7CK_)
+
+	#define	prtSDO				IOPORT_F	//JF
+	#define	trisSDO				TRISF
+	#define	latSDO				LATF
+	#define	bnSDO				BIT_5
+
+	#define	prtSDI				IOPORT_F
+	#define	trisSDI				TRISF
+	#define	latSDI				LATF
+	#define	bnSDI				BIT_4
+
+	#define	prtSCK				IOPORT_F
+	#define	trisSCK				TRISF
+	#define	latSCK				LATF
+	#define	bnSCK				BIT_13
 
 #else
 //*	Dec 14, 2011	<MLS>	Issue #160 this is the same, but we have to have a default, this still needs work
