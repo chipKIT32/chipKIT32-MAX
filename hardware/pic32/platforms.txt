@@ -40,5 +40,5 @@ pic32.compiler.upload.flags=
 pic32.library.path=./hardware/pic32/cores/pic32
 pic32.ldscript=chipKIT-BL-mega.ld
 pic32.library.core.path=./hardware/pic32/libraries
-pic32.compiler.define=::
+pic32.compiler.define=::-DMPIDEVER=0x01000101::-DMPIDE=23::
 pic32.build.variant=Default_100

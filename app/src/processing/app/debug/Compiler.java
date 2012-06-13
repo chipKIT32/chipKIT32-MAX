@@ -466,7 +466,7 @@ public class Compiler implements MessageConsumer {
 				configPreferences.get("build.f_cpu"), //5
 				configPreferences.get("software") + "=" + Base.REVISION,//6
 				configPreferences.get("board") , //7, 
-				configPreferences.get("compiler.define"), //8
+				configPreferences.get("compiler.define") + " " + configPreferences.get("board.define")  , //8
 				includes, //9
 				sourceName, //10
 				objectName //11
@@ -495,7 +495,7 @@ public class Compiler implements MessageConsumer {
 				configPreferences.get("build.f_cpu"),
 				configPreferences.get("software") + "=" + Base.REVISION,
 				configPreferences.get("board"), 
-				configPreferences.get("compiler.define"),
+				configPreferences.get("compiler.define") + " " + configPreferences.get("board.define"),
 				includes,
 				sourceName,
 				objectName
@@ -525,7 +525,7 @@ public class Compiler implements MessageConsumer {
 				configPreferences.get("build.f_cpu"),
 				configPreferences.get("software") + "=" + Base.REVISION,
 				configPreferences.get("board"),								
-				configPreferences.get("compiler.define"),
+				configPreferences.get("compiler.define") + " " + configPreferences.get("board.define"),
 				includes,
 				sourceName,
 				objectName
@@ -782,7 +782,7 @@ public class Compiler implements MessageConsumer {
 			}
 		}
 
-		//logger.debug("Done: Preferences");
+        //logger.debug("Preferences Platform Dump: " + platformPreferences);
 
 		iterator = platformPreferences.entrySet().iterator();
 
@@ -837,7 +837,7 @@ public class Compiler implements MessageConsumer {
 		}
 		//System.out.println("Done: boardPreferences");
 
-
+       // logger.debug("Final Preferences Dump: " + _map);
 
 		return _map;
 	}
