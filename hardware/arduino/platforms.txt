@@ -61,4 +61,6 @@ avr.compiler.upload.flags=
 avr.library.path=./hardware/arduino/cores/arduino
 avr.library.core.path=./libraries
 avr.compiler.define=::
+avr.board.define=::
+
 
