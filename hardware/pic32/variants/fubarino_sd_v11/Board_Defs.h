@@ -54,11 +54,11 @@
 ** refer to periperhals on the board generically.
 */
 
-#define	_BOARD_NAME_	"Fubarino"
+#define	_BOARD_NAME_	"FubarinoSD"
 
 /* Define the peripherals available on the board.
 */
-#define	NUM_DIGITAL_PINS	46
+#define	NUM_DIGITAL_PINS	45
 #define	NUM_ANALOG_PINS		15
 #define NUM_OC_PINS			5
 #define	NUM_IC_PINS			5
@@ -91,8 +91,13 @@
 /*					Button Declarations							*/
 /* ------------------------------------------------------------ */
 
-/* No buttons on this board.
+/* One button (PRG) for this board
 */
+#define	PIN_BTN1	21
+/* Also define the virutal program button for soft reset */
+#define USE_VIRTUAL_PROGRAM_BUTTON      1
+#define VIRTUAL_PROGRAM_BUTTON_TRIS     TRISEbits.TRISE7
+#define VIRTUAL_PROGRAM_BUTTON          LATEbits.LATE7
 
 /* ------------------------------------------------------------ */
 /*					Switch Declarations							*/
@@ -124,7 +129,7 @@
 #define PIN_IC4		4
 #define	PIN_IC5		11
 
-#define	PIN_TCK1	46
+#define	PIN_TCK1	6
 //#define	PIN_TCK2	not available on the chip
 //#define	PIN_TCK3	not available on the chip
 //#define	PIN_TCK4	not available on the chip
@@ -202,12 +207,12 @@ const static uint8_t SCK  = 102;		// PIC32 SCK2
 #define	PIN_CN10	26
 #define	PIN_CN11	27
 #define	PIN_CN12	44
-#define	PIN_CN13	11
-#define	PIN_CN14	12
-#define	PIN_CN15	13
-#define	PIN_CN16	14
-#define	PIN_CN17	45
-#define	PIN_CN18	46
+#define	PIN_CN13	10
+#define	PIN_CN14	11
+#define	PIN_CN15	12
+#define	PIN_CN16	13
+#define	PIN_CN17	28
+#define	PIN_CN18	29
 
 /* ------------------------------------------------------------ */
 /*					Pin Mapping Macros							*/
@@ -291,7 +296,7 @@ extern const uint8_t	analog_pin_to_channel_PGM[];
 /*																*/
 /* ------------------------------------------------------------ */
 
-#define	OPT_BOARD_INIT			0	//board needs no special init code
+#define	OPT_BOARD_INIT			1	//board needs special init code
 #define	OPT_BOARD_DIGITAL_IO	0	//board does not extend digital i/o functions
 #define	OPT_BOARD_ANALOG_READ	0	//board does not extend analogRead
 #define	OPT_BOARD_ANALOG_WRITE	0	//board does not extend analogWrite
