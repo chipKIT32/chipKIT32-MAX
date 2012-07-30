@@ -131,5 +131,6 @@ SECTIONS
 }
 
 /* From here out every linker script is the same, so just include it */
-INCLUDE "./hardware/pic32/cores/pic32/chipKIT-application-COMMON.ld"
 
+INCLUDE "chipKIT-application-COMMON.ld"
+/* INCLUDE "/Users/rianders/projects/chipKIT32-MAX/build/macosx/work/mpide.app/Contents/Resources/Java/hardware/pic32/cores/pic32/chipKIT-application-COMMON.ld"*/

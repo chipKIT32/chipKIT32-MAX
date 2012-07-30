@@ -712,7 +712,8 @@ public class Compiler implements MessageConsumer {
 				objectFileList,
 				buildPath + File.separator + "core.a",
 				buildPath,
-				corePath,	
+				corePath,
+                avrBasePath,
 				configPreferences.get("ldscript"),	
 		};
 		commandString = compileFormat.format(  Args );
