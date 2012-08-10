@@ -29,7 +29,7 @@
 const int PRESSURE = 0x1F;      //3 most significant bits of pressure
 const int PRESSURE_LSB = 0x20;  //16 least significant bits of pressure
 const int TEMPERATURE = 0x21;   //16 bit temperature reading
-cont byte READ = 0b00000000;     // SCP1000's read command
+const byte READ = 0b00000000;     // SCP1000's read command
 const byte WRITE = 0b00000010;   // SCP1000's write command
 // pins used for the connection with the sensor
 // the other you need are controlled by the SPI library):
