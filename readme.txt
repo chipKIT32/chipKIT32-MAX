@@ -8,7 +8,7 @@ IDE can be downloaded for free.
 For more information, see the website at: http://www.arduino.cc/
 or the forums at: http://www.arduino.cc/cgi-bin/yabb2/YaBB.pl
 
-This project if the MPIDE, Multi Platform IDE that supports AVR, and pic32 MCUs.
+This project is the MPIDE, Multi Platform IDE that supports AVR, and pic32 MCUs.
 
 To report a bug or a make a suggestions, go to:
 [hardware] https://github.com/chipKIT32/chipKIT32-MAX/issues
