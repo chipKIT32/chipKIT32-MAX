@@ -37,6 +37,7 @@
     <echo message="override ${env.JAVA_HOME}/lib/tools.jar" />
     <fail />
 -->
+<!--
     <javac target="1.5" 
 	   srcdir="src" 
 	   destdir="bin" 
@@ -46,8 +47,26 @@
 	   debug="true"
 	   classpath="../core/core.jar; ${env.JAVA_HOME}/lib/tools.jar; lib/ant.jar; lib/ant-launcher.jar; lib/apple.jar; lib/ecj.jar; lib/jna.jar; lib/RXTXcomm.jar; lib/log4j-1.2.16.jar; lib/log4j.properties" />
   </target>
-  
-  <target name="build" depends="compile" description="Build PDE">
-    <jar basedir="bin" destfile="pde.jar" />
+  -->
+  <javac target="1.6"
+	   source="1.6" 
+	   srcdir="src" 
+	   destdir="bin" 
+	   excludes="**/tools/format/**" 
+	   encoding="UTF-8"
+	   includeAntRuntime="false"
+	   debug="true"
+	   classpath="../core/core.jar; ${env.JAVA_HOME}/lib/tools.jar; lib/ant.jar; lib/ant-launcher.jar; lib/apple.jar; lib/ecj.jar; lib/jna.jar; lib/RXTXcomm.jar; lib/log4j-1.2.16.jar; lib/log4j.properties" />
+   </target>
+
+<target name="build" depends="compile" description="Build PDE">
+	  <jar basedir="bin" destfile="pde.jar" >
+		  <manifest>
+                <attribute name="Built-By" value="Rick Anderson"/>  
+                <attribute name="Main-Class" value="processing.app.Base"/>  
+                <attribute name="Class-Path" value="RXTXcomm.jar core.jar ecj.jar jna.jar log4j-1.2.16.jar pde.jar"/>  
+		  </manifest>
+	  </jar>
   </target>
+
 </project>
