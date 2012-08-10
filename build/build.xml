@@ -53,7 +53,7 @@
     </java>
   </target>
 
-   <target name="Linux-debug" description="Run mpide from Java." depends="build">
+   <target name="linux-debug" description="Run mpide from Java." depends="build">
       <java dir="./${platform}/work"
           classpath="${platform}/work/lib:${platform}/work/lib/RXTXcomm.jar:${platform}/work/lib/core.jar:${platform}/work/lib/ecj.jar:${platform}/work/lib/jna.jar:${platform}/work/lib/log4j-1.2.16.jar:${platform}/work/lib/pde.jar"
           fork="true"
