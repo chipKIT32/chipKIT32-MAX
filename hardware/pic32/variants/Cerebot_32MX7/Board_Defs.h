@@ -100,6 +100,13 @@
 #define PIN_BTN3	50
 
 /* ------------------------------------------------------------ */
+/*					Virtual Program Button						*/
+/* ------------------------------------------------------------ */
+#define USE_VIRTUAL_PROGRAM_BUTTON      1
+#define VIRTUAL_PROGRAM_BUTTON_TRIS     TRISCbits.TRISC12
+#define VIRTUAL_PROGRAM_BUTTON          LATCbits.LATC12
+
+/* ------------------------------------------------------------ */
 /*					Switch Declarations							*/
 /* ------------------------------------------------------------ */
 

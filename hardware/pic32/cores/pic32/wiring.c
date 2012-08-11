@@ -79,6 +79,10 @@
 #pragma config PWP		=	OFF
 
 //************************************************************************
+//*	This sets the MPIDE version number in the image header as defined in the linker script
+extern const uint32_t __attribute__((section(".mpide_version"))) _verMPIDE_Stub = MPIDEVER;    // assigns the build number in the header section in the image
+
+//************************************************************************
 //*	globals
 unsigned int	__PIC32_pbClk;
 
@@ -267,7 +271,69 @@ unsigned int __attribute__((nomips16)) INTDisableInterrupts(void)
     return status;
 }
 
+//************************************************************************
+//*	Deal with the 'virtual' program button and SoftReset(). This allows
+//* a sketch to cause the board to reboot, and either force entry into
+//* the bootloader, or not.
+//* Will return FALSE if ENTER_BOOTLOADER_ON_BOOT is not suppored.
+//* On return of FALSE, no registers or latches will have been disturbed.
+//* RUN_SKETCH_ON_BOOT is always supported.
+//************************************************************************
 
+unsigned int executeSoftReset(uint32_t options)
+{
+    const IMAGE_HEADER_INFO * pImageHeader = getImageHeaderInfoStructure();
+
+    // We will use the LAT bit of the program button (if the board has one)
+    // as the 'virutal' program button. The bootloader will read this bit
+    // upon boot (only after a software reset) to see if it should go into
+    // bootload mode or just run the sketch.
+
+ #if  (USE_VIRTUAL_PROGRAM_BUTTON == 1)
+
+    // Set/clear the LAT bit
+    if (options == ENTER_BOOTLOADER_ON_BOOT)
+    {
+        // lets see if the bootloader has the capability to do this.
+        // if we can not support this, make sure we have NOT fooled with any TRIS or Program buttons, do not disturb things
+        // because we will not be resetting.
+        if( ((pImageHeader->bootloaderCapabilities & blCapNotProvided) == blCapNotProvided)  ||  
+            ((pImageHeader->bootloaderCapabilities & blCapVirtualProgramButton) != blCapVirtualProgramButton) )
+        {   
+            return(false);
+        }
+      
+        VIRTUAL_PROGRAM_BUTTON_TRIS = 1;    // Set virtual program button to be an input (should be already)
+        VIRTUAL_PROGRAM_BUTTON = 1;         // Set to stay in the bootloader
+    }
+    else
+    {
+        // Set virtual program button to be an input (should be already)
+        VIRTUAL_PROGRAM_BUTTON_TRIS = 1;    // Set virtual program button to be an input (should be already)
+        VIRTUAL_PROGRAM_BUTTON = 0;         // Set to jump to application
+    }
+
+#else       // No virtual program button
+    // if we don't have virtual program buttons, we can't stay in the bootloader
+    if (options == ENTER_BOOTLOADER_ON_BOOT)
+    {
+        return(false);
+    }
+#endif  // end virtual program button
+ 
+    // At this point either we have a virtual program buttons and we can support ENTER_BOOTLOADER_ON_BOOT
+    // or we just want to soft reset. A RUN_SKETCH_ON_BOOT soft reset requires no special funcitonality in the bootloader.
+    // so we can always do a RUN_SKETCH_ON_BOOT.
+
+    // Always clear the EXTR bit to make sure we don't read the real program 
+    // button on boot
+    RCONbits.EXTR = 0;
+    
+    // Now perform the software reset
+    SoftReset();
+
+    return(true);       // never will be executed.
+}
 
 //************************************************************************
 //*	CoreTimerHandler Services (KeithV)
