@@ -632,4 +632,70 @@ fubarino_sd.build.f_cpu=80000000L
 fubarino_sd.build.core=pic32
 fubarino_sd.build.variant=fubarino_sd_v11
 
+############################################################
+quick240_usb_pic32.name=PONTECH quicK240
+
+# new items
+quick240_usb_pic32.platform=pic32
+quick240_usb_pic32.board=_BOARD_PONTECH_QUICK240_USB_
+quick240_usb_pic32.compiler.define=-D_USE_USB_FOR_SERIAL_
+quick240_usb_pic32.ccflags=ffff
+quick240_usb_pic32.ldscript=chipKIT-MAX32-application-32MX795F512L.ld
+# end of new items
+
+quick240_usb_pic32.upload.protocol=stk500v2
+quick240_usb_pic32.upload.maximum_size=520192
+quick240_usb_pic32.upload.speed=115200
+
+quick240_usb_pic32.bootloader.low_fuses=0xff
+quick240_usb_pic32.bootloader.high_fuses=0xdd
+quick240_usb_pic32.bootloader.extended_fuses=0x00
+quick240_usb_pic32.bootloader.path=not-supported
+quick240_usb_pic32.bootloader.file=not-supported
+quick240_usb_pic32.bootloader.unlock_bits=0x3F
+quick240_usb_pic32.bootloader.lock_bits=0x0F
+
+quick240_usb_pic32.build.mcu=32MX795F512L
+quick240_usb_pic32.build.f_cpu=80000000L
+quick240_usb_pic32.build.core=pic32
+quick240_usb_pic32.build.variant=quicK240
+#mega_usb_pic32.upload.using=
+
+############################################################
+usbono_pic32.name=PONTECH UAV100
+
+# new items
+usbono_pic32.platform=pic32
+usbono_pic32.board=_BOARD_PONTECH_UAV100_
+usbono_pic32.compiler.define=-D_USE_USB_FOR_SERIAL_::-Danything=1
+usbono_pic32.ccflags=ffff
+usbono_pic32.ldscript=chipKIT-application-32MX440F512H.ld
+#chipKIT-UNO32-application-32MX320F128L.ld
+# end of new items
+
+# Use a high -Gnum for devices that have less than 64K of data memory
+# For -G1024, objects 1024 bytes or smaller will be accessed by
+# gp-relative addressing
+#usbono_pic32.compiler.c.flags=-O2::-c::-mno-smart-io::-w::-ffunction-sections::-fdata-sections::-G1024::-g::-mdebugger::-Wcast-align
+#usbono_pic32.compiler.cpp.flags=-O2::-c::-mno-smart-io::-w::-fno-exceptions::-ffunction-sections::-fdata-sections::-G1024::-g::-mdebugger::-Wcast-align
+
+usbono_pic32.upload.protocol=stk500v2
+usbono_pic32.upload.maximum_size=520192
+usbono_pic32.upload.speed=115200
+
+usbono_pic32.bootloader.low_fuses=0xff
+usbono_pic32.bootloader.high_fuses=0xdd
+usbono_pic32.bootloader.extended_fuses=0x00
+usbono_pic32.bootloader.path=not-supported
+usbono_pic32.bootloader.file=not-supported
+usbono_pic32.bootloader.unlock_bits=0x3F
+usbono_pic32.bootloader.lock_bits=0x0F
+
+usbono_pic32.build.mcu=32MX440F512H
+usbono_pic32.build.f_cpu=80000000L
+usbono_pic32.build.core=pic32
+usbono_pic32.build.variant=Default_64
+#usbono_pic32.build.variant=Uno32
+#usbono_pic32.upload.using=
+
 

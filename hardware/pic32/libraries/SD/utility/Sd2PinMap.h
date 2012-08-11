@@ -42,6 +42,24 @@
 	#define latSCK				LATG
 	#define bnSCK				BIT_6
 
+#elif defined(_BOARD_PONTECH_QUICK240_USB_)
+        //uc Pin 72
+        #define prtSDO				IOPORT_D
+        #define	trisSDO				TRISD
+        #define	latSDO				LATD
+        #define	bnSDO				BIT_0
+
+        //uc Pin 9
+        #define prtSDI				IOPORT_C
+        #define trisSDI				TRISC
+        #define	latSDI				LATC
+        #define bnSDI				BIT_4
+
+        //uc Pin 70
+        #define prtSCK				IOPORT_D
+        #define trisSCK				TRISD
+        #define latSCK				LATD
+        #define bnSCK				BIT_10
 #elif defined(_BOARD_CEREBOT_MX3CK_)
 
 	#define	prtSDO				IOPORT_F	//JC
