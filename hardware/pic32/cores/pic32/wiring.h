@@ -115,6 +115,10 @@ extern "C"{
 #define bitClear(value, bit) ((value) &= ~(1UL << (bit)))
 #define bitWrite(value, bit, bitvalue) (bitvalue ? bitSet(value, bit) : bitClear(value, bit))
 
+    // Options for the SoftReset() function's 'options' parameter
+#define ENTER_BOOTLOADER_ON_BOOT    1
+#define RUN_SKETCH_ON_BOOT          0
+
 //************************************************************************
 // Let compile time pre-processor calculate the CORE_TICK_PERIOD
 //	clock rate is 80000000ull
