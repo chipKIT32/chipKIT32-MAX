@@ -42,8 +42,7 @@
 	#define latSCK				LATG
 	#define bnSCK				BIT_6
 
-#elif defined(_BOARD_quick240_USB_)
-//#error "made it here"
+#elif defined(_BOARD_PONTECH_QUICK240_USB_)
         //uc Pin 72
         #define prtSDO				IOPORT_D
         #define	trisSDO				TRISD
