@@ -151,6 +151,7 @@ void			shiftOut(uint8_t dataPin, uint8_t clockPin, uint8_t bitOrder, byte val);
 
 void attachInterrupt(uint8_t, void (*)(void), int mode);
 void detachInterrupt(uint8_t);
+unsigned int executeSoftReset(uint32_t options);
 
 unsigned int attachCoreTimerService(uint32_t (*)(uint32_t count));
 unsigned int detachCoreTimerService(uint32_t (*)(uint32_t count));
@@ -191,6 +192,116 @@ void loop(void);
 	#define	prog_uint32_t	const uint32_t
 	#define	prog_int64_t	const int64_t
 	#define	prog_uint64_t	const uint64_t
+#endif
+#if defined(__PIC32MX__)
+
+//************************************************************************
+// This is image header info used by the bootloader and eeprom functionality
+// The values are filled in either by the sketch's linker script, or by the bootloader
+// If an old bootloader is in use, the bootloader assigned fields will have 0xFFFFs in them.
+
+#if !defined(MPIDEVER)              // usually provided in platforms.txt on the pic32.compiler.define line
+    #define MPIDEVER 0x00000000     // if not, define it as the unspecified value of 0      
+#endif
+
+// Bootloader Capability bits
+// The first 4 bits define what type of STK500 interface is used
+// The next 4 bits define what LEDs are used
+// The next 8 bits define how the bootloader is to be put in programming/listen mode
+// The next 8 bits are how flash is erased instructed by the linker
+// The next 4 bits are this and that capabilities instructed by the linker
+// The last 4 bits are this and that capabilities
+#define blCapUARTInterface                              0x00000001ul        // bootloader talks over a UART
+#define blCapUSBInterface                               0x00000002ul        // bootloader talks over the USB for serial
+#define blCapBootLED                                    0x00000010ul        // A boot LED is driven
+#define blCapDownloadLED                                0x00000020ul        // A download LED is driven
+#define blCapAutoResetListening                         0x00000100ul        // There is a short listening delay after reset for avrdude to upload a sketch before automatically loading the in flash sketch              
+#define blCapProgramButton                              0x00000200ul        // A program button is supported  
+#define blCapVirtualProgramButton                       0x00000400ul        // A virtual program button is supported
+#define blCapLkInstrFullFlashEraseLess4KEEProm          0x00010000ul        // The original bootloader method of erasing all of program flash except the last 4K reserved for eeprom
+#define blCapLkInstrJustInTimeFlashErase                0x00020000ul        // Only flash pages written too needed by the sketch is erased
+#define blCapLkInstrFlashErase                          0x00040000ul        // The linker defines the flash range to erase
+#define blCapLkInstrFullFlashErase                      0x00080000ul        // All of flash is erased
+#define blCapLkInstrExecutionJumpAddress                0x01000000ul        // the bootloader will jump to the execution jump address immediately after programming
+#define blCapLkInstrExecutionJumpToFirstInFlash         0x02000000ul        // the bootloader will jump to the first sketch loaded in flash ignoring the execution jump address immediately after programming
+#define blCapSupportsRamHeaderAndPersistentData         0x10000000ul        // the bootloader clears the Ram Header and adds RAM header data like the RCON value
+#define blCapSplitFlashBootloader                       0x20000000ul        // This is a split flash bootloader with some of the bootloader in program flash
+#define blCapSmartStart                                 0x40000000ul        // To indicate that the bootloader has implemented a smart start sequence to prevent execution of the sketch until all start sequences have stabilized.
+#define blCapNotProvided                                0x80000000ul        // If this is set, then all capability bits have no meaning. This will be set if flash is in its erased state and the bootloader did not set any bits.
+
+// Linker assigned image bits, and requested bootloader instructions
+// The first 8 bits define what type image this is
+// The next 8 bits are undefined
+// The next 8 bits are linker instructions to the bootloader as how flash is to be erased
+// The next 4 bits are this and that instructions to the bootloader
+// The last 4 bits are undefined
+#define imageReserved                                   0x00000000ul
+#define imageMPIDE                                      0x00000001ul        // This is a normal MPIDE sketch
+#define imageBootFlashBootloader                        0x00000002ul        // This is a boot flash bootloader
+#define imageProgramFlashBootloader                     0x00000004ul        // This is a program flash bootloader
+#define imageSplitFlashBootloader                       0x00000008ul        // This has bootloader code in both boot and program flash
+#define imageFullFlashEraseLess4KEEProm                 blCapLkInstrFullFlashEraseLess4KEEProm                 
+#define imageJustInTimeFlashErase                       blCapLkInstrJustInTimeFlashErase                       
+#define imageLinkerSpecifiedFlashErase                  blCapLkInstrFlashErase                                 
+#define imageFullFlashErase                             blCapLkInstrFullFlashErase                             
+#define imageExecutionJumpAddress                       blCapLkInstrExecutionJumpAddress                       
+#define imageExecutionJumpToFirstInFlash                blCapLkInstrExecutionJumpToFirstInFlash                
+
+typedef void (* FNIMGJMP) (void);
+
+#pragma pack(push,2) 
+
+
+// The RAM Header is filled in by the bootloader, however it is specified by the sketch in the linker script
+// The sketch must place it in the first 1.5K of RAM, as this is the space perserved by the bootloader for the sketch's
+// Debug data, RAM Header, and persistent data. The bootloader will only fill in the RAM Header and will not touch 
+// the reset of the perserved data. The bootloader is highly protective to not exceed the number of bytes known by the
+// sketch as the RAM Header so the bootloader will not stray into the sketch's presistent data. Likewise the bootloader
+// will not stray into its own data space, so the bootloader may not write all bytes specified by the sketch if that
+// exceeds the 1.5K of reserved space. On return, cbBlHeader is the number of bytes written by the bootloader, any
+// data beyond this not touched by the bootloader.
+typedef struct {
+    uint32_t    cbBlRamHeader;     // the number of bytes of this header as written by the bootloader
+    uint32_t    rcon;              // value of RCON before the bootloader clears it
+} RAM_HEADER_INFO;
+
+// The header is reserved by the sketch's linker script but 
+// written by both the sketch's linker script and by the bootloader.
+// The sketch's linker script will fill in all values except
+// verBootloader, bootloaderCapabilities, vend, prod, and cbBlPreservedRam, these are
+// all filled in by the bootloader. If an old bootloader is on the board
+// all bootloader supplied values will be 0xFFFFFFFF; as this is the unprogramed value of flash. 
+// Check the MSB of the capabilities and if it is set, then none of the bootloader supplied values are valid.
+// In all cases, a value of all FFs is reserved as unknown and should be checked before using.
+typedef struct {
+    uint32_t  cbHeader;               // length of this structure
+    uint32_t  verBootloader;          // version of the booloader that loaded the sketch, it will be 0xFFFFFFFF if the bootloader did not write the version.
+    uint32_t  verMPIDE;               // the version number of MPIDE that build the sketch
+    uint32_t  bootloaderCapabilities; // capabilities of the bootloader defined by the blCapXXX bits.
+    uint16_t  vend;                   // vendor ID as assigned by the bootloader, 0xFF if undefined
+    uint16_t  prod;                   // product ID as assigned by the bootloader, 0xFF if undefined, or 0xFE is unassigned
+    uint32_t  imageType;              // see image bit field definition above
+    FNIMGJMP  pJumpAddr;              // the execution address that the bootloader will jump to
+    uint32_t  pProgramFlash;          // also known as base address, that is, the first byte of program flash used by the sketch
+    uint32_t  cbProgramFlash;         // the number of bytes of flash used by the sketch as defined by the linker script
+    uint32_t  pEEProm;                // pointer to the eeprom area, usually at the end of flash, but now can be defined by the linker script
+    uint32_t  cbEEProm;               // the length of eeprom, usually 4K but can now be defined by the linker script
+    uint32_t  pConfig;                // physical address pointer to the config bits
+    uint32_t  cbConfig;               // length of config bits.
+    RAM_HEADER_INFO * pRamHeader;     // pointer to the ram header
+    uint32_t  cbRamHeader;            // length of the ram header as specified by the linker and will be cleared/used by the bootloader
+    uint32_t  cbBlPreservedRam;       // the amount RAM the bootloader will not touch, 0xA0000000 -> 0xA0000000 + cbBlPerservedRam; Debug data, Ram Header and Persistent data must be in this section
+} IMAGE_HEADER_INFO;
+
+#pragma pack(pop)
+
+extern const IMAGE_HEADER_INFO _image_header_info;      // this is the header info right before .rodata, defined by the linker
+
+// psudo function to get the flash header info.
+#define getImageHeaderInfoStructure()   (&_image_header_info)
+#define _IMAGE_PTR_TABLE_OFFSET         (0x0F8ul)
+#define _IMAGE_HEADER_ADDR_OFFSET       (0x0FCul)
+
 #endif
 
 #if defined(__PIC32MX__)
