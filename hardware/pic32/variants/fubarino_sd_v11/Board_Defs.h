@@ -93,7 +93,7 @@
 
 /* One button (PRG) for this board
 */
-#define	PIN_BTN1	21
+#define	PIN_BTN1	23
 /* Also define the virutal program button for soft reset */
 #define USE_VIRTUAL_PROGRAM_BUTTON      1
 #define VIRTUAL_PROGRAM_BUTTON_TRIS     TRISEbits.TRISE7
