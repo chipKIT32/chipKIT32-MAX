@@ -711,9 +711,11 @@ public class Compiler implements MessageConsumer {
 				primaryClassName,
 				objectFileList,
 				buildPath + File.separator + "core.a",
-				buildPath,
+				buildPath, 
 				corePath,	
 				configPreferences.get("ldscript"),	
+                corePath,
+                configPreferences.get("ldcommon")
 		};
 		commandString = compileFormat.format(  Args );
 		execAsynchronously(commandString);

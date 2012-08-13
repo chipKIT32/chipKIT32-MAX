@@ -131,5 +131,5 @@ SECTIONS
 }
 
 /* From here out every linker script is the same, so just include it */
-INCLUDE "chipKIT-application-COMMON.ld"
+/*INCLUDE "chipKIT-application-COMMON.ld"*/
 
