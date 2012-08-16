@@ -538,14 +538,14 @@ SECTIONS
     . += (DEFINED (_DEBUGGER) ? 0x200 : 0x0);
   } >kseg1_data_mem
   
-  .ram_exchange_data :
+  .ram_exchange_data (NOLOAD) :
   {
     _ram_header_addr = . ;
     . += 8 ;
   } >kseg1_data_mem
 
   /* Persistent data */
-  .persist ALIGN(4) :
+  .persist ALIGN(4) (NOLOAD) :
   {
     _persist_begin = .;
     *(.persist .persist.*)
