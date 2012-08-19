@@ -212,32 +212,12 @@ const static uint8_t SCK  = 102;		// PIC32 SCK2
 /* ------------------------------------------------------------ */
 /*					Pin Mapping Macros							*/
 /* ------------------------------------------------------------ */
-/* Macros used to access the port and pin mapping tables.
-** These are mostly generic, but some of them may be board specific.
-** These perform slightly better as macros compared to inline functions
+/* This section contains the definitions for pin mapping macros that
+/* are being redefined for this board variant.
 */
-#define digitalPinToPort(P) ( digital_pin_to_port_PGM[P]  )
-#define digitalPinToBitMask(P) ( digital_pin_to_bit_mask_PGM[P]  )
-#define digitalPinToTimerOC(P)  ( (digital_pin_to_timer_PGM[P] & _MSK_TIMER_OC)  )
-#define digitalPinToTimerIC(P)  ( (digital_pin_to_timer_PGM[P] & _MSK_TIMER_IC)  )
-#define digitalPinToTimerTCK(P) ( (digital_pin_to_timer_PGM[P] & _MSK_TIMER_TCK) )
-#define	digitalPinToTimer(P)	digitalPinToTimerOC(P)
-#define portRegisters(P) ( port_to_tris_PGM[P] )
-#define portModeRegister(P) ( (volatile uint32_t *)port_to_tris_PGM[P] )
-#define portInputRegister(P) ( (volatile uint32_t *)(port_to_tris_PGM[P] + 0x0010) )
-#define portOutputRegister(P) ( (volatile uint32_t *)(port_to_tris_PGM[P] + 0x0020) )
 
-// This definition can be used for the default mapping.
-#define	digitalPinToAnalog(P) ( (((P) > 15) && ((P) < 32)) ? (P)-16 : NOT_ANALOG_PIN )
-// This definition can be used for the non-default case where there
-// is a mapping table to go from digital pin to analog pin
-//#define	digitalPinToAnalog(P) ( digital_pin_to_analog_PGM[P] )
-
-// This definition can be used for the default one-to-one mapping
-#define analogInPinToChannel(P) ( P )
-// This definition is used when there isn't a one-to-one mapping
-// This uses a table to do the mapping.
-//#define analogInPinToChannel(P) ( analog_pin_to_channel_PGM[P]  )
+// This board variant doesn't need to change any of the default
+// defintions.
 
 /* ------------------------------------------------------------ */
 /*					Data Definitions							*/

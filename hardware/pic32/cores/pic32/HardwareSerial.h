@@ -18,6 +18,7 @@
 //*	Nov  1,	2011	<MLS> Issue #140, HardwareSerial not derived from Stream 
 //*	Nov  1,	2011	<MLS> Also fixed some other compatibilty issues
 //* Nov 12, 2001	<GeneApperson> Rewrite for board variant support
+//*	Jul 26, 2012	<GeneApperson> Added PPS support for PIC32MX1xx/MX2xx devices
 //************************************************************************
 /*
   HardwareSerial.h - Hardware serial library for Wiring
@@ -85,6 +86,12 @@ class HardwareSerial : public Stream
 		uint8_t			vec;		//interrupt vector for the UART
 		uint8_t			ipl;		//interrupt priority level
 		uint8_t			spl;		//interrupt sub-priority level
+#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
+		uint8_t			pinTx;		//digital pin number of TX
+		uint8_t			pinRx;		//digital pin number for RX
+		uint8_t			ppsTx;		//PPS select for UART TX
+		uint8_t			ppsRx;		//PPS select for UART RX
+#endif
 		p32_regset *	ifs;		//interrupt flag register set
 		p32_regset *	iec;		//interrupt enable control register set
 		uint32_t		bit_err;	//err interrupt flag bit
@@ -93,7 +100,11 @@ class HardwareSerial : public Stream
 		ring_buffer		rx_buffer;	//queue used for UART rx data
 
 	public:
+#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
+		HardwareSerial(p32_uart * uartP, int irq, int vec, int ipl, int spl, int pinT, int pinR, int ppsT, int ppsR);
+#else
 		HardwareSerial(p32_uart * uartP, int irq, int vec, int ipl, int spl);
+#endif
 
 		void			doSerialInt(void);
 

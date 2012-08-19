@@ -78,6 +78,21 @@
 #define	NUM_SWT				0
 #define NUM_SERVO			0
 
+/* Define the number of pins including extended i/o pins.
+** These are pins that are not native to the microcontroller, such
+** as implemented via an i/o expander or external A/D or D/A.
+** This board doesn't have any.
+*/
+#define	NUM_DIGITAL_PINS_EXTENDED	NUM_DIGITAL_PINS
+#define	NUM_ANALOG_PINS_EXTENDED	NUM_ANALOG_PINS
+
+/* ------------------------------------------------------------ */
+/*					Virtual Program Button						*/
+/* ------------------------------------------------------------ */
+#define USE_VIRTUAL_PROGRAM_BUTTON      1
+#define VIRTUAL_PROGRAM_BUTTON_TRIS     TRISCbits.TRISC12
+#define VIRTUAL_PROGRAM_BUTTON          LATCbits.LATC12
+
 /* ------------------------------------------------------------ */
 /*						LED Declarations						*/
 /* ------------------------------------------------------------ */
@@ -93,13 +108,6 @@
 
 /* No buttons on this board.
 */
-
-/* ------------------------------------------------------------ */
-/*					Virtual Program Button						*/
-/* ------------------------------------------------------------ */
-#define USE_VIRTUAL_PROGRAM_BUTTON      1
-#define VIRTUAL_PROGRAM_BUTTON_TRIS     TRISCbits.TRISC12
-#define VIRTUAL_PROGRAM_BUTTON          LATCbits.LATC12
 
 /* ------------------------------------------------------------ */
 /*					Switch Declarations							*/
@@ -213,21 +221,14 @@ const static uint8_t SCK  = 13;		// PIC32 SCK2
 /* ------------------------------------------------------------ */
 /*					Pin Mapping Macros							*/
 /* ------------------------------------------------------------ */
-/* Macros used to access the port and pin mapping tables.
-** These are mostly generic, but some of them may be board specific.
-** These perform slightly better as macros compared to inline functions
+/* This section contains the definitions for pin mapping macros that
+/* are being redefined for this board variant.
 */
-#define digitalPinToPort(P) ( digital_pin_to_port_PGM[P]  )
-#define digitalPinToBitMask(P) ( digital_pin_to_bit_mask_PGM[P]  )
-#define digitalPinToTimerOC(P)  ( (digital_pin_to_timer_PGM[P] & _MSK_TIMER_OC)  )
-#define digitalPinToTimerIC(P)  ( (digital_pin_to_timer_PGM[P] & _MSK_TIMER_IC)  )
-#define digitalPinToTimerTCK(P) ( (digital_pin_to_timer_PGM[P] & _MSK_TIMER_TCK) )
-#define	digitalPinToTimer(P)	digitalPinToTimerOC(P)
-#define portRegisters(P) ( port_to_tris_PGM[P] )
-#define portModeRegister(P) ( (volatile uint32_t *)port_to_tris_PGM[P] )
-#define portInputRegister(P) ( (volatile uint32_t *)(port_to_tris_PGM[P] + 0x0010) )
-#define portOutputRegister(P) ( (volatile uint32_t *)(port_to_tris_PGM[P] + 0x0020) )
+
+#undef digitalPinToAnalog
 #define	digitalPinToAnalog(P) ( (P) < 12 ? (P) : ((P) >= 14) && ((P) < 26) ? (P)-14 : NOT_ANALOG_PIN )
+
+#undef analogInPinToChannel
 #define analogInPinToChannel(P) ( analog_pin_to_channel_PGM[P]  )
 
 /* ------------------------------------------------------------ */

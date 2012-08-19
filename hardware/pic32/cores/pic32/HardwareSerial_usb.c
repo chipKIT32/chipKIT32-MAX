@@ -752,8 +752,13 @@ void	usb_initialize(void)
 	// enable int
 #ifdef _USE_USB_IRQ_
 	IEC1bits.USBIE = 1;
+	#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
+        IPC7bits.USBIP = 6;
+        IPC7bits.USBIS = 0;
+    #else
 	IPC11bits.USBIP = 6;
 	IPC11bits.USBIS = 0;
+#endif
 #endif
 
 	MCF_USB_OTG_SOF_THLD = 74;

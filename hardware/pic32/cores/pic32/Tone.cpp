@@ -60,8 +60,8 @@
 
 #define	OPT_SYSTEM_INTERNAL
 #define OPT_BOARD_INTERNAL	//pull in internal symbol definitons
-#include "p32_defs.h"
 #include "pins_arduino.h"
+#include "p32_defs.h"
 
 //	timerx_toggle_count:
 //	> 0 - duration specified

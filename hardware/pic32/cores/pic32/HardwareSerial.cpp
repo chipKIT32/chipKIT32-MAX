@@ -57,6 +57,7 @@
 //*	Nov  1,	2011	<MLS> Issue #140, HardwareSerial not derived from Stream 
 //*	Nov  1,	2011	<MLS> Also fixed some other compatibilty issues
 //* Nov 12, 2001	<GeneApperson> Rewrite for board variant support
+//*	Jul 26, 2012	<GeneApperson> Added PPS support for PIC32MX1xx/MX2xx devices
 //************************************************************************
 #define __LANGUAGE_C__
 
@@ -65,6 +66,7 @@
 #include <string.h>
 #include <inttypes.h>
 
+#include <p32xxxx.h>
 #include <plib.h>
 
 #include "wiring.h"
@@ -108,15 +110,26 @@
 **		any global variables used by the object.
 */
 
-HardwareSerial::HardwareSerial(p32_uart * uartP, int irqP, int vecP, int iplP, int splP)
+#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
+HardwareSerial::HardwareSerial(p32_uart * uartT, int irqT, int vecT, int iplT, int splT, int pinT, int pinR, int ppsT, int ppsR)
+#else
+HardwareSerial::HardwareSerial(p32_uart * uartT, int irqT, int vecT, int iplT, int splT)
+#endif
 {
-	uart = uartP;
-	irq  = irqP;
-	vec  = vecP;
-	irq  = (uint8_t)irqP;
-	vec  = (uint8_t)vecP;
-	ipl  = (uint8_t)iplP;
-	spl  = (uint8_t)splP;
+	uart = uartT;
+	irq  = irqT;
+	vec  = vecT;
+	irq  = (uint8_t)irqT;
+	vec  = (uint8_t)vecT;
+	ipl  = (uint8_t)iplT;
+	spl  = (uint8_t)splT;
+
+#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
+	pinTx = (uint8_t)pinT;
+	pinRx = (uint8_t)pinR;
+	ppsTx = (uint8_t)ppsT;
+	ppsRx = (uint8_t)ppsR;
+#endif
 
 	/* The interrupt flag and enable control register addresses and
 	** the bit numbers for the flag bits can be computed from the
@@ -165,6 +178,21 @@ void HardwareSerial::begin(unsigned long baudRate)
 	/* Initialize the receive buffer.
 	*/
 	flush();
+
+#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
+	volatile uint32_t *		pps;
+
+	/* Map the UART TX to the appropriate pin.
+	*/
+	pps = ppsOutputRegister(pinTx);
+	*pps = ppsOutputSelect(ppsTx);
+
+	/* Map the UART RX to the appropriate pin.
+	*/
+	pps = ppsInputRegister(ppsRx);
+	*pps = ppsInputSelect(pinRx);
+
+#endif
 
 	/* Compute the address of the interrupt priority control
 	** registers used by this UART
@@ -858,21 +886,35 @@ void __ISR(_SER7_VECTOR, _SER7_IPL_ISR) IntSer7Handler(void)
 */
 USBSerial		Serial(&rx_bufferUSB);
 #if defined(_SER0_BASE)
+#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
+HardwareSerial Serial0((p32_uart *)_SER0_BASE, _SER0_IRQ, _SER0_VECTOR, _SER0_IPL, _SER0_SPL, _SER0_TX_PIN, _SER0_RX_PIN, _SER0_TX_OUT, _SER0_RX_IN);
+#else
 HardwareSerial Serial0((p32_uart *)_SER0_BASE, _SER0_IRQ, _SER0_VECTOR, _SER0_IPL, _SER0_SPL);
+#endif
 #endif
 
 #else
 /* If we're not using USB for serial, then hardware serial port 0
 ** gets instantiated as Serial.
+** NOTE: PIC32MX1xx/2xx devices only have 2 UARTS, so we're not defining more variant
+** object instances for those devices.
 */
 #if defined(_SER0_BASE)
+#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
+HardwareSerial Serial((p32_uart *)_SER0_BASE, _SER0_IRQ, _SER0_VECTOR, _SER0_IPL, _SER0_SPL, _SER0_TX_PIN, _SER0_RX_PIN, _SER0_TX_OUT, _SER0_RX_IN);
+#else
 HardwareSerial Serial((p32_uart *)_SER0_BASE, _SER0_IRQ, _SER0_VECTOR, _SER0_IPL, _SER0_SPL);
+#endif
 #endif
 
 #endif	//defined(_USB) && defined(_USE_USB_FOR_SERIAL_)
 
 #if defined(_SER1_BASE)
+#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
+HardwareSerial Serial1((p32_uart *)_SER1_BASE, _SER1_IRQ, _SER1_VECTOR, _SER1_IPL, _SER1_SPL, _SER1_TX_PIN, _SER1_RX_PIN, _SER1_TX_OUT, _SER1_RX_IN);
+#else
 HardwareSerial Serial1((p32_uart *)_SER1_BASE, _SER1_IRQ, _SER1_VECTOR, _SER1_IPL, _SER1_SPL);
+#endif
 #endif
 
 #if defined(_SER2_BASE)

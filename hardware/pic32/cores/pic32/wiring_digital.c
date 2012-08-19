@@ -34,13 +34,14 @@
 //*	Feb  6,	2011	<MLS> In order to use analog pins as digital, AD1PCFG must be set
 //* Nov 12, 2011	<GeneApperson> revised for board variant support
 //* Nov 16, 2011	<GeneApperson> revised to use p32_defs.h structure definitions
+//*	Jul 26, 2012	<GeneApperson> Added PPS support for PIC32MX1xx/MX2xx devices
 //************************************************************************
 
 #define OPT_BOARD_INTERNAL	//pull in internal symbol definitons
 #include <p32xxxx.h>
-#include "p32_defs.h"
 #include "wiring_private.h"
 #include "pins_arduino.h"
+#include "p32_defs.h"
 
 //************************************************************************
 void pinMode(uint8_t pin, uint8_t mode)
@@ -50,6 +51,12 @@ uint8_t					port;
 volatile p32_ioport *	iop;
 uint8_t		timer;
 
+	/* Check if pin number is in valid range.
+	*/
+	if (pin >= NUM_DIGITAL_PINS_EXTENDED)
+	{
+		return;
+	}
 
 #if (OPT_BOARD_DIGITAL_IO != 0)
 	/* Peform any board specific processing.
@@ -60,24 +67,43 @@ int	_board_pinMode(uint8_t pin, uint8_t mode)
 	{
 		return;
 	}
-#endif
+#endif	// OPT_BOARD_DIGITAL_IO
 
 	//* Get the port number for this pin.
-	if ((pin >= NUM_DIGITAL_PINS) || ((port = digitalPinToPort(pin)) == NOT_A_PIN))
+	if ((port = digitalPinToPort(pin)) == NOT_A_PIN)
 	{
 		return;
 	}
 
 	//* Obtain pointer to the registers for this io port.
-	iop = (p32_regset *)portRegisters(port);
+	iop = portRegisters(port);
 
 	//* Obtain bit mask for the specific bit for this pin.
 	bit = digitalPinToBitMask(pin);
 
-	//*	is it an analog port?
+#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
+	volatile uint32_t *	pps;
+
+	// The MX1xx/MX2xx support peripheral pin select (PPS). It is necessary
+	// to ensure that the pin is mapped as a general purpose i/o and not
+	// mapped to a peripheral.
+	if (isPpsPin(pin))
+	{
+		pps = ppsOutputRegister(pin);
+		*pps = ppsOutputSelect(PPS_OUT_GPIO);
+	}
+
+	// The MX1xx/MX2xx devices have an ANSELx register associated with
+	// each io port that is used to control analog/digital mode of the
+	// analog input capable pins.
+	// Clear the bit in the ANSELx register to ensure that the pin is in
+	// digital input mode.
+	iop->ansel.clr = bit;
+#else
 	if (port == _IOPORT_PB)
 	{
-		//*	we are on ANALOG pin, we have to set it to digital mode	
+		//* The MX3xx-MX7xx PIC32 devices have all of the analog capable pins on
+		//  PORTB. If this is a PORTB pin, we have to set it to digital mode.	
 		//	You have to set the bit in the AD1PCFG for an analog pin to be used as a 
 		//	digital input. They come up after reset as analog input with the digital 
 		//	input disabled. For the PORTB pins you switch between analog input and 
@@ -86,33 +112,14 @@ int	_board_pinMode(uint8_t pin, uint8_t mode)
 		AD1PCFGSET = bit;
 
 	}
+#endif	// defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
 
-	//*	the registers are 32 bits and in this order
-	//*	therefore the CLR register is +1 and the SET register is +2
-	//*	TRISx			= TRIState register (input vs output control)
-	//*	TRISxCLR
-	//*	TRISxSET
-	//*	TRISxINV
-	//*	PORTx
-	//*	PORTxCLR
-	//*	PORTxSET
-	//*	PORTxINV
-	//*	LATx
-	//*	LATxCLR
-	//*	LATxSET
-	//*	LATxINV
-	//*	ODCx
-	//*	ODCxCLR
-	//*	ODCxSET
-	//*	ODCxINV
-	//*	the TRISx register is used for data direction
-	//*	1 = input, 0 = output (opposite of AVR)
-
+	// Set the pin to the requested mode.
 	if (mode == INPUT) 
 	{
 		//* Determine if this is an output compare pin. If so,
 		//* we need to make sure PWM output is off.
-		timer = digitalPinToTimerOC(pin);
+		timer = digitalPinToTimerOC(pin) >> _BN_TIMER_OC;
 		if (timer != NOT_ON_TIMER)
 		{
 			turnOffPWM(timer);
@@ -147,6 +154,13 @@ uint32_t				bitMask;
 uint8_t					port;
 volatile p32_ioport *	iop;
 
+	/* Check if pin number is in valid range.
+	*/
+	if (pin >= NUM_DIGITAL_PINS_EXTENDED)
+	{
+		return;
+	}
+
 #if (OPT_BOARD_DIGITAL_IO != 0)
 	/* Peform any board specific processing.
 	*/
@@ -157,18 +171,18 @@ uint8_t		tmp;
 	{
 		return tmp;
 	}
-#endif
+#endif	// OPT_BOARD_DIGITAL_IO
 	
 	mode	=	OUTPUT;
 
 	//* Get the port number for this pin.
-	if ((pin >= NUM_DIGITAL_PINS) || ((port = digitalPinToPort(pin)) == NOT_A_PIN))
+	if ((port = digitalPinToPort(pin)) == NOT_A_PIN)
 	{
 		return mode;
 	}
 
 	//* Obtain pointer to the registers for this io port.
-	iop = (p32_regset *)portRegisters(port);
+	iop = portRegisters(port);
 
 	//* Obtain bit mask for the specific bit for this pin.
 	bitMask = digitalPinToBitMask(pin);
@@ -207,6 +221,13 @@ uint8_t					port;
 uint16_t				bit;
 uint8_t					timer;
 
+	/* Check if pin number is in valid range.
+	*/
+	if (pin >= NUM_DIGITAL_PINS_EXTENDED)
+	{
+		return;
+	}
+
 #if (OPT_BOARD_DIGITAL_IO != 0)
 	/* Peform any board specific processing.
 	*/
@@ -216,16 +237,16 @@ int	_board_digitalWrite(uint8_t pin, uint8_t val);
 	{
 		return;
 	}
-#endif
+#endif		// OPT_BOARD_DIGITAL_IO
 
 	//* Get the port number for this pin.
-	if ((pin >= NUM_DIGITAL_PINS) || ((port = digitalPinToPort(pin)) == NOT_A_PIN))
+	if ((port = digitalPinToPort(pin)) == NOT_A_PIN)
 	{
 		return;
 	}
 
 	//* Obtain pointer to the registers for this io port.
-	iop = (p32_regset *)portRegisters(port);
+	iop = portRegisters(port);
 
 	//* Obtain bit mask for the specific bit for this pin.
 	bit = digitalPinToBitMask(pin);
@@ -258,6 +279,13 @@ uint16_t				bit;
 uint8_t					port;
 int						highLow;
 
+	/* Check if pin number is in valid range.
+	*/
+	if (pin >= NUM_DIGITAL_PINS_EXTENDED)
+	{
+		return;
+	}
+
 #if (OPT_BOARD_DIGITAL_IO != 0)
 	/* Peform any board specific processing.
 	*/
@@ -268,10 +296,10 @@ uint8_t	tmp;
 	{
 		return tmp;
 	}
-#endif
+#endif		// OPT_BOARD_DIGITAL_IO
 
 	//* Get the port number for this pin.
-	if ((pin >= NUM_DIGITAL_PINS) || ((port = digitalPinToPort(pin)) == NOT_A_PIN))
+	if ((port = digitalPinToPort(pin)) == NOT_A_PIN)
 	{
 		return LOW;
 	}
@@ -281,6 +309,28 @@ uint8_t	tmp;
 
 	//* Obtain bit mask for the specific bit for this pin.
 	bit = digitalPinToBitMask(pin);
+
+#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
+	// The MX1xx-MX2xx devices have an ANSELx register associated with
+	// each io port that is used to control analog/digital mode of the
+	// analog input capable pins.
+	// Clear the bit in the ANSELx register to ensure that the pin is in
+	// digital input mode.
+	iop->ansel.clr = bit;
+#else
+	if (port == _IOPORT_PB)
+	{
+		//* The MX3xx-MX7xx PIC32 devices have all of the analog capable pins on
+		//  PORTB. If this is a PORTB pin, we have to set it to digital mode.	
+		//	You have to set the bit in the AD1PCFG for an analog pin to be used as a 
+		//	digital input. They come up after reset as analog input with the digital 
+		//	input disabled. For the PORTB pins you switch between analog input and 
+		//	digital input using AD1PCFG.
+
+		AD1PCFGSET = bit;
+
+	}
+#endif	// defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
 
 	//* Get the pin state.
 	if ((iop->port.reg & bit) != 0) 

@@ -350,6 +350,13 @@ const uint8_t analog_pin_to_channel_PGM[] = {
 //#endif
 
 /* ------------------------------------------------------------ */
+/*		Include Files for Board Customization Functions			*/
+/* ------------------------------------------------------------ */
+#if	(OPT_BOARD_INIT != 0)
+#include <plib.h>
+#endif
+
+/* ------------------------------------------------------------ */
 /*				Board Customization Functions					*/
 /* ------------------------------------------------------------ */
 /*																*/
@@ -384,7 +391,18 @@ const uint8_t analog_pin_to_channel_PGM[] = {
 #if	(OPT_BOARD_INIT != 0)
 
 void _board_init(void) {
+	//*	Turn Secondary oscillator off
+	//*	this is only needed on the mega board because the mega uses secondary
+	// ocsilator pins as general I/O
 	
+	unsigned int dma_status;
+	unsigned int int_status;
+	
+	mSYSTEMUnlock(int_status, dma_status);
+
+	OSCCONCLR	=	_OSCCON_SOSCEN_MASK;
+
+	mSYSTEMLock(int_status, dma_status);	
 }
 
 #endif

@@ -42,41 +42,20 @@
 //* Jan  9, 2012    <KeithV> Added CoreTimer Services to the CoreTimerHandler and fixed bugs where CT would be missed.
 //                  Also fixed write_comp() inline assembler
 //                  Also added countdown debug mask to stop the core timer when debugging.
+//* Jun  1, 2012    <BPS> Added SoftReset() for software bootload
 //************************************************************************
 #include <plib.h>
 #include <p32xxxx.h>
 
 #define	OPT_SYSTEM_INTERNAL
 #define OPT_BOARD_INTERNAL	//pull in internal symbol definitons
-#include "p32_defs.h"
 #include "pins_arduino.h"
+#include "p32_defs.h"
 
 #include "wiring_private.h"
-//#define _ENABLE_PIC_RTC_
+#include "peripheral/reset.h"
 
-
-//*	as per Al.Rodriguez@microchip.com, Jan 7, 2011
-//*	Add the following so the secondary oscillator is disabled and the port can be used as an IO PORT.
-//#pragma config FSOSCEN = OFF
-
-//#pragma config POSCMOD=XT, FNOSC=PRIPLL
-//#pragma config FPLLIDIV=DIV_2, FPLLMUL=MUL_20, FPLLODIV=DIV_1
-//#pragma config FPBDIV=DIV_2, FWDTEN=OFF, CP=OFF, BWP=OFF
-
-
-#pragma config FPLLODIV	=	DIV_1
-#pragma config FPLLMUL	=	MUL_20
-#pragma config FPLLIDIV	=	DIV_2
-#pragma config FWDTEN	=	OFF
-#pragma config FCKSM	=	CSECME
-#pragma config FPBDIV	=	DIV_1
-#pragma config OSCIOFNC	=	ON
-#pragma config POSCMOD	=	XT
-#pragma config FSOSCEN	=	OFF
-#pragma config FNOSC	=	PRIPLL
-#pragma config CP		=	OFF
-#pragma config BWP		=	OFF
-#pragma config PWP		=	OFF
+#undef _ENABLE_PIC_RTC_
 
 //************************************************************************
 //*	This sets the MPIDE version number in the image header as defined in the linker script
@@ -224,7 +203,13 @@ void init()
 
 	//*	as per Al.Rodriguez@microchip.com, Jan 7, 2011
 	//*	Disable the JTAG interface.
+#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
+	CFGCONbits.JTAGEN = 0;
+	//CFGCONbits.TDOEN = 0;
+	//OSCCONbits.SOSCEN = 0;
+#else
 	DDPCONbits.JTAGEN	=	0;
+#endif
 
 
 #if (OPT_BOARD_INIT != 0)
@@ -244,7 +229,80 @@ void	_board_init(void);
 #endif
 }
 
+//************************************************************************
+//*		PPS - Peripheral Pin Select - Functions
+//*
+/* Currently, PPS is only available in PIC32MX1xx/PIC32MX2xx devices.
+*/
+#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
 
+
+void lockPps()
+{
+
+}
+
+void unlockPps()
+{
+
+}
+
+int mapPpsInput(uint8_t pin, int func)
+{
+	p32_ppsin *		pps;
+
+	if (!isPpsPin(pin) || (ppsInputFromFunc(func) >= NUM_PPS_IN))
+	{
+		return false;
+	}
+
+	/* Check if the requested peripheral input can be mapped to
+	** the requested pin.
+	*/
+	if ((ppsSetFromPin(pin) & ppsSetFromFunc(func)) == 0)
+	{
+		return false;
+	}
+
+	/* An input is mapped from the pin to the peripheral input
+	** function by storing the select value into the register associated
+	** with the peripheral function.
+	*/
+	pps = ppsInputRegister(func);
+	*pps = ppsInputSelect(pin);
+
+	return true;
+
+}
+
+int mapPpsOutput(uint8_t pin, int func)
+{
+	p32_ppsout *	pps;
+
+	if (!isPpsPin(pin))
+	{
+		return false;
+	}
+
+	/* Check if the requested peripheral output function can be mapped to 
+	** the requested pin.
+	*/
+	if ((ppsSetFromPin(pin) & ppsSetFromFunc(func)) == 0)
+	{
+		return false;
+	}	
+
+	/* An output is mapped by storing the select value for the output function
+	** being mapped into the mapping register associated with the pin.
+	*/
+	pps = ppsOutputRegister(pin);
+	*pps = ppsOutputSelect(func);
+
+	return true;
+	
+}
+
+#endif	// defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
 
 //************************************************************************
 //*	Interrupts are enabled by setting the IE bit in the status register
