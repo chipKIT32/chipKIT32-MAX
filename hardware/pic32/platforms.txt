@@ -2,7 +2,7 @@
 pic32.recipe.c.o.pattern={0}{1}::{2}::{3}{4}::-DF_CPU={5}::-D{6}::-D{7}::{8}::{9}::{10}::-o::{11}
 pic32.recipe.cpp.o.pattern={0}{1}::{2}::{3}{4}::-DF_CPU={5}::-D{6}::-D{7}::{8}::{9}::{10}::-o::{11}
 pic32.recipe.ar.pattern={0}{1}::{2}::{3}{4}::{5}
-pic32.recipe.c.combine.pattern={0}{1}::{2}::{3}{4}::-o::{5}{6}.elf::{7}::{8}::-L{9}::-lm::-T::{10}/{11}
+pic32.recipe.c.combine.pattern={0}{1}::{2}::{3}{4}::-o::{5}{6}.elf::{7}::{8}::-L{9}::-lm::-T::{10}/{11}::-T{12}/{13}
 pic32.recipe.objcopy.eep.pattern={0}{1}::{2}::{3}.elf::{4}.eep
 pic32.recipe.objcopy.hex.pattern={0}{1}::{2}::{3}.elf
 
@@ -37,8 +37,9 @@ pic32.compiler.upload.cmd=
 pic32.compiler.includepath={0}/hardware/pic32/compiler/pic32-tools/pic32mx/include
 pic32.compiler.upload.flags=
 #pic32.library.path=./hardware/pic32/cores/pic32
-pic32.library.path=./hardware/pic32/cores/pic32
+pic32.library.core.path=./hardware/pic32/cores/pic32
+pic32.library.path=./hardware/pic32/libraries
 pic32.ldscript=chipKIT-BL-mega.ld
-pic32.library.core.path=./hardware/pic32/libraries
-pic32.compiler.define=::-DMPIDEVER=0x01000301::-DMPIDE=23::
+pic32.ldcommon=chipKIT-application-COMMON.ld
+pic32.compiler.define=::-DMPIDEVER=0x01000303::-DMPIDE=23::
 pic32.build.variant=Default_100

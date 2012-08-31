@@ -270,7 +270,7 @@ public class Base {
    //Issue: 104 Need to support loading examples, and libraries based on platform
     String platformname =  getBoardPreferences().get("platform");
     logger.debug("!!!Base: Platform Name: " + platformname);    
-    String libraryPath = getPlatformPreferences(platformname).get("library.core.path");
+    String libraryPath = getPlatformPreferences(platformname).get("library.path");
     logger.debug("!!!Base: Library Path: " + libraryPath);        
     librariesFolder = getContentFile(libraryPath);
     logger.debug("Base: librariesFolder: " + librariesFolder);
@@ -962,9 +962,9 @@ public class Base {
 			//Find the current target. Get the platform, and then select the correct name and core path.
 	    	String platformname = this.getBoardPreferences().get("platform");
 	    	String targetname = this.getPlatformPreferences(platformname).get("name");
-	        String libraryPath = this.getPlatformPreferences(platformname).get("library.core.path");
+	        String libraryPath = this.getPlatformPreferences(platformname).get("library.path");
 
-	        logger.debug("Base: library.core.path  = " + libraryPath);
+	        logger.debug("Base: library.path  = " + libraryPath);
 	    	logger.debug("Base: DEBUG: add libraries.");
 	    	JMenuItem platformItem = new JMenuItem(targetname);
 	    	platformItem.setEnabled(false);
@@ -1002,12 +1002,12 @@ public class Base {
     	String targetname = this.getPlatformPreferences(platformname).get("name");
         logger.debug("Base: rebuildExamplesMenu: Target Name: " + targetname);    
         
-        String libraryPath = this.getPlatformPreferences(platformname).get("library.core.path");
+        String libraryPath = this.getPlatformPreferences(platformname).get("library.path");
 
         menu.removeAll();
         boolean found = addSketches(menu, examplesFolder, false);
 
-        logger.debug("Base: RebuildExamplesMenu: DEBUG: Find examples in library.core.path  = " + libraryPath);
+        logger.debug("Base: RebuildExamplesMenu: DEBUG: Find examples in library.path  = " + libraryPath);
     	JMenuItem platformItem = new JMenuItem("Platform: " + targetname);
     	platformItem.setEnabled(false);
     	menu.add(platformItem);
