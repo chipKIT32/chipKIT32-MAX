@@ -67,7 +67,7 @@
 
 #define	NUM_SERIAL_PORTS	2
 #define	NUM_SPI_PORTS		1
-#define	NUM_I2C_PORTS		1
+#define	NUM_I2C_PORTS		2
 
 #define NUM_DSPI_PORTS		1
 #define NUM_DTWI_PORTS		2
@@ -129,7 +129,7 @@
 #define PIN_IC4		4
 #define	PIN_IC5		11
 
-#define	PIN_TCK1	6
+//#define	PIN_TCK1	46 (TCK would be what?)
 //#define	PIN_TCK2	not available on the chip
 //#define	PIN_TCK3	not available on the chip
 //#define	PIN_TCK4	not available on the chip
@@ -139,11 +139,11 @@
 /*					Interrupt Pin Declarations					*/
 /* ------------------------------------------------------------ */
 
-#define	PIN_INT0	5
-#define	PIN_INT1	1
-#define PIN_INT2	2
-#define	PIN_INT3	3
-#define	PIN_INT4	4
+#define	PIN_INT0	4
+#define	PIN_INT1	0
+#define	PIN_INT2	1
+#define	PIN_INT3	2
+#define	PIN_INT4	3
 
 /* ------------------------------------------------------------ */
 /*					SPI Pin Declarations						*/
