@@ -139,11 +139,11 @@
 /*					Interrupt Pin Declarations					*/
 /* ------------------------------------------------------------ */
 
-#define	PIN_INT0	5
-#define	PIN_INT1	1
-#define PIN_INT2	2
-#define	PIN_INT3	3
-#define	PIN_INT4	4
+#define	PIN_INT0	4
+#define	PIN_INT1	0
+#define	PIN_INT2	1
+#define	PIN_INT3	2
+#define	PIN_INT4	3
 
 /* ------------------------------------------------------------ */
 /*					SPI Pin Declarations						*/
