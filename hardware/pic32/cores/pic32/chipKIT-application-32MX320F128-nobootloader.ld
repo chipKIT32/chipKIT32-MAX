@@ -4,6 +4,12 @@ OUTPUT_ARCH(pic32mx)
 ENTRY(_reset)
 /*
  * Provide for a minimum stack and heap size
+ * - _min_stack_size -/* Default linker script, for normal executables */
+OUTPUT_FORMAT("elf32-tradlittlemips")
+OUTPUT_ARCH(pic32mx)
+ENTRY(_reset)
+/*
+ * Provide for a minimum stack and heap size
  * - _min_stack_size - represents the minimum space that must be made
  *                     available for the stack.  Can be overridden from
  *                     the command line using the linker's --defsym option.
@@ -30,16 +36,16 @@ INPUT("processor.o")
 MEMORY
 {
   exception_mem              : ORIGIN = 0x9D000000, LENGTH = 0x1000
-  kseg0_program_mem    (rx)  : ORIGIN = 0x9D001000, LENGTH = 0x7E000
-  kseg0_eeprom_mem           : ORIGIN = 0x9D07F000, LENGTH = 0x1000
-  kseg0_boot_mem             : ORIGIN = 0x9FC00490, LENGTH = 0
-  kseg1_boot_mem             : ORIGIN = 0xBFC00000, LENGTH = 0 
-  debug_exec_mem             : ORIGIN = 0xBFC02000, LENGTH = 0
+  kseg0_program_mem    (rx)  : ORIGIN = 0x9D001000, LENGTH = 0x1E000
+  kseg0_eeprom_mem           : ORIGIN = 0x9D01F000, LENGTH = 0x1000
+  kseg0_boot_mem             : ORIGIN = 0x9FC00490, LENGTH = 0x970
+  kseg1_boot_mem             : ORIGIN = 0xBFC00000, LENGTH = 0x490
+  debug_exec_mem             : ORIGIN = 0xBFC02000, LENGTH = 0xFF0
   config3                    : ORIGIN = 0xBFC02FF0, LENGTH = 4 
   config2                    : ORIGIN = 0xBFC02FF4, LENGTH = 4
   config1                    : ORIGIN = 0xBFC02FF8, LENGTH = 4
   config0                    : ORIGIN = 0xBFC02FFC, LENGTH = 4
-  kseg1_data_mem       (w!x) : ORIGIN = 0xA0000000, LENGTH = 0x20000
+  kseg1_data_mem       (w!x) : ORIGIN = 0xA0000000, LENGTH = 0x4000
   sfrs                       : ORIGIN = 0xBF800000, LENGTH = 0x100000
   configsfrs                 : ORIGIN = 0xBFC02FF0, LENGTH = 0x10
 }
@@ -119,17 +125,46 @@ _imageExecutionJumpToFirstInFlash   = 0x02000000 ;  /* the bootloader will jump 
  *************************************************************************/
  _IMAGE_TYPE            = _imageMPIDE | _imageJustInTimeFlashErase | _imageExecutionJumpAddress;
  _IMAGE_FLASH_SIZE      = LENGTH(exception_mem) + LENGTH(kseg0_program_mem);
- _JUMP_ADDR             = _RESET_ADDR;
+_JUMP_ADDR              = _RESET_ADDR;
 
 SECTIONS
 {
+  .config_BFC02FF0 : {
+  } > config3
+  .config_BFC02FF4 : {
+    LONG(0xFFF8FFD9)
+  } > config2
+  .config_BFC02FF8 : {
+    LONG(0xFF6AC97B)
+  } > config1
+  .config_BFC02FFC : {
+    LONG(0x7FFFFFFF)
+  } > config0
+}
+
+SECTIONS
+{
+  .bev_excpt _BEV_EXCPT_ADDR :
+  {
+    KEEP(*(.bev_handler))
+  } > kseg1_boot_mem
+
+  .dbg_excpt _DBG_EXCPT_ADDR (NOLOAD) :
+  {
+    . += (DEFINED (_DEBUGGER) ? 0x8 : 0x0);
+  } > kseg1_boot_mem
+
+  .dbg_code _DBG_CODE_ADDR (NOLOAD) :
+  {
+    . += (DEFINED (_DEBUGGER) ? LENGTH(debug_exec_mem) : 0x0);
+  } > debug_exec_mem
+
   /* Boot Sections */
   .reset _RESET_ADDR :
   {
     KEEP(*(.reset))
-  } > kseg0_program_mem
+  } > kseg1_boot_mem
 }
 
 /* From here out every linker script is the same, so just include it */
-INCLUDE "./hardware/pic32/cores/pic32/chipKIT-application-COMMON.ld"
-
+/*INCLUDE "chipKIT-application-COMMON.ld"*/

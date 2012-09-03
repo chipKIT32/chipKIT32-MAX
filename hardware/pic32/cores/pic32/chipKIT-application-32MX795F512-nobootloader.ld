@@ -4,6 +4,12 @@ OUTPUT_ARCH(pic32mx)
 ENTRY(_reset)
 /*
  * Provide for a minimum stack and heap size
+ * - _min_stack_size -/* Default linker script, for normal executables */
+OUTPUT_FORMAT("elf32-tradlittlemips")
+OUTPUT_ARCH(pic32mx)
+ENTRY(_reset)
+/*
+ * Provide for a minimum stack and heap size
  * - _min_stack_size - represents the minimum space that must be made
  *                     available for the stack.  Can be overridden from
  *                     the command line using the linker's --defsym option.
@@ -30,18 +36,18 @@ INPUT("processor.o")
 MEMORY
 {
   exception_mem              : ORIGIN = 0x9D000000, LENGTH = 0x1000
-  kseg0_program_mem    (rx)  : ORIGIN = 0x9D001000, LENGTH = 0x6000
-  kseg0_eeprom_mem           : ORIGIN = 0x9D006000, LENGTH = 0x1000
-  kseg0_boot_mem             : ORIGIN = 0x9FC00490, LENGTH = 0
-  kseg1_boot_mem             : ORIGIN = 0xBFC00000, LENGTH = 0x490 
-  debug_exec_mem             : ORIGIN = 0xBFC00490, LENGTH = 0x760
-  config3                    : ORIGIN = 0xBFC00BF0, LENGTH = 0x4
-  config2                    : ORIGIN = 0xBFC00BF4, LENGTH = 0x4
-  config1                    : ORIGIN = 0xBFC00BF8, LENGTH = 0x4
-  config0                    : ORIGIN = 0xBFC00BFC, LENGTH = 0x4
-  kseg1_data_mem       (w!x) : ORIGIN = 0xA0000000, LENGTH = 0x2000
+  kseg0_program_mem    (rx)  : ORIGIN = 0x9D001000, LENGTH = 0x7E000
+  kseg0_eeprom_mem           : ORIGIN = 0x9D07F000, LENGTH = 0x1000
+  kseg0_boot_mem             : ORIGIN = 0x9FC00490, LENGTH = 0x970
+  kseg1_boot_mem             : ORIGIN = 0xBFC00000, LENGTH = 0x490
+  debug_exec_mem             : ORIGIN = 0xBFC02000, LENGTH = 0xFF0 
+  config3                    : ORIGIN = 0xBFC02FF0, LENGTH = 4 
+  config2                    : ORIGIN = 0xBFC02FF4, LENGTH = 4
+  config1                    : ORIGIN = 0xBFC02FF8, LENGTH = 4
+  config0                    : ORIGIN = 0xBFC02FFC, LENGTH = 4
+  kseg1_data_mem       (w!x) : ORIGIN = 0xA0000000, LENGTH = 0x20000
   sfrs                       : ORIGIN = 0xBF800000, LENGTH = 0x100000
-  configsfrs                 : ORIGIN = 0xBFC00BF0, LENGTH = 0x10
+  configsfrs                 : ORIGIN = 0xBFC02FF0, LENGTH = 0x10
 }
 
 /*************************************************************************
@@ -51,7 +57,7 @@ _ebase_address  	    = ORIGIN(exception_mem);
 _IMAGE_PTR_TABLE       	= _ebase_address + 0x0F8;
 _IMAGE_HEADER_ADDR      = _ebase_address + 0x0FC;
 _GEN_EXCPT_ADDR         = _ebase_address + 0x180;
-_RESET_ADDR             = ORIGIN(kseg1_boot_mem );
+_RESET_ADDR             = ORIGIN(kseg1_boot_mem);
 _EEPROM_ADDR            = ORIGIN(kseg0_eeprom_mem);
 _BEV_EXCPT_ADDR         = 0xBFC00380;
 _DBG_EXCPT_ADDR         = 0xBFC00480;
@@ -123,17 +129,17 @@ _JUMP_ADDR              = _RESET_ADDR;
 
 SECTIONS
 {
-  .config_BFC00BF0 : {
-    LONG(0xCFFFFFFF)
+  .config_BFC02FF0 : {
+    LONG(0x2207FFFF)
   } > config3
-  .config_BFC00BF4 : {
-    LONG(0xFFF9FFD9)
+  .config_BFC02FF4 : {
+    LONG(0xFFF879D9)
   } > config2
-  .config_BFC00BF8 : {
-    LONG(0xFF6ACDDB)
+  .config_BFC02FF8 : {
+    LONG(0xFF6ACD5B)
   } > config1
-  .config_BFC00BFC : {
-    LONG(0x7FFFFFFB)
+  .config_BFC02FFC : {
+    LONG(0x7FFFFFF7)
   } > config0
 }
 
@@ -162,4 +168,4 @@ SECTIONS
 }
 
 /* From here out every linker script is the same, so just include it */
-INCLUDE "./hardware/pic32/cores/pic32/chipKIT-application-COMMON.ld"
+/*INCLUDE "chipKIT-application-COMMON.ld"*/
