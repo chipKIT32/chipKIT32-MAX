@@ -82,7 +82,7 @@ uno_pic32.board=_BOARD_UNO_
 uno_pic32.board.define=
 #uno_pic32.compiler.define=
 uno_pic32.ccflags=ffff
-uno_pic32.ldscript=chipKIT-application-32MX320F128L.ld
+uno_pic32.ldscript=chipKIT-application-32MX320F128.ld
 # end of new items
 
 # Use a high -Gnum for devices that have less than 64K of data memory
@@ -117,7 +117,7 @@ mega_pic32.platform=pic32
 mega_pic32.board=_BOARD_MEGA_
 mega_pic32.board.define=
 mega_pic32.ccflags=ffff
-mega_pic32.ldscript=chipKIT-application-32MX795F512L.ld
+mega_pic32.ldscript=chipKIT-application-32MX795F512.ld
 # end of new items
 
 mega_pic32.upload.protocol=stk500v2
@@ -146,7 +146,7 @@ mega_usb_pic32.platform=pic32
 mega_usb_pic32.board=_BOARD_MEGA_USB_
 mega_usb_pic32.board.define=-D_USE_USB_FOR_SERIAL_
 mega_usb_pic32.ccflags=ffff
-mega_usb_pic32.ldscript=chipKIT-application-32MX795F512L.ld
+mega_usb_pic32.ldscript=chipKIT-application-32MX795F512.ld
 # end of new items
 
 mega_usb_pic32.upload.protocol=stk500v2
@@ -175,7 +175,7 @@ chipkit_uc32.platform=pic32
 chipkit_uc32.board=_BOARD_UC32_
 chipkit_uc32.board.define=
 chipkit_uc32.ccflags=ffff
-chipkit_uc32.ldscript=chipKIT-application-32MX340F512H.ld
+chipkit_uc32.ldscript=chipKIT-application-32MX340F512.ld
 # end of new items
 
 # Use a high -Gnum for devices that have less than 64K of data memory
@@ -210,7 +210,7 @@ cerebot_mx3ck_512.platform=pic32
 cerebot_mx3ck_512.board=_BOARD_CEREBOT_MX3CK_512_
 cerebot_mx3ck_512.board.define=
 cerebot_mx3ck_512.ccflags=ffff
-cerebot_mx3ck_512.ldscript=chipKIT-application-32MX340F512H.ld
+cerebot_mx3ck_512.ldscript=chipKIT-application-32MX340F512.ld
 # end of new items
 
 # Use a high -Gnum for devices that have less than 64K of data memory
@@ -245,7 +245,7 @@ cerebot_mx3ck.platform=pic32
 cerebot_mx3ck.board=_BOARD_CEREBOT_MX3CK_
 cerebot_mx3ck.board.define=
 cerebot_mx3ck.ccflags=ffff
-cerebot_mx3ck.ldscript=chipKIT-application-32MX320F128L.ld
+cerebot_mx3ck.ldscript=chipKIT-application-32MX320F128.ld
 # end of new items
 
 # Use a high -Gnum for devices that have less than 64K of data memory
@@ -280,7 +280,7 @@ cerebot_mx4ck.platform=pic32
 cerebot_mx4ck.board=_BOARD_CEREBOT_MX4CK_
 cerebot_mx4ck.board.define=
 cerebot_mx4ck.ccflags=ffff
-cerebot_mx4ck.ldscript=chipKIT-application-32MX460F512L.ld
+cerebot_mx4ck.ldscript=chipKIT-application-32MX460F512.ld
 # end of new items
 
 cerebot_mx4ck.upload.protocol=stk500v2
@@ -309,7 +309,7 @@ cerebot_mx7ck.platform=pic32
 cerebot_mx7ck.board=_BOARD_CEREBOT_MX7CK_
 cerebot_mx7ck.board.define=
 cerebot_mx7ck.ccflags=ffff
-cerebot_mx7ck.ldscript=chipKIT-application-32MX795F512L.ld
+cerebot_mx7ck.ldscript=chipKIT-application-32MX795F512.ld
 # end of new items
 
 cerebot_mx7ck.upload.protocol=stk500v2
@@ -371,7 +371,7 @@ cerebot32mx4.platform=pic32
 cerebot32mx4.board=_BOARD_CEREBOT_32MX4_
 cerebot32mx4.board.define=
 cerebot32mx4.ccflags=ffff
-cerebot32mx4.ldscript=chipKIT-application-32MX460F512L.ld
+cerebot32mx4.ldscript=chipKIT-application-32MX460F512.ld
 # end of new items
 
 cerebot32mx4.upload.protocol=stk500v2
@@ -400,7 +400,7 @@ cerebot32mx7.platform=pic32
 cerebot32mx7.board=_BOARD_CEREBOT_32MX7_
 cerebot32mx7.board.define=
 cerebot32mx7.ccflags=ffff
-cerebot32mx7.ldscript=chipKIT-application-32MX795F512L.ld
+cerebot32mx7.ldscript=chipKIT-application-32MX795F512.ld
 # end of new items
 
 cerebot32mx7.upload.protocol=stk500v2
@@ -429,7 +429,7 @@ mc_pic32_starterkit.platform=pic32
 mc_pic32_starterkit.board=_BOARD_PIC32_STARTER_KIT_
 mc_pic32_starterkit.board.define=
 mc_pic32_starterkit.ccflags=ffff
-mc_pic32_starterkit.ldscript=chipKIT-application-32MX320F128L.ld
+mc_pic32_starterkit.ldscript=chipKIT-application-32MX320F128.ld
 # end of new items
 
 mc_pic32_starterkit.upload.protocol=stk500v2
@@ -458,7 +458,7 @@ mc_pic32_ethernet_starterkit.platform=pic32
 mc_pic32_ethernet_starterkit.board=_BOARD_PIC32_ETHERNET_STARTER_KIT_
 mc_pic32_ethernet_starterkit.board.define=-D_USE_USB_FOR_SERIAL_
 mc_pic32_ethernet_starterkit.ccflags=ffff
-mc_pic32_ethernet_starterkit.ldscript=chipKIT-application-32MX795F512L.ld
+mc_pic32_ethernet_starterkit.ldscript=chipKIT-application-32MX795F512.ld
 # end of new items
 
 mc_pic32_ethernet_starterkit.upload.protocol=stk500v2
@@ -487,7 +487,7 @@ mc_pic32_usb_starterkit.platform=pic32
 mc_pic32_usb_starterkit.board=_BOARD_PIC32_USB_STARTER_KIT_
 mc_pic32_usb_starterkit.board.define=-D_USE_USB_FOR_SERIAL_
 mc_pic32_usb_starterkit.ccflags=ffff
-mc_pic32_usb_starterkit.ldscript=chipKIT-application-32MX795F512L.ld
+mc_pic32_usb_starterkit.ldscript=chipKIT-application-32MX795F512.ld
 # end of new items
 
 mc_pic32_usb_starterkit.upload.protocol=stk500v2
@@ -516,7 +516,7 @@ mc_pic32_explorer16.platform=pic32
 mc_pic32_explorer16.board=_BOARD_PIC32_EXPLORER16_
 mc_pic32_explorer16.board.define=
 mc_pic32_explorer16.ccflags=ffff
-mc_pic32_explorer16.ldscript=chipKIT-application-32MX320F128L.ld
+mc_pic32_explorer16.ldscript=chipKIT-application-32MX320F128.ld
 # end of new items
 
 mc_pic32_explorer16.upload.protocol=stk500v2
@@ -545,7 +545,7 @@ mikroe_multimedia.platform=pic32
 mikroe_multimedia.board=_BOARD_MIKROE_MULTIMEDIA_
 mikroe_multimedia.board.define=-D_USE_USB_FOR_SERIAL_
 mikroe_multimedia.ccflags=ffff
-mikroe_multimedia.ldscript=chipKIT-application-32MX460F512L.ld
+mikroe_multimedia.ldscript=chipKIT-application-32MX460F512.ld
 # end of new items
 
 mikroe_multimedia.upload.protocol=stk500v2
@@ -574,7 +574,7 @@ mikroe_mikromedia.platform=pic32
 mikroe_mikromedia.board=_BOARD_MIKROE_MIKROMEDIA_
 mikroe_mikromedia.board.define=-D_USE_USB_FOR_SERIAL_
 mikroe_mikromedia.ccflags=ffff
-mikroe_mikromedia.ldscript=chipKIT-application-32MX460F512L.ld
+mikroe_mikromedia.ldscript=chipKIT-application-32MX460F512.ld
 # end of new items
 
 mikroe_mikromedia.upload.protocol=stk500v2
@@ -603,7 +603,7 @@ ubw32_mx460.platform=pic32
 ubw32_mx460.board=_BOARD_UBW32_MX460_
 ubw32_mx460.board.define=-D_USE_USB_FOR_SERIAL_
 ubw32_mx460.ccflags=ffff
-ubw32_mx460.ldscript=chipKIT-application-32MX460F512L.ld
+ubw32_mx460.ldscript=chipKIT-application-32MX460F512.ld
 # end of new items
 
 ubw32_mx460.upload.protocol=stk500v2
@@ -632,7 +632,7 @@ ubw32_mx795.platform=pic32
 ubw32_mx795.board=_BOARD_UBW32_MX795_
 ubw32_mx795.board.define=-D_USE_USB_FOR_SERIAL_
 ubw32_mx795.ccflags=ffff
-ubw32_mx795.ldscript=chipKIT-application-32MX795F512L.ld
+ubw32_mx795.ldscript=chipKIT-application-32MX795F512.ld
 # end of new items
 
 ubw32_mx795.upload.protocol=stk500v2
@@ -661,7 +661,7 @@ cui32.platform=pic32
 cui32.board=_BOARD_CUI32_
 cui32.board.define=-D_USE_USB_FOR_SERIAL_
 cui32.ccflags=ffff
-cui32.ldscript=chipKIT-application-32MX440F512H.ld
+cui32.ldscript=chipKIT-application-32MX440F512.ld
 # end of new items
 
 cui32.upload.protocol=stk500v2
@@ -690,7 +690,7 @@ CUI32stem.platform=pic32
 CUI32stem.board=_BOARD_CUI32_
 CUI32stem.board.define=-D_USE_USB_FOR_SERIAL_
 CUI32stem.ccflags=ffff
-CUI32stem.ldscript=chipKIT-application-32MX795F512L.ld
+CUI32stem.ldscript=chipKIT-application-32MX795F512.ld
 # end of new items
 
 CUI32stem.upload.protocol=stk500v2
@@ -720,7 +720,7 @@ fubarino_sd.platform=pic32
 fubarino_sd.board=_BOARD_FUBARINO_SD_
 fubarino_sd.board.define=-D_USE_USB_FOR_SERIAL_
 fubarino_sd.ccflags=ffff
-fubarino_sd.ldscript=chipKIT-application-32MX440F256H.ld
+fubarino_sd.ldscript=chipKIT-application-32MX440F256.ld
 # end of new items
 
 fubarino_sd.upload.protocol=stk500v2
@@ -748,7 +748,7 @@ fubarino_mini.platform=pic32
 fubarino_mini.board=_BOARD_FUBARINO_MINI_
 fubarino_mini.board.define=-D_USE_USB_FOR_SERIAL_
 fubarino_mini.ccflags=-Map="map.map"
-fubarino_mini.ldscript=chipKIT-application-32MX250F128D.ld
+fubarino_mini.ldscript=chipKIT-application-32MX250F128.ld
 # end of new items
 
 # Use a high -Gnum for devices that have less than 64K of data memory

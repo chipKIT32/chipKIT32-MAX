@@ -392,8 +392,6 @@ const uint8_t analog_pin_to_channel_PGM[] = {
 
 void _board_init(void) {
 	//*	Turn Secondary oscillator off
-	//*	this is only needed on the mega board because the mega uses secondary
-	// ocsilator pins as general I/O
 	
 	unsigned int dma_status;
 	unsigned int int_status;

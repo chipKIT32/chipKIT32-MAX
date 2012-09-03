@@ -117,17 +117,17 @@
 /*					Timer Pin Declarations						*/
 /* ------------------------------------------------------------ */
 
-#define PIN_OC1		5
-#define	PIN_OC2		8
-#define	PIN_OC3		9
-#define	PIN_OC4		10
-#define	PIN_OC5		11
+#define PIN_OC1		4
+#define	PIN_OC2		7
+#define	PIN_OC3		8
+#define	PIN_OC4		9
+#define	PIN_OC5		10
 
-#define PIN_IC1		1
-#define PIN_IC2		2
-#define PIN_IC3		3
-#define PIN_IC4		4
-#define	PIN_IC5		11
+#define PIN_IC1		0
+#define PIN_IC2		1
+#define PIN_IC3		2
+#define PIN_IC4		3
+#define	PIN_IC5		10
 
 //#define	PIN_TCK1	46 (TCK would be what?)
 //#define	PIN_TCK2	not available on the chip
@@ -153,16 +153,14 @@
 ** the default SPI port as it's pin numbers stay constant on all
 ** devices.
 */
-/// TODO: For Fubarino, do we need these?
-const static uint8_t SS   = 105;		// PIC32 SS2
-const static uint8_t MOSI =	104;		// PIC32 SDO2
-const static uint8_t MISO = 103;		// PIC32 SDI2
-const static uint8_t SCK  = 102;		// PIC32 SCK2
+const static uint8_t SS   = 27;		// PIC32 SS2
+const static uint8_t MOSI =	26;		// PIC32 SDO2
+const static uint8_t MISO = 25;		// PIC32 SDI2
+const static uint8_t SCK  = 24;		// PIC32 SCK2
 
 /* The Digilent DSPI library uses these ports.
 */
-/// TODO: For Fubarino, do we need these?
-#define	PIN_DSPI0_SS	105
+#define	PIN_DSPI0_SS	27
 
 /* ------------------------------------------------------------ */
 /*					Analog Pins									*/
@@ -194,14 +192,14 @@ const static uint8_t SCK  = 102;		// PIC32 SCK2
 /* These define the pin numbers for the various change notice
 ** pins.
 */
-#define	PIN_CN0		7
-#define	PIN_CN1		6
-#define	PIN_CN2		33
-#define	PIN_CN3		32
-#define	PIN_CN4		31
-#define	PIN_CN5		30
-#define	PIN_CN6		29
-#define	PIN_CN7		28
+#define	PIN_CN0		6
+#define	PIN_CN1		5
+#define	PIN_CN2		34
+#define	PIN_CN3		33
+#define	PIN_CN4		32
+#define	PIN_CN5		31
+#define	PIN_CN6		30
+#define	PIN_CN7		29
 #define	PIN_CN8		24
 #define	PIN_CN9		25
 #define	PIN_CN10	26

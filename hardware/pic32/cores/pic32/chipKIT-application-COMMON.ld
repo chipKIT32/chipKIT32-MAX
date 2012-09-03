@@ -552,9 +552,13 @@ SECTIONS
     . = ALIGN(4) ;
     _persist_end = .;
   } >kseg1_data_mem
-  ASSERT( SIZEOF(.dbg_data) + SIZEOF(.persist) + SIZEOF(.ram_exchange_data) <= 0x600, "Bootloader does not preserve debug, RAM Header, or persistent data beyond the first 1.5K")
 
-  .data   :
+  ASSERT( _persist_end <= ORIGIN(kseg1_data_mem) + 0x600, "Bootloader does not preserve debug, RAM Header, or persistent data beyond the first 1.5K")
+
+  /* If this is a bootloader, than skip around the protected memory and don't place anything there */
+  _protected_end = ((_IMAGE_TYPE & (_imageSplitFlashBootloader | _imageProgramFlashBootloader | _imageBootFlashBootloader)) != 0) ? (ORIGIN(kseg1_data_mem) + 0x600) : . ;
+
+  .data  _protected_end :
   {
     _data_begin = . ;
     *(.data .data.* .gnu.linkonce.d.*)
