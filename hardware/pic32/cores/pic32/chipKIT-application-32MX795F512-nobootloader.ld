@@ -130,7 +130,7 @@ _JUMP_ADDR              = _RESET_ADDR;
 SECTIONS
 {
   .config_BFC02FF0 : {
-    LONG(0x2207FFFF)
+    LONG(0x3AFFFFFF)
   } > config3
   .config_BFC02FF4 : {
     LONG(0xFFF879D9)
