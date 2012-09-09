@@ -4,6 +4,8 @@
 
 #include	"wiring.h"
 
+#define     USB_SERIAL_MIN_BUFFER_FREE      128
+
 extern boolean gCdcacm_active;
 
 typedef void (*cdcacm_reset_cbfn)(void);

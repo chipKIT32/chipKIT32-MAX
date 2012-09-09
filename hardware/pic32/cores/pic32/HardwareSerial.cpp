@@ -56,7 +56,8 @@
 //*	Sep  1,	2011	<MLS> Issue #111, #ifdefs around <plib.h>, it was being included twice
 //*	Nov  1,	2011	<MLS> Issue #140, HardwareSerial not derived from Stream 
 //*	Nov  1,	2011	<MLS> Also fixed some other compatibilty issues
-//* Nov 12, 2001	<GeneApperson> Rewrite for board variant support
+//* Nov 12, 2012	<GeneApperson> Rewrite for board variant support
+//* Sep  8, 2012    <BrianSchmalz> Fix dropping bytes on USB RX bug
 //************************************************************************
 #define __LANGUAGE_C__
 
@@ -453,21 +454,30 @@ void HardwareSerial::doSerialInt(void)
 
 ring_buffer rx_bufferUSB = { { 0 }, 0, 0 };
 
+#define     USBSerialBufferFree()     (((RX_BUFFER_SIZE - 1) + rx_bufferUSB.tail - rx_bufferUSB.head) % RX_BUFFER_SIZE)
+
 //*******************************************************************************************
-inline void store_char(unsigned char theChar, ring_buffer *rx_buffer)
+// Return TRUE if we could take the character, return FALSE if there wasn't room
+inline boolean store_char(unsigned char theChar, ring_buffer *rx_buffer)
 {
 int	bufIndex;
 
+    // Compute the place where we want to store this byte - one beyond the head
 	bufIndex	= (rx_buffer->head + 1) % RX_BUFFER_SIZE;
 
-	// if we should be storing the received character into the location
-	// just before the tail (meaning that the head would advance to the
-	// current location of the tail), we're about to overflow the buffer
-	// and so we don't write the character or advance the head.
+    // If the place where we are about to store the character is the tail, then
+    // we would overflow the buffer if we put our character there. This is because
+    // if head = tail, the buffer is empty. If head = tail-1, then the buffer
+    // is full. So only write into the buffer if we are not writing at the tail.
 	if (bufIndex != rx_buffer->tail)
 	{
 		rx_buffer->buffer[rx_buffer->head]	=	theChar;
 		rx_buffer->head	=	bufIndex;
+        return(true);
+	}
+    else
+    {
+        return(false);
 	}
 }
 
@@ -478,14 +488,26 @@ void	USBresetRoutine(void)
 }
 
 //****************************************************************
+// Need to return FALSE if we need USB to hold off for awhile
 boolean	USBstoreDataRoutine(const byte *buffer, int length)
 {
-unsigned int	ii;
+    unsigned int	i;
 
-	for (ii=0; ii<length; ii++)
+    // Put each byte into the serial recieve buffer
+    for (i=0; i<length; i++)
 	{
-		store_char(buffer[ii], &rx_bufferUSB);
+        store_char(buffer[i], &rx_bufferUSB);
 	}
+    // If there isn't going to be enough space for a whole nother buffer, then return
+    // false so USB will NAK and we won't get any more data.
+    if (USBSerialBufferFree() < USB_SERIAL_MIN_BUFFER_FREE)
+    {
+        return(false);
+    }
+    else
+    {
+        return(true);
+    }
 }
 
 
@@ -552,7 +574,7 @@ int USBSerial::read(void)
 {
 	unsigned char theChar;
 
-	// if the head isn't ahead of the tail, we don't have any characters
+	// If the head = tail, then the buffer is empty, so nothing to read
 	if (_rx_buffer->head == _rx_buffer->tail)
 	{
 		return -1;
@@ -561,6 +583,14 @@ int USBSerial::read(void)
 	{
 		theChar				=	_rx_buffer->buffer[_rx_buffer->tail];
 		_rx_buffer->tail	=	(_rx_buffer->tail + 1) % RX_BUFFER_SIZE;
+        
+        // If we just made enough room for the next packet to fit into our buffer,
+        // start the packets flowing from the PC again
+        if (USBSerialBufferFree() >= USB_SERIAL_MIN_BUFFER_FREE)
+        {
+            cdcacm_command_ack();
+        }
+        
 		return (theChar);
 	}
 }
