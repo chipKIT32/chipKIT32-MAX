@@ -162,8 +162,8 @@ static byte			gTXbuffer[PACKET_SIZE];	// packet from host
 // N.B. -1 forces short packets
 static byte			gRXbuffer[NRX][PACKET_SIZE-1]; // packets to host
 static int			gRX_length[NRX];
-static byte			gRX_in;
-static byte			gRX_out;
+static volatile byte			gRX_in;
+static volatile byte			gRX_out;
 
 static boolean		gDiscard;	// true when we don't think anyone is listening
 
@@ -211,7 +211,7 @@ int buffersNeeded;
 int m;
 int previousInterrutLevel;
 		
-//	ASSERT(length);
+	// ASSERT(length);
 
 	if (! gCdcacm_attached || gDiscard || (length <= 0))
 	{

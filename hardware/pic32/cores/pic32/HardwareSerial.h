@@ -64,7 +64,7 @@
 // is the index of the location from which to read.
 // The algorithms used to operate on the head and tail assume that the
 // size is a power of 2. (e.g. 32, 64, 128, etc)
-#define RX_BUFFER_SIZE 128
+#define RX_BUFFER_SIZE 512
 
 typedef struct {
 	unsigned char buffer[RX_BUFFER_SIZE];
