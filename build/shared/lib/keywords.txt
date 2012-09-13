@@ -172,6 +172,7 @@ shiftOut	KEYWORD2	ShiftOut
 tone	KEYWORD2	Tone
 
 Serial	KEYWORD3	Serial
+Serial0	KEYWORD3	Serial
 Serial1	KEYWORD3	Serial
 Serial2	KEYWORD3	Serial
 Serial3	KEYWORD3	Serial
