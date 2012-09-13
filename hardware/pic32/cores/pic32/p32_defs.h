@@ -393,7 +393,7 @@ typedef uint32_t p32_ppsin;
 */
 #define	_PPS_RPA0R		0
 #define	_PPS_RPA1R		1
-#define	_PPS_RP12R		2
+#define	_PPS_RPA2R		2
 #define	_PPS_RPA3R		3
 #define	_PPS_RPA4R		4
 #define _PPS_RPA8R		8

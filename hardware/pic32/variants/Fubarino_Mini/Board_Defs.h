@@ -59,7 +59,7 @@
 /* Define the peripherals available on the board.
 */
 #define	NUM_DIGITAL_PINS	33
-#define	NUM_ANALOG_PINS		15
+#define	NUM_ANALOG_PINS		13
 #define NUM_OC_PINS			5
 #define	NUM_IC_PINS			5
 #define	NUM_TCK_PINS		5
@@ -169,22 +169,19 @@ const static uint8_t SCK  = 24;		// PIC32 SCK2
 ** used to map an analog pin number to the corresponding digital
 ** pin number.
 */
-#define	A0		44
-#define	A1		43
-#define A2		42
-#define A3		41
-#define A4		40
-#define A5		39
-#define A6		38
-#define A7		37
-#define A8		36
-#define A9		35
-#define A10		34
-#define A11		33
-#define	A12		32
-#define	A13		31
-#define	A14		30
-//#define	A15		28
+#define	A0		0
+#define	A1		3
+#define A2		4
+#define A3		5
+#define A4		6
+#define A5		7
+#define A6		8
+#define A7		9
+#define A8		10
+#define A9		11
+#define A10		12
+#define A11		13
+#define A12     20
 
 /* ------------------------------------------------------------ */
 /*					Change Notice Pins							*/
@@ -295,9 +292,9 @@ extern const uint8_t	external_int_to_digital_pin_PGM[];
 #define	_SER0_IPL		_UART1_IPL_IPC
 #define	_SER0_SPL		_UART1_SPL_IPC
 #define	_SER0_TX_OUT	PPS_OUT_U1TX
-#define	_SER0_TX_PIN	8
+#define	_SER0_TX_PIN	5
 #define	_SER0_RX_IN		PPS_IN_U1RX
-#define	_SER0_RX_PIN	9
+#define	_SER0_RX_PIN	6
 
 /* Serial port 1 uses UART2
 */
@@ -308,9 +305,9 @@ extern const uint8_t	external_int_to_digital_pin_PGM[];
 #define	_SER1_IPL		_UART2_IPL_IPC
 #define	_SER1_SPL		_UART2_SPL_IPC
 #define	_SER1_TX_OUT	PPS_OUT_U2TX
-#define	_SER1_TX_PIN	2
+#define	_SER1_TX_PIN	26
 #define	_SER1_RX_IN		PPS_IN_U2RX
-#define	_SER1_RX_PIN	1
+#define	_SER1_RX_PIN	25
 
 /* ------------------------------------------------------------ */
 /*					SPI Port Declarations						*/
