@@ -193,39 +193,39 @@ const uint16_t	digital_pin_to_bit_mask_PGM[] = {
 ** input associated with that pin.
 */
 const uint8_t	digital_pin_to_timer_PGM[] = {
-	_TIMER_IC1 ,	// 0  RD8
-	_TIMER_IC2 ,	// 1  RD9
-	_TIMER_IC3 ,	// 2  RD10
-	_TIMER_IC4 ,	// 3  RD11
-	_TIMER_OC1 ,	// 4  RD0
-	NOT_ON_TIMER ,	// 5  RC13
-	_TIMER_TCK1 ,	// 6  RC14
-	_TIMER_OC2 ,	// 7  RD1
-	_TIMER_OC3 ,	// 8  RD2
-	_TIMER_OC4 ,	// 9 RD3
-	_TIMER_OC5 | _TIMER_IC5,    // 10 RD4
-	NOT_ON_TIMER ,	// 11 RD5
-	NOT_ON_TIMER ,	// 12 RD6
-	NOT_ON_TIMER ,	// 13 RD7
-	NOT_ON_TIMER ,	// 14 RF0
-	NOT_ON_TIMER ,	// 15 RF1
-	NOT_ON_TIMER ,	// 16 RE0
-	NOT_ON_TIMER ,	// 17 RE2
-	NOT_ON_TIMER ,	// 18 RE3
-	NOT_ON_TIMER ,	// 19 RE4
-	NOT_ON_TIMER ,	// 20 RE5
-	NOT_ON_TIMER ,	// 21 RE6
-	NOT_ON_TIMER ,	// 22 RE7
-	NOT_ON_TIMER ,	// 23 RG6
-	NOT_ON_TIMER ,	// 24 RG7
-	NOT_ON_TIMER ,	// 25 RG8
-	NOT_ON_TIMER ,	// 26 RG9
-	NOT_ON_TIMER ,	// 27 RF4
-	NOT_ON_TIMER ,	// 28 RF5
-	NOT_ON_TIMER ,	// 29 RB5
-	NOT_ON_TIMER ,	// 30 RB4
-	NOT_ON_TIMER ,	// 31 RB3
-	NOT_ON_TIMER ,	// 32 RB2
+	NOT_ON_TIMER ,	//  0  RB13
+	NOT_ON_TIMER ,	//  1  RA10
+	NOT_ON_TIMER ,	//  2  RA7
+	NOT_ON_TIMER ,	//  3  RB14
+	NOT_ON_TIMER ,	//  4  RB15
+	NOT_ON_TIMER ,	//  5  RA0
+	NOT_ON_TIMER ,	//  6  RA1
+	NOT_ON_TIMER ,	//  7  RB0
+	NOT_ON_TIMER ,	//  8  RB1
+	NOT_ON_TIMER ,	//  9  RB2
+	NOT_ON_TIMER ,  // 10  RB3
+	NOT_ON_TIMER ,	// 11  RC0
+	NOT_ON_TIMER ,	// 12  RC1
+	NOT_ON_TIMER ,	// 13  RC2
+	NOT_ON_TIMER ,	// 14  RA2
+	NOT_ON_TIMER ,	// 15  RA3
+	NOT_ON_TIMER ,	// 16  RA8
+	NOT_ON_TIMER ,	// 17  RB4
+	NOT_ON_TIMER ,	// 18  RA4
+	NOT_ON_TIMER ,	// 19  RA9
+	NOT_ON_TIMER ,	// 20  RC3
+	NOT_ON_TIMER ,	// 21  RC4
+	NOT_ON_TIMER ,	// 22  RC5
+	NOT_ON_TIMER ,	// 23  RB5
+	NOT_ON_TIMER ,	// 24  RB7
+	NOT_ON_TIMER ,	// 25  RB8
+	NOT_ON_TIMER ,	// 26  RB9
+	NOT_ON_TIMER ,	// 27  RC6
+	NOT_ON_TIMER ,	// 28  RC7
+	NOT_ON_TIMER ,	// 29  RC8
+	NOT_ON_TIMER ,	// 30  RC9
+	NOT_ON_TIMER ,	// 31  RB10
+	NOT_ON_TIMER ,	// 32  RB11
 };
 
 /* ------------------------------------------------------------ */
@@ -286,39 +286,39 @@ const uint8_t digital_pin_to_pps_out_PGM[] = {
 ** access the table redefined as well.
 */
 const uint8_t digital_pin_to_pps_in_PGM[] = {
-	_PPS_IN(_PPS_RPB13R),		//	0	RB13
+	_PPS_IN(_PPS_RPB13),		//	0	RB13
 	NOT_PPS_PIN,	        	//	1	RA10
 	NOT_PPS_PIN,	        	//	2	RA7
-	_PPS_IN(_PPS_RPB14R),		//	3	RB14
-	_PPS_IN(_PPS_RPB15R),		//	4	RB15
-	_PPS_IN(_PPS_RPA0R),		//	5	RA0
-	_PPS_IN(_PPS_RPA1R),		//	6	RA1
-	_PPS_IN(_PPS_RPB0R),		//	7	RB0
-	_PPS_IN(_PPS_RPB1R),		//	8	RB1
-	_PPS_IN(_PPS_RPB2R),		//	9	RB2
-	_PPS_IN(_PPS_RPB3R),		//	10	RB3
-	_PPS_IN(_PPS_RPC0R),		//	11	RC0
-	_PPS_IN(_PPS_RPC1R),		//	12	RC1
-	_PPS_IN(_PPS_RPC2R),		//	13	RC2
-	_PPS_IN(_PPS_RPA2R),		//	14	RA2
-	_PPS_IN(_PPS_RPA3R),		//	15	RA3
-	_PPS_IN(_PPS_RPA8R),		//	16	RA8
-	_PPS_IN(_PPS_RPB4R),		//	17	RB4
-	_PPS_IN(_PPS_RPA4R), 		//	18	RA4
-	_PPS_IN(_PPS_RPA9R),		//	19	RA9
-	_PPS_IN(_PPS_RPC3R),		//	20	RC3
-	_PPS_IN(_PPS_RPC4R),		//	21	RC4
-	_PPS_IN(_PPS_RPC5R),		//	22	RC5
-	_PPS_IN(_PPS_RPB5R),		//	23  RB5
-	_PPS_IN(_PPS_RPB7R),		//	24	RB7
-	_PPS_IN(_PPS_RPB8R),		//	25	RB8
-	_PPS_IN(_PPS_RPB9R),		//	26	RB9
-	_PPS_IN(_PPS_RPC6R),		//	27	RC6
-	_PPS_IN(_PPS_RPC7R),		//	28	RC7
-	_PPS_IN(_PPS_RPC8R),		//	29	RC8
-	_PPS_IN(_PPS_RPC9R),	    //	30  RC9
-	_PPS_IN(_PPS_RPB10),        //	30  RB10
-	_PPS_IN(_PPS_RPB11),        //	30  RB11
+	_PPS_IN(_PPS_RPB14),		//	3	RB14
+	_PPS_IN(_PPS_RPB15),		//	4	RB15
+	_PPS_IN(_PPS_RPA0),		    //	5	RA0
+	_PPS_IN(_PPS_RPA1),		    //	6	RA1
+	_PPS_IN(_PPS_RPB0),		    //	7	RB0
+	_PPS_IN(_PPS_RPB1),		    //	8	RB1
+	_PPS_IN(_PPS_RPB2),		    //	9	RB2
+	_PPS_IN(_PPS_RPB3),		    //	10	RB3
+	_PPS_IN(_PPS_RPC0),		    //	11	RC0
+	_PPS_IN(_PPS_RPC1),		    //	12	RC1
+	_PPS_IN(_PPS_RPC2),		    //	13	RC2
+	_PPS_IN(_PPS_RPA2),		    //	14	RA2
+	_PPS_IN(_PPS_RPA3),		    //	15	RA3
+	_PPS_IN(_PPS_RPA8),		    //	16	RA8
+	_PPS_IN(_PPS_RPB4),		    //	17	RB4
+	_PPS_IN(_PPS_RPA4), 		//	18	RA4
+	_PPS_IN(_PPS_RPA9),		    //	19	RA9
+	_PPS_IN(_PPS_RPC3),		    //	20	RC3
+	_PPS_IN(_PPS_RPC4),		    //	21	RC4
+	_PPS_IN(_PPS_RPC5),		    //	22	RC5
+	_PPS_IN(_PPS_RPB5),		    //	23  RB5
+	_PPS_IN(_PPS_RPB7),		    //	24	RB7
+	_PPS_IN(_PPS_RPB8),		    //	25	RB8
+	_PPS_IN(_PPS_RPB9),		    //	26	RB9
+	_PPS_IN(_PPS_RPC6),		    //	27	RC6
+	_PPS_IN(_PPS_RPC7),		    //	28	RC7
+	_PPS_IN(_PPS_RPC8),		    //	29	RC8
+	_PPS_IN(_PPS_RPC9),	        //	30  RC9
+	_PPS_IN(_PPS_RPB10),        //  31  RB10
+	_PPS_IN(_PPS_RPB11),        //  32  RB11
 };
 
 /* ------------------------------------------------------------ */
@@ -327,39 +327,39 @@ const uint8_t digital_pin_to_pps_in_PGM[] = {
 */
 //#if defined(_NOT_USED_)
 const uint8_t digital_pin_to_analog_PGM[] = {
-	NOT_ANALOG_PIN,	//   0  RD8
-	NOT_ANALOG_PIN,	//   1  RD9
-	NOT_ANALOG_PIN,	//   2  RD10
-	NOT_ANALOG_PIN,	//   3  RD11
-	NOT_ANALOG_PIN,	//   4  RD0
-	NOT_ANALOG_PIN,	//   5  RC13
-	NOT_ANALOG_PIN,	//   6  RC14
-	NOT_ANALOG_PIN,	//   7  RD1
-	NOT_ANALOG_PIN,	//   8  RD2
-	NOT_ANALOG_PIN,	//   9  RD3
-	NOT_ANALOG_PIN,	//  10  RD4
-	NOT_ANALOG_PIN,	//  11  RD5
-	NOT_ANALOG_PIN,	//  12  RD6
-	NOT_ANALOG_PIN,	//  13  RD7
-	NOT_ANALOG_PIN,	//  14  RF0
-	NOT_ANALOG_PIN,	//  15  RF1
-	NOT_ANALOG_PIN,	//  16  RE0
-	NOT_ANALOG_PIN,	//  17  RE1
-	NOT_ANALOG_PIN,	//  18  RE2
-	NOT_ANALOG_PIN,	//  19  RE3
-	NOT_ANALOG_PIN,	//  20  RE4
-	NOT_ANALOG_PIN,	//  21  RE5
-	NOT_ANALOG_PIN,	//  22  RE6
-	NOT_ANALOG_PIN,	//  23  RE7
-	NOT_ANALOG_PIN,	//  24  RG6
-	NOT_ANALOG_PIN,	//  25  RG7
-	NOT_ANALOG_PIN,	//  26  RG8
-	NOT_ANALOG_PIN,	//  27  RG9
-	NOT_ANALOG_PIN,	//  28  RF4
-	NOT_ANALOG_PIN, //  29  RF5
-	_BOARD_AN4, 	//  30  RB4   A14
-	_BOARD_AN3, 	//  31  RB3   A13
-	_BOARD_AN2,	    //  32  RB2   A12
+	_BOARD_AN11,    //	0	RB13
+	NOT_ANALOG_PIN,	//	1	RA10
+	NOT_ANALOG_PIN,	//	2	RA7
+	_BOARD_AN10, 	//	3	RB14
+	_BOARD_AN9,	    //	4	RB15
+	_BOARD_AN0,	    //	5	RA0
+	_BOARD_AN1,	    //	6	RA1
+	_BOARD_AN2,	    //	7	RB0
+	_BOARD_AN3,	    //	8	RB1
+	_BOARD_AN4,	    //	9	RB2
+	_BOARD_AN5,	    //	10	RB3
+	_BOARD_AN6,	    //	11	RC0
+	_BOARD_AN7,	    //	12	RC1
+	_BOARD_AN8,	    //	13	RC2
+	NOT_ANALOG_PIN,	//	14	RA2
+	NOT_ANALOG_PIN,	//	15	RA3
+	NOT_ANALOG_PIN,	//	16	RA8
+	NOT_ANALOG_PIN,	//	17	RB4
+	NOT_ANALOG_PIN,	//	18	RA4
+	NOT_ANALOG_PIN,	//	19	RA9
+	_BOARD_AN12,	//	20	RC3
+	NOT_ANALOG_PIN,	//	21	RC4
+	NOT_ANALOG_PIN,	//	22	RC5
+	NOT_ANALOG_PIN,	//	23  RB5
+	NOT_ANALOG_PIN,	//	24	RB7
+	NOT_ANALOG_PIN,	//	25	RB8
+	NOT_ANALOG_PIN,	//	26	RB9
+	NOT_ANALOG_PIN,	//	27	RC6
+	NOT_ANALOG_PIN,	//	28	RC7
+	NOT_ANALOG_PIN, //	29	RC8
+	NOT_ANALOG_PIN, //	30  RC9
+	NOT_ANALOG_PIN, //  31  RB10
+	NOT_ANALOG_PIN,	//  32  RB11
 };
 //#endif
 
@@ -479,6 +479,11 @@ void _board_init(void) {
 	OSCCONCLR	=	_OSCCON_SOSCEN_MASK;
 
 	mSYSTEMLock(int_status, dma_status);	
+    
+//   	ANSELA = 0;
+//	ANSELB = 0;
+//	ANSELC = 0;
+
 }
 
 #endif
