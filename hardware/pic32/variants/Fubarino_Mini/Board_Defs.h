@@ -217,11 +217,9 @@ const static uint8_t SCK  = 24;		// PIC32 SCK2
 ** These perform slightly better as macros compared to inline functions
 */
 #undef digitalPinToAnalog
-//#define	digitalPinToAnalog(P) ( ((P) < NUM_ANALOG_PINS) ? (P) : digital_pin_to_analog_PGM[P] )
 #define	digitalPinToAnalog(P) ( digital_pin_to_analog_PGM[P] )
 
 #undef analogInPinToChannel
-
 #define analogInPinToChannel(P) ( analog_pin_to_channel_PGM[P]  )
 
 /* ------------------------------------------------------------ */
