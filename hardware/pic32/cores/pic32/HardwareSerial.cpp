@@ -185,14 +185,11 @@ void HardwareSerial::begin(unsigned long baudRate)
 
 	/* Map the UART TX to the appropriate pin.
 	*/
-	pps = ppsOutputRegister(pinTx);
-	*pps = ppsOutputSelect(ppsTx);
+    ppsSwitchOutputPin(pinTx, ppsTx);
 
 	/* Map the UART RX to the appropriate pin.
 	*/
-	pps = ppsInputRegister(ppsRx);
-	*pps = ppsInputSelect(pinRx);
-
+    ppsSwitchInputPin(pinRx, ppsRx);
 #endif
 
 	/* Compute the address of the interrupt priority control

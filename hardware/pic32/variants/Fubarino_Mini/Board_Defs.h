@@ -293,9 +293,9 @@ extern const uint8_t	external_int_to_digital_pin_PGM[];
 #define	_SER0_IPL		_UART1_IPL_IPC
 #define	_SER0_SPL		_UART1_SPL_IPC
 #define	_SER0_TX_OUT	PPS_OUT_U1TX
-#define	_SER0_TX_PIN	5
+#define	_SER0_TX_PIN	17
 #define	_SER0_RX_IN		PPS_IN_U1RX
-#define	_SER0_RX_PIN	6
+#define	_SER0_RX_PIN	18
 
 /* Serial port 1 uses UART2
 */
