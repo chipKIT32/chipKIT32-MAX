@@ -172,8 +172,6 @@
 #define ppsSetFromPin(P) ((digital_pin_to_pps_in_PGM[P] >> 4) & 0x000F)
 #define	ppsSetFromFunc(F) (((F) >> 8) & 0x000F)
 #define	ppsInputFromFunc(F) ((F) & 0x00FF)
-#define ppsSwitchOutputPin(Pin, Peripheral) *(ppsOutputRegister(Pin)) = ppsOutputSelect(Peripheral)
-#define ppsSwitchInputPin(Pin, Peripheral) *(ppsInputRegister(Peripheral)) = ppsInputSelect(Pin)
 
 
 #define	timerOCtoDigitalPin(P) (uint8_t)(output_compare_to_digital_pin_PGM[P])

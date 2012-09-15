@@ -181,15 +181,13 @@ void HardwareSerial::begin(unsigned long baudRate)
 	flush();
 
 #if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
-	volatile uint32_t *		pps;
-
 	/* Map the UART TX to the appropriate pin.
 	*/
-    ppsSwitchOutputPin(pinTx, ppsTx);
+    mapPpsOutput(pinTx, ppsTx);
 
 	/* Map the UART RX to the appropriate pin.
 	*/
-    ppsSwitchInputPin(pinRx, ppsRx);
+    mapPpsInput(pinRx, ppsRx);
 #endif
 
 	/* Compute the address of the interrupt priority control
