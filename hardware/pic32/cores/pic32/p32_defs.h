@@ -38,9 +38,11 @@
 //*	Jul 26, 2012 <GeneApperson> Added PPS support for PIC32MX1xx/MX2xx devices
 //************************************************************************
 
-#if !defined(_P32_DEFS_H)
+
+#ifndef _P32_DEFS_H
 #define _P32_DEFS_H
 
+#include "cpudefs.h"
 #include	<inttypes.h>
 
 /* ------------------------------------------------------------ */
@@ -277,39 +279,46 @@ typedef struct {
 */
 typedef uint32_t p32_ppsout;
 
+#define _PPS_INPUT_BIT  (1 << 15)
+#define	PPS_OUT_MASK	0x000F
+#define	PPS_IN_MASK		0x00FF
+#define	NUM_PPS_IN		44          // This must be set to the highest PPS_IN_xxx value
+#define NUM_PPS_OUT     7           // This must be set to the highest PPS_OUT_xxx value
+
+/* This enum specifies all of the possible input and output peripherals you can
+** pass into the mapPps() function's <func> parameter. All of the inputs
+** have their _PPS_INPUT_BIT set, while the outputs don't. (Thats how the
+** mapPps() function can tell the difference.)
+*/
+
+typedef enum {
 /* The following symbols define the output functions that are mappable with
 ** PPS. These give the select values used to map a peripheral function to a PPS
 ** output pin combined with their set membership. The PPS output select values
 ** are divided into four sets. Some peripheral functions are duplicated in more
 ** than one set. In this case they have the same select value in each set.
 */
-#define	PPS_OUT_MASK	0x000F
+    PPS_OUT_GPIO	= (0 + (_PPS_SET_A|_PPS_SET_B|_PPS_SET_C|_PPS_SET_D)),
 
-#define	PPS_OUT_GPIO	(0 + (_PPS_SET_A|_PPS_SET_B|_PPS_SET_C|_PPS_SET_D))
+    PPS_OUT_U1TX	= (1 + _PPS_SET_A),
+    PPS_OUT_U2RTS	= (2 + _PPS_SET_A),
+    PPS_OUT_SS1		= (3 + _PPS_SET_A),
+    PPS_OUT_OC1		= (5 + _PPS_SET_A),
+    PPS_OUT_C2OUT	= (7 + _PPS_SET_A),
 
-#define	PPS_OUT_U1TX	(1 + _PPS_SET_A)
-#define	PPS_OUT_U2RTS	(2 + _PPS_SET_A)
-#define	PPS_OUT_SS1		(3 + _PPS_SET_A)
-#define	PPS_OUT_OC1		(5 + _PPS_SET_A)
-#define	PPS_OUT_C2OUT	(7 + _PPS_SET_A)
+    PPS_OUT_SDO1	= (3 + (_PPS_SET_B | _PPS_SET_C)),
+    PPS_OUT_SDO2	= (4 + (_PPS_SET_B | _PPS_SET_C)),
+    PPS_OUT_OC2		= (5 + _PPS_SET_B),
 
-#define	PPS_OUT_SDO1	(3 + (_PPS_SET_B|_PPS_SET_C))
-#define	PPS_OUT_SDO2	(4 + (_PPS_SET_B|_PPS_SET_C))
-#define	PPS_OUT_OC2		(5 + _PPS_SET_B)
+    PPS_OUT_OC4		= (5 + _PPS_SET_C),
+    PPS_OUT_OC5		= (6 + _PPS_SET_C),
+    PPS_OUT_REFCLKO	= (7 + _PPS_SET_C),
 
-#define	PPS_OUT_OC4		(5 + _PPS_SET_C)
-#define	PPS_OUT_OC5		(6 + _PPS_SET_C)
-#define PPS_OUT_REFCLKO	(7 + _PPS_SET_C)
-
-#define PPS_OUT_U1RTS	(1 + _PPS_SET_D)
-#define	PPS_OUT_U2TX	(2 + _PPS_SET_D)
-#define	PPS_OUT_SS2		(4 + _PPS_SET_D)
-#define	PPS_OUT_OC3		(5 + _PPS_SET_D)
-#define	PPS_OUT_C1OUT	(7 + _PPS_SET_D)
-
-/* Data type for PPS input select register.
-*/
-typedef uint32_t p32_ppsin;
+    PPS_OUT_U1RTS	= (1 + _PPS_SET_D),
+    PPS_OUT_U2TX	= (2 + _PPS_SET_D),
+    PPS_OUT_SS2		= (4 + _PPS_SET_D),
+    PPS_OUT_OC3		= (5 + _PPS_SET_D),
+    PPS_OUT_C1OUT	= (7 + _PPS_SET_D),
 
 /* The following symbols define the input functions that are mappable
 ** using PPS. These are used as an index to the input selection mapping
@@ -318,34 +327,39 @@ typedef uint32_t p32_ppsin;
 ** new input functions, or change the order of the input select registers,
 ** this mapping will have to be changed to be done through a table.
 */
-#define	PPS_IN_MASK		0x00FF
 
-#define	PPS_IN_INT1		(0  + _PPS_SET_D)
-#define	PPS_IN_INT2		(1  + _PPS_SET_C)
-#define	PPS_IN_INT3		(2  + _PPS_SET_B)
-#define	PPS_IN_INT4		(3  + _PPS_SET_A)
-#define	PPS_IN_T2CK		(5  + _PPS_SET_A)
-#define	PPS_IN_T3CK		(6  + _PPS_SET_B)
-#define	PPS_IN_T4CK		(7  + _PPS_SET_C)
-#define	PPS_IN_T5CK		(8  + _PPS_SET_D)
-#define	PPS_IN_IC1		(9  + _PPS_SET_C)
-#define	PPS_IN_IC2		(10 + _PPS_SET_D)
-#define	PPS_IN_IC3		(11 + _PPS_SET_B)
-#define	PPS_IN_IC4		(12 + _PPS_SET_A)
-#define	PPS_IN_IC5		(13 + _PPS_SET_C)
-#define	PPS_IN_OCFA		(17 + _PPS_SET_D)
-#define	PPS_IN_OCFB		(18 + _PPS_SET_C)
-#define	PPS_IN_U1RX		(19 + _PPS_SET_C)
-#define	PPS_IN_U1CTS	(20 + _PPS_SET_B)
-#define	PPS_IN_U2RX		(21 + _PPS_SET_B)
-#define	PPS_IN_U2CTS	(22 + _PPS_SET_C)
-#define	PPS_IN_SDI1		(31 + _PPS_SET_B)
-#define	PPS_IN_SS1		(32 + _PPS_SET_A)
-#define	PPS_IN_SDI2		(34 + _PPS_SET_C)
-#define	PPS_IN_SS2		(35 + _PPS_SET_D)
-#define	PPS_IN_REFCLKI	(44 + _PPS_SET_A)
+    PPS_IN_INT1		= (0  + _PPS_SET_D + _PPS_INPUT_BIT),
+    PPS_IN_INT2		= (1  + _PPS_SET_C + _PPS_INPUT_BIT),
+    PPS_IN_INT3		= (2  + _PPS_SET_B + _PPS_INPUT_BIT),
+    PPS_IN_INT4		= (3  + _PPS_SET_A + _PPS_INPUT_BIT),
+    PPS_IN_T2CK		= (5  + _PPS_SET_A + _PPS_INPUT_BIT),
+    PPS_IN_T3CK		= (6  + _PPS_SET_B + _PPS_INPUT_BIT),
+    PPS_IN_T4CK		= (7  + _PPS_SET_C + _PPS_INPUT_BIT),
+    PPS_IN_T5CK		= (8  + _PPS_SET_D + _PPS_INPUT_BIT),
+    PPS_IN_IC1		= (9  + _PPS_SET_C + _PPS_INPUT_BIT),
+    PPS_IN_IC2		= (10 + _PPS_SET_D + _PPS_INPUT_BIT),
+    PPS_IN_IC3		= (11 + _PPS_SET_B + _PPS_INPUT_BIT),
+    PPS_IN_IC4		= (12 + _PPS_SET_A + _PPS_INPUT_BIT),
+    PPS_IN_IC5		= (13 + _PPS_SET_C + _PPS_INPUT_BIT),
+    PPS_IN_OCFA		= (17 + _PPS_SET_D + _PPS_INPUT_BIT),
+    PPS_IN_OCFB		= (18 + _PPS_SET_C + _PPS_INPUT_BIT),
+    PPS_IN_U1RX		= (19 + _PPS_SET_C + _PPS_INPUT_BIT),
+    PPS_IN_U1CTS	= (20 + _PPS_SET_B + _PPS_INPUT_BIT),
+    PPS_IN_U2RX		= (21 + _PPS_SET_B + _PPS_INPUT_BIT),
+    PPS_IN_U2CTS	= (22 + _PPS_SET_C + _PPS_INPUT_BIT),
+    PPS_IN_SDI1		= (31 + _PPS_SET_B + _PPS_INPUT_BIT),
+    PPS_IN_SS1		= (32 + _PPS_SET_A + _PPS_INPUT_BIT),
+    PPS_IN_SDI2		= (34 + _PPS_SET_C + _PPS_INPUT_BIT),
+    PPS_IN_SS2		= (35 + _PPS_SET_D + _PPS_INPUT_BIT),
+    PPS_IN_REFCLKI	= (44 + _PPS_SET_A + _PPS_INPUT_BIT),
 
-#define	NUM_PPS_IN		24
+} ppsFunctionType;
+
+
+/* Data type for PPS input select register.
+*/
+typedef uint32_t p32_ppsin;
+
 
 /* These symbols define the values to load into a PPS input select register
 ** to assign the actual input pin. The PIC32 architecture divides these values 

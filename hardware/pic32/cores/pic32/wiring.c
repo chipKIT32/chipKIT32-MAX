@@ -96,6 +96,9 @@ volatile unsigned long gMicros_calculating		=	0;
 // SoftPWM library update function pointer
 uint32_t (*gSoftPWMServoUpdate)(void) = NULL;
 
+// PPS lock variable
+uint8_t ppsGlobalLock = false;
+
 //************************************************************************
 unsigned long millis()
 {
@@ -236,22 +239,53 @@ void	_board_init(void);
 */
 #if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
 
-
+// Locks all PPS functions so that calls to mapPpsInput() or mapPpsOutput() always fail.
+// You would use this function if you set up all of your PPS settings at the beginning
+// of your sketch, and then wanted to prevent any changes while running the rest of the
+// sketch. Can be unlocked with unlockPps().
 void lockPps()
 {
-
+    ppsGlobalLock = true;
 }
 
+// Once the PPS system has been locked with logkPps(), this function will unlock it.
+// Use this function before making any changes with mapPpsInput() or mapPpsOutput()
+// functions.
 void unlockPps()
 {
-
+    ppsGlobalLock = false;
 }
 
-int mapPpsInput(uint8_t pin, int func)
+// Use this function to connect up a input or output function (peripheral) with a 
+// digitial pin.
+// <pin> : Digital pin to connect
+// <func> : Input or output name from ppsFunctionType enum (see p32_defs.h)
+// Note that this function will fail if the pps system is locked, or if
+// <pin> can't be mapped to <func>. There are only certain pins (up to 8)
+// that can be mapped ro each <func>.
+boolean mapPps(uint8_t pin, ppsFunctionType func)
 {
 	p32_ppsin *		pps;
 
-	if (!isPpsPin(pin) || (ppsInputFromFunc(func) >= NUM_PPS_IN))
+    // if the pps system is locked, then don't do anything
+    if (ppsGlobalLock)
+    {
+        return false;
+    }
+    
+    if (!isPpsPin(pin))
+    {
+        return false;
+    }
+
+    // Check for valid PPS pin number and valid function number (input or output)
+	if (
+        !isPpsPin(pin) 
+        || 
+        ((ppsInputFromFunc(func) > NUM_PPS_IN) && ppsFuncIsInput(func))
+        ||
+        ((ppsOutputFromFunc(func) > NUM_PPS_OUT) && ppsFuncIsOutput(func))
+    )
 	{
 		return false;
 	}
@@ -264,40 +298,24 @@ int mapPpsInput(uint8_t pin, int func)
 		return false;
 	}
 
+    if (ppsFuncIsInput(func))
+    {
 	/* An input is mapped from the pin to the peripheral input
 	** function by storing the select value into the register associated
 	** with the peripheral function.
 	*/
 	pps = ppsInputRegister(func);
 	*pps = ppsInputSelect(pin);
-
-	return true;
-
-}
-
-int mapPpsOutput(uint8_t pin, int func)
-{
-	p32_ppsout *	pps;
-
-	if (!isPpsPin(pin))
-	{
-		return false;
 	}
-
-	/* Check if the requested peripheral output function can be mapped to 
-	** the requested pin.
-	*/
-	if ((ppsSetFromPin(pin) & ppsSetFromFunc(func)) == 0)
+    else
 	{
-		return false;
-	}	
 
 	/* An output is mapped by storing the select value for the output function
 	** being mapped into the mapping register associated with the pin.
 	*/
 	pps = ppsOutputRegister(pin);
 	*pps = ppsOutputSelect(func);
-
+   }
 	return true;
 	
 }

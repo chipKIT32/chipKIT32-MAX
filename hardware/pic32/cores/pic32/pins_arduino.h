@@ -165,13 +165,16 @@
 
 #define isPpsPin(P) ((digital_pin_to_pps_out_PGM[P] == NOT_PPS_PIN) ? 0 : 1)
 
-#define	ppsOutputRegister(P) (volatile uint32_t *)((uint32_t)(&_RPOBASE) + 4*digital_pin_to_pps_out_PGM[P])
-#define ppsInputRegister(F) ((uint32_t *)(4*((F) & 0x00FF) + (uint32_t)&_RPIBASE))
 #define	ppsInputSelect(P) (digital_pin_to_pps_in_PGM[P] & 0x000F)
 #define	ppsOutputSelect(F) ((F) & PPS_OUT_MASK)
 #define ppsSetFromPin(P) ((digital_pin_to_pps_in_PGM[P] >> 4) & 0x000F)
 #define	ppsSetFromFunc(F) (((F) >> 8) & 0x000F)
-#define	ppsInputFromFunc(F) ((F) & 0x00FF)
+#define	ppsInputFromFunc(F) ((F) & PPS_IN_MASK)
+#define ppsOutputFromFunc(F) ((F) & PPS_OUT_MASK)
+#define ppsFuncIsInput(F)   ((F) & _PPS_INPUT_BIT)
+#define ppsFuncIsOutput(F)  (~ppsFuncIsInput(F))
+#define	ppsOutputRegister(P) (volatile uint32_t *)((uint32_t)(&_RPOBASE) + 4*digital_pin_to_pps_out_PGM[P])
+#define ppsInputRegister(F) ((uint32_t *)(4*(ppsInputFromFunc(F)) + (uint32_t)&_RPIBASE))
 
 
 #define	timerOCtoDigitalPin(P) (uint8_t)(output_compare_to_digital_pin_PGM[P])

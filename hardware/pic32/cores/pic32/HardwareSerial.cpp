@@ -60,8 +60,9 @@
 //* Sep  8, 2012    <BrianSchmalz> Fix dropping bytes on USB RX bug
 //*	Jul 26, 2012	<GeneApperson> Added PPS support for PIC32MX1xx/MX2xx devices
 //************************************************************************
+#ifndef __LANGUAGE_C__
 #define __LANGUAGE_C__
-
+#endif
 
 #include <stdio.h>
 #include <string.h>
@@ -112,7 +113,7 @@
 */
 
 #if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
-HardwareSerial::HardwareSerial(p32_uart * uartT, int irqT, int vecT, int iplT, int splT, int pinT, int pinR, int ppsT, int ppsR)
+HardwareSerial::HardwareSerial(p32_uart * uartT, int irqT, int vecT, int iplT, int splT, int pinT, int pinR, ppsFunctionType ppsT, ppsFunctionType ppsR)
 #else
 HardwareSerial::HardwareSerial(p32_uart * uartT, int irqT, int vecT, int iplT, int splT)
 #endif
@@ -128,8 +129,8 @@ HardwareSerial::HardwareSerial(p32_uart * uartT, int irqT, int vecT, int iplT, i
 #if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
 	pinTx = (uint8_t)pinT;
 	pinRx = (uint8_t)pinR;
-	ppsTx = (uint8_t)ppsT;
-	ppsRx = (uint8_t)ppsR;
+	ppsTx = ppsT;
+	ppsRx = ppsR;
 #endif
 
 	/* The interrupt flag and enable control register addresses and
@@ -183,11 +184,11 @@ void HardwareSerial::begin(unsigned long baudRate)
 #if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
 	/* Map the UART TX to the appropriate pin.
 	*/
-    mapPpsOutput(pinTx, ppsTx);
+    mapPps(pinTx, ppsTx);
 
 	/* Map the UART RX to the appropriate pin.
 	*/
-    mapPpsInput(pinRx, ppsRx);
+    mapPps(pinRx, ppsRx);
 #endif
 
 	/* Compute the address of the interrupt priority control

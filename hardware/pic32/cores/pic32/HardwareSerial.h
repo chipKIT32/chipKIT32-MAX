@@ -41,7 +41,9 @@
 
 #ifndef HardwareSerial_h
 #define HardwareSerial_h
+#ifndef __LANGUAGE_C__
 #define __LANGUAGE_C__
+#endif
 
 #include <inttypes.h>
 #include <p32xxxx.h>
@@ -89,8 +91,8 @@ class HardwareSerial : public Stream
 #if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
 		uint8_t			pinTx;		//digital pin number of TX
 		uint8_t			pinRx;		//digital pin number for RX
-		uint8_t			ppsTx;		//PPS select for UART TX
-		uint8_t			ppsRx;		//PPS select for UART RX
+		ppsFunctionType	ppsTx;		//PPS select for UART TX
+		ppsFunctionType	ppsRx;		//PPS select for UART RX
 #endif
 		p32_regset *	ifs;		//interrupt flag register set
 		p32_regset *	iec;		//interrupt enable control register set
@@ -101,7 +103,7 @@ class HardwareSerial : public Stream
 
 	public:
 #if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
-		HardwareSerial(p32_uart * uartP, int irq, int vec, int ipl, int spl, int pinT, int pinR, int ppsT, int ppsR);
+		HardwareSerial(p32_uart * uartP, int irq, int vec, int ipl, int spl, int pinT, int pinR, ppsFunctionType ppsT, ppsFunctionType ppsR);
 #else
 		HardwareSerial(p32_uart * uartP, int irq, int vec, int ipl, int spl);
 #endif
