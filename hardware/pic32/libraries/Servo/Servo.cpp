@@ -1,6 +1,6 @@
 //************************************************************************
 /*
- Servo.cpp - Interrupt driven Servo library for Arduino using 16 bit timers- Version 2
+ Servo.cpp - Interrupt driven Servo library for Arduino using 16 bit timers
  Copyright (c) 2009 Michael Margolis.  All right reserved.
  Revision date: 08/18/2011(Michelle Yu)
   
@@ -20,13 +20,19 @@
  */
 //************************************************************************
 
-/* 
- 
+/*
  A servo is activated by creating an instance of the Servo class passing the desired pin to the attach() method.
  The servos are pulsed in the background using the value most recently written using the write() method
  
  Note that analogWrite of PWM on pins associated with the timer are disabled when the first servo is attached.
- Timers are seized as needed in groups of 8 servos - 16 servos use two timers, 32 servos will use four.
+ Timers are seized as needed in groups of 8 servos - 16 servos use two timers, 24 servos will use three.
+ 
+ For the PIC32, the three timers that are used are (in order):
+ Timer4 (for 1 through 8 servos)
+ Timer5 (for 9 through 16 servos)
+ Timer3 (for 17 through 24 servos)
+ 
+ Be careful that other libraries do not use any of the timers that you need for your servos.
  
  The methods are:
  
@@ -53,6 +59,9 @@
 //*	Sep  1,	2011	<MLS> issue #112, changed assigment to compare in finISR
 //* Sep  5, 2011	<GeneApperson> added include of plib.h to fix compile errors
 //*						introduced when plib.h was removed from HardwareSerial.h
+//* Sep 18, 2012    <BPS> Fixed math problem with refresh interval, and 
+//*                 expanded nbr to 7 bits for pins above 63 (MAX32 has 83)
+//*                 And adjusted trim to 1 tick (measured and adjusted)
 //************************************************************************
 
 #include <plib.h>
@@ -65,15 +74,12 @@ extern "C"{
 #define usToTicks(_us)	(((_us)*5)/4)					// converts microseconds to tick 
 #define ticksToUs(_ticks) ((((unsigned)(_ticks))*4)/5)	// converts from ticks back to microseconds
 
-
-#define TRIM_DURATION		2							// compensation ticks to trim adjust for digitalWrite delays // 12 August 200
-
+#define TRIM_DURATION		1							// compensation ticks to trim adjust for digitalWrite delays // 12 August 200
 
 static servo_t servos[MAX_SERVOS];						// static array of servo structures
 int	channel[3];											// channel for the current servo
 
 uint8_t ServoCount	=	0;								// the total number of attached servos
-
 
 #define SERVO_MIN() (MIN_PULSE_WIDTH - this->min * 4)  // minimum value in uS for this servo
 #define SERVO_MAX() (MAX_PULSE_WIDTH - this->max * 4)  // maximum value in uS for this servo 
@@ -83,49 +89,59 @@ uint8_t ServoCount	=	0;								// the total number of attached servos
 /************ static functions common to all instances ***********************/
 
 //************************************************************************
-void handle_interrupts(int timer, volatile unsigned int *TMRn, volatile unsigned int *PR)
+// Note: PIC32 timers (TMRn) reset to zero when they match PRn.
+void handle_interrupts(int timer, volatile unsigned int *TMRn, volatile unsigned int *PRn)
 {
-
- 
+    static uint32_t AccumulatedTicks[3] = {0,0,0};      // Store the number of ticks since the first rising edge for this timer
+    
+    // Test for invalid timer number
+    if (timer >= 3)
+    {
+        return;
+    }
+    
+    // If this value is -1, then we have just finished with the time from the end of the last pulse
+    // and need to start with the first servo index on this timer again.
 	if ( channel[timer] < 0 )
 	{
-		*TMRn	=	0; // channel set to -1 indicated that refresh interval completed so reset the timer 
+        AccumulatedTicks[timer] = 0;    // Clear the accumulated time for this timer on first rising edge
 	}
 	else
 	{
+        // If this is not the first pulse, then set the old pin low
 		if ( SERVO_INDEX(timer,channel[timer]) < ServoCount && SERVO(timer,channel[timer]).Pin.isActive == true )
 		{
-			digitalWrite( SERVO(timer,channel[timer]).Pin.nbr,LOW); // pulse this channel low if activated
+			digitalWrite( SERVO(timer,channel[timer]).Pin.nbr, LOW); // pulse this channel low if activated
 		}
 	}
 
 	channel[timer]++;	// increment to the next channel
+    // If we have not run out of channels (on this timer),
 	if ( SERVO_INDEX(timer,channel[timer]) < ServoCount && channel[timer] < SERVOS_PER_TIMER)
 	{
-		*PR	=	*TMRn + SERVO(timer,channel[timer]).ticks;
+        // Then set the time we want to fire next (the width for this channel)
+		*PRn	=	SERVO(timer,channel[timer]).ticks;
+        // Set this channel's pin high if its active
 		if (SERVO(timer,channel[timer]).Pin.isActive == true)			// check if activated
 		{
-			digitalWrite( SERVO(timer,channel[timer]).Pin.nbr,HIGH); // its an active channel so pulse it high
+			digitalWrite( SERVO(timer,channel[timer]).Pin.nbr, HIGH); // its an active channel so pulse it high
 		}
+        AccumulatedTicks[timer] += *PRn;       // Add the time we are about to spend on this channel
 	}
 	else
 	{ 
-		*TMRn	=	channel[timer] * usToTicks(MAX_PULSE_WIDTH);
-		// finished all channels so wait for the refresh period to expire before starting over 
-		if ( (unsigned)*TMRn < (usToTicks(REFRESH_INTERVAL) + 4) )	// allow a few ticks to ensure the next OCR1A not missed
+		// Otherwise, finished all channels so next fire needs to be at REFRESH_INTERVAL - AccumulatedTicks
+		if (AccumulatedTicks[timer] < (usToTicks(REFRESH_INTERVAL) - 4))
 		{
-			*PR	=	(unsigned int)usToTicks(REFRESH_INTERVAL);
+			*PRn	=	(unsigned int)(usToTicks(REFRESH_INTERVAL)) - AccumulatedTicks[timer];
 		}
 		else 
 		{
-			*PR	=	*TMRn + 4;  // at least REFRESH_INTERVAL has elapsed
+			*PRn	=	*TMRn + 4;  // at least REFRESH_INTERVAL has elapsed
 		}
 		channel[timer]	=	-1; // this will get incremented at the end of the refresh period to start again at the first channel
 	}
 }
-
-
-
 
 //************************************************************************
 static void finISR(int timer)
@@ -157,20 +173,23 @@ static boolean isTimerActive(int timer)
 	return false;
 }
 
-
 /****************** end of static functions ******************************/
 
 Servo::Servo()
 {
-	if ( ServoCount < MAX_SERVOS)
+	if (ServoCount < MAX_SERVOS)
 	{
+        /// TODO: Really, we need to search through servos[] for the first one
+        /// that is not being used, rather than always use ServoCount as the 
+        /// index. What happens if you create 24 servos, then destroy one
+        /// and create another. Right now that would fail, even though you
+        /// weren't actively using 24 servos.
 		this->servoIndex = ServoCount++;									// assign a servo index to this instance
 		servos[this->servoIndex].ticks = usToTicks(DEFAULT_PULSE_WIDTH);	// store default to neutral position
   	}
 	else
-		this->servoIndex = INVALID_SERVO ;  // too many servos	
+		this->servoIndex = INVALID_SERVO ;  // too many servos
 }
-
 
 //************************************************************************
 uint8_t Servo::attach(int pin)
@@ -181,16 +200,9 @@ uint8_t Servo::attach(int pin)
 //************************************************************************
 uint8_t Servo::attach(int pin, int min, int max)
 {
-	if (this->servoIndex < MAX_SERVOS )
+	if (this->servoIndex < ServoCount)
 	{
-		if (pin == 0 | pin == 1)
-		{
-			// disable UART
-			U1MODE = 0x0;
-
-		}
-
-		pinMode( pin, OUTPUT) ;								// set servo pin to output
+		pinMode(pin, OUTPUT);								// set servo pin to output
 		servos[this->servoIndex].Pin.nbr = pin;
 		this->min	=	(MIN_PULSE_WIDTH - min)/4;			// resolution of min/max is 4 uS
 		this->max	=	(MAX_PULSE_WIDTH - max)/4; 
@@ -204,9 +216,12 @@ uint8_t Servo::attach(int pin, int min, int max)
 
 		return this->servoIndex;
 	}
+    else
+    {
+        // return bogus value if this->ServoIndex is invalid
+        return(INVALID_SERVO);
+    }
 }
-
-
 
 //************************************************************************
 void Servo::detach()
@@ -248,12 +263,9 @@ void Servo::writeMicroseconds(int value)
 		value = value - TRIM_DURATION;
 		value = usToTicks(value);			// convert to ticks after compensating for interrupt overhead 
 
-
-
 		unsigned int status;
 		status = INTDisableInterrupts();
 		servos[channel].ticks = value;
-
 		INTRestoreInterrupts(status);
 	} 
 }
