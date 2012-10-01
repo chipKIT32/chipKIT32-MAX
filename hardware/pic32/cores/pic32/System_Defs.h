@@ -16,6 +16,8 @@
 /*																		*/
 /*	11/29/2011(GeneApperson): Created									*/
 /*	12/20/2011(GeneApperson): Added task manager declarations			*/
+/*	07/26/2012(GeneApperson): Added PPS support for PIC32MX1xx/MX2xx	*/
+/*		devices															*/
 /*																		*/
 /************************************************************************/
 //*	This library is free software; you can redistribute it and/or
@@ -114,9 +116,15 @@
 
 /* Core Timer
 */
+#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
+#define	_CT_IPL_ISR		IPL7SOFT
+#define	_CT_IPL_IPC		CT_INT_PRIOR_7
+#define	_CT_SPL_IPC		0
+#else
 #define	_CT_IPL_ISR		IPL7SRS
 #define	_CT_IPL_IPC		CT_INT_PRIOR_7
 #define	_CT_SPL_IPC		0
+#endif
 
 /* Core Software Interrupts
 */

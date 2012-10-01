@@ -291,7 +291,7 @@ extern const uint8_t	analog_pin_to_channel_PGM[];
 /*																*/
 /* ------------------------------------------------------------ */
 
-#define	OPT_BOARD_INIT			0	//board needs no special init code
+#define	OPT_BOARD_INIT			1	//board needs special init code
 #define	OPT_BOARD_DIGITAL_IO	0	//board does not extend digital i/o functions
 #define	OPT_BOARD_ANALOG_READ	0	//board does not extend analogRead
 #define	OPT_BOARD_ANALOG_WRITE	0	//board does not extend analogWrite

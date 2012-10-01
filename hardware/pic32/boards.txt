@@ -1,4 +1,79 @@
 ############################################################
+cerebot_ga4.name=MX1 Cerebot GA4
+
+# new items
+cerebot_ga4.platform=pic32
+cerebot_ga4.board=_BOARD_CEREBOT_GA4_
+cerebot_ga4.board.define=
+#cerebot_ga4.compiler.define=-Danything_you_want::-Danything=1
+cerebot_ga4.ccflags=ffff
+cerebot_ga4.ldscript=chipKIT-application-32MX120F032D.ld
+# end of new items
+
+# Use a high -Gnum for devices that have less than 64K of data memory
+# For -G1024, objects 1024 bytes or smaller will be accessed by
+# gp-relative addressing
+cerebot_ga4.compiler.c.flags=-O2::-c::-mno-smart-io::-w::-ffunction-sections::-fdata-sections::-G1024::-g::-mdebugger::-Wcast-align::-fno-short-double
+cerebot_ga4.compiler.cpp.flags=-O2::-c::-mno-smart-io::-w::-fno-exceptions::-ffunction-sections::-fdata-sections::-G1024::-g::-mdebugger::-Wcast-align::-fno-short-double
+
+cerebot_ga4.upload.protocol=stk500v2
+cerebot_ga4.upload.maximum_size=28672
+cerebot_ga4.upload.speed=115200
+
+cerebot_ga4.bootloader.low_fuses=0xff
+cerebot_ga4.bootloader.high_fuses=0xdd
+cerebot_ga4.bootloader.extended_fuses=0x00
+cerebot_ga4.bootloader.path=not-supported
+cerebot_ga4.bootloader.file=not-supported
+cerebot_ga4.bootloader.unlock_bits=0x3F
+cerebot_ga4.bootloader.lock_bits=0x0F
+
+cerebot_ga4.build.mcu=32MX120F032D
+cerebot_ga4.build.f_cpu=40000000L
+cerebot_ga4.build.core=pic32
+cerebot_ga4.build.variant=Cerebot_GA4
+#cerebot_ga4.upload.using=
+
+############################################################
+cerebot_ga4_dbg.name=MX1 Cerebot GA4 - MPLAB Debug
+
+# new items
+cerebot_ga4_dbg.platform=pic32
+cerebot_ga4_dbg.board=_BOARD_CEREBOT_GA4_
+cerebot_ga4_dbg.board.define=
+#cerebot_ga4_dbg.compiler.define=-Danything_you_want::-Danything=1
+cerebot_ga4_dbg.ccflags=ffff
+cerebot_ga4_dbg.ldscript=chipKIT-application-32MX120F032D-nobootloader.ld
+# end of new items
+
+# Use a high -Gnum for devices that have less than 64K of data memory
+# For -G1024, objects 1024 bytes or smaller will be accessed by
+# gp-relative addressing
+cerebot_ga4_dbg.compiler.c.flags=-O0::-c::-mno-smart-io::-w::-ffunction-sections::-fdata-sections::-G1024::-g::-mdebugger::-Wcast-align::-fno-short-double
+cerebot_ga4_dbg.compiler.cpp.flags=-O0::-c::-mno-smart-io::-w::-fno-exceptions::-ffunction-sections::-fdata-sections::-G1024::-g::-mdebugger::-Wcast-align::-fno-short-double
+
+cerebot_ga4_dbg.upload.protocol=stk500v2
+cerebot_ga4_dbg.upload.maximum_size=28672
+cerebot_ga4_dbg.upload.speed=115200
+
+cerebot_ga4_dbg.bootloader.low_fuses=0xff
+cerebot_ga4_dbg.bootloader.high_fuses=0xdd
+cerebot_ga4_dbg.bootloader.extended_fuses=0x00
+cerebot_ga4_dbg.bootloader.path=not-supported
+cerebot_ga4_dbg.bootloader.file=not-supported
+cerebot_ga4_dbg.bootloader.unlock_bits=0x3F
+cerebot_ga4_dbg.bootloader.lock_bits=0x0F
+
+cerebot_ga4_dbg.build.mcu=32MX120F032D
+cerebot_ga4_dbg.build.f_cpu=40000000L
+cerebot_ga4_dbg.build.core=pic32
+cerebot_ga4_dbg.build.variant=Cerebot_GA4
+#cerebot_ga4_dbg.upload.using=
+
+############################################################
+############################################################
+############################################################
+############################################################
 uno_pic32.name=chipKIT UNO32
 
 # new items
@@ -68,7 +143,7 @@ mega_usb_pic32.name=chipKIT MAX32-USB for Serial
 
 # new items
 mega_usb_pic32.platform=pic32
-mega_usb_pic32.board=_BOARD_MEGA_USB_
+mega_usb_pic32.board=_BOARD_MEGA_
 mega_usb_pic32.board.define=-D_USE_USB_FOR_SERIAL_
 mega_usb_pic32.ccflags=ffff
 mega_usb_pic32.ldscript=chipKIT-application-32MX795F512.ld
@@ -90,6 +165,41 @@ mega_usb_pic32.build.mcu=32MX795F512L
 mega_usb_pic32.build.f_cpu=80000000L
 mega_usb_pic32.build.core=pic32
 mega_usb_pic32.build.variant=Max32
+#mega_usb_pic32.upload.using=
+
+############################################################
+mega_usb_debug_pic32.name=chipKIT MAX32-USB for Serial Debug
+
+# new items
+mega_usb_debug_pic32.platform=pic32
+mega_usb_debug_pic32.board=_BOARD_MEGA_
+mega_usb_debug_pic32.board.define=-D_USE_USB_FOR_SERIAL_
+mega_usb_debug_pic32.ccflags=-Map="map.map"
+mega_usb_debug_pic32.ldscript=chipKIT-MAX32-application-32MX795F512-nobootloader.ld
+# end of new items
+
+# Use a high -Gnum for devices that have less than 64K of data memory
+# For -G1024, objects 1024 bytes or smaller will be accessed by
+# gp-relative addressing
+mega_usb_debug_pic32.compiler.c.flags=-O0::-c::-mno-smart-io::-w::-ffunction-sections::-fdata-sections::-G1024::-g::-mdebugger::-Wcast-align::-fno-short-double
+mega_usb_debug_pic32.compiler.cpp.flags=-O0::-c::-mno-smart-io::-w::-fno-exceptions::-ffunction-sections::-fdata-sections::-G1024::-g::-mdebugger::-Wcast-align::-fno-short-double
+
+mega_usb_debug_pic32.upload.protocol=stk500v2
+mega_usb_debug_pic32.upload.maximum_size=520192
+mega_usb_debug_pic32.upload.speed=115200
+
+mega_usb_debug_pic32.bootloader.low_fuses=0xff
+mega_usb_debug_pic32.bootloader.high_fuses=0xdd
+mega_usb_debug_pic32.bootloader.extended_fuses=0x00
+mega_usb_debug_pic32.bootloader.path=not-supported
+mega_usb_debug_pic32.bootloader.file=not-supported
+mega_usb_debug_pic32.bootloader.unlock_bits=0x3F
+mega_usb_debug_pic32.bootloader.lock_bits=0x0F
+
+mega_usb_debug_pic32.build.mcu=32MX795F512L
+mega_usb_debug_pic32.build.f_cpu=80000000L
+mega_usb_debug_pic32.build.core=pic32
+mega_usb_debug_pic32.build.variant=Max32
 #mega_usb_pic32.upload.using=
 
 ############################################################
@@ -254,6 +364,39 @@ cerebot_mx7ck.build.f_cpu=80000000L
 cerebot_mx7ck.build.core=pic32
 cerebot_mx7ck.build.variant=Cerebot_MX7cK
 #cerebot_mx7ck.upload.using=
+
+############################################################
+MX7ck_dbg.name=Cerebot MX7cK - MPLAB Debug
+
+# new items
+MX7ck_dbg.platform=pic32
+MX7ck_dbg.board=_BOARD_CEREBOT_MX7CK_
+MX7ck_dbg.board.define=
+MX7ck_dbg.ccflags=ffff
+MX7ck_dbg.ldscript=chipKIT-application-32MX795F512L-nobootloader.ld
+# end of new items
+
+# Override the compiler flags to turn off optimizations
+MX7ck_dbg.compiler.c.flags=-O0::-c::-mno-smart-io::-w::-ffunction-sections::-fdata-sections::-g::-mdebugger::-Wcast-align::-fno-short-double::-save-temps::-g3
+MX7ck_dbg.compiler.cpp.flags=-O0::-c::-mno-smart-io::-w::-fno-exceptions::-ffunction-sections::-fdata-sections::-g::-mdebugger::-Wcast-align::-fno-short-double
+
+MX7ck_dbg.upload.protocol=stk500v2
+MX7ck_dbg.upload.maximum_size=520192
+MX7ck_dbg.upload.speed=115200
+
+MX7ck_dbg.bootloader.low_fuses=0xff
+MX7ck_dbg.bootloader.high_fuses=0xdd
+MX7ck_dbg.bootloader.extended_fuses=0x00
+MX7ck_dbg.bootloader.path=not-supported
+MX7ck_dbg.bootloader.file=not-supported
+MX7ck_dbg.bootloader.unlock_bits=0x3F
+MX7ck_dbg.bootloader.lock_bits=0x0F
+
+MX7ck_dbg.build.mcu=32MX795F512L
+MX7ck_dbg.build.f_cpu=80000000L
+MX7ck_dbg.build.core=pic32
+MX7ck_dbg.build.variant=Cerebot_MX7cK
+#MX7ck_dbg.upload.using=
 
 ############################################################
 cerebot32mx4.name=Cerebot 32MX4
@@ -631,6 +774,75 @@ fubarino_sd.build.mcu=32MX440F256H
 fubarino_sd.build.f_cpu=80000000L
 fubarino_sd.build.core=pic32
 fubarino_sd.build.variant=fubarino_sd_v11
+
+############################################################
+fubarino_mini.name=Fubarino_Mini
+
+# new items
+fubarino_mini.platform=pic32
+fubarino_mini.board=_BOARD_FUBARINO_MINI_
+fubarino_mini.board.define=-D_USE_USB_FOR_SERIAL_
+fubarino_mini.ccflags=-Map="map.map"
+fubarino_mini.ldscript=chipKIT-application-32MX250F128.ld
+# end of new items
+
+# Use a high -Gnum for devices that have less than 64K of data memory
+# For -G1024, objects 1024 bytes or smaller will be accessed by
+# gp-relative addressing
+fubarino_mini.compiler.c.flags=-O2::-c::-mno-smart-io::-w::-ffunction-sections::-fdata-sections::-G1024::-g::-mdebugger::-Wcast-align::-fno-short-double
+fubarino_mini.compiler.cpp.flags=-O2::-c::-mno-smart-io::-w::-fno-exceptions::-ffunction-sections::-fdata-sections::-G1024::-g::-mdebugger::-Wcast-align::-fno-short-double
+
+fubarino_mini.upload.protocol=stk500v2
+# 128KB - 4K for EEPROM - 4K for bootloader
+fubarino_mini.upload.maximum_size=122880
+fubarino_mini.upload.speed=115200
+
+fubarino_mini.bootloader.low_fuses=0xff
+fubarino_mini.bootloader.high_fuses=0xdd
+fubarino_mini.bootloader.extended_fuses=0x00
+fubarino_mini.bootloader.path=not-supported
+fubarino_mini.bootloader.file=not-supported
+fubarino_mini.bootloader.unlock_bits=0x3F
+fubarino_mini.bootloader.lock_bits=0x0F
+
+fubarino_mini.build.mcu=32MX250F128D
+fubarino_mini.build.f_cpu=40000000L
+fubarino_mini.build.core=pic32
+fubarino_mini.build.variant=Fubarino_Mini
+
+############################################################
+fubarino_mini_dbg.name=Fubarino_Mini Debug
+
+# new items
+fubarino_mini_dbg.platform=pic32
+fubarino_mini_dbg.board=_BOARD_FUBARINO_MINI_
+fubarino_mini_dbg.board.define=-D_USE_USB_FOR_SERIAL_
+fubarino_mini_dbg.ccflags=-Map="map.map"
+fubarino_mini_dbg.ldscript=chipKIT-application-32MX250F128-nobootloader.ld
+# end of new items
+
+# Use a high -Gnum for devices that have less than 64K of data memory
+# For -G1024, objects 1024 bytes or smaller will be accessed by
+# gp-relative addressing
+fubarino_mini_dbg.compiler.c.flags=-O0::-c::-mno-smart-io::-w::-ffunction-sections::-fdata-sections::-G1024::-g::-mdebugger::-Wcast-align::-fno-short-double
+fubarino_mini_dbg.compiler.cpp.flags=-O0::-c::-mno-smart-io::-w::-fno-exceptions::-ffunction-sections::-fdata-sections::-G1024::-g::-mdebugger::-Wcast-align::-fno-short-double
+fubarino_mini_dbg.upload.protocol=stk500v2
+# 128KB - 4K for EEPROM - 4K for bootloader
+fubarino_mini_dbg.upload.maximum_size=122880
+fubarino_mini_dbg.upload.speed=115200
+
+fubarino_mini_dbg.bootloader.low_fuses=0xff
+fubarino_mini_dbg.bootloader.high_fuses=0xdd
+fubarino_mini_dbg.bootloader.extended_fuses=0x00
+fubarino_mini_dbg.bootloader.path=not-supported
+fubarino_mini_dbg.bootloader.file=not-supported
+fubarino_mini_dbg.bootloader.unlock_bits=0x3F
+fubarino_mini_dbg.bootloader.lock_bits=0x0F
+
+fubarino_mini_dbg.build.mcu=32MX250F128D
+fubarino_mini_dbg.build.f_cpu=40000000L
+fubarino_mini_dbg.build.core=pic32
+fubarino_mini_dbg.build.variant=Fubarino_Mini
 
 ############################################################
 quick240_usb_pic32.name=PONTECH quicK240

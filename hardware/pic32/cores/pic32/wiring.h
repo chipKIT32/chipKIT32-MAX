@@ -37,12 +37,15 @@
 
 #if defined(__AVR__)
 	#include <avr/io.h>
+#elif defined(__PIC32MX__)
+    #include "p32_defs.h"
 #endif
 #include <inttypes.h>
 #include "binary.h"
 
 #include "cpudefs.h"	//*		This file is designed to provide some of the cpu specific definitions
 						//*		that are available for avr chips and not for other chips (i.e. pic32)
+                        //*     It now contains PIC32 speciffic defines as well.
 
 #ifdef __cplusplus
 extern "C"{
@@ -164,9 +167,6 @@ unsigned int callCoreTimerServiceNow(uint32_t (* service)(uint32_t));
 void setup(void);
 void loop(void);
 
-#ifdef __cplusplus
-} // extern "C"
-#endif
 
 #if !defined(__AVR__)
 	#define _BV(bit) (1ul << (bit))
@@ -310,6 +310,35 @@ extern const IMAGE_HEADER_INFO _image_header_info;      // this is the header in
 
 #if defined(__PIC32MX__)
 	extern unsigned int	__PIC32_pbClk;
+#endif
+
+#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
+
+// PPS Support for PIC32MX1 and PIC32MX2 parts
+// Locks all PPS functions so that calls to mapPpsInput() or mapPpsOutput() always fail.
+// You would use this function if you set up all of your PPS settings at the beginning
+// of your sketch, and then wanted to prevent any changes while running the rest of the
+// sketch. Can be unlocked with unlockPps().
+void lockPps();
+
+// Once the PPS system has been locked with logkPps(), this function will unlock it.
+// Use this function before making any changes with mapPpsInput() or mapPpsOutput()
+// functions.
+void unlockPps();
+
+// Use this function to assign a digital pin to a particular digital peripheral function.
+// <pin> is the digital pin you want to change
+// <func> is the name of the periphreal function to assign <pin> to. (see ppsFunctionType
+// enum in p32_defs.h)
+// Note that for a given <func> there are only a certain subset of possible pins that
+// can be assigned (up to 8 possible, as defined in the PIC32 datasheet). If you pass
+// in a <pin> that can't be assigned to <func>, this function will return 'false'.
+boolean mapPps(uint8_t pin, ppsFunctionType func);
+
+#endif  // defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
+
+#ifdef __cplusplus
+} // extern "C"
 #endif
 
 #endif

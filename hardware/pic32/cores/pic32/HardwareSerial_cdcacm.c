@@ -211,7 +211,7 @@ int buffersNeeded;
 int m;
 int previousInterrutLevel;
 		
-	//ASSERT(length);
+	// ASSERT(length);
 
 	if (! gCdcacm_attached || gDiscard || (length <= 0))
 	{
