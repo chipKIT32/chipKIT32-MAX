@@ -640,7 +640,7 @@ quick240_usb_pic32.platform=pic32
 quick240_usb_pic32.board=_BOARD_PONTECH_QUICK240_USB_
 quick240_usb_pic32.compiler.define=-D_USE_USB_FOR_SERIAL_
 quick240_usb_pic32.ccflags=ffff
-quick240_usb_pic32.ldscript=chipKIT-MAX32-application-32MX795F512L.ld
+quick240_usb_pic32.ldscript=chipKIT-application-32MX795F512.ld
 # end of new items
 
 quick240_usb_pic32.upload.protocol=stk500v2
@@ -669,7 +669,7 @@ usbono_pic32.platform=pic32
 usbono_pic32.board=_BOARD_PONTECH_UAV100_
 usbono_pic32.compiler.define=-D_USE_USB_FOR_SERIAL_::-Danything=1
 usbono_pic32.ccflags=ffff
-usbono_pic32.ldscript=chipKIT-application-32MX440F512H.ld
+usbono_pic32.ldscript=chipKIT-application-32MX440F512.ld
 #chipKIT-UNO32-application-32MX320F128L.ld
 # end of new items
 
