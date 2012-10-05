@@ -400,7 +400,7 @@
     <delete includeemptydirs="true">
       <fileset dir="linux/work/hardware/pic32/compiler" includes="**/*"/>
     </delete>  
-    <unzip dest="linux/work/hardware/pic32/compiler" src="linux/dist/pic32-tools-chipKIT-cxx-master-Linux32-image-20120720.zip"" overwrite="false">
+    <unzip dest="linux/work/hardware/pic32/compiler" src="linux/dist/pic32-tools-chipKIT-cxx-master-Linux32-image-20120720.zip" overwrite="false">
         <patternset>
             <include name="pic32-tools"/>
         </patternset>
