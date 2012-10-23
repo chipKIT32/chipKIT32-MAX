@@ -349,9 +349,9 @@ typedef enum {
     PPS_IN_U2CTS	= (22 + _PPS_SET_C + _PPS_INPUT_BIT),
     PPS_IN_SDI1		= (31 + _PPS_SET_B + _PPS_INPUT_BIT),
     PPS_IN_SS1		= (32 + _PPS_SET_A + _PPS_INPUT_BIT),
-    PPS_IN_SDI2		= (34 + _PPS_SET_C + _PPS_INPUT_BIT),
-    PPS_IN_SS2		= (35 + _PPS_SET_D + _PPS_INPUT_BIT),
-    PPS_IN_REFCLKI	= (44 + _PPS_SET_A + _PPS_INPUT_BIT),
+    PPS_IN_SDI2		= (35 + _PPS_SET_C + _PPS_INPUT_BIT),
+    PPS_IN_SS2		= (36 + _PPS_SET_D + _PPS_INPUT_BIT),
+    PPS_IN_REFCLKI	= (45 + _PPS_SET_A + _PPS_INPUT_BIT),
 
 } ppsFunctionType;
 
