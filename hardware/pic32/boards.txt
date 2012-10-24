@@ -776,7 +776,7 @@ fubarino_sd.build.core=pic32
 fubarino_sd.build.variant=fubarino_sd_v11
 
 ############################################################
-fubarino_mini.name=Fubarino_Mini
+fubarino_mini.name=FubarinoMini
 
 # new items
 fubarino_mini.platform=pic32
@@ -811,7 +811,7 @@ fubarino_mini.build.core=pic32
 fubarino_mini.build.variant=Fubarino_Mini
 
 ############################################################
-#fubarino_mini_dbg.name=Fubarino_Mini Debug
+#fubarino_mini_dbg.name=FubarinoMini Debug
 #
 ## new items
 #fubarino_mini_dbg.platform=pic32
