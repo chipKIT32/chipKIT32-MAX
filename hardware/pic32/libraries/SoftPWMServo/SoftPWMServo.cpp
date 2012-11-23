@@ -227,7 +227,7 @@ int32_t SoftPWMServoRawWrite(uint32_t Pin, uint32_t Value, bool PinType)
     }
     
     // And if this pin already has this PWM Value, then don't do anything.
-    if (Value == Chan[InactiveBuffer][Pin].PWMValue)
+    if (Value == Chan[ActiveBuffer][Pin].PWMValue)
     {
         return SOFTPWMSERVO_OK;
     }
