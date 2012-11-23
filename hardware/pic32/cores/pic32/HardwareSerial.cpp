@@ -59,6 +59,7 @@
 //* Nov 12, 2012	<GeneApperson> Rewrite for board variant support
 //* Sep  8, 2012    <BrianSchmalz> Fix dropping bytes on USB RX bug
 //*	Jul 26, 2012	<GeneApperson> Added PPS support for PIC32MX1xx/MX2xx devices
+//* Nov 23, 2012    <BrianSchmalz> Auto-detect when to use BRGH = 1 (high baud rates)
 //************************************************************************
 #ifndef __LANGUAGE_C__
 #define __LANGUAGE_C__
@@ -87,7 +88,8 @@
 /* ------------------------------------------------------------ */
 /*			General Declarations								*/
 /* ------------------------------------------------------------ */
-
+// Baud rate above which we use high baud divisor (BRGH = 1)
+#define LOW_HIGH_BAUD_SPLIT     200000
 
 /* ------------------------------------------------------------ */
 /*			HardwareSerial Object Class Implementation			*/
@@ -215,13 +217,21 @@ void HardwareSerial::begin(unsigned long baudRate)
 	iec->set = bit_rx;						//enable rx interrupts
 
 	/* Initialize the UART itself.
-	*/
-	//	http://www.chipkit.org/forum/viewtopic.php?f=7&t=213&p=948#p948
-	uart->uxBrg.reg	 = ((__PIC32_pbClk / 16 / baudRate) - 1);	// calculate actual BAUD generate value.
+	**	http://www.chipkit.org/forum/viewtopic.php?f=7&t=213&p=948#p948
+    ** Use high baud rate divisor for bauds over LOW_HIGH_BAUD_SPLIT
+    */
 	uart->uxSta.reg = 0;
-	uart->uxMode.reg = (1 << _UARTMODE_ON);			//enable UART module
-	uart->uxSta.reg  = (1 << _UARTSTA_UTXEN) + (1 << _UARTSTA_URXEN);	//enable transmitter and receiver
-
+    if (baudRate < LOW_HIGH_BAUD_SPLIT)
+    {
+        uart->uxBrg.reg    = ((__PIC32_pbClk / 16 / baudRate) - 1);      // calculate actual BAUD generate value.
+        uart->uxMode.reg = (1 << _UARTMODE_ON);                          // enable UART module
+    }
+    else
+    {
+        uart->uxBrg.reg    = ((__PIC32_pbClk / 4 / baudRate) - 1);       // calculate actual BAUD generate value.
+        uart->uxMode.reg = (1 << _UARTMODE_ON) | (1 << _UARTMODE_BRGH);  // enable UART module
+    }
+    uart->uxSta.reg  = (1 << _UARTSTA_UTXEN) + (1 << _UARTSTA_URXEN);    // enable transmitter and receiver
 }
 
 /* ------------------------------------------------------------ */
