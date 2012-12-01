@@ -58,7 +58,7 @@
 //*	Nov  1,	2011	<MLS> Also fixed some other compatibilty issues
 //* Nov 12, 2012	<GeneApperson> Rewrite for board variant support
 //* Sep  8, 2012    <BrianSchmalz> Fix dropping bytes on USB RX bug
-//*	Jul 26, 2012	<GeneApperson> Added PPS support for PIC32MX1xx/MX2xx devices
+//*	Jul 26, 2012	<GeneApperson> Added PPS support for PIC32MX1xx/MX2xx devices 
 //************************************************************************
 #ifndef __LANGUAGE_C__
 #define __LANGUAGE_C__
