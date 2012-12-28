@@ -313,6 +313,10 @@ extern const uint8_t	analog_pin_to_channel_PGM[];
 #define	_SER0_IPL_ISR	_UART1_IPL_ISR
 #define	_SER0_IPL		_UART1_IPL_IPC
 #define	_SER0_SPL		_UART1_SPL_IPC
+//#define>_SER0_RX_PIN    8$
+//#define>_SER0_TX_PIN    9$
+
+
 
 /* Serial port 1 uses UART2
 */
@@ -322,6 +326,10 @@ extern const uint8_t	analog_pin_to_channel_PGM[];
 #define	_SER1_IPL_ISR	_UART2_IPL_ISR
 #define	_SER1_IPL		_UART2_IPL_IPC
 #define	_SER1_SPL		_UART2_SPL_IPC
+//#define>_SER0_RX_PIN    28$
+//#define>_SER0_TX_PIN    29$
+
+
 
 /* ------------------------------------------------------------ */
 /*					SPI Port Declarations						*/

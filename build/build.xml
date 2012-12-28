@@ -4,13 +4,15 @@
   <!--echo message="os.arch = ${os.arch}" /-->
   <!--echo message="os.version = ${os.version}" /-->
   <!-- Sets properties for macosx/windows/linux depending on current system -->
+    <property file="upload.properties"/>
+    <property name="aws.bucket" value="chipkit" />
 
  <condition property="macosx"><os family="mac" /></condition>
   <condition property="windows"><os family="windows" /></condition>
   <condition property="linux"><os family="unix" /></condition>
   <condition property="linux64"><os family="unix" arch="amd64" /></condition>
 
-  <condition property="platform" 
+<condition property="platform" 
    value="macosx"><os family="mac" /></condition>
   <condition property="platform" 
     value="windows"><os family="windows" /></condition>
@@ -319,7 +321,11 @@
       
       macosx/mpide-${version}.dmg
       =======================================================
-    </echo>
+  </echo>
+  <propertyfile file="upload.properties">
+      <entry  key="version" value="${version}"/>
+  </propertyfile>
+
   </target>
 
   
@@ -648,6 +654,37 @@
     </copy>
   </target>
     -->
+   <!-- Task for setting up the aws-ant-tasks -->
+    <target name="awstasks.setup">
+        <path id="tasks.path">
+            <fileset dir="antlibs" includes="*.jar"/>
+        </path>
+
+        <taskdef name="s3put" classpath="antlibs" classname="it.corley.ant.S3PutTask"
+                 classpathref="tasks.path"/>
+        <typedef name="contenttype.mapping" classname="it.corley.ant.ContentTypeMapping" classpathref="tasks.path"/>
+        <typedef name="cachecontrol.mapping" classname="it.corley.ant.CacheControlMapping" classpathref="tasks.path"/>
+    	<typedef name="contentencoding.mapping" classname="it.corley.ant.ContentEncodingMapping" classpathref="tasks.path"/>
+    </target>
+    <!-- Upload the current build -->
+    <target name="upload" description="Use the Task" depends="awstasks.setup">
+        <property file="test.properties"/>
+        <s3put key="${aws.access_key}" secret="${aws.secret_key}" bucket="${aws.bucket}"
+               dest="builds" publicread="true" cacheControl="3600" contentType="application/x-readme">
+            <fileset dir="macosx" includes="mpide-${version}.dmg"/>
+            <contenttypemapping extension="md" contenttype="text/plain"/>
+            <cachecontrolmapping extension="md" maxage="7200"/>
+        	<contentencodingmapping extension="md" encoding="UTF-8" />
+        </s3put>
+
+    </target>
+    <!-- Debugging echo target for s3, other values could be added as needed. -->
+    <target name="echo">
+        <echo message="${aws.access_key}"/>
+        <echo message="${aws.secret_key}"/>
+        <echo message="${aws.bucket}"/>
+        <echo message="${version}"/>
+    </target>
 
 
 </project>
