@@ -108,6 +108,7 @@ typedef struct {
 /* UxMODE - Define bits in UART mode port
 */
 #define	_UARTMODE_ON	15
+#define _UARTMODE_BRGH  3
 
 /* UxSTA - Define bits in UART status/control register
 */

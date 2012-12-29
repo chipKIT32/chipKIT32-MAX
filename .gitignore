@@ -6,4 +6,3 @@
 *.out
 *.class
 *.svn
-./build/upload.properties
