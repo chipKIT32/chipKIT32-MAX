@@ -196,13 +196,13 @@ void init()
    // allow for debugging, this will stop the core timer when the debugger takes control
     _CP0_BIC_DEBUG(_CP0_DEBUG_COUNTDM_MASK); 
 
-	delay(50);
 	// time is MSb: hour, min, sec, rsvd. date is MSb: year, mon, mday, wday.
 	RtccOpen(0x10073000, 0x11010901, 0);
 	RtccSetTimeDate(0x10073000, 0x10101701);
 	// please note that the rsvd field has to be 0 in the time field!
 #endif
 
+	delay(50);
 
 	//*	as per Al.Rodriguez@microchip.com, Jan 7, 2011
 	//*	Disable the JTAG interface.
