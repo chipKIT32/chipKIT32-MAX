@@ -19,8 +19,6 @@
 //************************************************************************
 
 
-#include <plib.h>
-
 //#include "main.h"
 #include	"HardwareSerial.h"
 //*	make sure the cpu selected has a usb port

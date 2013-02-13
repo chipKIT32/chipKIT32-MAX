@@ -18,7 +18,8 @@
 //************************************************************************
 
 
-#include <plib.h>
+#include <p32xxxx.h>
+#include <sys/attribs.h>
 
 #include	"HardwareSerial.h"
 

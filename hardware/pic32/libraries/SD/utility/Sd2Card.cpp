@@ -18,12 +18,25 @@
  * along with the Arduino Sd2Card Library.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
+//* ***************************************************************************
+//* Revision History:
+//* Feb  7, 2013 <Gene Apperson> Changed bit-banged SPI code to remove dependency
+//*					on the Microchip plib library.
 #include <p32xxxx.h>
-#include <plib.h>
-
 
 #include <WProgram.h>
 #include "Sd2Card.h"
+
+/* The following are used for direct access to the processor pins
+** for the bit-banged SPI implementation.
+*/
+#define	bitSDO (1 << BN_SDO)
+#define	bitSDI (1 << BN_SDI)
+#define	bitSCK (1 << BN_SCK)
+
+p32_ioport * iopSDO = (p32_ioport *)&IOPORT_SDO;
+p32_ioport * iopSDI = (p32_ioport *)&IOPORT_SDI;
+p32_ioport * iopSCK = (p32_ioport *)&IOPORT_SCK;
 
 /*	SPIxCON
 */
@@ -50,10 +63,12 @@ uint32_t    interrupt_state = 0;
 uint8_t spiRec(void) {
   uint8_t data = 0;
   // output pin high - like sending 0XFF
-  PORTSetBits(prtSDO, bnSDO);
+  //PORTSetBits(prtSDO, bnSDO);
+  iopSDO->lat.set = bitSDO;
 
   for (uint8_t i = 0; i < 8; i++) {
-	PORTSetBits(prtSCK, bnSCK);
+	//PORTSetBits(prtSCK, bnSCK);
+	iopSCK->lat.set = bitSCK;
 
     data <<= 1;
 
@@ -61,10 +76,15 @@ uint8_t spiRec(void) {
     asm("nop");
     asm("nop");
 
-    if (PORTReadBits(prtSDI,bnSDI)) data |= 1;
+    //if (PORTReadBits(prtSDI,bnSDI)) data |= 1;
+	if ((iopSDI->port.reg & bitSDI) != 0)
+	{
+		data |= 1;
+	}
 
 
-    PORTClearBits(prtSCK, bnSCK);
+    //PORTClearBits(prtSCK, bnSCK);
+	iopSCK->lat.clr = bitSCK;
   }
 
   return data;
@@ -76,14 +96,17 @@ void spiSend(uint8_t data) {
   for (uint8_t i = 0; i < 8; i++) {
     
 	if(data & 0X80) {
-		PORTSetBits(prtSDO, bnSDO);
+		//PORTSetBits(prtSDO, bnSDO);
+		iopSDO->lat.set = bitSDO;
 	}
 	else
 	{
-		PORTClearBits(prtSDO, bnSDO);
+		//PORTClearBits(prtSDO, bnSDO);
+		iopSDO->lat.clr = bitSDO;
 	}
 
-	PORTClearBits(prtSCK, bnSCK);
+	//PORTClearBits(prtSCK, bnSCK);
+	iopSCK->lat.clr = bitSCK;
 
     asm("nop");
 	asm("nop");
@@ -91,7 +114,8 @@ void spiSend(uint8_t data) {
 
     data <<= 1;
 
-	PORTSetBits(prtSCK, bnSCK);
+	//PORTSetBits(prtSCK, bnSCK);
+	iopSCK->lat.set = bitSCK;
 
   }
   // hold SCK high for a few ns
@@ -100,7 +124,8 @@ void spiSend(uint8_t data) {
    asm("nop");
    asm("nop");
 
-  PORTClearBits(prtSCK, bnSCK);
+  //PORTClearBits(prtSCK, bnSCK);
+  iopSCK->lat.clr = bitSCK;
 }
 //------------------------------------------------------------------------------
 // send command and return error code.  Return zero for OK
@@ -164,7 +189,7 @@ void Sd2Card::chipSelectHigh(void) {
   {
     SPI2CON = spi_state;
     fspi_state_saved = false;
-    INTRestoreInterrupts(interrupt_state);
+    restoreInterrupts(interrupt_state);
   }
 #endif
 }
@@ -173,7 +198,7 @@ void Sd2Card::chipSelectLow(void) {
 #if defined(_BOARD_MEGA_) || defined(_BOARD_UNO_) || defined(_BOARD_UC32_)
     if(!fspi_state_saved)
     {
-        interrupt_state = INTDisableInterrupts();
+        interrupt_state = disableInterrupts();
         spi_state = SPI2CON;
         SPI2CONbits.ON = 0; 
         fspi_state_saved = true;
@@ -259,10 +284,13 @@ uint8_t Sd2Card::init(uint8_t sckRateID, uint8_t chipSelectPin) {
 
   pinMode(chipSelectPin_, OUTPUT);
 
-  PORTSetPinsDigitalOut(prtSCK, bnSCK);
-  PORTSetPinsDigitalOut(prtSDO, bnSDO);
-  PORTSetPinsDigitalIn(prtSDI, bnSDI);
-  
+  //PORTSetPinsDigitalOut(prtSCK, bnSCK);
+  //PORTSetPinsDigitalOut(prtSDO, bnSDO);
+  //PORTSetPinsDigitalIn(prtSDI, bnSDI);
+  iopSCK->tris.clr = bitSCK;
+  iopSDO->tris.clr = bitSDO;
+  iopSDI->tris.set = bitSDI;
+
   // set pin modes
   chipSelectHigh();
 

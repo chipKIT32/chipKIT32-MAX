@@ -32,18 +32,19 @@
 //* Aug 30, 2011    <GeneApperson> clear interrupt flag after return from
 //*                     user interrupt function (issue #109)
 //*	Jul 26, 2012	<GeneApperson> Added PPS support for PIC32MX1xx/MX2xx devices
+//	Feb  6, 2012	<GeneApperson> Removed dependencies on the Microchip plib library
 //************************************************************************
 
-#include <plib.h>
 #include <p32xxxx.h>
+#include <sys/attribs.h>
 
 #include <inttypes.h>
 #include <stdio.h>
 
 #define	OPT_SYSTEM_INTERNAL
 #define OPT_BOARD_INTERNAL	//pull in internal symbol definitons
-#include "pins_arduino.h"
 #include "p32_defs.h"
+#include "pins_arduino.h"
 
 #include "WConstants.h"
 #include "wiring_private.h"

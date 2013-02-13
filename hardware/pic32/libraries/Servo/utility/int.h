@@ -40,7 +40,7 @@
 #include <inttypes.h>
 
 //define timer priority
-#define TIMER4 0 // timer2 is the first timer used
+#define TIMER4 0 // timer4 is the first timer used
 #define TIMER5 1
 #define TIMER3 2
 

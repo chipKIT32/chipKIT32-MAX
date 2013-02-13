@@ -39,9 +39,9 @@
 
 #define OPT_BOARD_INTERNAL	//pull in internal symbol definitons
 #include <p32xxxx.h>
+#include "p32_defs.h"
 #include "wiring_private.h"
 #include "pins_arduino.h"
-#include "p32_defs.h"
 
 //************************************************************************
 void pinMode(uint8_t pin, uint8_t mode)

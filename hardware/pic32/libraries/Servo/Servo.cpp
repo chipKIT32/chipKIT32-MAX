@@ -62,9 +62,9 @@
 //* Sep 18, 2012    <BPS> Fixed math problem with refresh interval, and 
 //*                 expanded nbr to 7 bits for pins above 63 (MAX32 has 83)
 //*                 And adjusted trim to 1 tick (measured and adjusted)
+//* Feb  7, 2013	<GeneApperson> Removed dependency on Microchip plib library
 //************************************************************************
 
-#include <plib.h>
 #include "Servo.h"
 
 extern "C"{
@@ -264,9 +264,9 @@ void Servo::writeMicroseconds(int value)
 		value = usToTicks(value);			// convert to ticks after compensating for interrupt overhead 
 
 		unsigned int status;
-		status = INTDisableInterrupts();
+		status = disableInterrupts();
 		servos[channel].ticks = value;
-		INTRestoreInterrupts(status);
+		restoreInterrupts(status);
 	} 
 }
 

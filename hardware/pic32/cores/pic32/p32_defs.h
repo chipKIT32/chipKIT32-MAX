@@ -36,14 +36,21 @@
 //************************************************************************
 //*	Oct 2, 2011	<Gene Apperson> created
 //*	Jul 26, 2012 <GeneApperson> Added PPS support for PIC32MX1xx/MX2xx devices
+//* Feb  6, 2013 <GeneApperson> Added bit definitions for several peripherals
 //************************************************************************
 
 
-#ifndef _P32_DEFS_H
+#if !defined(_P32_DEFS_H)
 #define _P32_DEFS_H
 
 #include "cpudefs.h"
-#include	<inttypes.h>
+#include <inttypes.h>
+
+/* ------------------------------------------------------------ */
+/*				Misc. Declarations								*/
+/* ------------------------------------------------------------ */
+
+#define	FLASH_SPEED_HZ          30000000
 
 /* ------------------------------------------------------------ */
 /*				Register Declarations							*/
@@ -193,12 +200,123 @@ typedef struct {
 	volatile p32_regset tmxPr;
 } p32_timer;
 
+/* Define bits in the timer control register.
+** Type A timers (timer1) have different control bits
+** than Type B timers (timer2 - timer5)
+*/
+// Type A timer - Timer1
+#define _BN_TACON_ON		15
+#define	_BN_TACON_FRZ		14
+#define	_BN_TACON_SIDL		13
+#define	_BN_TACON_TWDIS		12
+#define	_BN_TACON_TWIP		11
+#define	_BN_TACON_TGATE		7
+#define _BN_TACON_TCKPS		4
+#define	_BN_TACON_TSYNC		2
+#define _BN_TACON_TCS		1
+
+#define TACON_ON			(1 << _BN_TACON_ON)
+#define TACON_OFF			(0)
+#define	TACON_FRZ_ON		(1 << _BN_TACON_FRZ)
+#define	TACON_FRZ_OFF		(0)
+#define	TACON_IDLE_STOP		(1 << _BN_TACON_SIDL)
+#define	TACON_IDLE_RUN		(0)
+#define	TACON_TWDIS_ON		(1 << _BN_TACON_TWDIS)
+#define	TACON_TWDIS_OFF		(0)
+#define	TACON_TWIP			(1 << _BN_TACON_TWIP)
+#define	TACON_TGATE_ON		(1 << _BN_TACON_TGATE)
+#define	TACON_TGATE_OFF		(0)
+#define	TACON_TSYNC_ON		(1 << _BN_TACON_TSYNC)
+#define	TACON_TSYNC_OFF		(0)
+
+#define TACON_SRC_INT		(0 << _BN_TACON_TCS)
+#define TACON_SRC_EXT		(1 << _BN_TACON_TCS)
+
+#define	TACON_PS_MASK		(3 << _BN_TACON_TCKPS)
+#define	TACON_PS_1			(0 << _BN_TACON_TCKPS)
+#define TACON_PS_8			(1 << _BN_TACON_TCKPS)
+#define	TACON_PS_64			(2 << _BN_TACON_TCKPS)
+#define	TACON_PS_256		(3 << _BN_TACON_TCKPS)
+
+// Type B timer - Timer2-Timer5
+#define	_BN_TBCON_ON		15
+#define	_BN_TBCON_FRZ		14
+#define	_BN_TBCON_SIDL		13
+#define	_BN_TBCON_TGATE		7
+#define	_BN_TBCON_TCKPS		4
+#define	_BN_TBCON_T32		3
+#define	_BN_TBCON_TCS		1
+
+#define	TBCON_ON			(1 << _BN_TBCON_ON)
+#define	TBCON_OFF			(0)
+#define	TBCON_FRZ_ON		(1 << _BN_TBCON_FRZ)
+#define	TBCON_FRZ_OFF		(0)
+#define	TBCON_IDLE_STOP		(1 << _BN_TBCON_SIDL)
+#define	TBCON_IDLE_RUN		(0)
+#define	TBCON_TGATE_ON		(1 << _BN_TBCON_TGATE)
+#define	TBCON_TGATE_OFF		(0)
+
+#define TBCON_PS_MASK		(7 << _BN_TBCON_TCKPS)
+#define	TBCON_PS_1			(0 << _BN_TBCON_TCKPS)
+#define	TBCON_PS_2			(1 << _BN_TBCON_TCKPS)
+#define TBCON_PS_4			(2 << _BN_TBCON_TCKPS)
+#define TBCON_PS_8			(3 << _BN_TBCON_TCKPS)
+#define TBCON_PS_16			(4 << _BN_TBCON_TCKPS)
+#define	TBCON_PS_32			(5 << _BN_TBCON_TCKPS)
+#define TBCON_PS_64			(6 << _BN_TBCON_TCKPS)
+#define TBCON_PS_256		(7 << _BN_TBCON_TCKPS)
+
+#define	TBCON_MODE32		(1 << _BN_TBCON_T32)
+#define	TBCON_MODE16		(0)
+#define TBCON_SRC_EXT		(1 << _BN_TBCON_TCS)
+#define TBCON_SRC_INT		(0)
+
 /* This structure defines the registers for a PIC32 Input Capture.
 */
 typedef struct {
 	volatile p32_regset icxCon;
 	volatile p32_regbuf icxBuf;
 } p32_ic;
+
+/* Define bits in the incput capture control register
+*/
+#define	_BN_ICCON_ON		15
+#define	_BN_ICCON_FRZ		14
+#define	_BN_ICCON_SIDL		13
+#define	_BN_ICCON_FEDGE		9
+#define	_BN_ICCON_C32		8
+#define	_BN_ICCON_ICTMR		7
+#define	_BN_ICCON_ICI		5
+#define	_BN_ICCON_ICOV		4
+#define	_BN_ICCON_ICBNE		3
+#define	_BN_ICCON_ICM		0
+
+#define	ICCON_ON			(1 << _BN_ICCON_ON)
+#define	ICCON_OFF			(0)
+#define	ICCON_FRZ_ON		(1 << _BN_ICCON_FRZ)
+#define	ICCON_FRZ_OFF		(0)
+#define	ICCON_IDLE_STOP		(1 << _BN_ICCON_SIDL)
+#define	ICCON_IDLE_RUN		(0)
+#define	ICCON_FEDGE_RISING	(1 << _BN_ICCON_FEDGE)
+#define	ICCON_FEDGE_FALLING	(0)
+#define	ICCON_WIDTH_32		(1 << _BN_ICCON_C32)
+#define	ICCON_WIDTH_16		(0)
+#define	ICCON_SOURCE_TIMER2	(1 << _BN_ICCON_ICTMR)
+#define	ICCON_SOURCE_TIMER3	(0)
+#define	ICCON_INT_FOURTH_EVENT	(3 << _BN_ICCON_ICI)
+#define	ICCON_INT_THIRD_EVENT	(2 << _BN_ICCON_ICI)
+#define	ICCON_INT_SECOND_EVENT	(1 << _BN_ICCON_ICI)
+#define	ICCON_INT_EVERY_EVENT	(0 << _BN_ICCON_ICI)
+#define	ICCON_OVERFLOW		(1 << _BN_ICCON_ICOV)
+#define	ICCON_ICBNE			(1 << _BN_ICCON_ICBNE)
+#define	ICCON_ICM_INTERRUPT		(7 << _BN_ICCON_ICM)
+#define	ICCON_ICM_EVERY_EDGE	(6 << _BN_ICCON_ICM)
+#define	ICCON_ICM_RISING_16		(5 << _BN_ICCON_ICM)
+#define	ICCON_ICM_RISING_4		(4 << _BN_ICCON_ICM)
+#define	ICCON_ICM_RISING_EDGE	(3 << _BN_ICCON_ICM)
+#define	ICCON_ICM_FALLING_EDGE	(2 << _BN_ICCON_ICM)
+#define	ICCON_ICM_EDGE_DETECT	(1 << _BN_ICCON_ICM)
+#define	ICCON_ICM_DISABLE		(0 << _BN_ICCON_ICM)
 
 /* This structure defines the registers for a PIC32 Output Compare.
 */
@@ -207,6 +325,34 @@ typedef struct {
 	volatile p32_regset ocxR;
 	volatile p32_regset ocxRs;
 } p32_oc;
+
+/* Define bits in the output compare control register
+*/
+#define _BN_OCCON_ON		15
+#define	_BN_OCCON_SIDL		13
+#define _BN_OCCON_OC32		5
+#define	_BN_OCCON_OCFLT		4
+#define _BN_OCCON_OCTSEL	3
+#define	_BN_OCCON_OCM		0
+
+#define OCCON_ON			(1 << _BN_OCCON_ON)
+#define OCCON_OFF			(0)
+#define	OCCON_IDLE_STOP		(1 << _BN_OCCON_SIDL)
+#define	OCCON_IDLE_RUN		(0)
+#define OCCON_MODE32		(1 << _BN_OCCON_OC32)
+#define OCCON_MODE16		(0)
+#define	OCCON_OCFLT			(1 << _BN_OCCON_OCFLT)
+#define	OCCON_SRC_TIMER3	(1 << _BN_OCCON_OCTSEL)
+#define	OCCON_SRC_TIMER2	(0)
+
+#define OCCON_PWM_FAULT_ENABLE		(7 << _BN_OCCON_OCM)
+#define	OCCON_PWM_FAULT_DISABLE		(6 << _BN_OCCON_OCM)
+#define	OCCON_PULSE_CONTINUOUS		(5 << _BN_OCCON_OCM)
+#define	OCCON_PULSE_SINGLE			(4 << _BN_OCCON_OCM)
+#define	OCCON_PULSE_TOGGLE			(3 << _BN_OCCON_OCM)
+#define	OCCON_FALLING_EDGE			(2 << _BN_OCCON_OCM)
+#define	OCCON_RISING_EDGE			(1 << _BN_OCCON_OCM)
+#define OCCON_MODE_OFF				(0 << _BN_OCCON_OCM)
 
 /* This structure defines the registers for a PIC32 A/D converter
 */

@@ -40,18 +40,18 @@
 //*	Aug  7,	2011	<Gene Apperson> Added necessary code for analogReference (Issue #69)
 //* Nov 12, 2011	<Gene Apperson> modified for board variant support
 //*	Jul 26, 2012	<GeneApperson> Added PPS support for PIC32MX1xx/MX2xx devices
+//	Feb  6, 2013	<Gene Apperson> Removed dependencies on the Microchip plib library
 //************************************************************************
 
-// Master header file for all peripheral library includes
-#include <plib.h>
+#include <p32xxxx.h>
 
 #include "wiring_private.h"
 
 #define OPT_BOARD_INTERNAL	//pull in internal symbol definitons
-#include "pins_arduino.h"
 #include "p32_defs.h"
+#include "pins_arduino.h"
 
-#define	PWM_TIMER_PERIOD	((F_CPU / 256) / 490)
+#define	PWM_TIMER_PERIOD	((__PIC32_pbClk / 256) / 490)
 
 uint32_t	analog_reference = 0;	//default to AVDD, AVSS
 
@@ -135,7 +135,8 @@ int	tmp;
 	** analog pin number. Map the input so that it is guaranteed to be
 	** an analog pin number.
 	*/
-	if ((ain = digitalPinToAnalog(pin)) == NOT_ANALOG_PIN) {
+	ain = (pin < NUM_DIGITAL_PINS) ? digitalPinToAnalog(pin) : NOT_ANALOG_PIN;
+	if (ain == NOT_ANALOG_PIN) {
 		return 0;
 	}
 
@@ -252,7 +253,7 @@ int	_board_analogWrite(uint8_t pin, int val);
 	/* Determine if this is actually a PWM capable pin or not.
 	** The value in timer will be the output compare number associated with
 	** the pin, or NOT_ON_TIMER if no OC is connected to the pin.
-	** The values 0 or  >=255 have the side effect of turning off PWM on
+	** The values 0 or >=255 have the side effect of turning off PWM on
 	** pins that are PWM capable.
 	*/
 	timer = digitalPinToTimerOC(pin) >> _BN_TIMER_OC;
@@ -266,36 +267,35 @@ int	_board_analogWrite(uint8_t pin, int val);
 		** of turning off PWM on the pin if it happens to be a
 		** PWM capable pin.
 		*/
-	pinMode(pin, OUTPUT);
+		pinMode(pin, OUTPUT);
 
-	        if (val < 128)
-	        {
-	            digitalWrite(pin, LOW);
-	        }
-	        else
-	        {
-	            digitalWrite(pin, HIGH);
-	        }
+	    if (val < 128)
+	    {
+	        digitalWrite(pin, LOW);
 	    }
-
 	    else
 	    {
-	    /* It's a PWM capable pin. Timer 2 is used for the time base
+	        digitalWrite(pin, HIGH);
+	    }
+	}
+
+	else
+	{
+		/* It's a PWM capable pin. Timer 2 is used for the time base
 		** for analog output, so if no PWM are currently active then
 		** Timer 2 needs to be initialized
 		*/
-	        if (pwm_active == 0)
-	        {
-	            T2CON = T2_PS_1_256;
-	            TMR2 = 0;
-	            PR2 = PWM_TIMER_PERIOD;
-	            T2CONSET = T2_ON;
-	       }
+	    if (pwm_active == 0)
+	    {
+			T2CON = TBCON_PS_256;
+			TMR2 = 0;
+			PR2 = PWM_TIMER_PERIOD;
+			T2CONSET = TBCON_ON;
+	    }
 
 		/* Generate bit mask for this output compare.
-	    ** We should assert(timer < 8) here, but assertions aren't being used
 		*/
-	    pwm_mask = (1 << (timer - (_TIMER_OC1 >> _BN_TIMER_OC)));
+		pwm_mask = (1 << (timer - (_TIMER_OC1 >> _BN_TIMER_OC)));
 
 		/* Obtain a pointer to the output compare being being used
 		** NOTE: as of 11/15/2011 All existing PIC32 devices
@@ -305,16 +305,12 @@ int	_board_analogWrite(uint8_t pin, int val);
 		*/
 		ocp = (p32_oc *)(_OCMP1_BASE_ADDRESS + (0x200 * (timer - (_TIMER_OC1 >> _BN_TIMER_OC))));
 
-	    /* If the requested PWM isn't active, init its output compare. Enabling
+		/* If the requested PWM isn't active, init its output compare. Enabling
 		** the output compare takes over control of pin direction and forces the
 		** pin to be an output.
 		*/
-	        if ((pwm_active & pwm_mask) == 0) 
-	        {
-			/* The pin isn't currently being used to drive a PWM output. Make
-			** sure it's an output.
-			*/
-			pinMode(pin, OUTPUT);
+		if ((pwm_active & pwm_mask) == 0) 
+		{
 
 #if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
 			volatile uint32_t *	pps;
@@ -325,18 +321,18 @@ int	_board_analogWrite(uint8_t pin, int val);
 			pps = ppsOutputRegister(timerOCtoDigitalPin(timer));
 			*pps = ppsOutputSelect(timerOCtoOutputSelect(timer));
 #endif
-	            ocp->ocxR.reg   = ((PWM_TIMER_PERIOD*val)/256);
-				ocp->ocxCon.reg = OC_TIMER2_SRC | OC_PWM_FAULT_PIN_DISABLE;
-	            ocp->ocxCon.set = OC_ON;
+	        ocp->ocxR.reg   = ((PWM_TIMER_PERIOD*val)/256);
+			ocp->ocxCon.reg = OCCON_SRC_TIMER2 | OCCON_PWM_FAULT_DISABLE;
+			ocp->ocxCon.set = OCCON_ON;
 
-	            pwm_active |= pwm_mask;
-	        }
-
-	    /* Set the duty cycle register for the requested output compare
-		*/
-			ocp->ocxRs.reg = ((PWM_TIMER_PERIOD*val)/256);
-
+	        pwm_active |= pwm_mask;
 	    }
+
+		/* Set the duty cycle register for the requested output compare
+		*/
+		ocp->ocxRs.reg = ((PWM_TIMER_PERIOD*val)/256);
+
+	}
 }
 
 
@@ -348,7 +344,7 @@ void turnOffPWM(uint8_t timer)
 	/* Disable the output compare.
 	*/
 	ocp = (p32_oc *)(_OCMP1_BASE_ADDRESS + (0x200 * (timer - (_TIMER_OC1 >> _BN_TIMER_OC))));
-	ocp->ocxCon.clr = OC_ON;
+	ocp->ocxCon.clr = OCCON_ON;
 
 	// Turn off the bit saying that this PWM is active.
 	pwm_active &= ~(1 << (timer - (_TIMER_OC1 >> _BN_TIMER_OC)));
@@ -356,6 +352,6 @@ void turnOffPWM(uint8_t timer)
 	// If no PWM are active, turn off the timer.
 	if (pwm_active == 0)
 	{
-    	T2CONCLR = T2_ON;
+    	T2CONCLR = TBCON_ON;
 	}
 }

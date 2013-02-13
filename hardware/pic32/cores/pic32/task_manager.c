@@ -1,6 +1,6 @@
 /************************************************************************/
 /*																		*/
-/*	periodic_task.c -- Periodic Task Management							*/
+/*	task_manager.c -- Periodic Task Management							*/
 /*																		*/
 /************************************************************************/
 /*	Author: Gene Apperson												*/
@@ -13,15 +13,30 @@
 /* of the main execution loop.											*/
 /*																		*/
 /************************************************************************/
+//*	This module is free software; you can redistribute it and/or
+//*	modify it under the terms of the GNU Lesser General Public
+//*	License as published by the Free Software Foundation; either
+//*	version 2.1 of the License, or (at your option) any later version.
+//*	
+//*	This library is distributed in the hope that it will be useful,
+//*	but WITHOUT ANY WARRANTY; without even the implied warranty of
+//*	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//*	Lesser General Public License for more details.
+//*	
+//*	You should have received a copy of the GNU Lesser General
+//*	Public License along with this library; if not, write to the
+//*	Free Software Foundation, Inc., 59 Temple Place, Suite 330,
+//*	Boston, MA  02111-1307  USA
+/************************************************************************/
 /*  Revision History:													*/
 /*																		*/
 /*	12/08/2011(GeneApperson): Created									*/
 /*	12/20/2011(GeneApperson): Modified to support multiple tasks using	*/
 /*		the same task function, and made the task var be a void * rather*/
 /*		than an unsigned short.											*/
+/*	02/06/2013(GeneApperson): Removed dependencies on Microchip plib	*/
 /*																		*/
 /************************************************************************/
-
 
 /* ------------------------------------------------------------ */
 /*				Include File Definitions						*/
@@ -105,11 +120,13 @@ createTask(taskFunc task, unsigned long period, unsigned short state, void * var
 	int				idSet;
 	int				idFree;
 	unsigned long	tmsCur;
+	unsigned int	st;
 
 	/* Search the table looking for an empty slot.
 	*/
+	st = disableInterrupts();
+	tmsCur = millis();
 	idSet  = -1;
-	noInterrupts();
 	for (id = 0; id < NUM_TASKS; id++) {
 		/* If this is the first vacant slot in the table.
 		*/
@@ -118,9 +135,6 @@ createTask(taskFunc task, unsigned long period, unsigned short state, void * var
 			break;
 		}
 	}
-	interrupts();
-
-	tmsCur = millis();
 
 	/* We should have the index of the appropriate slot in the table
 	** in idSet. If idSet == -1, then the table is full.
@@ -135,13 +149,14 @@ createTask(taskFunc task, unsigned long period, unsigned short state, void * var
 		rgtaskTable[idSet].stTask	 = state;
 		rgtaskTable[idSet].fsFlags	 = 0;
 	}
+	restoreInterrupts(st);
 
 	if (idSet != -1) {
 		/* Update our notion of when the next task event should occur.
 		*/
-		noInterrupts();
+		st = disableInterrupts();
 		_updateTaskEvent(tmsCur);
-		interrupts();
+		restoreInterrupts(st);
 	}
 
 	/* All done. Return the task id.
@@ -170,7 +185,8 @@ createTask(taskFunc task, unsigned long period, unsigned short state, void * var
 
 void
 destroyTask(int id) {
-	int		itask;
+	int				itask;
+	unsigned int	st;
 
 	/* Remove the specified task from the table.
 	*/
@@ -184,9 +200,9 @@ destroyTask(int id) {
 
 	/* Update when the next task event should occur.
 	*/
-	noInterrupts();
+	st = disableInterrutps();
 	_updateTaskEvent(millis());
-	interrupts();
+	restoreInterrupts(st);
 
 	return;
 }
@@ -584,11 +600,12 @@ _scheduleTask() {
 			 ((tmsNxt <  tmsLastEvent) && 
 						((tmsCur >= tmsNxt) && (tmsCur < tmsLastEvent))) ) {
 
-			/* Update the event time for the next event on this task.
+			/* This task event has timed out. Update the event time for the
+			** next event on this task.
 			*/
 			rgtaskTable[id].tmsNext += rgtaskTable[id].tmsPeriod;
 
-			/* This task event has timed out. Call the event function.
+			/* Call the event function.
 			*/
 			rgtaskTable[id].fsFlags |= fsBusy;
 			(*rgtaskTable[id].pfnTask)(id, rgtaskTable[id].varTask);

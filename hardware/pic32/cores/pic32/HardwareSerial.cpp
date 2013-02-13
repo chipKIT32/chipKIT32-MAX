@@ -60,8 +60,9 @@
 //* Sep  8, 2012    <BrianSchmalz> Fix dropping bytes on USB RX bug
 //*	Jul 26, 2012	<GeneApperson> Added PPS support for PIC32MX1xx/MX2xx devices 
 //* Nov 23, 2012    <BrianSchmalz> Auto-detect when to use BRGH = 1 (high baud rates)
+//*	Feb  6, 2013	<GeneApperson> Removed dependencies on the Microchip plib library
 //************************************************************************
-#ifndef __LANGUAGE_C__
+#if !defined(__LANGUAGE_C__)
 #define __LANGUAGE_C__
 #endif
 
@@ -70,7 +71,7 @@
 #include <inttypes.h>
 
 #include <p32xxxx.h>
-#include <plib.h>
+#include <sys/attribs.h>
 
 #include "wiring.h"
 #include "wiring_private.h"
@@ -193,20 +194,9 @@ void HardwareSerial::begin(unsigned long baudRate)
     mapPps(pinRx, ppsRx);
 #endif
 
-	/* Compute the address of the interrupt priority control
-	** registers used by this UART
-	*/
-	ipc = ((p32_regset *)&IPC0) + (vec / 4);	//interrupt priority control reg set
-
-	/* Compute the number of bit positions to shift to get to the
-	** correct position for the priority bits for this IRQ.
-	*/
-	irq_shift = 8 * (vec % 4);
-
 	/* Set the interrupt privilege level and sub-privilege level
 	*/
-	ipc->clr = 	(0x1F << irq_shift);
-	ipc->set = ((ipl << 2) + spl) << irq_shift;
+	setIntPriority(vec, ipl, spl);
 
 	/* Clear the interrupt flags, and set the interrupt enables for the
 	** interrupts used by this UART.
@@ -573,7 +563,7 @@ void USBSerial::begin(unsigned long baudRate)
 	DebugViaSerial0("returned from cdcacm_register");
 
 	// Must enable glocal interrupts - in this case, we are using multi-vector mode
-	INTEnableSystemMultiVectoredInt();
+	//INTEnableSystemMultiVectoredInt();
 	DebugViaSerial0("INTEnableSystemMultiVectoredInt");
 
 }

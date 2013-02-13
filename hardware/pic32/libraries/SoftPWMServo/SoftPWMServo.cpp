@@ -31,13 +31,14 @@
   01/12/2011 <BrianSchmalz>:
     * Re-wrote ISR and helper functions to utilize the new core timer
       attach() and detach() functions that Keith put into wiring.c
+  02/07/2013 <GeneApperson>:
+	* Removed dependency on Microchip plib library.
 */
 
 /* Note: plib.h must be included before WProgram.h. There is a fundamental
 ** incompatibility between GenericTypedefs.h (included by plib.h) and Print.h
 ** (included by WProgram.h) on the declaration of the symbol BYTE.
 */
-#include <plib.h>
 
 #define OPT_BOARD_INTERNAL
 #include <WProgram.h>
@@ -187,7 +188,7 @@ int32_t SoftPWMServoPinEnable(uint32_t Pin, bool PinType)
 int32_t SoftPWMServoPinDisable(uint32_t Pin)
 {
     int32_t intr;
-    intr = INTDisableInterrupts();
+    intr = disableInterrupts();
     CopyBuffers();
     
     // Pull this one out of the linked list of active channels
@@ -196,7 +197,7 @@ int32_t SoftPWMServoPinDisable(uint32_t Pin)
     // Mark it as unused
     Chan[InactiveBuffer][Pin].SetPort = NULL;
     Chan[InactiveBuffer][Pin].ClearPort = NULL;
-    INTRestoreInterrupts(intr);    
+    restoreInterrupts(intr);    
 
     return SOFTPWMSERVO_OK;
 }
@@ -240,7 +241,7 @@ int32_t SoftPWMServoRawWrite(uint32_t Pin, uint32_t Value, bool PinType)
     // touch but has updates and is ready to be swapped before the
     // next rising edge, and then 'inactive' which is the one we modify
     // with here. Maybe we wouldn't need to disable interrupts then.
-    intr = INTDisableInterrupts();
+    intr = disableInterrupts();
 
     // If needed, copy the values from the previously active buffer
     // into the inactive buffer before we begin work on it.
@@ -259,7 +260,7 @@ int32_t SoftPWMServoRawWrite(uint32_t Pin, uint32_t Value, bool PinType)
     // And add it back in the list, in the right place (in time)
     Add(Pin);    
 
-    INTRestoreInterrupts(intr);  
+    restoreInterrupts(intr);  
 
     return SOFTPWMSERVO_OK;
 }
@@ -335,7 +336,7 @@ uint32_t HandlePWMServo(uint32_t CurrentCount)
     uint32_t NextTime = 0;                  // The number of CoreTimer counts into the future when our next edge should occur
     uint32_t OldPeriod;                     // The CoreTimer value that caused the ISR to fire
     static ChanType * CurChanP = NULL;      // Pointer to the current channel we're operating on
-    bool DoItAgain = FALSE;                 // True if we don't have time to leave the ISR and come back in
+    bool DoItAgain = false;                 // True if we don't have time to leave the ISR and come back in
     uint32_t NextTimeAcc = CurrentCount;    // Records the sum of NextTime values while we stay in the do-while loop
 
     
@@ -381,7 +382,7 @@ uint32_t HandlePWMServo(uint32_t CurrentCount)
                 // And mark this time as the beginning of the PWM cycle
                 CurrentTime = 0;
                 // We don't want to do this again until next time
-                RisingEdge = FALSE;
+                RisingEdge = false;
             }
             else
             {
@@ -462,7 +463,7 @@ uint32_t HandlePWMServo(uint32_t CurrentCount)
                 NextTime = FrameTime - CurrentTime;
                 
                 // And make all of our channels go high then
-                RisingEdge = TRUE;
+                RisingEdge = true;
                 
                 // If it's time to swap buffers, then do that here
                 if (InactiveBufferReady)
@@ -519,7 +520,7 @@ uint32_t HandlePWMServo(uint32_t CurrentCount)
         // off the OldPeriod from our current CoreTimer value. This subtraction will
         // eleminate problems where adding NextTimeAcc rolls OldPeriod over, or where
         // the CoreTimer has rolled over from OldPeriod.
-        if (NextTimeAcc  < (ReadCoreTimer() + EXTRA_ISR_EXIT_CYCLES))
+        if (NextTimeAcc  < (readCoreTimer() + EXTRA_ISR_EXIT_CYCLES))
         {
             DoItAgain = true;
 
@@ -527,7 +528,7 @@ uint32_t HandlePWMServo(uint32_t CurrentCount)
             // CoreTimer fire has come and gone. We also put a fuge factor in here to
             // simulate the number of cycles necessary to get into the ISR and to the 
             // point where the top of the do-while loop starts executing.
-            while(ReadCoreTimer() < (NextTimeAcc + EXTRA_ISR_ENTRY_CYCLES))
+            while(readCoreTimer() < (NextTimeAcc + EXTRA_ISR_ENTRY_CYCLES))
             {
             }
         }

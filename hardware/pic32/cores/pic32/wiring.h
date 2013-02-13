@@ -30,22 +30,20 @@
 //*	May  ?,	2011	Brian Schmalz worked on micros timers
 //*	May 18,	2011	<MLS> Added prog_xxx defs because there is no "pgmspace.h" file for pic32
 //*	May 23,	2011	<MLS> Added definitions for PROGMEM,  pgm_read_byte_near, pgm_read_byte_far
+//* Feb  6, 2012	<Gene Appeson> Added declarations for new functions in WSystem.c
 //************************************************************************
 
 #ifndef Wiring_h
 #define Wiring_h
 
-#if defined(__AVR__)
-	#include <avr/io.h>
-#elif defined(__PIC32MX__)
-    #include "p32_defs.h"
-#endif
 #include <inttypes.h>
 #include "binary.h"
 
+#include <p32xxxx.h>
+#include "p32_defs.h"
 #include "cpudefs.h"	//*		This file is designed to provide some of the cpu specific definitions
 						//*		that are available for avr chips and not for other chips (i.e. pic32)
-                        //*     It now contains PIC32 speciffic defines as well.
+                        //*     It now contains PIC32 specific defines as well.
 
 #ifdef __cplusplus
 extern "C"{
@@ -103,8 +101,8 @@ extern "C"{
 #define degrees(rad) ((rad)*RAD_TO_DEG)
 #define sq(x) ((x)*(x))
 
-#define interrupts() INTEnableInterrupts()
-#define noInterrupts() INTDisableInterrupts()
+#define interrupts() enableInterrupts()
+#define noInterrupts() disableInterrupts()
 
 #define clockCyclesPerMicrosecond() ( F_CPU / 1000000L )
 #define clockCyclesToMicroseconds(a) ( (a) / clockCyclesPerMicrosecond() )
@@ -144,8 +142,6 @@ int		digitalRead(uint8_t pin);
 int		analogRead(uint8_t);
 void	analogReference(uint8_t mode);
 void	analogWrite(uint8_t, int);
-unsigned int __attribute__((nomips16))  INTEnableInterrupts(void);
-unsigned int __attribute__((nomips16)) INTDisableInterrupts(void);
 
 
 unsigned long	millis(void);
@@ -158,6 +154,22 @@ void			shiftOut(uint8_t dataPin, uint8_t clockPin, uint8_t bitOrder, byte val);
 
 void attachInterrupt(uint8_t, void (*)(void), int mode);
 void detachInterrupt(uint8_t);
+
+uint32_t __attribute__((nomips16)) enableInterrupts(void);
+uint32_t __attribute__((nomips16)) disableInterrupts(void);
+void __attribute__((nomips16))  restoreInterrupts(uint32_t st);
+uint32_t getIntFlag(int irq);
+void clearIntFlag(int irq);
+uint32_t setIntEnable(int irq);
+uint32_t clearIntEnable(int irq);
+void restoreIntEnable(int irq, uint32_t st);
+void setIntPriority(int vec, int ipl, int spl);
+void getIntPriority(int vec, int * pipl, int * pspl);
+uint32_t getPeripheralClock();
+uint32_t __attribute__((nomips16)) readCoreTimer(void);
+void __attribute__((nomips16)) writeCoreTimer(uint32_t tmr);
+
+
 unsigned int executeSoftReset(uint32_t options);
 
 unsigned int attachCoreTimerService(uint32_t (*)(uint32_t count));
@@ -253,9 +265,6 @@ void loop(void);
 
 typedef void (* FNIMGJMP) (void);
 
-#pragma pack(push,2) 
-
-
 // The RAM Header is filled in by the bootloader, however it is specified by the sketch in the linker script
 // The sketch must place it in the first 1.5K of RAM, as this is the space perserved by the bootloader for the sketch's
 // Debug data, RAM Header, and persistent data. The bootloader will only fill in the RAM Header and will not touch 
@@ -264,10 +273,12 @@ typedef void (* FNIMGJMP) (void);
 // will not stray into its own data space, so the bootloader may not write all bytes specified by the sketch if that
 // exceeds the 1.5K of reserved space. On return, cbBlHeader is the number of bytes written by the bootloader, any
 // data beyond this not touched by the bootloader.
+#pragma pack(push,2)
 typedef struct {
     uint32_t    cbBlRamHeader;     // the number of bytes of this header as written by the bootloader
     uint32_t    rcon;              // value of RCON before the bootloader clears it
 } RAM_HEADER_INFO;
+#pragma pack(pop)
 
 // The header is reserved by the sketch's linker script but 
 // written by both the sketch's linker script and by the bootloader.
@@ -277,6 +288,7 @@ typedef struct {
 // all bootloader supplied values will be 0xFFFFFFFF; as this is the unprogramed value of flash. 
 // Check the MSB of the capabilities and if it is set, then none of the bootloader supplied values are valid.
 // In all cases, a value of all FFs is reserved as unknown and should be checked before using.
+#pragma pack(push,2)
 typedef struct {
     uint32_t  cbHeader;               // length of this structure
     uint32_t  verBootloader;          // version of the booloader that loaded the sketch, it will be 0xFFFFFFFF if the bootloader did not write the version.
@@ -296,7 +308,6 @@ typedef struct {
     uint32_t  cbRamHeader;            // length of the ram header as specified by the linker and will be cleared/used by the bootloader
     uint32_t  cbBlPreservedRam;       // the amount RAM the bootloader will not touch, 0xA0000000 -> 0xA0000000 + cbBlPerservedRam; Debug data, Ram Header and Persistent data must be in this section
 } IMAGE_HEADER_INFO;
-
 #pragma pack(pop)
 
 extern const IMAGE_HEADER_INFO _image_header_info;      // this is the header info right before .rodata, defined by the linker

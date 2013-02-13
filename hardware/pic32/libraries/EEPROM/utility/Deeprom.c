@@ -6,13 +6,30 @@
 /*	Author: 	Oliver Jones											*/
 /*	Copyright 2011, Digilent Inc.										*/
 /************************************************************************/
+/*
+  This library is free software; you can redistribute it and/or
+  modify it under the terms of the GNU Lesser General Public
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
+
+  This library is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  Lesser General Public License for more details.
+
+  You should have received a copy of the GNU Lesser General Public
+  License along with this library; if not, write to the Free Software
+  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+*/
+/************************************************************************/
 /*  Module Description: 												*/
 /*																		*/
 /*																		*/
 /************************************************************************/
 /*  Revision History:													*/
 /*																		*/
-/*	09/01/2011(OliverJ): created										*/
+/* 09/01/2011(OliverJ):	created											*/
+/* 02/06/2013(GeneA):	removed dependencies on Microchip plib library	*/
 /*																		*/
 /************************************************************************/
 
@@ -23,13 +40,13 @@
 
 #include <p32xxxx.h>
 #include <stdint.h>
-#include <peripheral/nvm.h>
 #include <alloca.h>
 
 #define	OPT_BOARD_INTERNAL
 #include <pins_arduino.h>
 
 #include "Deeprom.h"
+#include "flash.h"
 
 /* ------------------------------------------------------------ */
 /*				Global Variables								*/
@@ -112,7 +129,7 @@ void clearEeprom()
 
 	//Clear page
 	for(i=0; i < _EEPROM_PAGE_COUNT; i++) {
-		NVMErasePage(&eedata_addr[i][0]);
+		eraseFlashPage(&eedata_addr[i][0]);
 	}
 }
 
@@ -153,7 +170,7 @@ BOOL writeEeprom(uint32_t address, uint8_t data)
 		putBuffer(&eedata_addr[i][0], tempBuffer);
 
 		//Clear page
-		NVMErasePage(&eedata_addr[i][0]);
+		eraseFlashPage(&eedata_addr[i][0]);
 
 		//Put buffer back to page
 		getBuffer(&eedata_addr[i][0], tempBuffer);
@@ -249,7 +266,7 @@ BOOL putEeprom(eeSeg * eeprom, uint32_t address, uint8_t data)
 			   else {
 				   tempSeg = eeprom[i];
 				   tempSeg.temp.valid = 0;
-				   NVMWriteWord((void*)&eeprom[i],tempSeg.data);
+				   writeFlashWord((void*)&eeprom[i],tempSeg.data);
 
 				   // If data is 0xFF return
 				   if(data == 0xFF) {
@@ -271,7 +288,7 @@ BOOL putEeprom(eeSeg * eeprom, uint32_t address, uint8_t data)
 
 	//Pack address with data and write to flash
 	tempSeg = pack(address,data);
-	NVMWriteWord((void*)&eeprom[i],tempSeg.data);
+	writeFlashWord((void*)&eeprom[i],tempSeg.data);
 
 	return fTrue;
 }
@@ -389,7 +406,7 @@ void getBuffer(eeSeg * eeprom, uint8_t * buffer)
 		if(buffer[i] != 0xFF) {
 			tempData = buffer[i];
 			tempSeg = pack(i, tempData);
-			NVMWriteWord((void*)&eeprom[i],tempSeg.data);
+			writeFlashWord((void*)&eeprom[i],tempSeg.data);
 		}
 	}
 }

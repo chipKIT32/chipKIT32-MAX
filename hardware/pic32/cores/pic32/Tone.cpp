@@ -37,13 +37,12 @@
 //*	Oct 15,	2010	Started on Tone.cpp for PIC32
 //*	Aug  7, 2011	<GeneApperson> Completed implementation for single tone.
 //*	Oct  5,	2011	<MLS> Issue #132 Tone fails when the frequency is 0 fixed
+//	Feb  6, 2013	<GeneApperson> Removed dependencies on the Microchip plib library
 //************************************************************************
 
 
 #define	LANGUAGE_C
 #define	__LANGUAGE_C__
-//*	the Microchip .h files do not know about C++
-#include <plib.h>
 
 //#define DEBUG_TONE
 
@@ -56,12 +55,15 @@
 	#include "HardwareSerial.h"
 #endif
 
+#include <p32xxxx.h>
+#include <sys/attribs.h>
+
 #include "wiring.h"
 
 #define	OPT_SYSTEM_INTERNAL
 #define OPT_BOARD_INTERNAL	//pull in internal symbol definitons
-#include "pins_arduino.h"
 #include "p32_defs.h"
+#include "pins_arduino.h"
 
 //	timerx_toggle_count:
 //	> 0 - duration specified
@@ -100,9 +102,10 @@ uint8_t port;
 		if (tone_pin == 255)
 		{
 			// No tone currently playing. Init the timer.
-			T1CON	=	T1_PS_1_256;
-			mT1ClearIntFlag();
-			ConfigIntTimer1(T1_INT_ON | _T1_IPL_IPC | (_T1_SPL_IPC << 4));
+			T1CON = TACON_PS_256;
+			clearIntFlag(_TIMER_1_IRQ);
+			setIntPriority(_TIMER_1_VECTOR, _T1_IPL_IPC, _T1_SPL_IPC);
+			setIntEnable(_TIMER_1_IRQ);
 		}
 		else if (_pin != tone_pin)
 		{
@@ -130,17 +133,17 @@ uint8_t port;
 			timer1_toggle_count	=	-1;
 		}
 
-		TMR1		=	0;
-		PR1			=	((F_CPU / 256) / 2 / frequency);
-		T1CONSET	=	T1_ON;
+		TMR1		= 0;
+		PR1			= ((__PIC32_pbClk / 256) / 2 / frequency);
+		T1CONSET	= TACON_ON;
 	}
 }
 
 //************************************************************************
 void disableTimer(uint8_t _timer)
 {
-	mT1IntEnable(0);
-	T1CON		=	0;;
+	clearIntEnable(_TIMER_1_IRQ);
+	T1CON		=	0;
 	tone_pin	=	255;
 }
 
@@ -187,7 +190,7 @@ void __ISR(_TIMER_1_VECTOR, _T1_IPL_ISR) Timer1Handler(void)
 	}
 
 	// clear the interrupt flag
-	mT1ClearIntFlag();
+	clearIntFlag(_TIMER_1_IRQ);
 }
 
 };	//*	extern "C"

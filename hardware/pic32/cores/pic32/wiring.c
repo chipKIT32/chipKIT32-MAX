@@ -43,9 +43,11 @@
 //                  Also fixed write_comp() inline assembler
 //                  Also added countdown debug mask to stop the core timer when debugging.
 //* Jun  1, 2012    <BPS> Added SoftReset() for software bootload
+//	Feb  6, 2013	<GeneApperson> Removed dependencies on the Microchip plib library
 //************************************************************************
-#include <plib.h>
+
 #include <p32xxxx.h>
+#include <sys/attribs.h>
 
 #define	OPT_SYSTEM_INTERNAL
 #define OPT_BOARD_INTERNAL	//pull in internal symbol definitons
@@ -53,7 +55,6 @@
 #include "p32_defs.h"
 
 #include "wiring_private.h"
-#include "peripheral/reset.h"
 
 #undef _ENABLE_PIC_RTC_
 
@@ -118,25 +119,23 @@ unsigned long millis()
 //************************************************************************
 unsigned long micros()
 {
-unsigned int cur_timer_val	=	0;
-unsigned int micros_delta	=	0;
+	uint32_t	st;
+	unsigned int cur_timer_val	=	0;
+	unsigned int micros_delta	=	0;
 
 	unsigned int result;
 	
-	INTDisableInterrupts();
+	st = disableInterrupts();
 	result = gTimer0_millis * 1000;
 	cur_timer_val = ReadCoreTimer();
 	cur_timer_val -= gCore_timer_last_val;
 	cur_timer_val += CORETIMER_TICKS_PER_MICROSECOND/2;  // rounding
 	cur_timer_val /= CORETIMER_TICKS_PER_MICROSECOND;  // convert to microseconds
-	INTEnableInterrupts();
+	restoreInterrupts(st);
 	return (result + cur_timer_val);
 
 }
 
-//#define mCTClearIntFlag()					(IFS0CLR = _IFS0_CTIF_MASK)
-//#define mCTGetIntFlag()					 (IFS0bits.CTIF)
-//#define GetSystemClock() (80000000ul)
 //************************************************************************
 // Delay for a given number of milliseconds.
 void delay(unsigned long ms)
@@ -168,6 +167,7 @@ unsigned long	startMicros	=	micros();
 void init()
 {
 
+#if defined(DEAD)
 #ifdef _ENABLE_PIC_RTC_
 	// Configure the device for maximum performance but do not change the PBDIV
 	// Given the options, this function will change the flash wait states, RAM
@@ -177,29 +177,36 @@ void init()
 #else
 	__PIC32_pbClk	=	SYSTEMConfigPerformance(F_CPU);
 #endif
+#endif
 
+	// Configure the processor for the proper number of wait states and caching.
+	_configSystem(F_CPU);
 
-	OpenCoreTimer(CORE_TICK_RATE);
+	// Enable multi-vector interrupts
+	_enableMultiVectorInterrupts();
 
-	// set up the core timer interrupt with a prioirty of 2 and zero sub-priority
-	mConfigIntCoreTimer(CT_INT_ON | _CT_IPL_IPC | (_CT_SPL_IPC << 4));
+	// Initialize the core timer for use to maintain the system timer tick.
+	_initCoreTimer(CORE_TICK_RATE);
+	setIntPriority(_CORE_TIMER_VECTOR, _CT_IPL_IPC, _CT_SPL_IPC);
+	setIntEnable(_CORE_TIMER_IRQ);
 
-	// enable multi-vector interrupts
-	INTEnableSystemMultiVectoredInt();
+	// Save the peripheral bus frequency for later use.
+	__PIC32_pbClk = getPeripheralClock();
 
+   // allow for debugging, this will stop the core timer when the debugger takes control
+    _CP0_BIC_DEBUG(_CP0_DEBUG_COUNTDM_MASK); 
 
+#if defined(DEAD)
 #ifdef _ENABLE_PIC_RTC_
 	RtccInit();									// init the RTCC
 //	while(RtccGetClkStat() != RTCC_CLK_ON);		// wait for the SOSC to be actually running and RTCC to have its clock source
 												// could wait here at most 32ms
 
-   // allow for debugging, this will stop the core timer when the debugger takes control
-    _CP0_BIC_DEBUG(_CP0_DEBUG_COUNTDM_MASK); 
-
 	// time is MSb: hour, min, sec, rsvd. date is MSb: year, mon, mday, wday.
 	RtccOpen(0x10073000, 0x11010901, 0);
 	RtccSetTimeDate(0x10073000, 0x10101701);
 	// please note that the rsvd field has to be 0 in the time field!
+#endif
 #endif
 
 	delay(50);
@@ -323,31 +330,6 @@ boolean mapPps(uint8_t pin, ppsFunctionType func)
 #endif	// defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
 
 //************************************************************************
-//*	Interrupts are enabled by setting the IE bit in the status register
-//************************************************************************
-unsigned int __attribute__((nomips16))  INTEnableInterrupts(void)
-{
-    unsigned int status = 0;
-
-    asm volatile("ei    %0" : "=r"(status));
-
-    return status;
-}
-
-
-//************************************************************************
-//*	Interrupts are disabled by clearing the IE bit in the status register
-//************************************************************************
-unsigned int __attribute__((nomips16)) INTDisableInterrupts(void)
-{
-    unsigned int status = 0;
-
-    asm volatile("di    %0" : "=r"(status));
-
-    return status;
-}
-
-//************************************************************************
 //*	Deal with the 'virtual' program button and SoftReset(). This allows
 //* a sketch to cause the board to reboot, and either force entry into
 //* the bootloader, or not.
@@ -406,7 +388,7 @@ unsigned int executeSoftReset(uint32_t options)
     RCONbits.EXTR = 0;
     
     // Now perform the software reset
-    SoftReset();
+    _softwareReset();
 
     return(true);       // never will be executed.
 }
@@ -460,6 +442,7 @@ uint32_t millisecondCoreTimerService(uint32_t curTime);
 #define write_comp(src) __asm__ __volatile__("mtc0 %0,$11" : : "r" (src))
 
 #define mCTSetIntFlag() (IFS0SET = _IFS0_CTIF_MASK)
+#define mCTClearIntFlag() (IFS0CLR = _IFS0_CTIF_MASK)
 
 typedef  uint32_t (*CoreTimerService)(uint32_t);
 

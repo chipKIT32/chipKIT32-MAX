@@ -22,8 +22,8 @@
 
 #define OPT_SYSTEM_INTERNAL
 #define OPT_BOARD_INTERNAL
-#include <plib.h>
 #include <p32xxxx.h>
+#include <sys/attribs.h>
 #include <p32_defs.h>
 #include <pins_arduino.h>
 #include "twi.h"

@@ -31,12 +31,13 @@
 //*	Sep  5,	2011	<GeneA> Added include of p32xxxx.h and plib.h to fix
 //*						compile errors intoduced when include of plib.h was removed
 //*						HardwareSerial.h
+//* Feb  7, 2013	<GeneApperson> Removed dependency on Microchip plib library
 //************************************************************************
 
 #define OPT_SYSTEM_INTERNAL
 #define OPT_BOARD_INTERNAL
 #include <p32xxxx.h>
-#include <plib.h>
+#include <sys/attribs.h>
 #include <pins_arduino.h>
 
 #include "int.h"

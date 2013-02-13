@@ -20,6 +20,7 @@
 /*  Revision History:													*/
 /*																		*/
 /*	11/28/2011(GeneA): Created by splitting data out of Board_Defs.h	*/
+/*	02/12/2013(GeneA): removed dependency on Microchip plib library		*/
 /*																		*/
 /************************************************************************/
 //*	This library is free software; you can redistribute it and/or
@@ -399,9 +400,6 @@ const uint16_t digital_pin_to_timer_PGM[] = {
 /*		Include Files for Board Customization Functions			*/
 /* ------------------------------------------------------------ */
 
-#if	(OPT_BOARD_INIT != 0)
-#include <plib.h>
-#endif
 
 /* ------------------------------------------------------------ */
 /*				Board Customization Functions					*/
@@ -439,20 +437,10 @@ const uint16_t digital_pin_to_timer_PGM[] = {
 
 void _board_init(void) {
 
-	//*	Turn Secondary oscillator off
-	//*	this is only needed on the mega board because the mega uses secondary
-	// ocsilator pins as general I/O
-	
-	unsigned int dma_status;
-	unsigned int int_status;
-	
-		mSYSTEMUnlock(int_status, dma_status);
+	/*	Turn off Secondary oscillator so pins can be used as GPIO
+	*/
+	OSCCONCLR	=	_OSCCON_SOSCEN_MASK;
 
-		OSCCONCLR	=	_OSCCON_SOSCEN_MASK;
-
-
-		mSYSTEMLock(int_status, dma_status);
-	
 }
 
 #endif

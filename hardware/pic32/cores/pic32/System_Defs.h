@@ -118,11 +118,11 @@
 */
 #if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
 #define	_CT_IPL_ISR		IPL7SOFT
-#define	_CT_IPL_IPC		CT_INT_PRIOR_7
+#define	_CT_IPL_IPC		7
 #define	_CT_SPL_IPC		0
 #else
 #define	_CT_IPL_ISR		IPL7SRS
-#define	_CT_IPL_IPC		CT_INT_PRIOR_7
+#define	_CT_IPL_IPC		7
 #define	_CT_SPL_IPC		0
 #endif
 
