@@ -69,9 +69,6 @@
     <input message="Enter version number:" 
 	addproperty="version"
 	defaultvalue="${revision}" />
-  <propertyfile file="upload.properties">
-      <entry  key="version" value="${version}"/>
-  </propertyfile>
     <antcall target="${platform}-dist" />
 </target>
 
@@ -80,9 +77,6 @@
     <input message="Enter version number:"
            addproperty="version"
            defaultvalue="${revision}-${platform}-${TODAY}-test" />
-  <propertyfile file="upload.properties">
-      <entry  key="version" value="${version}"/>
-  </propertyfile>
     <antcall target="${platform}-dist" />
   </target>
 
@@ -328,6 +322,9 @@
       macosx/mpide-${version}.dmg
       =======================================================
   </echo>
+  <propertyfile file="upload.properties">
+      <entry  key="version" value="${version}"/>
+  </propertyfile>
 
   </target>
 
@@ -672,18 +669,14 @@
     <!-- Upload the current build -->
     <target name="upload" description="Use the Task" depends="awstasks.setup">
         <property file="test.properties"/>
-        <echo message="Platform: ${platform} Version: ${version}" />
         <s3put key="${aws.access_key}" secret="${aws.secret_key}" bucket="${aws.bucket}"
                dest="builds" publicread="true" cacheControl="3600" contentType="application/x-readme">
-<!--            <fileset dir="${platform}" includes="mpide-${version}.dmg"/>
-            <fileset dir="${platform}" includes="mpide-${version}.zip"/>
--->
-            <fileset dir="${platform}" includes="mpide-${version}.tgz"/>
+            <fileset dir="macosx" includes="mpide-${version}.dmg"/>
             <contenttypemapping extension="md" contenttype="text/plain"/>
             <cachecontrolmapping extension="md" maxage="7200"/>
-            <contentencodingmapping extension="md" encoding="UTF-8" />
+        	<contentencodingmapping extension="md" encoding="UTF-8" />
         </s3put>
-        <echo message="Upload task complete" />
+
     </target>
     <!-- Debugging echo target for s3, other values could be added as needed. -->
     <target name="echo">
