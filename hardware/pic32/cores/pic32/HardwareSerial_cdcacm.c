@@ -27,6 +27,7 @@
 
 #include <stdarg.h>
 #include <stdint.h>
+#include <stddef.h>
 
 
 #include	"HardwareSerial_cdcacm.h"
