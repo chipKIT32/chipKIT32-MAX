@@ -28,7 +28,8 @@
 
 #include <stdarg.h>
 #include <stdint.h>
-
+#include <stddef.h>
+#include <sys/kmem.h>
 
 #include	"HardwareSerial_usb.h"
 #include	"HardwareSerial_cdcacm.h"
