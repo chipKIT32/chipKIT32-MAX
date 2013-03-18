@@ -240,7 +240,7 @@
     </exec>
      
 <unzip dest="macosx/work/mpide.app/Contents/Resources/Java/hardware/pic32/compiler" src="macosx/dist/pic32-tools-chipKIT-cxx-master-Darwin-image-20120720.zip" overwrite="false"/>
-<chmod perm="+x" maxparallel=20>
+<chmod perm="+x" maxparallel="20">
       <fileset dir="macosx/work/mpide.app/Contents/Resources/Java/hardware/pic32/compiler" includes="**/*" />
 </chmod>
 
