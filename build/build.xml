@@ -77,6 +77,9 @@
     <input message="Enter version number:"
            addproperty="version"
            defaultvalue="${revision}-${platform}-${TODAY}-test" />
+  <propertyfile file="upload.properties">
+      <entry  key="version" value="${version}"/>
+  </propertyfile>
     <antcall target="${platform}-dist" />
   </target>
 
