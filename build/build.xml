@@ -12,14 +12,18 @@
   <condition property="linux"><os family="unix" /></condition>
   <condition property="linux64"><os family="unix" arch="amd64" /></condition>
 
-<condition property="platform" 
-   value="macosx"><os family="mac" /></condition>
-  <condition property="platform" 
-    value="windows"><os family="windows" /></condition>
-  <condition property="platform" 
-     value="linux"><os family="unix" arch="i386" /></condition>
-  <condition property="platform" 
-     value="linux64"><os family="unix" arch="amd64" /></condition>
+<condition property="platform" value="macosx">
+	<os family="mac" />
+</condition>
+<condition property="platform" value="windows">
+	<os family="windows" />
+</condition>
+  <condition property="platform"  value="linux">
+	<os family="unix" arch="i386" />
+</condition>
+<condition property="platform" value="linux64">
+	<os family="unix" arch="amd64" />
+</condition>
 
   <!-- set time propert -->  
   <tstamp>
@@ -208,7 +212,7 @@
   </target>
   
   <target name="macosx-build" if="macosx" depends="revision-check, macosx-checkos, subprojects-build" description="Build Mac OS X version">
-    <mkdir dir="macosx/work" />
+    	<mkdir dir="macosx/work" />
     
     <!-- assemble the pde -->
     <copy todir="macosx/work">
@@ -269,6 +273,11 @@
 
 
   <target name="macosx-dist" if="macosx" depends="macosx-build" description="Create a .dmg of the Mac OS X version">
+   	<property name="extension" value="dmg"/>  
+	<propertyfile file="upload.properties">
+      		<entry  key="extension" value="${extension}"/>
+  	</propertyfile>
+
     <!-- now build the dmg -->
     <gunzip src="macosx/template.dmg.gz" dest="macosx/working.dmg" />
     
@@ -425,6 +434,10 @@
 
   <target name="linux-dist" depends="build" 
 	  description="Build .tar.gz of linux version">
+    <property name="extension" value="tgz"/> 
+    <propertyfile file="upload.properties">
+           <entry  key="extension" value="${extension}"/>
+    </propertyfile>
 
     <!--get src="http://dev.processing.org/build/jre-tools-6u18-linux-i586.tgz" 
 	 dest="linux/jre.tgz" 
@@ -559,6 +572,10 @@
 
   <target name="windows-dist" depends="windows-build" 
 	  description="Create .zip files of windows version">
+    <property name="extension" value="zip"/>   
+    <propertyfile file="upload.properties">
+           <entry  key="extension" value="${extension}"/>
+    </propertyfile>
 
     <!--get src="http://dev.processing.org/build/jre-tools-6u18-windows-i586.zip" 
 	 dest="windows/jre.zip" 
@@ -674,12 +691,12 @@
         <property file="test.properties"/>
         <s3put key="${aws.access_key}" secret="${aws.secret_key}" bucket="${aws.bucket}"
                dest="builds" publicread="true" cacheControl="3600" contentType="application/x-readme">
-            <fileset dir="macosx" includes="mpide-${version}.dmg"/>
+            <fileset dir="${platform}" includes="mpide-${version}.${extension}"/> 
             <contenttypemapping extension="md" contenttype="text/plain"/>
             <cachecontrolmapping extension="md" maxage="7200"/>
-        	<contentencodingmapping extension="md" encoding="UTF-8" />
+   	    	<contentencodingmapping extension="md" encoding="UTF-8" />
         </s3put>
-
+        <echo message="Upload task complete" /> 
     </target>
     <!-- Debugging echo target for s3, other values could be added as needed. -->
     <target name="echo">
