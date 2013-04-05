@@ -441,8 +441,6 @@ const uint16_t digital_pin_to_timer_PGM[] = {
 
 void _board_init(void) {
 
-void _board_init(void) {
-
 	/*	Turn off Secondary oscillator so pins can be used as GPIO
 	*/
 	OSCCONCLR	=	_OSCCON_SOSCEN_MASK;
