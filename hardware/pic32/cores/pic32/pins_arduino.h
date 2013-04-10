@@ -55,6 +55,7 @@
 #define	NOT_ON_TIMER	0
 #define	NOT_ANALOG_PIN	0xFF
 #define	NOT_PPS_PIN		0xFF
+#define NOT_CN_PIN      0xFF
 
 /* Symbols to define the bit position of the timer fields within the
 ** timer mapping table.
@@ -157,6 +158,7 @@
 #define digitalPinToTimerIC(P)  ( (digital_pin_to_timer_PGM[P] & _MSK_TIMER_IC)  )
 #define digitalPinToTimerTCK(P) ( (digital_pin_to_timer_PGM[P] & _MSK_TIMER_TCK) )
 #define	digitalPinToTimer(P)	digitalPinToTimerOC(P)
+#define digitalPinToCN(P) (NOT_CN_PIN)
 
 #if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
 // This macro returns a pointer to a p32_ioport structure as defined in p32_defs.h

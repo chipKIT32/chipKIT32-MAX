@@ -231,6 +231,9 @@ const static uint8_t SCK  = 13;		// PIC32 SCK2
 #undef analogInPinToChannel
 #define analogInPinToChannel(P) ( analog_pin_to_channel_PGM[P]  )
 
+#undef digitalPinToCN
+#define digitalPinToCN(P) ( digital_pin_to_cn_PGM[P] )
+
 /* ------------------------------------------------------------ */
 /*					Data Declarations							*/
 /* ------------------------------------------------------------ */
@@ -246,6 +249,7 @@ extern const uint8_t	digital_pin_to_port_PGM[];
 extern const uint16_t	digital_pin_to_bit_mask_PGM[];
 extern const uint16_t	digital_pin_to_timer_PGM[];
 extern const uint8_t	analog_pin_to_channel_PGM[];
+extern const uint32_t   digital_pin_to_cn_PGM[];
 
 #endif
 
