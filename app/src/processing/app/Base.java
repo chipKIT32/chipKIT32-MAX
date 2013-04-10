@@ -1660,11 +1660,27 @@ static public Map<String, String> getPlatformPreferences() {
 
 static public Map<String, String> getBoardPreferences() {
     Target target = getTarget();
-    if (target == null) return new LinkedHashMap();
+    if (target == null) {
+        logger.debug("Base: getBoardPreferences target is null");
+        return new LinkedHashMap();
+    }
     Map map = target.getBoards();
-    if (map == null) return new LinkedHashMap();
-    map = (Map) map.get(Preferences.get("board"));
-    if (map == null) return new LinkedHashMap();
+    if (map == null) {
+        logger.debug("Base: getBoardPreferences target getBoards() is null");
+        return new LinkedHashMap();
+    }
+    Map map1 = (Map) map.get(Preferences.get("board"));
+    if (map1 == null) {
+        String[] entries = (String[]) map.keySet().toArray(new String[0]);
+        logger.debug("Base: getBoardPreferences board not found, defaulting to " + entries[0]);
+        map = (Map) map.get(entries[0]);
+        if (map == null) {
+            logger.debug("Base: getBoardPreferences unable to find any board");
+            return new LinkedHashMap();
+        }
+    } else {
+        map = map1;
+    }
     return map;
   }
 
