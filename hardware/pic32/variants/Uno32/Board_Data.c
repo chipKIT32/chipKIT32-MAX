@@ -300,6 +300,54 @@ const uint8_t analog_pin_to_channel_PGM[] =
 
 };
 
+const uint32_t digital_pin_to_cn_PGM[] = 
+{
+    NOT_CN_PIN,
+    NOT_CN_PIN,
+    NOT_CN_PIN,
+    NOT_CN_PIN,
+    NOT_CN_PIN,
+    NOT_CN_PIN,
+    NOT_CN_PIN,
+    NOT_CN_PIN,
+    NOT_CN_PIN,
+    NOT_CN_PIN,
+    _BV(13),
+    _BV(10),
+    _BV(9),
+    _BV(8),
+    _BV(4),
+    _BV(6),
+    NOT_CN_PIN,
+    NOT_CN_PIN,
+    NOT_CN_PIN,
+    NOT_CN_PIN,
+    _BV(5),
+    _BV(7),
+    NOT_CN_PIN,
+    NOT_CN_PIN,
+    NOT_CN_PIN,
+    _BV(12),
+    NOT_CN_PIN,
+    NOT_CN_PIN,
+    NOT_CN_PIN,
+    NOT_CN_PIN,
+    NOT_CN_PIN,
+    NOT_CN_PIN,
+    NOT_CN_PIN,
+    NOT_CN_PIN,
+    _BV(14),
+    NOT_CN_PIN,
+    _BV(15),
+    _BV(16),
+    NOT_CN_PIN,
+    _BV(17),
+    _BV(18),
+    _BV(3),
+    _BV(2),
+    NOT_CN_PIN
+};
+
 /* ------------------------------------------------------------ */
 /*				Board Customization Functions					*/
 /* ------------------------------------------------------------ */

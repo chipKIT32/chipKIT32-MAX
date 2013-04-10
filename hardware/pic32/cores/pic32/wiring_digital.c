@@ -49,7 +49,8 @@ void pinMode(uint8_t pin, uint8_t mode)
 uint32_t				bit;
 uint8_t					port;
 volatile p32_ioport *	iop;
-uint8_t		timer;
+uint8_t		            timer;
+uint32_t                cn;
 
 	/* Check if pin number is in valid range.
 	*/
@@ -115,34 +116,38 @@ int	_board_pinMode(uint8_t pin, uint8_t mode)
 #endif	// defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
 
 	// Set the pin to the requested mode.
-	if (mode == INPUT) 
-	{
-		//* Determine if this is an output compare pin. If so,
-		//* we need to make sure PWM output is off.
-		timer = digitalPinToTimerOC(pin) >> _BN_TIMER_OC;
-		if (timer != NOT_ON_TIMER)
-		{
-			turnOffPWM(timer);
-		}
+    switch (mode) {
+        case INPUT_PULLUP:
+            cn = digitalPinToCN(pin);
+            if (cn != NOT_CN_PIN) {
+                CNPUESET = cn;
+            } 
+            // continue into INPUT case
+        case INPUT:
+            //* Determine if this is an output compare pin. If so,
+            //* we need to make sure PWM output is off.
+            timer = digitalPinToTimerOC(pin) >> _BN_TIMER_OC;
+            if (timer != NOT_ON_TIMER)
+            {
+                turnOffPWM(timer);
+            }
 
-		//*	May  1,	2011
-		//*	according to item #26 in PIC32MX5XX-6XX-7XX Errata.pdf 
-		//*	if we are setting to input, set the data bit to zero first
-		iop->lat.clr  = bit;	//clear to output bit		
-		iop->tris.set = bit;	//make the pin an input
-	}
-	else if (mode == OPEN)
-	{
-		iop->tris.clr = bit;	//OPEN implies output, make the pin an output
-		iop->odc.set  = bit;	//make the pin open drain
-	}
-	else
-	{
-		// The behavior inherited from Arduino is that if INPUT wasn't
-		// specified you get OUTPUT. That behavior is preserved rather
-		// than error checking the input value.
-		iop->tris.clr = bit;	//make the pin an output
-		iop->odc.clr  = bit;	//make sure it isn't open drain
+            //*	May  1,	2011
+            //*	according to item #26 in PIC32MX5XX-6XX-7XX Errata.pdf 
+            //*	if we are setting to input, set the data bit to zero first
+            iop->lat.clr  = bit;	//clear to output bit		
+            iop->tris.set = bit;	//make the pin an input
+            break;
+        case OPEN:
+            iop->tris.clr = bit;	//OPEN implies output, make the pin an output
+            iop->odc.set  = bit;	//make the pin open drain
+            break;
+        default:
+            // The behavior inherited from Arduino is that if INPUT wasn't
+            // specified you get OUTPUT. That behavior is preserved rather
+            // than error checking the input value.
+            iop->tris.clr = bit;	//make the pin an output
+            iop->odc.clr  = bit;	//make sure it isn't open drain
 	}
 }
 
@@ -220,6 +225,7 @@ volatile p32_ioport *	iop;
 uint8_t					port;
 uint16_t				bit;
 uint8_t					timer;
+uint32_t                cn;
 
 	/* Check if pin number is in valid range.
 	*/
@@ -251,23 +257,38 @@ int	_board_digitalWrite(uint8_t pin, uint8_t val);
 	//* Obtain bit mask for the specific bit for this pin.
 	bit = digitalPinToBitMask(pin);
 
-	//* Determine if this is an output compare pin. If so,
-	//* we need to make sure PWM output is off.
-	timer = digitalPinToTimerOC(pin);
-	if (timer != NOT_ON_TIMER)
-	{
-		turnOffPWM(timer);
-	}
+    //* If the port is in input mode and we write a value to it
+    //* we must be enabling or disabling the internal pull-up
+    //* resistor.  Only works for pins that have an associated
+    //* change notification pin.
+    if (iop->tris.reg & bit) {
+        cn = digitalPinToCN(pin);
+        if (cn != NOT_CN_PIN) {
+            if (val == LOW) {
+                CNPUECLR = cn;
+            } else {
+                CNPUESET = cn;
+            }
+        }
+    } else {
+        //* Determine if this is an output compare pin. If so,
+        //* we need to make sure PWM output is off.
+        timer = digitalPinToTimerOC(pin);
+        if (timer != NOT_ON_TIMER)
+        {
+            turnOffPWM(timer);
+        }
 
-	//* Set the pin state
-	if (val == LOW)
-	{
-		iop->lat.clr = bit;
-	}
-	else
-	{
-		iop->lat.set = bit;
-	}
+        //* Set the pin state
+        if (val == LOW)
+        {
+            iop->lat.clr = bit;
+        }
+        else
+        {
+            iop->lat.set = bit;
+        }
+    }
 }
 
 //************************************************************************
