@@ -1,5 +1,6 @@
 ##############################################################
 
+uno.group=Arduino
 uno.name=Arduino Uno
 uno.platform=avr
 uno.upload.protocol=arduino
@@ -18,6 +19,7 @@ uno.build.core=arduino
 
 ##############################################################
 
+atmega328.group=Arduino
 atmega328.name=Arduino Duemilanove or Nano w/ ATmega328
 atmega328.platform=avr
 atmega328.upload.protocol=stk500
@@ -38,6 +40,7 @@ atmega328.build.core=arduino
 
 ##############################################################
 
+diecimila.group=Arduino
 diecimila.name=Arduino Diecimila, Duemilanove, or Nano w/ ATmega168
 diecimila.platform=avr
 diecimila.upload.protocol=stk500
@@ -58,6 +61,7 @@ diecimila.build.core=arduino
 
 ##############################################################
 
+mega2560.group=Arduino
 mega2560.name=Arduino Mega 2560
 mega2560.platform=avr
 
@@ -79,6 +83,7 @@ mega2560.build.core=arduino
 
 ##############################################################
 
+mega.group=Arduino
 mega.name=Arduino Mega (ATmega1280)
 mega.platform=avr
 
@@ -100,6 +105,7 @@ mega.build.core=arduino
 
 ##############################################################
 
+mini.group=Arduino
 mini.name=Arduino Mini
 mini.platform=avr
 
@@ -121,6 +127,7 @@ mini.build.core=arduino
 
 ##############################################################
 
+fio.group=Arduino
 fio.name=Arduino Fio
 fio.platform=avr
 
@@ -142,6 +149,7 @@ fio.build.core=arduino:arduino
 
 ##############################################################
 
+bt328.group=Arduino
 bt328.name=Arduino BT w/ ATmega328
 bt328.platform=avr
 
@@ -164,6 +172,7 @@ bt328.build.core=arduino
 
 ##############################################################
 
+bt.group=Arduino
 bt.name=Arduino BT w/ ATmega168
 bt.platform=avr
 
@@ -186,6 +195,7 @@ bt.build.core=arduino
 
 ##############################################################
 
+lilypad328.group=Arduino
 lilypad328.name=LilyPad Arduino w/ ATmega328
 lilypad328.platform=avr
 
@@ -207,6 +217,7 @@ lilypad328.build.core=arduino
 
 ##############################################################
 
+lilypad.group=Arduino
 lilypad.name=LilyPad Arduino w/ ATmega168
 lilypad.platform=avr
 
@@ -228,6 +239,7 @@ lilypad.build.core=arduino
 
 ##############################################################
 
+pro5v328.group=Arduino
 pro5v328.name=Arduino Pro or Pro Mini (5V, 16 MHz) w/ ATmega328
 pro5v328.platform=avr
 
@@ -249,6 +261,7 @@ pro5v328.build.core=arduino
 
 ##############################################################
 
+pro5v.group=Arduino
 pro5v.name=Arduino Pro or Pro Mini (5V, 16 MHz) w/ ATmega168
 pro5v.platform=avr
 pro5v.upload.protocol=stk500
@@ -269,6 +282,7 @@ pro5v.build.core=arduino
 
 ##############################################################
 
+pro328.group=Arduino
 pro328.name=Arduino Pro or Pro Mini (3.3V, 8 MHz) w/ ATmega328
 pro328.platform=avr
 
@@ -290,6 +304,7 @@ pro328.build.core=arduino
 
 ##############################################################
 
+pro.group=Arduino
 pro.name=Arduino Pro or Pro Mini (3.3V, 8 MHz) w/ ATmega168
 pro.platform=avr
 
@@ -311,6 +326,7 @@ pro.build.core=arduino
 
 ##############################################################
 
+atmega168.group=Arduino
 atmega168.name=Arduino NG or older w/ ATmega168
 atmega168.platform=avr
 
@@ -332,6 +348,7 @@ atmega168.build.core=arduino
 
 ##############################################################
 
+atmega8.group=Arduino
 atmega8.name=Arduino NG or older w/ ATmega8
 atmega8.platform=avr
 
@@ -353,6 +370,7 @@ atmega8.build.core=arduino
 ##############################################################
 
 ethernet.name=Arduino Ethernet
+ethernet.group=Arduino
 ethernet.platform=avr
 ethernet.upload.protocol=arduino
 ethernet.upload.maximum_size=32256

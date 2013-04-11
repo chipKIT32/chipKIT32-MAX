@@ -1029,36 +1029,46 @@ public class Base {
   }
  
  
-  public void rebuildBoardsMenu(JMenu menu) {
-    logger.debug("Base: rebuildBoardsMenu: DEBUG: start: rebuilding boards menu.");
+    public void rebuildBoardsMenu(JMenu menu) {
+        logger.debug("Base: rebuildBoardsMenu: DEBUG: start: rebuilding boards menu.");
   
     menu.removeAll();      
     ButtonGroup group = new ButtonGroup();
+    HashMap<String, JMenu> groupings;
+    groupings = new HashMap<String, JMenu>();
     for (Target target : targetsTable.values()) {
-      for (String board : target.getBoards().keySet()) {
-        AbstractAction action = 
-          new AbstractAction(target.getBoards().get(board).get("name")) {
-            public void actionPerformed(ActionEvent actionevent) {
-              logger.debug("Base: rebuildBoardsMenu: DEBUG: start: " + "Switching to " + (String) getValue("target") + ":" + (String) getValue("board"));
-              Preferences.set("target", (String) getValue("target"));
-              Preferences.set("board", (String) getValue("board"));
-              onBoardOrPortChange();
-          	  //Debug: created new imports menu based on board
-              rebuildImportMenu(activeEditor.importMenu);
-	      logger.debug("Base: rebuildBoardsMenu: Rebuilding examples menu base on board.");
-	      rebuildExamplesMenu(activeEditor.examplesMenu);
+        for (String board : target.getBoards().keySet()) {
+            AbstractAction action = new AbstractAction(target.getBoards().get(board).get("name")) {
+                public void actionPerformed(ActionEvent actionevent) {
+                    logger.debug("Base: rebuildBoardsMenu: DEBUG: start: " + "Switching to " + (String) getValue("target") + ":" + (String) getValue("board"));
+                    Preferences.set("target", (String) getValue("target"));
+                    Preferences.set("board", (String) getValue("board"));
+                    onBoardOrPortChange();
+                    //Debug: created new imports menu based on board
+                    rebuildImportMenu(activeEditor.importMenu);
+                    logger.debug("Base: rebuildBoardsMenu: Rebuilding examples menu base on board.");
+                    rebuildExamplesMenu(activeEditor.examplesMenu);
+                }
+            };
+            action.putValue("target", target.getName());
+            action.putValue("board", board);
+            JMenuItem item = new JRadioButtonMenuItem(action);
+            if (target.getName().equals(Preferences.get("target")) && board.equals(Preferences.get("board"))) {
+                item.setSelected(true);
             }
-          };
-        action.putValue("target", target.getName());
-        action.putValue("board", board);
-        JMenuItem item = new JRadioButtonMenuItem(action);
-        if (target.getName().equals(Preferences.get("target")) &&
-            board.equals(Preferences.get("board"))) {
-          item.setSelected(true);
-                 }
-        group.add(item);
-        menu.add(item);
-      }
+            group.add(item);
+            if (target.getBoards().get(board).get("group") != null) {
+                if (groupings.get(target.getBoards().get(board).get("group")) == null) {
+                    groupings.put(target.getBoards().get(board).get("group"), new JMenu(target.getBoards().get(board).get("group")));
+                }
+                groupings.get(target.getBoards().get(board).get("group")).add(item);
+            } else {
+                menu.add(item);
+            }
+            for (String grp : groupings.keySet()) {
+                menu.add(groupings.get(grp));
+            }
+        }
     }
   
     logger.debug("Base: rebuildBoardsMenu: DEBUG: end: rebuilding boards menu.");

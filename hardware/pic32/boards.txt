@@ -2,6 +2,7 @@
 uno_pic32.name=chipKIT UNO32
 
 # new items
+uno_pic32.group=chipKIT
 uno_pic32.platform=pic32
 uno_pic32.board=_BOARD_UNO_
 uno_pic32.board.define=
@@ -16,6 +17,7 @@ uno_pic32.ldscript=chipKIT-application-32MX320F128.ld
 uno_pic32.compiler.c.flags=-O2::-c::-mno-smart-io::-w::-ffunction-sections::-fdata-sections::-G1024::-g::-mdebugger::-Wcast-align::-fno-short-double
 uno_pic32.compiler.cpp.flags=-O2::-c::-mno-smart-io::-w::-fno-exceptions::-ffunction-sections::-fdata-sections::-G1024::-g::-mdebugger::-Wcast-align::-fno-short-double
 
+uno_pic32.upload.using=avrdude
 uno_pic32.upload.protocol=stk500v2
 uno_pic32.upload.maximum_size=126976
 uno_pic32.upload.speed=115200
@@ -36,6 +38,7 @@ uno_pic32.build.variant=Uno32
 
 ############################################################
 mega_pic32.name=chipKIT MAX32
+mega_pic32.group=chipKIT
 
 # new items
 mega_pic32.platform=pic32
@@ -65,6 +68,7 @@ mega_pic32.build.variant=Max32
 
 ############################################################
 mega_usb_pic32.name=chipKIT MAX32-USB for Serial
+mega_usb_pic32.group=chipKIT
 
 # new items
 mega_usb_pic32.platform=pic32
@@ -129,6 +133,7 @@ mega_usb_pic32.build.variant=Max32
 #
 ############################################################
 chipkit_uc32.name=chipKIT uC32
+chipkit_uc32.group=chipKIT
 
 # new items
 chipkit_uc32.platform=pic32
@@ -164,6 +169,7 @@ chipkit_uc32.build.variant=uC32
 
 ############################################################
 cerebot_mx3ck_512.name=Cerebot MX3cK 512
+cerebot_mx3ck_512.group=Cerebot
 
 # new items
 cerebot_mx3ck_512.platform=pic32
@@ -199,6 +205,7 @@ cerebot_mx3ck_512.build.variant=Cerebot_MX3cK_512
 
 ############################################################
 cerebot_mx3ck.name=Cerebot MX3cK
+cerebot_mx3ck.group=Cerebot
 
 # new items
 cerebot_mx3ck.platform=pic32
@@ -234,6 +241,7 @@ cerebot_mx3ck.build.variant=Cerebot_MX3cK
 
 ############################################################
 cerebot_mx4ck.name=Cerebot MX4cK
+cerebot_mx4ck.group=Cerebot
 
 # new items
 cerebot_mx4ck.platform=pic32
@@ -263,6 +271,7 @@ cerebot_mx4ck.build.variant=Cerebot_MX4cK
 
 ############################################################
 cerebot_mx7ck.name=Cerebot MX7cK
+cerebot_mx7ck.group=Cerebot
 
 # new items
 cerebot_mx7ck.platform=pic32
@@ -325,6 +334,7 @@ cerebot_mx7ck.build.variant=Cerebot_MX7cK
 #
 ############################################################
 cerebot32mx4.name=Cerebot 32MX4
+cerebot32mx4.group=Cerebot
 
 # new items
 cerebot32mx4.platform=pic32
@@ -354,6 +364,7 @@ cerebot32mx4.build.variant=Cerebot_32MX4
 
 ############################################################
 cerebot32mx7.name=Cerebot 32MX7
+cerebot32mx7.group=Cerebot
 
 # new items
 cerebot32mx7.platform=pic32
@@ -383,6 +394,7 @@ cerebot32mx7.build.variant=Cerebot_32MX7
 
 ############################################################
 mc_pic32_starterkit.name=Microchip PIC32 Starter kit
+mc_pic32_starterkit.group=Microchip
 
 # new items
 mc_pic32_starterkit.platform=pic32
@@ -412,6 +424,7 @@ mc_pic32_starterkit.build.variant=Default_100
 
 ############################################################
 mc_pic32_ethernet_starterkit.name=Microchip PIC32 Ethernet Starter kit
+mc_pic32_ethernet_starterkit.group=Microchip
 
 # new items
 mc_pic32_ethernet_starterkit.platform=pic32
@@ -441,6 +454,7 @@ mc_pic32_ethernet_starterkit.build.variant=Default_100
 
 ############################################################
 mc_pic32_usb_starterkit.name=Microchip PIC32 USB Starter kit II
+mc_pic32_usb_starterkit.group=Microchip
 
 # new items
 mc_pic32_usb_starterkit.platform=pic32
@@ -470,6 +484,7 @@ mc_pic32_usb_starterkit.build.variant=Default_100
 
 ############################################################
 mc_pic32_explorer16.name=Microchip PIC32 Explorer 16
+mc_pic32_explorer16.group=Microchip
 
 # new items
 mc_pic32_explorer16.platform=pic32
@@ -499,7 +514,7 @@ mc_pic32_explorer16.build.variant=Default_100
 
 ############################################################
 mikroe_multimedia.name=MirkoElektronika PIC32 Multimedia Board
-
+mikroe_multimedia.group=MicroElektronika
 # new items
 mikroe_multimedia.platform=pic32
 mikroe_multimedia.board=_BOARD_MIKROE_MULTIMEDIA_
@@ -528,6 +543,7 @@ mikroe_multimedia.build.variant=Default_100
 
 ############################################################
 mikroe_mikromedia.name=MirkoElektronika PIC32 mikroMedia Board
+mikroe_mikromedia.group=MicroElektronika
 
 # new items
 mikroe_mikromedia.platform=pic32
@@ -557,6 +573,7 @@ mikroe_mikromedia.build.variant=Default_100
 
 ############################################################
 ubw32_mx460.name=Pic32 UBW32-MX460
+ubw32_mx460.group=UBW32
 
 # new items
 ubw32_mx460.platform=pic32
@@ -586,6 +603,7 @@ ubw32_mx460.build.variant=Default_100
 
 ############################################################
 ubw32_mx795.name=Pic32 UBW32-MX795
+ubw32_mx795.group=UBW32
 
 # new items
 ubw32_mx795.platform=pic32
@@ -615,6 +633,7 @@ ubw32_mx795.build.variant=Default_100
 
 ############################################################
 cui32.name=Pic32 CUI32-Development Stick
+cui32.group=CUI32
 
 # new items
 cui32.platform=pic32
@@ -644,6 +663,7 @@ cui32.build.variant=Default_64
 
 ############################################################
 CUI32stem.name=CUI32stem
+CUI32stem.group=CUI32
 
 # new items
 CUI32stem.platform=pic32
@@ -674,7 +694,7 @@ CUI32stem.build.variant=Default_64
 
 ############################################################
 fubarino_sd.name=Fubarino SD
-
+fubarino_sd.group=Fubarino
 # new items
 fubarino_sd.platform=pic32
 fubarino_sd.board=_BOARD_FUBARINO_SD_
@@ -702,6 +722,7 @@ fubarino_sd.build.variant=fubarino_sd_v11
 
 ############################################################
 fubarino_sd_chipkit.name=Fubarino SD chipKIT
+fubarino_sd_chipkit.group=Fubarino
 
 # new items
 fubarino_sd_chipkit.platform=pic32
@@ -730,6 +751,7 @@ fubarino_sd_chipkit.build.variant=fubarino_sd_v11
 
 ############################################################
 fubarino_mini.name=Fubarino Mini
+fubarino_mini.group=Fubarino
 
 # new items
 fubarino_mini.platform=pic32
@@ -765,6 +787,7 @@ fubarino_mini.build.variant=Fubarino_Mini
 
 ############################################################
 fubarino_mini_chipkit.name=Fubarino Mini chipKIT
+fubarino_mini_chipkit.group=Fubarino
 
 # new items
 fubarino_mini_chipkit.platform=pic32
@@ -835,6 +858,7 @@ fubarino_mini_chipkit.build.variant=Fubarino_Mini
 #
 ############################################################
 quick240_usb_pic32.name=PONTECH quicK240
+quick240_usb_pic32.group=PONTECH
 
 # new items
 quick240_usb_pic32.platform=pic32
@@ -864,6 +888,7 @@ quick240_usb_pic32.build.variant=quicK240
 
 ############################################################
 usbono_pic32.name=PONTECH UAV100
+usbono_pic32.group=PONTECH
 
 # new items
 usbono_pic32.platform=pic32
