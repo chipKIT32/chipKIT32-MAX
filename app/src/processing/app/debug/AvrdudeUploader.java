@@ -110,7 +110,7 @@ public class AvrdudeUploader extends Uploader  {
 
         String variant = boardPreferences.get("build.variant");
 
-        String variantPath = new String(t.getFolder()+"/variants/" + variant + "/tools/");
+        String variantPath = t.getVariantFolder(variant).getAbsolutePath() + "/tools/";
         String basePath = new String(Base.getHardwarePath() + "/tools/");
   
         String foundPath = null;

@@ -107,17 +107,14 @@ public class Compiler implements MessageConsumer {
         String buildCore = boardPreferences.get("build.core");
         if (buildCore == null) {
     	    RunnerException re = new RunnerException("No board selected; please choose a board from the Tools > Board menu.");
-        re.hideStackTrace();
-        throw re;
+            re.hideStackTrace();
+            throw re;
         }
         //Check for null platform, and use system default if not found
 		platform = boardPreferences.get("platform");
-		if (platform == null)
-		{
+		if (platform == null) {
 			platformPreferences = new HashMap(Base.getPlatformPreferences());
-		}
-		else
-		{
+		} else {
 			platformPreferences = new HashMap(Base.getPlatformPreferences(platform));
 		}
 
@@ -131,26 +128,25 @@ public class Compiler implements MessageConsumer {
 		avrBasePath = configPreferences.get("compiler.path");
 
 		logger.debug("avrBasePath: " + avrBasePath);
-		if (avrBasePath == null) 
-		{
+		if (avrBasePath == null) {
 			avrBasePath = Base.getAvrBasePath();
-		}
-		else
-		{
+		} else {
+
 			//Put in the system path in the compiler path if available
+
 			MessageFormat compileFormat = new MessageFormat(avrBasePath);	
 			String basePath = System.getProperty("user.dir");
+
 			if (Base.isMacOS()) {
 				logger.debug("basePath: " + basePath);
 				basePath += "/mpide.app/Contents/Resources/Java";
 			}
+
 			Object[] Args = {basePath};
 			avrBasePath = compileFormat.format(  Args );
-
 		}
 		this.board = configPreferences.get("board");
-		if (this.board == "")
-		{
+		if (this.board == "") {
 			this.board = "_UNKNOWN";
 		}
 
@@ -158,14 +154,13 @@ public class Compiler implements MessageConsumer {
 		if (core == null) 
 		{
 			RunnerException re = new RunnerException(
-					"No board selected; please choose a board from the Tools > Board menu.");
+                "No board selected; please choose a board from the Tools > Board menu.");
 			re.hideStackTrace();
 			throw re;
 		}
 		//String corePath;
 
-		if (core.indexOf(':') == -1) 
-		{
+		if (core.indexOf(':') == -1) {
 			Target t = Base.getTarget();
 			File coreFolder = new File(new File(t.getFolder(), "cores"), core);
 			this.corePath = coreFolder.getAbsolutePath();
@@ -181,22 +176,18 @@ public class Compiler implements MessageConsumer {
 		 */
 		logger.debug("corePaths: " + this.corePath);
 
-  String variant = boardPreferences.get("build.variant");
-    String variantPath = null;
+        String variant = boardPreferences.get("build.variant");
+        String variantPath = null;
     
-    if (variant != null) {
-      if (variant.indexOf(':') == -1) {
-	Target t = Base.getTarget();
-	File variantFolder = new File(new File(t.getFolder(), "variants"), variant);
-	variantPath = variantFolder.getAbsolutePath();
-      } else {
-	Target t = Base.targetsTable.get(variant.substring(0, variant.indexOf(':')));
-	File variantFolder = new File(t.getFolder(), "variants");
-	variantFolder = new File(variantFolder, variant.substring(variant.indexOf(':') + 1));
-	variantPath = variantFolder.getAbsolutePath();
-      }
-    }
-
+        if (variant != null) {
+            if (variant.indexOf(':') == -1) {
+                Target t = Base.getTarget();
+                variantPath = t.getVariantFolder(variant).getAbsolutePath();
+            } else {
+                Target t = Base.targetsTable.get(variant.substring(0, variant.indexOf(':')));
+                variantPath = t.getVariantFolder(variant).getAbsolutePath();
+            }
+        }
 
 		this.objectFiles = new ArrayList<File>();
 
@@ -703,14 +694,16 @@ public class Compiler implements MessageConsumer {
 
         String variant = configPreferences.get("build.variant");
         Target t;
+        String variantPath;
         if (variant.indexOf(':') == -1) {
             t = Base.getTarget();
+            variantPath = t.getVariantFolder(variant).getAbsolutePath();
         } else {
             t = Base.targetsTable.get(variant.substring(0, variant.indexOf(':')));
+            variantPath = t.getVariantFolder(variant.substring(0, variant.indexOf(':'))).getAbsolutePath();
 		}
 
         String ldscript = configPreferences.get("ldscript");
-        String variantPath = new String(t.getFolder()+"/variants/" + variant );
         String foundPath = null;
         File testFile = null;
 
