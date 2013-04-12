@@ -100,6 +100,64 @@ public abstract class Uploader implements MessageConsumer  {
     }
   }
 
+  protected boolean executeToolsCommand(Collection commandLine, String basePath) 
+    throws RunnerException
+  {
+    firstErrorFound = false;  // haven't found any errors yet
+    secondErrorFound = false;
+    notFoundError = false;
+    int result=0; // pre-initialized to quiet a bogus warning from jikes
+    
+    try {
+      String[] commandArray = new String[commandLine.size()];
+      commandLine.toArray(commandArray);
+
+      commandArray[0] = basePath + commandArray[0];
+      
+      if (verbose || Preferences.getBoolean("upload.verbose")) {
+        for(int i = 0; i < commandArray.length; i++) {
+          System.out.print("[" + commandArray[i] + "] ");
+        }
+        System.out.println();
+    }
+      Process process = Runtime.getRuntime().exec(commandArray);
+      new MessageSiphon(process.getInputStream(), this);
+      new MessageSiphon(process.getErrorStream(), this);
+
+      // wait for the process to finish.  if interrupted
+      // before waitFor returns, continue waiting
+      //
+      boolean compiling = true;
+      while (compiling) {
+        try {
+          result = process.waitFor();
+          compiling = false;
+        } catch (InterruptedException intExc) {
+        }
+      } 
+      if(exception!=null) {
+        exception.hideStackTrace();
+        throw exception;   
+      }
+      if(result!=0)
+        return false;
+    } catch (Exception e) {
+      String msg = e.getMessage();
+      e.printStackTrace();
+      result = -1;
+    }
+    if (exception != null) throw exception;
+
+    if ((result != 0) && (result != 1 )) {
+      exception = new RunnerException(SUPER_BADNESS);
+      //editor.error(exception);
+      //PdeBase.openURL(BUGS_URL);
+      //throw new PdeException(SUPER_BADNESS);
+    }
+
+    return (result == 0); // ? true : false;      
+  }
+
   protected boolean executeUploadCommand(Collection commandDownloader) 
     throws RunnerException
   {
@@ -127,7 +185,7 @@ public abstract class Uploader implements MessageConsumer  {
       
       if (verbose || Preferences.getBoolean("upload.verbose")) {
         for(int i = 0; i < commandArray.length; i++) {
-          System.out.print(commandArray[i] + " ");
+          System.out.print("[" + commandArray[i] + "] ");
         }
         System.out.println();
       }

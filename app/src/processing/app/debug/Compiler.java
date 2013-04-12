@@ -701,6 +701,38 @@ public class Compiler implements MessageConsumer {
 			objectFileList = objectFileList + file.getAbsolutePath() + "::";
 		}
 
+        String variant = configPreferences.get("build.variant");
+        Target t;
+        if (variant.indexOf(':') == -1) {
+            t = Base.getTarget();
+        } else {
+            t = Base.targetsTable.get(variant.substring(0, variant.indexOf(':')));
+		}
+
+        String ldscript = configPreferences.get("ldscript");
+        String variantPath = new String(t.getFolder()+"/variants/" + variant );
+        String foundPath = null;
+        File testFile = null;
+
+        testFile = new File(variantPath + "/" + ldscript);
+        logger.debug("Searching for " + variantPath + ldscript + "...");
+        if (testFile.exists()) {
+          logger.debug("... found");
+          foundPath = variantPath;
+        } else {
+          logger.debug("Searching for " + corePath + "/" + ldscript + "...");
+          testFile = new File(corePath + ldscript);
+          if (testFile.exists()) {
+            logger.debug("... found");
+            foundPath = corePath;
+          }
+        }
+
+        if (foundPath == null) {
+            System.out.println("Linker script not found: " + ldscript);
+            return;
+        }
+
 		Object[] Args = {
 				avrBasePath,
 				configPreferences.get("compiler.c.elf.cmd"),
@@ -712,12 +744,13 @@ public class Compiler implements MessageConsumer {
 				objectFileList,
 				buildPath + File.separator + "core.a",
 				buildPath, 
-				corePath,	
+				foundPath,	
 				configPreferences.get("ldscript"),	
                 corePath,
                 configPreferences.get("ldcommon")
 		};
 		commandString = compileFormat.format(  Args );
+        logger.debug("Link command: " + commandString);
 		execAsynchronously(commandString);
 			}
 
