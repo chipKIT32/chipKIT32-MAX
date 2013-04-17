@@ -76,6 +76,15 @@
     <antcall target="${platform}-dist" />
 </target>
 
+<target name="deb" depends="revision-check"
+      description="Build mpide for distribution.">
+    <input message="Enter version number:"
+    addproperty="version"
+    defaultvalue="${revision}" />
+    <antcall target="${platform}-deb" />
+</target>
+
+
   <target name="dist-test" depends="revision-check"
           description="Build mpide for distribution.">
     <input message="Enter version number:"
@@ -87,6 +96,16 @@
     <antcall target="${platform}-dist" />
   </target>
 
+  <target name="deb-test" depends="revision-check"
+          description="Build mpide for distribution.">
+    <input message="Enter version number:"
+           addproperty="version"
+           defaultvalue="${revision}-${platform}-${TODAY}-test" />
+  <propertyfile file="upload.properties">
+      <entry  key="version" value="${version}"/>
+  </propertyfile>
+    <antcall target="${platform}-deb" />
+  </target>
 
   <!-- "§$§$&, ant doesn't have a built-in help target :(  -->
   <target name="help" description="Show project help">
@@ -474,6 +493,57 @@
       =======================================================
     </echo>
   </target>
+
+  <target name="linux-deb" depends="build"
+      description="Build .deb of linux version">
+    <property name="extension" value="deb"/>
+    <propertyfile file="upload.properties">
+           <entry  key="extension" value="${extension}"/>
+    </propertyfile>
+
+    <mkdir dir="linux/mpide-${version}" />
+    <copy todir="linux/mpide-${version}/usr">
+      <fileset dir="linux/dist/usr" />
+    </copy>
+
+    <copy todir="linux/mpide-${version}/usr/share/mpide">
+        <fileset dir="linux/work" />
+    </copy>
+    <chmod perm="755">
+      <fileset dir="linux/mpide-${version}/usr/share/mpide" includes="mpide" />
+      <fileset dir="linux/mpide-${version}/usr/share/mpide/tools" includes="**/*" />
+      <fileset dir="linux/mpide-${version}/usr/share/mpide/hardware/tools" includes="**/*" />
+      <fileset dir="linux/mpide-${version}/usr/share/mpide/hardware/pic32/compiler" includes="**/*" />
+      <!--fileset dir="linux/mpide-${version}/usr/share/mpide/hardware/pic32/tools" includes="**/*" /-->
+    </chmod>
+    <symlink link="linux/mpide-${version}/usr/bin/mpide" resource="/usr/share/mpide/mpide" overwrite="true" />
+
+    <mkdir dir="linux/mpide-${version}/DEBIAN" />
+    <echo file="linux/mpide-${version}/DEBIAN/control">
+Package: mpide
+Version: ${version}
+Maintainer: matt@majenko.co.uk
+Architecture: i386
+Section: Programming
+Depends: avr-libc, avrdude, binutils-avr, extra-xdg-menus, gcc-avr, libftdi1, libjna-java, librxtx-java
+Description: chipKIT MPIDE Development environment
+
+</echo>
+    <exec executable="dpkg-deb" dir="linux">
+      <arg value="-b"/>
+      <arg value="mpide-${version}"/>
+    </exec>
+    <delete dir="linux/mpide-${version}" />
+
+    <echo>
+      =======================================================
+      mpide for Linux was built. Grab the package from   
+      
+      build/linux/mpide-${version}.deb
+      =======================================================
+    </echo>
+</target>
+
 
   
   <target name="linux64-dist" depends="linux-dist" 

@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=chipKIT MPIDE
+Comment=IDE for chipKIT development boards
+Exec=/usr/bin/mpide
+Icon=mpide.png
+Terminal=false
+Type=Application
+Categories=Application;Development;Programming;
+StartupNotify=true
