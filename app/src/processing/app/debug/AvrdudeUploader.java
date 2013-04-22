@@ -37,8 +37,12 @@ import java.util.zip.*;
 import javax.swing.*;
 import gnu.io.*;
 
+import org.apache.log4j.Logger;
+
 
 public class AvrdudeUploader extends Uploader  {
+  static Logger logger = Logger.getLogger(Base.class.getName());
+
   public AvrdudeUploader() {
   }
 
@@ -65,9 +69,112 @@ public class AvrdudeUploader extends Uploader  {
         uploadUsing = uploadUsing.substring(uploadUsing.indexOf(':') + 1);
       }
 
-      Collection params = getProgrammerCommands(t, uploadUsing);
-      params.add("-Uflash:w:" + buildPath + File.separator + className + ".hex:i");
-      return avrdude(params);
+
+      //* Look to see if there is an entry in bootloaders.txt that
+      //* corresponds to the upload.using entry in the boards.txt
+      //* If there is, then use the command from that entry with suitable
+      //* token substitution:
+      //*   %H = Filename of hex file (including path)
+      //*   %P = Port name as selected in menu
+      //*   %B = Baud rate
+      //*   %V = Verbose flag if verbose turned on
+      //*   %O = Protocol from boards.txt
+      //*   %T = Location of tools directory
+      //*   %M = CPU Specification
+
+      Map<String, Map<String, String>> bootLoaders = t.getBootloaders();
+      Map<String, String> bootloader = bootLoaders.get(uploadUsing);
+      if (bootloader != null) {
+        List parts = new ArrayList();
+
+        String command = null;
+        if (Base.isLinux()) {
+          command = bootloader.get("command_linux");
+        }
+        if (Base.isWindows()) {
+          command = bootloader.get("command_windows");
+        }
+        if (Base.isMacOS()) {
+          command = bootloader.get("command_macosx");
+        }
+        // If not got an OS specific entry, fall back to the generic one.
+        if (command == null) {
+          command = bootloader.get("command");
+        }
+
+        String[] spl = command.split("\\s+");
+        String executable = spl[0];
+        if (Base.isWindows()) {
+            executable = executable + ".exe";
+        }
+
+        String variant = boardPreferences.get("build.variant");
+
+        String variantPath = t.getVariantFolder(variant).getAbsolutePath() + "/tools/";
+        String basePath = new String(Base.getHardwarePath() + "/tools/");
+  
+        String foundPath = null;
+        File testFile = null;
+  
+        testFile = new File(variantPath + executable);
+        logger.debug("Searching for " + variantPath + executable + "...");
+        if (testFile.exists()) {
+          logger.debug("... found");
+          foundPath = variantPath;
+        } else {
+          logger.debug("Searching for " + basePath + executable + "...");
+          testFile = new File(basePath + executable);
+          if (testFile.exists()) {
+            logger.debug("... found");
+            foundPath = basePath;
+          }
+        }
+
+        if (foundPath == null) {
+            System.out.println("Command not found: " + executable);
+            return false;
+        }
+
+        command = command.replace("%H",  
+          buildPath + File.separator + className + ".hex");
+        command = command.replace("%V", 
+            (verbose ? bootloader.get("verbose") : 
+                bootloader.get("quiet") != null ? bootloader.get("quiet") : ""));
+        command = command.replace("%P", 
+          (Base.isWindows() ? "\\\\.\\" : "") + 
+          Preferences.get("serial.port")
+        );
+        command = command.replace("%B", boardPreferences.get("upload.speed"));
+        command = command.replace("%O", 
+            boardPreferences.get("upload.protocol") != null ? 
+            boardPreferences.get("upload.protocol") : ""
+        );
+        command = command.replace("%T", foundPath);
+        command = command.replace("%M", 
+            boardPreferences.get("build.mcu") != null ? 
+            boardPreferences.get("build.mcu") : ""
+        );
+        command = command.trim();
+
+        // Split the command into words
+        spl = command.split("\\s+");
+
+        // Parse each word, doing string replacement as needed, trimming it, and
+        // generally getting it ready for executing.
+
+        for (int i = 0; i < spl.length; i++) {
+          spl[i] = spl[i].trim();
+          if (spl[i].length() > 0) {
+            parts.add(spl[i]);
+          }
+        }
+
+        return executeToolsCommand(parts, foundPath);
+      } else {
+        Collection params = getProgrammerCommands(t, uploadUsing);
+        params.add("-Uflash:w:" + buildPath + File.separator + className + ".hex:i");
+        return avrdude(params);
+      }
     }
   }
   

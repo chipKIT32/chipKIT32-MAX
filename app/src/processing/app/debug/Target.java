@@ -46,6 +46,7 @@ public class Target {
   private Map boards;
   private Map programmers;
   private Map platforms;
+  private Map bootloaders;
 
   static Logger logger = Logger.getLogger(Base.class.getName());
   
@@ -58,6 +59,7 @@ public class Target {
     this.boards = new LinkedHashMap();
     this.programmers = new LinkedHashMap();
     this.platforms = new LinkedHashMap();
+    this.bootloaders = new LinkedHashMap();
     
     File boardsFile = new File(folder, "boards.txt");
     try {
@@ -117,6 +119,169 @@ public class Target {
       System.err.println("Error loading programmers from " + 
                          programmersFile + ": " + e);
     }    
+  
+  
+    File bootloadersFile = new File(folder, "bootloaders.txt");
+    try {
+      if (bootloadersFile.exists()) {
+        Map bootloaderPreferences = new LinkedHashMap();
+        Preferences.load(new FileInputStream(bootloadersFile), bootloaderPreferences);
+        for (Object k : bootloaderPreferences.keySet()) {
+          String key = (String) k;
+          String bootloader = key.substring(0, key.indexOf('.'));
+          if (!bootloaders.containsKey(bootloader)) bootloaders.put(bootloader, new HashMap());
+          ((Map) bootloaders.get(bootloader)).put(
+            key.substring(key.indexOf('.') + 1),
+            bootloaderPreferences.get(key));
+        }
+      }
+    } catch (Exception e) {
+      System.err.println("Error loading bootloaders from " + 
+                         bootloadersFile + ": " + e);
+    }    
+
+    File variantsDir = new File(folder, "variants");
+    if (variantsDir.exists()) {
+        if (variantsDir.isDirectory()) {
+            logger.debug("Ok, variants is a directory");
+            for (File child : variantsDir.listFiles()) {
+                if (child.isDirectory()) {
+
+                    File variantBoardsFile = new File(child, "boards.txt");
+                    try {
+                      if (variantBoardsFile.exists()) {
+                        Map boardPreferences = new LinkedHashMap();
+                        Preferences.load(new FileInputStream(variantBoardsFile), boardPreferences);
+                        for (Object k : boardPreferences.keySet()) {
+                          String key = (String) k;
+                          String board = key.substring(0, key.indexOf('.'));
+                          if (!boards.containsKey(board)) boards.put(board, new HashMap());
+                          ((Map) boards.get(board)).put(
+                            key.substring(key.indexOf('.') + 1),
+                            boardPreferences.get(key));
+                        }
+                      }
+                    } catch (Exception e) {
+                      System.err.println("Error loading boards from " + variantBoardsFile + ": " + e);
+                    }
+                    File variantBootloadersFile = new File(child, "bootloaders.txt");
+                    try {
+                      if (variantBootloadersFile.exists()) {
+                        Map bootloaderPreferences = new LinkedHashMap();
+                        Preferences.load(new FileInputStream(variantBootloadersFile), bootloaderPreferences);
+                        for (Object k : bootloaderPreferences.keySet()) {
+                          String key = (String) k;
+                          String bootloader = key.substring(0, key.indexOf('.'));
+                          if (!bootloaders.containsKey(bootloader)) bootloaders.put(bootloader, new HashMap());
+                          ((Map) bootloaders.get(bootloader)).put(
+                            key.substring(key.indexOf('.') + 1),
+                            bootloaderPreferences.get(key));
+                        }
+                      }
+                    } catch (Exception e) {
+                      System.err.println("Error loading bootloaders from " + 
+                         variantBootloadersFile + ": " + e);
+                    }    
+                }
+            }
+        }
+    }
+
+    File sbhw = Base.getSketchbookHardwareFolder();
+    File sbhwFolder = new File(sbhw, folder.getName());
+    if (sbhwFolder.exists()) {
+        logger.debug("SBHW OK");
+        variantsDir = new File(sbhwFolder, "variants");
+        if (variantsDir.exists()) {
+            if (variantsDir.isDirectory()) {
+                logger.debug("Scanning extra dir " +
+                    sbhw.getName() + "/" + sbhwFolder.getName() + "/" +
+                    variantsDir.getName());
+                for (File child : variantsDir.listFiles()) {
+                    if (child.isDirectory()) {
+
+                        File variantBoardsFile = new File(child, "boards.txt");
+                        try {
+                          if (variantBoardsFile.exists()) {
+                            Map boardPreferences = new LinkedHashMap();
+                            Preferences.load(new FileInputStream(variantBoardsFile), boardPreferences);
+                            for (Object k : boardPreferences.keySet()) {
+                              String key = (String) k;
+                              String board = key.substring(0, key.indexOf('.'));
+                              if (!boards.containsKey(board)) boards.put(board, new HashMap());
+                              ((Map) boards.get(board)).put(
+                                key.substring(key.indexOf('.') + 1),
+                                boardPreferences.get(key));
+                            }
+                          }
+                        } catch (Exception e) {
+                          System.err.println("Error loading boards from " + variantBoardsFile + ": " + e);
+                        }
+                        File variantBootloadersFile = new File(child, "bootloaders.txt");
+                        try {
+                          if (variantBootloadersFile.exists()) {
+                            Map bootloaderPreferences = new LinkedHashMap();
+                            Preferences.load(new FileInputStream(variantBootloadersFile), bootloaderPreferences);
+                            for (Object k : bootloaderPreferences.keySet()) {
+                              String key = (String) k;
+                              String bootloader = key.substring(0, key.indexOf('.'));
+                              if (!bootloaders.containsKey(bootloader)) bootloaders.put(bootloader, new HashMap());
+                              ((Map) bootloaders.get(bootloader)).put(
+                                key.substring(key.indexOf('.') + 1),
+                                bootloaderPreferences.get(key));
+                            }
+                          }
+                        } catch (Exception e) {
+                          System.err.println("Error loading bootloaders from " + 
+                             variantBootloadersFile + ": " + e);
+                        }    
+                    }
+                }
+            }
+        }
+    }
+  }
+
+  public File getVariantFolder(String variant) {
+        File variantFolder = null;
+        if (variant != null) {
+            if (variant.indexOf(':') == -1) {
+                File sketchHardwareFolder = Base.getSketchbookHardwareFolder();
+                if (sketchHardwareFolder.exists() && sketchHardwareFolder.isDirectory()) {
+                    File sketchTargetFolder = new File(sketchHardwareFolder, name);
+                    if (sketchTargetFolder.exists() && sketchTargetFolder.isDirectory()) {
+                        File sketchVariantsFolder = new File(sketchTargetFolder, "variants");
+                        if (sketchVariantsFolder.exists() && sketchVariantsFolder.isDirectory()) {
+                            variantFolder = new File(sketchVariantsFolder, variant);
+                        }
+                    }
+                }
+
+                if (variantFolder == null) {
+                    variantFolder = new File(
+                        new File(sketchHardwareFolder, "variants"), variant);
+                }
+            } else {
+                Target t = Base.targetsTable.get(variant.substring(0, variant.indexOf(':')));
+
+                File sketchHardwareFolder = Base.getSketchbookHardwareFolder();
+                if (sketchHardwareFolder.exists() && sketchHardwareFolder.isDirectory()) {
+                    File sketchTargetFolder = new File(sketchHardwareFolder, name);
+                    if (sketchTargetFolder.exists() && sketchTargetFolder.isDirectory()) {
+                        File sketchVariantsFolder = new File(sketchTargetFolder, "variants");
+                        if (sketchVariantsFolder.exists() && sketchVariantsFolder.isDirectory()) {
+                            variantFolder = new File(sketchVariantsFolder, variant.substring(variant.indexOf(':') + 1));
+                        }
+                    }
+                }
+
+                if (variantFolder == null) {
+                    variantFolder = new File(
+                        new File(sketchHardwareFolder, "variants"), variant.substring(variant.indexOf(':') + 1));
+                }
+            }
+        }
+        return variantFolder;
   }
   
   public String getName() { return name; }
@@ -132,6 +297,10 @@ public class Target {
   public Map<String, Map<String, String>> getPlatforms() {
   	logger.debug("Target: getPlatforms(): " + this.name);
     return platforms;
+  }
+  public Map<String, Map<String, String>> getBootloaders() {
+  	logger.debug("Target: getBootloaders(): " + this.name);
+    return bootloaders;
   }
 
   public Map<String, String> getSketchPreferences(File folder) {

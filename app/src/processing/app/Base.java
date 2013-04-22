@@ -265,7 +265,7 @@ public class Base {
     
     targetsTable = new HashMap<String, Target>();
     loadHardware(getHardwareFolder());
-    loadHardware(getSketchbookHardwareFolder());
+//    loadHardware(getSketchbookHardwareFolder());
 
    //Issue: 104 Need to support loading examples, and libraries based on platform
     String platformname =  getBoardPreferences().get("platform");
