@@ -189,6 +189,8 @@ public class Compiler implements MessageConsumer {
             }
         }
 
+        logger.debug("Variant Path: " + variantPath);
+
 		this.objectFiles = new ArrayList<File>();
 
 		// 0. include paths for core + all libraries
@@ -707,14 +709,14 @@ public class Compiler implements MessageConsumer {
         String foundPath = null;
         File testFile = null;
 
-        testFile = new File(variantPath + "/" + ldscript);
-        logger.debug("Searching for " + variantPath + ldscript + "...");
+        testFile = new File(variantPath, ldscript);
+        logger.debug("Searching for " + variantPath + "/" + ldscript + "...");
         if (testFile.exists()) {
           logger.debug("... found");
           foundPath = variantPath;
         } else {
           logger.debug("Searching for " + corePath + "/" + ldscript + "...");
-          testFile = new File(corePath + ldscript);
+          testFile = new File(corePath, ldscript);
           if (testFile.exists()) {
             logger.debug("... found");
             foundPath = corePath;

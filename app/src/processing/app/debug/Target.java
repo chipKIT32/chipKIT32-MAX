@@ -259,7 +259,7 @@ public class Target {
 
                 if (variantFolder == null) {
                     variantFolder = new File(
-                        new File(sketchHardwareFolder, "variants"), variant);
+                        new File(folder, "variants"), variant);
                 }
             } else {
                 Target t = Base.targetsTable.get(variant.substring(0, variant.indexOf(':')));
@@ -277,7 +277,7 @@ public class Target {
 
                 if (variantFolder == null) {
                     variantFolder = new File(
-                        new File(sketchHardwareFolder, "variants"), variant.substring(variant.indexOf(':') + 1));
+                        new File(folder, "variants"), variant.substring(variant.indexOf(':') + 1));
                 }
             }
         }
