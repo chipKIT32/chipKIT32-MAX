@@ -117,17 +117,38 @@ int	_board_pinMode(uint8_t pin, uint8_t mode)
 
 	// Set the pin to the requested mode.
     switch (mode) {
+        case INPUT:
         case INPUT_PULLUP:
+        case INPUT_PULLDOWN:
+        case INPUT_PULLUPDOWN:
 #if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
-            iop->cnpu.set = bit;
+            if (mode == INPUT_PULLUP) {
+                iop->cnpu.set = bit;
+                iop->cnpd.clr = bit;
+            } else if (mode == INPUT_PULLDOWN) {
+                iop->cnpu.clr = bit;
+                iop->cnpd.set = bit;
+            } else if (mode == INPUT_PULLUPDOWN) {
+                iop->cnpu.set = bit;
+                iop->cnpd.set = bit;
+            } else {
+                iop->cnpu.clr = bit;
+                iop->cnpd.clr = bit;
+            }
 #else
-            cn = digitalPinToCN(pin);
-            if (cn != NOT_CN_PIN) {
-                CNPUESET = cn;
-            } 
+            if (mode == INPUT_PULLUP) {
+                cn = digitalPinToCN(pin);
+                if (cn != NOT_CN_PIN) {
+                    CNPUESET = cn;
+                } 
+            } else {
+                cn = digitalPinToCN(pin);
+                if (cn != NOT_CN_PIN) {
+                    CNPUECLR = cn;
+                } 
+            }
 #endif
             // continue into INPUT case
-        case INPUT:
             //* Determine if this is an output compare pin. If so,
             //* we need to make sure PWM output is off.
             timer = digitalPinToTimerOC(pin) >> _BN_TIMER_OC;
@@ -150,6 +171,15 @@ int	_board_pinMode(uint8_t pin, uint8_t mode)
             // The behavior inherited from Arduino is that if INPUT wasn't
             // specified you get OUTPUT. That behavior is preserved rather
             // than error checking the input value.
+#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
+            iop->cnpu.clr = bit;
+            iop->cnpd.clr = bit;
+#else
+            cn = digitalPinToCN(pin);
+            if (cn != NOT_CN_PIN) {
+                CNPUECLR = cn;
+            } 
+#endif
             iop->tris.clr = bit;	//make the pin an output
             iop->odc.clr  = bit;	//make sure it isn't open drain
 	}
@@ -269,8 +299,10 @@ int	_board_digitalWrite(uint8_t pin, uint8_t val);
 #if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
         if (val == LOW) {
             iop->cnpu.clr = bit;
+            iop->cnpd.clr = bit;
         } else {
             iop->cnpu.set = bit;
+            iop->cnpd.clr = bit;
         }
 #else
         cn = digitalPinToCN(pin);
