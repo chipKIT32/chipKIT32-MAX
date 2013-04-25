@@ -118,10 +118,14 @@ int	_board_pinMode(uint8_t pin, uint8_t mode)
 	// Set the pin to the requested mode.
     switch (mode) {
         case INPUT_PULLUP:
+#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
+            iop->cnpu.set = bit;
+#else
             cn = digitalPinToCN(pin);
             if (cn != NOT_CN_PIN) {
                 CNPUESET = cn;
             } 
+#endif
             // continue into INPUT case
         case INPUT:
             //* Determine if this is an output compare pin. If so,
@@ -262,6 +266,13 @@ int	_board_digitalWrite(uint8_t pin, uint8_t val);
     //* resistor.  Only works for pins that have an associated
     //* change notification pin.
     if (iop->tris.reg & bit) {
+#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
+        if (val == LOW) {
+            iop->cnpu.clr = bit;
+        } else {
+            iop->cnpu.set = bit;
+        }
+#else
         cn = digitalPinToCN(pin);
         if (cn != NOT_CN_PIN) {
             if (val == LOW) {
@@ -270,6 +281,8 @@ int	_board_digitalWrite(uint8_t pin, uint8_t val);
                 CNPUESET = cn;
             }
         }
+#endif
+
     } else {
         //* Determine if this is an output compare pin. If so,
         //* we need to make sure PWM output is off.
