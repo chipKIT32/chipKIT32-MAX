@@ -1,6 +1,5 @@
 /* Arduino SdFat Library
  * Copyright (C) 2009 by William Greiman
- * Revision Date: 08/18/2011 (Olver Jones)
  *
  * This file is part of the Arduino SdFat Library
  *
@@ -105,15 +104,13 @@ typedef struct partitionTable part_t;
  *
  * The first block of a storage device that is formatted with a MBR.
  */
-
 struct masterBootRecord {
            /** Code Area for master boot program. */
   uint8_t  codeArea[440];
            /** Optional WindowsNT disk signature. May contain more boot code. */
   uint32_t diskSignature;
            /** Usually zero but may be more boot code. */
-  uint8_t usuallyZero;
-  uint8_t test1;
+  uint16_t usuallyZero;
            /** Partition tables. */
   part_t   part[4];
            /** First MBR signature byte. Must be 0X55 */

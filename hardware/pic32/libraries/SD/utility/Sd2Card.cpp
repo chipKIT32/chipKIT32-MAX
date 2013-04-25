@@ -1,6 +1,5 @@
 /* Arduino Sd2Card Library
  * Copyright (C) 2009 by William Greiman
- * Revision Date: 08/18/2011 (Olver Jones)
  *
  * This file is part of the Arduino Sd2Card Library
  *
@@ -18,25 +17,12 @@
  * along with the Arduino Sd2Card Library.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-//* ***************************************************************************
-//* Revision History:
-//* Feb  7, 2013 <Gene Apperson> Changed bit-banged SPI code to remove dependency
-//*					on the Microchip plib library.
 #include <p32xxxx.h>
+#include <plib.h>
+
 
 #include <WProgram.h>
 #include "Sd2Card.h"
-
-/* The following are used for direct access to the processor pins
-** for the bit-banged SPI implementation.
-*/
-#define	bitSDO (1 << BN_SDO)
-#define	bitSDI (1 << BN_SDI)
-#define	bitSCK (1 << BN_SCK)
-
-p32_ioport * iopSDO = (p32_ioport *)&IOPORT_SDO;
-p32_ioport * iopSDI = (p32_ioport *)&IOPORT_SDI;
-p32_ioport * iopSCK = (p32_ioport *)&IOPORT_SCK;
 
 /*	SPIxCON
 */
@@ -55,20 +41,14 @@ p32_ioport * iopSCK = (p32_ioport *)&IOPORT_SCK;
 #define bnSPI2RXIE	7
 #define bnSPI2TXIE	6
 
-uint32_t	spi_state;
-uint8_t     fspi_state_saved = false;
-uint32_t    interrupt_state = 0;
-
 /** Soft SPI receive */
 uint8_t spiRec(void) {
   uint8_t data = 0;
   // output pin high - like sending 0XFF
-  //PORTSetBits(prtSDO, bnSDO);
-  iopSDO->lat.set = bitSDO;
+  PORTSetBits(prtSDO, bnSDO);
 
   for (uint8_t i = 0; i < 8; i++) {
-	//PORTSetBits(prtSCK, bnSCK);
-	iopSCK->lat.set = bitSCK;
+	PORTSetBits(prtSCK, bnSCK);
 
     data <<= 1;
 
@@ -76,15 +56,10 @@ uint8_t spiRec(void) {
     asm("nop");
     asm("nop");
 
-    //if (PORTReadBits(prtSDI,bnSDI)) data |= 1;
-	if ((iopSDI->port.reg & bitSDI) != 0)
-	{
-		data |= 1;
-	}
+    if (PORTReadBits(prtSDI,bnSDI)) data |= 1;
 
 
-    //PORTClearBits(prtSCK, bnSCK);
-	iopSCK->lat.clr = bitSCK;
+    PORTClearBits(prtSCK, bnSCK);
   }
 
   return data;
@@ -96,17 +71,14 @@ void spiSend(uint8_t data) {
   for (uint8_t i = 0; i < 8; i++) {
     
 	if(data & 0X80) {
-		//PORTSetBits(prtSDO, bnSDO);
-		iopSDO->lat.set = bitSDO;
+		PORTSetBits(prtSDO, bnSDO);
 	}
 	else
 	{
-		//PORTClearBits(prtSDO, bnSDO);
-		iopSDO->lat.clr = bitSDO;
+		PORTClearBits(prtSDO, bnSDO);
 	}
 
-	//PORTClearBits(prtSCK, bnSCK);
-	iopSCK->lat.clr = bitSCK;
+	PORTClearBits(prtSCK, bnSCK);
 
     asm("nop");
 	asm("nop");
@@ -114,8 +86,7 @@ void spiSend(uint8_t data) {
 
     data <<= 1;
 
-	//PORTSetBits(prtSCK, bnSCK);
-	iopSCK->lat.set = bitSCK;
+	PORTSetBits(prtSCK, bnSCK);
 
   }
   // hold SCK high for a few ns
@@ -124,8 +95,7 @@ void spiSend(uint8_t data) {
    asm("nop");
    asm("nop");
 
-  //PORTClearBits(prtSCK, bnSCK);
-  iopSCK->lat.clr = bitSCK;
+  PORTClearBits(prtSCK, bnSCK);
 }
 //------------------------------------------------------------------------------
 // send command and return error code.  Return zero for OK
@@ -152,7 +122,7 @@ uint8_t Sd2Card::cardCommand(uint8_t cmd, uint32_t arg) {
   spiSend(crc);
 
   // wait for response
-  for (unsigned int i = 0; ((status_ = spiRec()) & 0X80) && i != 0xFFF; i++);
+  for (uint8_t i = 0; ((status_ = spiRec()) & 0X80) && i != 0XFF; i++);
   return status_;
 }
 //------------------------------------------------------------------------------
@@ -184,26 +154,9 @@ uint32_t Sd2Card::cardSize(void) {
 //------------------------------------------------------------------------------
 void Sd2Card::chipSelectHigh(void) {
   digitalWrite(chipSelectPin_, HIGH);
-#if defined(_BOARD_MEGA_) || defined(_BOARD_UNO_) || defined(_BOARD_UC32_)
-  if(fspi_state_saved)
-  {
-    SPI2CON = spi_state;
-    fspi_state_saved = false;
-    restoreInterrupts(interrupt_state);
-  }
-#endif
 }
 //------------------------------------------------------------------------------
 void Sd2Card::chipSelectLow(void) {
-#if defined(_BOARD_MEGA_) || defined(_BOARD_UNO_) || defined(_BOARD_UC32_)
-    if(!fspi_state_saved)
-    {
-        interrupt_state = disableInterrupts();
-        spi_state = SPI2CON;
-        SPI2CONbits.ON = 0; 
-        fspi_state_saved = true;
-    }
-#endif
   digitalWrite(chipSelectPin_, LOW);
 }
 //------------------------------------------------------------------------------
@@ -284,13 +237,10 @@ uint8_t Sd2Card::init(uint8_t sckRateID, uint8_t chipSelectPin) {
 
   pinMode(chipSelectPin_, OUTPUT);
 
-  //PORTSetPinsDigitalOut(prtSCK, bnSCK);
-  //PORTSetPinsDigitalOut(prtSDO, bnSDO);
-  //PORTSetPinsDigitalIn(prtSDI, bnSDI);
-  iopSCK->tris.clr = bitSCK;
-  iopSDO->tris.clr = bitSDO;
-  iopSDI->tris.set = bitSDI;
-
+  PORTSetPinsDigitalOut(prtSCK, bnSCK);
+  PORTSetPinsDigitalOut(prtSDO, bnSDO);
+  PORTSetPinsDigitalIn(prtSDI, bnSDI);
+  
   // set pin modes
   chipSelectHigh();
 
@@ -307,22 +257,17 @@ uint8_t Sd2Card::init(uint8_t sckRateID, uint8_t chipSelectPin) {
     }
   }
   // check SD version
-
   if ((cardCommand(CMD8, 0x1AA) & R1_ILLEGAL_COMMAND)) {
     type(SD_CARD_TYPE_SD1);
   } else {
     // only need last byte of r7 response
-    for (uint8_t i = 0; i < 4; i++) {
-		status_ = spiRec();
-	}
-
+    for (uint8_t i = 0; i < 4; i++) status_ = spiRec();
     if (status_ != 0XAA) {
       error(SD_CARD_ERROR_CMD8);
       goto fail;
     }
     type(SD_CARD_TYPE_SD2);
   }
-
   // initialize card and send host supports SDHC if SD2
   arg = type() == SD_CARD_TYPE_SD2 ? 0X40000000 : 0;
 
@@ -333,24 +278,23 @@ uint8_t Sd2Card::init(uint8_t sckRateID, uint8_t chipSelectPin) {
       goto fail;
     }
   }
-
   // if SD2 read OCR register to check for SDHC card
   if (type() == SD_CARD_TYPE_SD2) {
     if (cardCommand(CMD58, 0)) {
       error(SD_CARD_ERROR_CMD58);
       goto fail;
     }
-
-    if ((spiRec() & 0XC0) == 0XC0) {
-		type(SD_CARD_TYPE_SDHC);
-	}
+    if ((spiRec() & 0XC0) == 0XC0) type(SD_CARD_TYPE_SDHC);
     // discard rest of ocr - contains allowed voltage range
     for (uint8_t i = 0; i < 3; i++) spiRec();
   }
   chipSelectHigh();
 
-
+#ifndef SOFTWARE_SPI
+  return setSckRate(sckRateID);
+#else  // SOFTWARE_SPI
   return true;
+#endif  // SOFTWARE_SPI
 
  fail:
   chipSelectHigh();
@@ -401,7 +345,6 @@ uint8_t Sd2Card::readBlock(uint32_t block, uint8_t* dst) {
 uint8_t Sd2Card::readData(uint32_t block,
         uint16_t offset, uint16_t count, uint8_t* dst) {
   uint16_t n;
-
   if (count == 0) return true;
   if ((count + offset) > 512) {
     goto fail;
@@ -421,15 +364,14 @@ uint8_t Sd2Card::readData(uint32_t block,
     inBlock_ = 1;
   }
 
+
+
   // skip data before offset
   for (;offset_ < offset; offset_++) {
     spiRec();
   }
-
-  n = count;
-
   // transfer data
-  for (uint16_t i = 0; i < n; i++) {
+  for (uint16_t i = 0; i < count; i++) {
     dst[i] = spiRec();
   }
 
@@ -449,7 +391,8 @@ uint8_t Sd2Card::readData(uint32_t block,
 /** Skip remaining data in a block when in partial block read mode. */
 void Sd2Card::readEnd(void) {
   if (inBlock_) {
-    while (offset_++ < 512) spiRec();
+      // skip data and crc
+    while (offset_++ < 514) spiRec();
     chipSelectHigh();
     inBlock_ = 0;
   }

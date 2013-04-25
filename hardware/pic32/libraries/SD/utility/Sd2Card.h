@@ -1,6 +1,5 @@
 /* Arduino Sd2Card Library
  * Copyright (C) 2009 by William Greiman
- * Revision Date: 08/18/2011 (Olver Jones)
  *
  * This file is part of the Arduino Sd2Card Library
  *
@@ -26,6 +25,7 @@
  */
 #include "Sd2PinMap.h"
 #include "SdInfo.h"
+//#include <plib.h>
 
 /** Set SCK to max rate of F_CPU/2. See Sd2Card::setSckRate(). */
 uint8_t const SPI_FULL_SPEED = 0;
