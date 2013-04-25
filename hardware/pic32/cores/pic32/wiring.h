@@ -56,6 +56,8 @@ extern "C"{
 #define OUTPUT 0x1
 #define OPEN 0x02
 #define INPUT_PULLUP 0x03
+#define INPUT_PULLDOWN 0x04
+#define INPUT_PULLUPDOWN 0x05
 
 #define true 0x1
 #define false 0x0
