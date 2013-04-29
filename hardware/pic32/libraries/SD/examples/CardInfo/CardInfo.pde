@@ -28,17 +28,17 @@ SdFile root;
 // Arduino Ethernet shield: pin 4
 // Adafruit SD shields and modules: pin 10
 // Sparkfun SD shield: pin 8
+// On the Ethernet Shield, CS is pin 4. It's set as an output by default.
+// Note that even if it's not used as the CS pin, the hardware SS pin 
+// (10 on most Arduino boards, 53 on the Mega) must be left as an output 
+// or the SD library functions will not work. 
 const int chipSelect = 8;    
 
 void setup()
 {
   Serial.begin(9600);
   Serial.print("\nInitializing SD card...");
-  // On the Ethernet Shield, CS is pin 4. It's set as an output by default.
-  // Note that even if it's not used as the CS pin, the hardware SS pin 
-  // (10 on most Arduino boards, 53 on the Mega) must be left as an output 
-  // or the SD library functions will not work. 
-  pinMode(10, OUTPUT);     // change this to 53 on a mega
+  pinMode(chipSelect, OUTPUT);     // change this to 53 on a mega
 
 
   // we'll use the initialization code from the utility libraries

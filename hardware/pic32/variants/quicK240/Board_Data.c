@@ -20,7 +20,7 @@
 /*  Revision History:													*/
 /*																		*/
 /*	11/28/2011(GeneA): Created by splitting data out of Board_Defs.h	*/
-/*	02/12/2013(GeneA): removed dependency on Microchip plib library		*/
+/*	03/31/2012(GeneA): added support for second LED on Rev D boards		*/
 /*																		*/
 /************************************************************************/
 //*	This library is free software; you can redistribute it and/or
@@ -199,6 +199,7 @@ const uint8_t digital_pin_to_port_PGM[] = {
 	_IOPORT_PG,		//	83 RG12	TRD1/RG12
 	_IOPORT_PG,		//	84 RG13	TRD0/RG13
 	_IOPORT_PA,		//	85 RA9	VREF-/CVREF0/AERXD2/PMA7/RA9
+	_IOPORT_PC,		//	86 RC1	T2CK/RC1
 };
 
 /* ------------------------------------------------------------ */
@@ -297,6 +298,7 @@ const uint16_t digital_pin_to_bit_mask_PGM[] = {
 	_BV( 12 ),		//	83 RG12	TRD1/RG12
 	_BV( 13 ),		//	84 RG13	TRD0/RG13
 	_BV( 9 ),		//	85 RA9	VREF-/CVREF0/AERXD2/PMA7/RA9
+	_BV( 1 ),		//	86 RC1	T2CK/RC1
 };
 
 /* ------------------------------------------------------------ */
@@ -394,12 +396,16 @@ const uint16_t digital_pin_to_timer_PGM[] = {
 	NOT_ON_TIMER,		//	83 RG12	TRD1/RG12
 	NOT_ON_TIMER,		//	84 RG13	TRD0/RG13
 	NOT_ON_TIMER,		//	85 RA9	VREF-/CVREF0/AERXD2/PMA7/RA9
+	NOT_ON_TIMER,		//	86 RC1	T2CK/RC1
 };
 
 /* ------------------------------------------------------------ */
 /*		Include Files for Board Customization Functions			*/
 /* ------------------------------------------------------------ */
 
+#if	(OPT_BOARD_INIT != 0)
+#include <plib.h>
+#endif
 
 /* ------------------------------------------------------------ */
 /*				Board Customization Functions					*/
@@ -437,10 +443,20 @@ const uint16_t digital_pin_to_timer_PGM[] = {
 
 void _board_init(void) {
 
-	/*	Turn off Secondary oscillator so pins can be used as GPIO
-	*/
-	OSCCONCLR	=	_OSCCON_SOSCEN_MASK;
+	//*	Turn Secondary oscillator off
+	//*	this is only needed on the mega board because the mega uses secondary
+	// ocsilator pins as general I/O
+	
+	unsigned int dma_status;
+	unsigned int int_status;
+	
+		mSYSTEMUnlock(int_status, dma_status);
 
+		OSCCONCLR	=	_OSCCON_SOSCEN_MASK;
+
+
+		mSYSTEMLock(int_status, dma_status);
+	
 }
 
 #endif

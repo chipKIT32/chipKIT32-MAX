@@ -23,6 +23,7 @@
 /*	11/28/2011(GeneA): Moved data definitions and configuration			*/
 /*		functions to Board_Data.c										*/
 /*	11/29/2011(GeneA): Moved int priority definitions to System_Defs.h	*/
+/*	03/31/2012(GeneA): added support for second LED on Rev D boards		*/
 /*																		*/
 /************************************************************************/
 //*	This library is free software; you can redistribute it and/or
@@ -57,7 +58,7 @@
 
 /* Define the Microcontroller peripherals available on the board.
 */
-#define	NUM_DIGITAL_PINS	86
+#define	NUM_DIGITAL_PINS	87
 #define	NUM_ANALOG_PINS		16
 #define	NUM_OC_PINS			5
 #define	NUM_IC_PINS			5
@@ -73,10 +74,17 @@
 
 /* Define I/O devices on the board.
 */
-#define	NUM_LED				1
+#define	NUM_LED				2
 #define NUM_BTN				0
 #define	NUM_SWT				0
 #define NUM_SERVO			0
+
+/* Define the number of extended i/o pins. These are pins
+** that are not native to the microcontroller. This board
+** doesn't have any.
+*/
+#define	NUM_DIGITAL_PINS_EXTENDED	NUM_DIGITAL_PINS
+#define	NUM_ANALOG_PINS_EXTENDED	NUM_ANALOG_PINS
 
 /* ------------------------------------------------------------ */
 /*						LED Declarations						*/
@@ -84,7 +92,8 @@
 
 /* Define the pin numbers for the LEDs
 */
-#define	PIN_LED1	13
+#define	PIN_LED1	37
+#define	PIN_LED2	81
 
 /* ------------------------------------------------------------ */
 /*					Button Declarations							*/
