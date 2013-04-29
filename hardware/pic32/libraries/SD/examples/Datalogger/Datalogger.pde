@@ -34,7 +34,7 @@ void setup()
   Serial.print("Initializing SD card...");
   // make sure that the default chip select pin is set to
   // output, even if you don't use it:
-  pinMode(10, OUTPUT);
+  pinMode(chipSelect, OUTPUT);
   
   // see if the card is present and can be initialized:
   if (!SD.begin(chipSelect)) {
