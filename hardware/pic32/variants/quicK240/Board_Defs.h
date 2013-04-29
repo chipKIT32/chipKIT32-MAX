@@ -79,6 +79,13 @@
 #define	NUM_SWT				0
 #define NUM_SERVO			0
 
+/* Define the number of extended i/o pins. These are pins
+** that are not native to the microcontroller. This board
+** doesn't have any.
+*/
+#define	NUM_DIGITAL_PINS_EXTENDED	NUM_DIGITAL_PINS
+#define	NUM_ANALOG_PINS_EXTENDED	NUM_ANALOG_PINS
+
 /* ------------------------------------------------------------ */
 /*						LED Declarations						*/
 /* ------------------------------------------------------------ */
