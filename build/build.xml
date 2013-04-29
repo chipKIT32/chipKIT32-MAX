@@ -91,7 +91,7 @@
            addproperty="version"
            defaultvalue="${revision}-${platform}-${TODAY}-test" />
   <propertyfile file="upload.properties">
-      <entry  key="version" value="${version}"/>
+      <entry  key="uploadversion" value="${version}"/>
   </propertyfile>
     <antcall target="${platform}-dist" />
   </target>
@@ -102,7 +102,7 @@
            addproperty="version"
            defaultvalue="${revision}-${platform}-${TODAY}-test" />
   <propertyfile file="upload.properties">
-      <entry  key="version" value="${version}"/>
+      <entry  key="uploadversion" value="${version}"/>
   </propertyfile>
     <antcall target="${platform}-deb" />
   </target>
@@ -354,7 +354,7 @@
       =======================================================
   </echo>
   <propertyfile file="upload.properties">
-      <entry  key="version" value="${version}"/>
+      <entry  key="uploadversion" value="${version}"/>
   </propertyfile>
 
   </target>
@@ -761,7 +761,7 @@ Description: chipKIT MPIDE Development environment
         <property file="test.properties"/>
         <s3put key="${aws.access_key}" secret="${aws.secret_key}" bucket="${aws.bucket}"
                dest="builds" publicread="true" cacheControl="3600" contentType="application/x-readme">
-            <fileset dir="${platform}" includes="mpide-${version}.${extension}"/> 
+            <fileset dir="${platform}" includes="mpide-${uploadversion}.${extension}"/> 
             <contenttypemapping extension="md" contenttype="text/plain"/>
             <cachecontrolmapping extension="md" maxage="7200"/>
    	    	<contentencodingmapping extension="md" encoding="UTF-8" />
