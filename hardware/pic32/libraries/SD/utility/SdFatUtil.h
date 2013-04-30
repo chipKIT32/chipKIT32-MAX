@@ -1,6 +1,5 @@
 /* Arduino SdFat Library
  * Copyright (C) 2008 by William Greiman
- * Revision Date: 08/18/2011 (Olver Jones)
  *
  * This file is part of the Arduino SdFat Library
  *
@@ -30,10 +29,11 @@
 /** Store and print a string in flash memory followed by a CR/LF.*/
 #define PgmPrintln(x) SerialPrintln_P(PSTR(x))
 /** Defined so doxygen works for function definitions. */
-#define NOINLINE __attribute__((noinline))
+#define NOINLINE __attribute__((noinline,unused))
+#define UNUSEDOK __attribute__((unused))
 //------------------------------------------------------------------------------
 /** Return the number of bytes currently free in RAM. */
-static int FreeRam(void) {
+static UNUSEDOK int FreeRam(void) {
   extern int  __bss_end;
   extern int* __brkval;
   int free_memory;

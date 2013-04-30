@@ -1,6 +1,5 @@
 /* Arduino SdFat Library
  * Copyright (C) 2009 by William Greiman
- * Revision Date: 08/18/2011 (Olver Jones)
  *
  * This file is part of the Arduino SdFat Library
  *
@@ -141,7 +140,7 @@ class SdFile : public Print {
    * Set writeError to false before calling print() and/or write() and check
    * for true after calls to print() and/or write().
    */
-  bool writeError;
+  //bool writeError;
   /**
    * Cancel unbuffered reads for this file.
    * See setUnbufferedRead()
@@ -284,7 +283,7 @@ class SdFile : public Print {
   /** \return SdVolume that contains this file. */
   SdVolume* volume(void) const {return vol_;}
   void write(uint8_t b);
-  int16_t write(const void* buf, uint16_t nbyte);
+  size_t write(const void* buf, uint16_t nbyte);
   void write(const char* str);
   void write_P(char* str);
   void writeln_P(char* str);

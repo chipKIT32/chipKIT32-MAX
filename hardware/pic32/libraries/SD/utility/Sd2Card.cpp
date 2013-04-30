@@ -1,6 +1,5 @@
 /* Arduino Sd2Card Library
  * Copyright (C) 2009 by William Greiman
- * Revision Date: 08/18/2011 (Olver Jones)
  *
  * This file is part of the Arduino Sd2Card Library
  *
@@ -23,6 +22,7 @@
 //* Feb  7, 2013 <Gene Apperson> Changed bit-banged SPI code to remove dependency
 //*					on the Microchip plib library.
 #include <p32xxxx.h>
+
 
 #include <WProgram.h>
 #include "Sd2Card.h"
@@ -152,7 +152,7 @@ uint8_t Sd2Card::cardCommand(uint8_t cmd, uint32_t arg) {
   spiSend(crc);
 
   // wait for response
-  for (unsigned int i = 0; ((status_ = spiRec()) & 0X80) && i != 0xFFF; i++);
+  for (uint8_t i = 0; ((status_ = spiRec()) & 0X80) && i != 0XFF; i++);
   return status_;
 }
 //------------------------------------------------------------------------------
@@ -307,22 +307,17 @@ uint8_t Sd2Card::init(uint8_t sckRateID, uint8_t chipSelectPin) {
     }
   }
   // check SD version
-
   if ((cardCommand(CMD8, 0x1AA) & R1_ILLEGAL_COMMAND)) {
     type(SD_CARD_TYPE_SD1);
   } else {
     // only need last byte of r7 response
-    for (uint8_t i = 0; i < 4; i++) {
-		status_ = spiRec();
-	}
-
+    for (uint8_t i = 0; i < 4; i++) status_ = spiRec();
     if (status_ != 0XAA) {
       error(SD_CARD_ERROR_CMD8);
       goto fail;
     }
     type(SD_CARD_TYPE_SD2);
   }
-
   // initialize card and send host supports SDHC if SD2
   arg = type() == SD_CARD_TYPE_SD2 ? 0X40000000 : 0;
 
@@ -333,24 +328,23 @@ uint8_t Sd2Card::init(uint8_t sckRateID, uint8_t chipSelectPin) {
       goto fail;
     }
   }
-
   // if SD2 read OCR register to check for SDHC card
   if (type() == SD_CARD_TYPE_SD2) {
     if (cardCommand(CMD58, 0)) {
       error(SD_CARD_ERROR_CMD58);
       goto fail;
     }
-
-    if ((spiRec() & 0XC0) == 0XC0) {
-		type(SD_CARD_TYPE_SDHC);
-	}
+    if ((spiRec() & 0XC0) == 0XC0) type(SD_CARD_TYPE_SDHC);
     // discard rest of ocr - contains allowed voltage range
     for (uint8_t i = 0; i < 3; i++) spiRec();
   }
   chipSelectHigh();
 
-
+#ifndef SOFTWARE_SPI
+  return setSckRate(sckRateID);
+#else  // SOFTWARE_SPI
   return true;
+#endif  // SOFTWARE_SPI
 
  fail:
   chipSelectHigh();
@@ -401,7 +395,6 @@ uint8_t Sd2Card::readBlock(uint32_t block, uint8_t* dst) {
 uint8_t Sd2Card::readData(uint32_t block,
         uint16_t offset, uint16_t count, uint8_t* dst) {
   uint16_t n;
-
   if (count == 0) return true;
   if ((count + offset) > 512) {
     goto fail;
@@ -421,15 +414,14 @@ uint8_t Sd2Card::readData(uint32_t block,
     inBlock_ = 1;
   }
 
+
+
   // skip data before offset
   for (;offset_ < offset; offset_++) {
     spiRec();
   }
-
-  n = count;
-
   // transfer data
-  for (uint16_t i = 0; i < n; i++) {
+  for (uint16_t i = 0; i < count; i++) {
     dst[i] = spiRec();
   }
 
@@ -449,7 +441,8 @@ uint8_t Sd2Card::readData(uint32_t block,
 /** Skip remaining data in a block when in partial block read mode. */
 void Sd2Card::readEnd(void) {
   if (inBlock_) {
-    while (offset_++ < 512) spiRec();
+      // skip data and crc
+    while (offset_++ < 514) spiRec();
     chipSelectHigh();
     inBlock_ = 0;
   }

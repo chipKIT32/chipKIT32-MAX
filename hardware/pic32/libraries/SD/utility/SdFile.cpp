@@ -1,6 +1,5 @@
 /* Arduino SdFat Library
  * Copyright (C) 2009 by William Greiman
- * Revision Date: 08/18/2011 (Olver Jones)
  *
  * This file is part of the Arduino SdFat Library
  *
@@ -21,7 +20,6 @@
 #include <SdFat.h>
 #include <WProgram.h>
 
-volatile char SDbuffer[256];
 //------------------------------------------------------------------------------
 // callback function for date/time
 void (*SdFile::dateTime_)(uint16_t* date, uint16_t* time) = NULL;
@@ -260,11 +258,7 @@ uint8_t SdFile::make83Name(const char* str, uint8_t* name) {
       // illegal FAT characters
       char* p = "|<>^+=?/[];,*\"\\";
       uint8_t b;
-
-	  for(int temp=0; temp < 15; temp++) {
-		  SDbuffer[temp] = p[temp];
-	  }
-
+      while ((b = pgm_read_byte(p++))) if (b == c) return false;
       // check size and only allow ASCII printable characters
       if (i > n || c < 0X21 || c > 0X7E)return false;
       // only upper case allowed in 8.3 names - convert lower to upper
@@ -371,7 +365,7 @@ uint8_t SdFile::makeDir(SdFile* dir, const char* dirName) {
  * O_EXCL - If O_CREAT and O_EXCL are set, open() shall fail if the file exists.
  *
  * O_SYNC - Call sync() after each write.  This flag should not be used with
- * write(uint8_t), write_P(char*), writeln_P(char*), or the Arduino Print class.
+ * write(uint8_t), write_P(PGM_P), writeln_P(PGM_P), or the Arduino Print class.
  * These functions do character at a time writes so sync() will be called
  * after each byte.
  *
@@ -596,7 +590,7 @@ void SdFile::printDirName(const dir_t& dir, uint8_t width) {
       Serial.print('.');
       w++;
     }
-    Serial.print(dir.name[i]);
+    Serial.write(dir.name[i]);
     w++;
   }
   if (DIR_IS_SUBDIR(&dir)) {
@@ -1127,7 +1121,7 @@ uint8_t SdFile::truncate(uint32_t length) {
  * for a read-only file, device is full, a corrupt file system or an I/O error.
  *
  */
-int16_t SdFile::write(const void* buf, uint16_t nbyte) {
+size_t SdFile::write(const void* buf, uint16_t nbyte) {
   // convert void* to uint8_t*  -  must be before goto statements
   const uint8_t* src = reinterpret_cast<const uint8_t*>(buf);
 
@@ -1216,8 +1210,9 @@ int16_t SdFile::write(const void* buf, uint16_t nbyte) {
 
  writeErrorReturn:
   // return for write error
-  writeError = true;
-  return -1;
+  //writeError = true;
+  //setWriteError();
+  return 0;
 }
 //------------------------------------------------------------------------------
 /**
@@ -1226,6 +1221,7 @@ int16_t SdFile::write(const void* buf, uint16_t nbyte) {
  * Use SdFile::writeError to check for errors.
  */
 void SdFile::write(uint8_t b) {
+  //return 
   write(&b, 1);
 }
 //------------------------------------------------------------------------------
@@ -1235,6 +1231,7 @@ void SdFile::write(uint8_t b) {
  * Use SdFile::writeError to check for errors.
  */
 void SdFile::write(const char* str) {
+  //return 
   write(str, strlen(str));
 }
 //------------------------------------------------------------------------------
@@ -1244,7 +1241,7 @@ void SdFile::write(const char* str) {
  * Use SdFile::writeError to check for errors.
  */
 void SdFile::write_P(char* str) {
-  Serial.print(str);
+  print(str);
 }
 //------------------------------------------------------------------------------
 /**
@@ -1254,5 +1251,5 @@ void SdFile::write_P(char* str) {
  */
 void SdFile::writeln_P(char* str) {
   write_P(str);
-  Serial.println();
+  println();
 }
