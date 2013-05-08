@@ -81,6 +81,7 @@ public class AvrdudeUploader extends Uploader  {
       //*   %O = Protocol from boards.txt
       //*   %T = Location of tools directory
       //*   %M = CPU Specification
+      //*   %A = vAriant directory
 
       Map<String, Map<String, String>> bootLoaders = t.getBootloaders();
       Map<String, String> bootloader = bootLoaders.get(uploadUsing);
@@ -116,14 +117,14 @@ public class AvrdudeUploader extends Uploader  {
         String foundPath = null;
         File testFile = null;
   
-        testFile = new File(variantPath + executable);
-        logger.debug("Searching for " + variantPath + executable + "...");
+        testFile = new File(variantPath, executable);
+        logger.debug("Searching for " + variantPath + "/" + executable + "...");
         if (testFile.exists()) {
           logger.debug("... found");
           foundPath = variantPath;
         } else {
-          logger.debug("Searching for " + basePath + executable + "...");
-          testFile = new File(basePath + executable);
+          logger.debug("Searching for " + basePath + "/" + executable + "...");
+          testFile = new File(basePath, executable);
           if (testFile.exists()) {
             logger.debug("... found");
             foundPath = basePath;
@@ -135,6 +136,7 @@ public class AvrdudeUploader extends Uploader  {
             return false;
         }
 
+        command = command.replace("%A", variantPath);
         command = command.replace("%H",  
           buildPath + File.separator + className + ".hex");
         command = command.replace("%V", 
