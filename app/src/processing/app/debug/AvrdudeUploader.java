@@ -56,6 +56,7 @@ public class AvrdudeUploader extends Uploader  {
       // fall back on global preference
       uploadUsing = Preferences.get("upload.using");
     }
+    logger.debug("*** UPLOAD USING: " + uploadUsing);
     if (uploadUsing.equals("bootloader")) {
       return uploadViaBootloader(buildPath, className);
     } else {
@@ -68,7 +69,6 @@ public class AvrdudeUploader extends Uploader  {
         t = Base.targetsTable.get(targetName);
         uploadUsing = uploadUsing.substring(uploadUsing.indexOf(':') + 1);
       }
-
 
       //* Look to see if there is an entry in bootloaders.txt that
       //* corresponds to the upload.using entry in the boards.txt
@@ -85,6 +85,7 @@ public class AvrdudeUploader extends Uploader  {
 
       Map<String, Map<String, String>> bootLoaders = t.getBootloaders();
       Map<String, String> bootloader = bootLoaders.get(uploadUsing);
+
       if (bootloader != null) {
         List parts = new ArrayList();
 
@@ -102,6 +103,11 @@ public class AvrdudeUploader extends Uploader  {
         if (command == null) {
           command = bootloader.get("command");
         }
+
+        logger.debug("================ UPLOAD =================");
+        logger.debug("Bootloader selected: " + uploadUsing);
+        logger.debug("Command: " + command);
+        logger.debug("");
 
         String[] spl = command.split("\\s+");
         String executable = spl[0];
@@ -136,7 +142,7 @@ public class AvrdudeUploader extends Uploader  {
             return false;
         }
 
-        command = command.replace("%A", variantPath);
+        command = command.replace("%A", t.getVariantFolder(variant).getAbsolutePath());
         command = command.replace("%H",  
           buildPath + File.separator + className + ".hex");
         command = command.replace("%V", 

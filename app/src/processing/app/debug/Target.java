@@ -173,6 +173,8 @@ public class Target {
                           String key = (String) k;
                           String bootloader = key.substring(0, key.indexOf('.'));
                           if (!bootloaders.containsKey(bootloader)) bootloaders.put(bootloader, new HashMap());
+
+                            logger.debug("Adding variant bootloader [" + bootloader + "] = " + key.substring(key.indexOf('.') + 1) + ", " + bootloaderPreferences.get(key));
                           ((Map) bootloaders.get(bootloader)).put(
                             key.substring(key.indexOf('.') + 1),
                             bootloaderPreferences.get(key));
