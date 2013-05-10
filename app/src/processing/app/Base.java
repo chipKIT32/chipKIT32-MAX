@@ -1346,7 +1346,10 @@ public class Base {
     
     for (String target : list) {
       File subfolder = new File(folder, target);
-      targetsTable.put(target, new Target(target, subfolder));
+      File pf = new File(subfolder, "platforms.txt");
+      if (pf.exists()) {
+        targetsTable.put(target, new Target(target, subfolder));
+      }
     }
   }
 
@@ -1631,6 +1634,9 @@ public class Base {
   
   static public Target getTarget() {
       Target target =  Base.targetsTable.get(Preferences.get("target"));
+        if (target == null) {
+            return null;
+        }
       logger.debug("Base: getTarget() : Target Name: " + target.getName());
     return target;
   }
@@ -1643,7 +1649,7 @@ static public Map<String, String> getSketchPreferences(File folder) {
  
 static public Map<String, String> getPlatformPreferences() {
     Target target = getTarget();
-    //if (target == null) return new LinkedHashMap();
+    if (target == null) return new LinkedHashMap();
     Map map = target.getPlatforms();
     /*
     if (map == null)
@@ -1662,6 +1668,7 @@ static public Map<String, String> getPlatformPreferences() {
   static public Map<String, String> getPlatformPreferences(String platformname) {
     logger.debug("Base: getPlatformPreferences: platformname: " + platformname);
   	Target target = getTarget();
+    if (target == null) return new LinkedHashMap();
   	Map map = target.getPlatforms();
     map =  (Map) map.get(platformname);
     return map;
