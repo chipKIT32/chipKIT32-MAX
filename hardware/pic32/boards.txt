@@ -917,31 +917,31 @@ usbono_pic32.build.variant=Default_64
 #usbono_pic32.upload.using=
 
 ############################################################
-fubarino_sd_seeed.name=Pinguino32
-fubarino_sd_seeed.group=Olimex
+Olimex_Pinguino32.name=Pinguino32
+Olimex_Pinguino32.group=Olimex
 
-fubarino_sd_seeed.platform=pic32
-fubarino_sd_seeed.board=_BOARD_PINGUINO32
-fubarino_sd_seeed.board.define=-D_USE_USB_FOR_SERIAL_
-fubarino_sd_seeed.ccflags=ffff
-fubarino_sd_seeed.ldscript=chipKIT-application-32MX440F256.ld
+Olimex_Pinguino32.platform=pic32
+Olimex_Pinguino32.board=_BOARD_PINGUINO32
+Olimex_Pinguino32.board.define=-D_USE_USB_FOR_SERIAL_
+Olimex_Pinguino32.ccflags=ffff
+Olimex_Pinguino32.ldscript=chipKIT-application-32MX440F256.ld
 
-fubarino_sd_seeed.upload.protocol=stk500v2
-fubarino_sd_seeed.upload.maximum_size=258048
-fubarino_sd_seeed.upload.speed=115200
+Olimex_Pinguino32.upload.protocol=stk500v2
+Olimex_Pinguino32.upload.maximum_size=258048
+Olimex_Pinguino32.upload.speed=115200
 
-fubarino_sd_seeed.bootloader.low_fuses=0xff
-fubarino_sd_seeed.bootloader.high_fuses=0xdd
-fubarino_sd_seeed.bootloader.extended_fuses=0x00
-fubarino_sd_seeed.bootloader.path=not-supported
-fubarino_sd_seeed.bootloader.file=not-supported
-fubarino_sd_seeed.bootloader.unlock_bits=0x3F
-fubarino_sd_seeed.bootloader.lock_bits=0x0F
+Olimex_Pinguino32.bootloader.low_fuses=0xff
+Olimex_Pinguino32.bootloader.high_fuses=0xdd
+Olimex_Pinguino32.bootloader.extended_fuses=0x00
+Olimex_Pinguino32.bootloader.path=not-supported
+Olimex_Pinguino32.bootloader.file=not-supported
+Olimex_Pinguino32.bootloader.unlock_bits=0x3F
+Olimex_Pinguino32.bootloader.lock_bits=0x0F
 
-fubarino_sd_seeed.build.mcu=32MX440F256H
-fubarino_sd_seeed.build.f_cpu=80000000L
-fubarino_sd_seeed.build.core=pic32
-fubarino_sd_seeed.build.variant=Pinguino32
+Olimex_Pinguino32.build.mcu=32MX440F256H
+Olimex_Pinguino32.build.f_cpu=80000000L
+Olimex_Pinguino32.build.core=pic32
+Olimex_Pinguino32.build.variant=Pinguino32
 
 ############################################################
 
