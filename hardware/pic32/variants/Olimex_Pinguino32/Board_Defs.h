@@ -55,7 +55,7 @@
 ** refer to periperhals on the board generically.
 */
 
-#define	_BOARD_NAME_	"Pinguino32"
+#define	_BOARD_NAME_	"PIC32_Pinguino"
 
 /* Define the peripherals available on the board.
 */
