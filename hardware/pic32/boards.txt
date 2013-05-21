@@ -917,11 +917,11 @@ usbono_pic32.build.variant=Default_64
 #usbono_pic32.upload.using=
 
 ############################################################
-Olimex_Pinguino32.name=Pinguino32
+Olimex_Pinguino32.name=PIC32 Pinguino
 Olimex_Pinguino32.group=Olimex
 
 Olimex_Pinguino32.platform=pic32
-Olimex_Pinguino32.board=_BOARD_OLIMEX_PINGUINO32_
+Olimex_Pinguino32.board=_BOARD_OLIMEX_PIC32_PINGUINO_
 Olimex_Pinguino32.board.define=-D_USE_USB_FOR_SERIAL_
 Olimex_Pinguino32.ccflags=ffff
 Olimex_Pinguino32.ldscript=chipKIT-application-32MX440F256.ld
@@ -941,6 +941,6 @@ Olimex_Pinguino32.bootloader.lock_bits=0x0F
 Olimex_Pinguino32.build.mcu=32MX440F256H
 Olimex_Pinguino32.build.f_cpu=80000000L
 Olimex_Pinguino32.build.core=pic32
-Olimex_Pinguino32.build.variant=Olimex_Pinguino32
+Olimex_Pinguino32.build.variant=Olimex_PIC32_Pinguino
 
 ############################################################
