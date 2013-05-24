@@ -42,6 +42,10 @@
 #define bnSPI2RXIE	7
 #define bnSPI2TXIE	6
 
+uint32_t	spi_state;
+uint8_t     fspi_state_saved = false;
+uint32_t    interrupt_state = 0;
+
 /** Soft SPI receive */
 uint8_t spiRec(void) {
   uint8_t data = 0;
@@ -152,12 +156,30 @@ uint32_t Sd2Card::cardSize(void) {
     return 0;
   }
 }
+
 //------------------------------------------------------------------------------
 void Sd2Card::chipSelectHigh(void) {
   digitalWrite(chipSelectPin_, HIGH);
+#if defined(_BOARD_MEGA_) || defined(_BOARD_UNO_) || defined(_BOARD_UC32_)
+  if(fspi_state_saved)
+  {
+    SPI2CON = spi_state;
+    fspi_state_saved = false;
+    restoreIntEnable(_EXTERNAL_1_IRQ, interrupt_state);
+  }
+#endif
 }
 //------------------------------------------------------------------------------
 void Sd2Card::chipSelectLow(void) {
+#if defined(_BOARD_MEGA_) || defined(_BOARD_UNO_) || defined(_BOARD_UC32_)
+    if(!fspi_state_saved)
+    {
+        interrupt_state = clearIntEnable(_EXTERNAL_1_IRQ);
+        spi_state = SPI2CON;
+        SPI2CONbits.ON = 0; 
+        fspi_state_saved = true;
+    }
+#endif
   digitalWrite(chipSelectPin_, LOW);
 }
 //------------------------------------------------------------------------------
