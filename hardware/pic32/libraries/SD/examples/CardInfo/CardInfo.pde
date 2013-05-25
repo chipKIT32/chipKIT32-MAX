@@ -15,6 +15,9 @@
  
  created  28 Mar 2011
  by Limor Fried 
+
+ - Cleaned up all SD examples included with MPIDE for consistency in defining CS pins
+ revised  24 May 2013 by Jacob Christ
  */
  // include the SD library:
 #include <SD.h>
@@ -32,18 +35,30 @@ SdFile root;
 // Note that even if it's not used as the CS pin, the hardware SS pin 
 // (10 on most Arduino boards, 53 on the Mega) must be left as an output 
 // or the SD library functions will not work. 
-const int chipSelect = 8;    
+
+// Default SD chip select for Uno and Mega type devices
+const int chipSelect_SD_default = 10; // Change 10 to 53 for a Mega
+
+// chipSelect_SD can be changed if you do not use default CS pin
+const int chipSelect_SD = chipSelect_SD_default;
 
 void setup()
 {
   Serial.begin(9600);
   Serial.print("\nInitializing SD card...");
-  pinMode(chipSelect, OUTPUT);     // change this to 53 on a mega
 
+  // Make sure the default chip select pin is set to so that
+  // shields that have a device that use the default CS pin
+  // that are connected to the SPI bus do not hold drive bus
+  pinMode(chipSelect_SD_default, OUTPUT);
+  digitalWrite(chipSelect_SD_default, HIGH);
+
+  pinMode(chipSelect_SD, OUTPUT);
+  digitalWrite(chipSelect_SD, HIGH);
 
   // we'll use the initialization code from the utility libraries
   // since we're just testing if the card is working!
-  if (!card.init(SPI_HALF_SPEED, chipSelect)) {
+  if (!card.init(SPI_HALF_SPEED, chipSelect_SD)) {
     Serial.println("initialization failed. Things to check:");
     Serial.println("* is a card is inserted?");
     Serial.println("* Is your wiring correct?");

@@ -12,6 +12,9 @@
  ** CS - pin 4
  
  created  22 December 2010
+
+ - Cleaned up all SD examples included with MPIDE for consistency in defining CS pins
+ revised  24 May 2013 by Jacob Christ
  
  This example code is in the public domain.
  	 
@@ -23,18 +26,29 @@
 // used as the CS pin, the hardware CS pin (10 on most Arduino boards,
 // 53 on the Mega) must be left as an output or the SD library
 // functions will not work.
-const int chipSelect = 4;
+
+// Default SD chip select for Uno and Mega type devices
+const int chipSelect_SD_default = 10; // Change 10 to 53 for a Mega
+
+// chipSelect_SD can be changed if you do not use default CS pin
+const int chipSelect_SD = chipSelect_SD_default;
 
 void setup()
 {
   Serial.begin(9600);
   Serial.print("Initializing SD card...");
-  // make sure that the default chip select pin is set to
-  // output, even if you don't use it:
-  pinMode(chipSelect, OUTPUT);
+
+  // Make sure the default chip select pin is set to so that
+  // shields that have a device that use the default CS pin
+  // that are connected to the SPI bus do not hold drive bus
+  pinMode(chipSelect_SD_default, OUTPUT);
+  digitalWrite(chipSelect_SD_default, HIGH);
+
+  pinMode(chipSelect_SD, OUTPUT);
+  digitalWrite(chipSelect_SD, HIGH);
   
   // see if the card is present and can be initialized:
-  if (!SD.begin(chipSelect)) {
+  if (!SD.begin(chipSelect_SD)) {
     Serial.println("Card failed, or not present");
     // don't do anything more:
     return;
