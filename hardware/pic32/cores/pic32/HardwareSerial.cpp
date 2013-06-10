@@ -182,7 +182,7 @@ void HardwareSerial::begin(unsigned long baudRate)
 
 	/* Initialize the receive buffer.
 	*/
-	flush();
+	purge();
 
 #if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
 	/* Map the UART TX to the appropriate pin.
@@ -354,11 +354,35 @@ int HardwareSerial::read(void)
 **		none
 **
 **	Description:
+**		Empty the send buffer by waiting for the
+**		fifo to empty and the transmitter to become idle
+*/
+void HardwareSerial::flush()
+{
+	while ((uart->uxSta.reg & (1 << _UARTSTA_TMRT)) == 0)	//check the TRMT bit
+	{
+		//* wait for the transmitter to be clear
+	}
+}
+
+/* ------------------------------------------------------------ */
+/***	HardwareSerial::purge
+**
+**	Parameters:
+**		none
+**
+**	Return Value:
+**		none
+**
+**	Errors:
+**		none
+**
+**	Description:
 **		Empty the receive buffer by discarding any characters in
 **		the buffer.
 */
 
-void HardwareSerial::flush()
+void HardwareSerial::purge()
 {
 	// don't reverse this or there may be problems if the RX interrupt
 	// occurs after reading the value of rx_buffer_head but before writing
@@ -392,11 +416,10 @@ void HardwareSerial::flush()
 void HardwareSerial::write(uint8_t theChar)
 {
 
-	while ((uart->uxSta.reg & (1 << _UARTSTA_TMRT)) == 0)	//check the TRMT bit
-		{
-		//* wait for the transmitter to be clear
-		}
-
+	while ((uart->uxSta.reg & (1 << _UARTSTA_UTXBF)) != 0)	//check the UTXBF bit
+  {
+		//* wait for the transmitter buffer to have room
+	}
 
 	uart->uxTx.reg = theChar;
 }
