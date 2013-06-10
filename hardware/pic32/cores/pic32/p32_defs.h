@@ -121,7 +121,6 @@ typedef struct {
 */
 #define	_UARTSTA_URXEN	12
 #define	_UARTSTA_UTXEN	10
-#define _UARTSTA_UTXBF  9
 #define	_UARTSTA_TMRT	8
 
 /* Structure for the registers of a PIC32 SPI controller
