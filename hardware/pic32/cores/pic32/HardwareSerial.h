@@ -116,6 +116,7 @@ class HardwareSerial : public Stream
 		virtual int		peek();
 		virtual int		read(void);
 		virtual void	flush(void);
+		virtual void	purge(void);
 		virtual	void	write(uint8_t);
 		using	Print::write; // pull in write(str) and write(buf, size) from Print
 };
