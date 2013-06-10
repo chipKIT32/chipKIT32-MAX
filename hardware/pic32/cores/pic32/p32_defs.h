@@ -136,6 +136,8 @@ typedef struct {
 /*	SPIxCON - Define bits in the SPI control port
 */
 #define _SPICON_ON		15
+#define _SPICON_MODE32		11
+#define _SPICON_MODE16		10
 #define _SPICON_SMP		9
 #define	_SPICON_CKE		8
 #define _SPICON_CKP		6

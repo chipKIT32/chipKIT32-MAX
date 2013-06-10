@@ -409,15 +409,53 @@ DSPI::setPinSelect(uint8_t pin) {
 }
 
 /* ------------------------------------------------------------ */
+/***	DSPI::setPinSelect
+**
+**	Parameters:
+**		pin		- the pin to use as the slave select
+**
+**	Return Value:
+**		none
+**
+**	Errors:
+**		none
+**
+**	Description:
+**		This sets the pin used for slave select. It will make the
+**		pin be an output driving high. This pin will then be use
+**		by the setSelect method.
+*/
+
+void
+DSPI::setTransferSize(uint8_t bits) {
+	switch(bits) {
+		default:
+			// Anything that's not recognised we'll just take as 8 bit
+		case DSPI_8BIT:
+			pspi->sxCon.clr = 1<<_SPICON_MODE32;
+			pspi->sxCon.clr = 1<<_SPICON_MODE16;
+			break;
+		case DSPI_16BIT:
+			pspi->sxCon.clr = 1<<_SPICON_MODE32;
+			pspi->sxCon.set = 1<<_SPICON_MODE16;
+			break;
+		case DSPI_32BIT:
+			pspi->sxCon.set = 1<<_SPICON_MODE32;
+			pspi->sxCon.clr = 1<<_SPICON_MODE16;
+			break;
+	}
+}
+
+/* ------------------------------------------------------------ */
 /*				Data Transfer Functions							*/
 /* ------------------------------------------------------------ */
 /***	DSPI::transfer
 **
 **	Parameters:
-**		bVal	- byte to send
+**		bVal	- byte/word to send
 **
 **	Return Value:
-**		returns byte received from the slave
+**		returns byte/word received from the slave
 **
 **	Errors:
 **		none
@@ -427,8 +465,8 @@ DSPI::setPinSelect(uint8_t pin) {
 **		the byte received from the slave device.
 */
 
-uint8_t
-DSPI::transfer(uint8_t bVal) {
+uint32_t
+DSPI::transfer(uint32_t bVal) {
 
 	while ((pspi->sxStat.reg & (1 << _SPISTAT_SPITBE)) == 0) {
 	}

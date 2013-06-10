@@ -51,6 +51,10 @@
 #define	DSPI_MODE2	((1 << _SPICON_CKP)|(1 << _SPICON_CKE))		// CKP = 1 CKE = 1
 #define	DSPI_MODE3	((1 << _SPICON_CKP)|(0 << _SPICON_CKE))		// CKP = 1 CKE = 0
 
+#define DSPI_8BIT	8
+#define DSPI_16BIT	16
+#define DSPI_32BIT	32
+
 #define	_DSPI_SPD_DEFAULT	1000000L
 
 /* ------------------------------------------------------------ */
@@ -118,11 +122,12 @@ void		end();
 void		setSpeed(uint32_t spd);
 void		setMode(uint16_t  mod);
 void		setPinSelect(uint8_t pin);
+void		setTransferSize(uint8_t txsize);
 
 /* Data transfer functions.
 */
 void		setSelect(uint8_t sel) { digitalWrite(pinSS, sel); };
-uint8_t		transfer(uint8_t bVal);
+uint32_t		transfer(uint32_t bVal);
 void		transfer(uint16_t cbReq, uint8_t * pbSnd, uint8_t * pbRcv);
 void		transfer(uint16_t cbReq, uint8_t * pbSnd);
 void		transfer(uint16_t cbReq, uint8_t bPad, uint8_t * pbRcv);
