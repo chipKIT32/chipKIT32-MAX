@@ -457,7 +457,9 @@ public class Compiler implements MessageConsumer {
 				configPreferences.get("compiler.cpudef"), //3
 				configPreferences.get("build.mcu"), //4				
 				configPreferences.get("build.f_cpu"), //5
-				configPreferences.get("software") + "=" + Base.REVISION,//6
+				configPreferences.get("software") + "=" + 
+                    ( configPreferences.get("core.version") != null ? 
+                      configPreferences.get("core.version") : Base.REVISION),
 				configPreferences.get("board") , //7, 
 				configPreferences.get("compiler.define") + " " + configPreferences.get("board.define")  , //8
 				includes, //9
@@ -486,7 +488,9 @@ public class Compiler implements MessageConsumer {
 				configPreferences.get("compiler.cpudef"),
 				configPreferences.get("build.mcu"),				
 				configPreferences.get("build.f_cpu"),
-				configPreferences.get("software") + "=" + Base.REVISION,
+				configPreferences.get("software") + "=" + 
+                    ( configPreferences.get("core.version") != null ? 
+                      configPreferences.get("core.version") : Base.REVISION),
 				configPreferences.get("board"), 
 				configPreferences.get("compiler.define") + " " + configPreferences.get("board.define"),
 				includes,
@@ -508,7 +512,6 @@ public class Compiler implements MessageConsumer {
 		String includes = preparePaths(includePaths);
 		logger.debug("Source: " + sourceName);
 
-
 		Object[] Args = {
 				avrBasePath,
 				configPreferences.get("compiler.cpp.cmd"),
@@ -516,7 +519,9 @@ public class Compiler implements MessageConsumer {
 				configPreferences.get("compiler.cpudef"),
 				configPreferences.get("build.mcu"),				
 				configPreferences.get("build.f_cpu"),
-				configPreferences.get("software") + "=" + Base.REVISION,
+				configPreferences.get("software") + "=" + 
+                    ( configPreferences.get("core.version") != null ? 
+                      configPreferences.get("core.version") : Base.REVISION),
 				configPreferences.get("board"),								
 				configPreferences.get("compiler.define") + " " + configPreferences.get("board.define"),
 				includes,
@@ -706,26 +711,32 @@ public class Compiler implements MessageConsumer {
 		}
 
         String ldscript = configPreferences.get("ldscript");
+
         String foundPath = null;
-        File testFile = null;
+        if (ldscript != null) {
+            File testFile = null;
 
-        testFile = new File(variantPath, ldscript);
-        logger.debug("Searching for " + variantPath + "/" + ldscript + "...");
-        if (testFile.exists()) {
-          logger.debug("... found");
-          foundPath = variantPath;
+            testFile = new File(variantPath, ldscript);
+            logger.debug("Searching for " + variantPath + "/" + ldscript + "...");
+            if (testFile.exists()) {
+              logger.debug("... found");
+              foundPath = variantPath;
+            } else {
+              logger.debug("Searching for " + corePath + "/" + ldscript + "...");
+              testFile = new File(corePath, ldscript);
+              if (testFile.exists()) {
+                logger.debug("... found");
+                foundPath = corePath;
+              }
+            }
+
+            if (foundPath == null) {
+                System.out.println("Linker script not found: " + ldscript);
+                return;
+            }
         } else {
-          logger.debug("Searching for " + corePath + "/" + ldscript + "...");
-          testFile = new File(corePath, ldscript);
-          if (testFile.exists()) {
-            logger.debug("... found");
-            foundPath = corePath;
-          }
-        }
-
-        if (foundPath == null) {
-            System.out.println("Linker script not found: " + ldscript);
-            return;
+            ldscript = "";
+            foundPath = "";
         }
 
 		Object[] Args = {
@@ -740,9 +751,9 @@ public class Compiler implements MessageConsumer {
 				buildPath + File.separator + "core.a",
 				buildPath, 
 				foundPath,	
-				configPreferences.get("ldscript"),	
+				configPreferences.get("ldscript") != null ? configPreferences.get("ldscript")  : "",
                 corePath,
-                configPreferences.get("ldcommon")
+				configPreferences.get("ldcommon") != null ? configPreferences.get("ldcommon")  : "",
 		};
 		commandString = compileFormat.format(  Args );
         logger.debug("Link command: " + commandString);

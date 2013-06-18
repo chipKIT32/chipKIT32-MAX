@@ -207,11 +207,24 @@ public class PdePreprocessor {
   // Write the pde program to the cpp file
   protected void writeProgram(PrintStream out, String program, List<String> prototypes) {
     int prototypeInsertionPoint = firstStatement(program);
+    String platform;
+    Map<String, String> platformPreferences;
+    Map<String, String> boardPreferences;
+
+    boardPreferences = new HashMap(Base.getBoardPreferences());
+
+    platform = boardPreferences.get("platform");
+    if (platform == null) {
+        platformPreferences = new HashMap(Base.getPlatformPreferences());
+    } else {
+        platformPreferences = new HashMap(Base.getPlatformPreferences(platform));
+    }
+
   	logger.debug("Prepro: writeProgram");
   	logger.debug("Program: " + program);
   	logger.debug("prototypes: " + prototypes);
     out.print(program.substring(0, prototypeInsertionPoint));
-    out.print("#include \"WProgram.h\"\n");    
+    out.print("#include \"" + platformPreferences.get("core.header") + "\"\n");    
     
     // print user defined prototypes
     for (int i = 0; i < prototypes.size(); i++) {
