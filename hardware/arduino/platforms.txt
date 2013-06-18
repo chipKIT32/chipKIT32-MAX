@@ -62,5 +62,6 @@ avr.library.core.path=./hardware/arduino/cores/arduino
 avr.library.path=./libraries
 avr.compiler.define=::
 avr.board.define=::
-
+avr.core.include=WProgram.h
+avr.core.version=23
 
