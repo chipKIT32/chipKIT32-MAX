@@ -200,7 +200,7 @@ destroyTask(int id) {
 
 	/* Update when the next task event should occur.
 	*/
-	st = disableInterrutps();
+	st = disableInterrupts();
 	_updateTaskEvent(millis());
 	restoreInterrupts(st);
 
