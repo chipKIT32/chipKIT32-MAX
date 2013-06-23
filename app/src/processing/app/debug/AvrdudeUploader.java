@@ -37,6 +37,8 @@ import java.util.zip.*;
 import javax.swing.*;
 import gnu.io.*;
 
+import java.util.regex.*;
+
 import org.apache.log4j.Logger;
 
 
@@ -109,8 +111,14 @@ public class AvrdudeUploader extends Uploader  {
         logger.debug("Command: " + command);
         logger.debug("");
 
-        String[] spl = command.split("\\s+");
-        String executable = spl[0];
+
+        ArrayList <String> spl = new ArrayList();
+        Matcher m = Pattern.compile("([^\"]\\S*|\".+?\")\\s*").matcher(command);
+        while (m.find())
+            spl.add(m.group(1));
+
+        String executable = spl.get(0);
+        executable = executable.replace("\"", "");
         if (Base.isWindows()) {
             executable = executable + ".exe";
         }
@@ -152,7 +160,10 @@ public class AvrdudeUploader extends Uploader  {
           (Base.isWindows() ? "\\\\.\\" : "") + 
           Preferences.get("serial.port")
         );
-        command = command.replace("%B", boardPreferences.get("upload.speed"));
+        command = command.replace("%B", 
+            boardPreferences.get("upload.speed") != null ?
+            boardPreferences.get("upload.speed"): ""
+        );
         command = command.replace("%O", 
             boardPreferences.get("upload.protocol") != null ? 
             boardPreferences.get("upload.protocol") : ""
@@ -164,16 +175,22 @@ public class AvrdudeUploader extends Uploader  {
         );
         command = command.trim();
 
+        spl.clear();
         // Split the command into words
-        spl = command.split("\\s+");
+        m = Pattern.compile("([^\"]\\S*|\".+?\")\\s*").matcher(command);
+        while (m.find())
+            spl.add(m.group(1));
 
         // Parse each word, doing string replacement as needed, trimming it, and
         // generally getting it ready for executing.
 
-        for (int i = 0; i < spl.length; i++) {
-          spl[i] = spl[i].trim();
-          if (spl[i].length() > 0) {
-            parts.add(spl[i]);
+        for (int i = 0; i < spl.size(); i++) {
+          String tmp = spl.get(i);
+          tmp = tmp.replace("\"", "");
+          tmp = tmp.trim();
+          spl.set(i, tmp);
+          if (spl.get(i).length() > 0) {
+            parts.add(spl.get(i));
           }
         }
 
