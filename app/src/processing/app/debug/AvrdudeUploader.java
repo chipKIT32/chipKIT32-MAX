@@ -92,18 +92,21 @@ public class AvrdudeUploader extends Uploader  {
         List parts = new ArrayList();
 
         String command = null;
-        if (Base.isLinux()) {
-          command = bootloader.get("command_linux");
-        }
-        if (Base.isWindows()) {
-          command = bootloader.get("command_windows");
-        }
-        if (Base.isMacOS()) {
-          command = bootloader.get("command_macosx");
-        }
-        // If not got an OS specific entry, fall back to the generic one.
+
+
+        // Let's find the right command to use - starting from the most specific
+        // (os and arch), then just the os, and finally the generic command.
+
+        command = bootloader.get("command_" + Base.osName());
         if (command == null) {
-          command = bootloader.get("command");
+            command = bootloader.get("command_" + Base.getPlatformName());
+        }
+        if (command == null) {
+            command = bootloader.get("command");
+        }
+        if (command == null) {
+            logger.debug("ERROR: No command found for bootloader!");
+            return false;
         }
 
         logger.debug("================ UPLOAD =================");
@@ -120,7 +123,9 @@ public class AvrdudeUploader extends Uploader  {
         String executable = spl.get(0);
         executable = executable.replace("\"", "");
         if (Base.isWindows()) {
-            executable = executable + ".exe";
+            if (executable.indexOf(".exe") == -1) {
+                executable = executable + ".exe";
+            }
         }
 
         String variant = boardPreferences.get("build.variant");

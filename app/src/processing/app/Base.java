@@ -196,6 +196,7 @@ public class Base {
 
 
   static protected void initPlatform() {
+    logger.debug("Platform and arch: " + osName());
     try {
       Class<?> platformClass = Class.forName("processing.app.Platform");
       if (Base.isMacOS()) {
@@ -1469,6 +1470,11 @@ public class Base {
   // of conflicts that could happen with older versions of core.jar, where
   // the MACOSX constant would instead read as the LINUX constant.
 
+  static public String osName() {
+    String sysname = getPlatformName();
+    String arch = System.getProperty("os.arch");;
+    return sysname + "_" + arch;
+  }
 
   /**
    * returns true if Processing is running on a Mac OS X machine.

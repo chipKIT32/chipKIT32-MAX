@@ -24,6 +24,9 @@
 <condition property="platform" value="linux64">
 	<os family="unix" arch="amd64" />
 </condition>
+<condition property="platform" value="raspberrypi">
+	<os family="unix" arch="arm" />
+</condition>
 
   <!-- set time propert -->  
   <tstamp>
@@ -368,6 +371,10 @@
     <delete dir="linux/work" />
   </target>
   
+  <target name="raspberrypi-clean" depends="subprojects-clean" description="Clean raspberry pi linux version">
+    <delete dir="raspberrypi/work" />
+  </target>
+  
   <target name="linux-checkos" unless="linux">
     <echo>
       =======================================================
@@ -415,6 +422,51 @@
 
   </target>
 
+  <target name="raspberrypi-build" depends="revision-check, linux-checkos, subprojects-build" description="Build linux ARM version">
+    <mkdir dir="raspberrypi/work" />
+    
+    <copy todir="raspberrypi/work">
+      <fileset dir="shared" includes="lib/**" />
+      <fileset file="shared/revisions.txt" />
+    </copy>
+    
+    <copy todir="raspberrypi/work">
+      <fileset dir="raspberrypi/dist" includes="lib/**" />
+    </copy>
+
+    <copy todir="raspberrypi/work/lib" flatten="true">
+      <fileset refid="runtime.jars" />
+    </copy>
+    
+    <antcall target="assemble">
+      <param name="target.path" value="raspberrypi/work" />
+    </antcall>
+
+    <get src="http://chipkit.s3.amazonaws.com/compilers/pic32-tools-chipKIT-cxx-master-arm-linux-image.zip"
+         dest="raspberrypi/dist"
+         verbose="false"
+         usetimestamp="true"/>
+
+    <get src="http://chipkit.s3.amazonaws.com/raspberrypi/tools.tar"
+        dest="raspberrypi/dist"
+        verbose="false"
+        usetimestamp="true"/>
+
+    <untar dest="raspberrypi/work/hardware/tools/" src="raspberrypi/dist/tools.tar" overwrite="false" />
+    <chmod perm="755" file="raspberrypi/work/hardware/tools/avrdude" />
+
+    <!-- For now we'll just leach the generic linux startup script.  If we want
+         to tweak a specific Pi version we can change this to one stored in the
+         raspberrypi/dist folder instead. -->
+    <copy todir="raspberrypi/work" file="linux/dist/mpide" />
+    <chmod perm="755" file="raspberrypi/work/mpide" />
+    <unzip dest="raspberrypi/work/hardware/pic32" src="raspberrypi/dist/pic32-tools-chipKIT-cxx-master-arm-linux-image.zip" overwrite="false"/>
+    <chmod perm="+x">
+      <fileset dir="raspberrypi/work/hardware/pic32/compiler" includes="**/*" />
+    </chmod>
+
+  </target>
+
  <target name="linux32-build" depends="linux-build" description="Build linux (32-bit) version">
     <!-- Unzip AVR tools -->
     <exec executable="tar" dir="linux/work/hardware">
@@ -449,6 +501,42 @@
   <target name="linux64-run" depends="linux64-build" 
 	  description="Run Linux (64-bit) version">
     <exec executable="./linux/work/mpide" spawn="false"/>
+  </target>
+
+  <target name="raspberrypi-dist" depends="raspberrypi-build" 
+	  description="Build .tar.gz of raspberry pi linux version">
+
+    <input message="Enter version number:"
+    addproperty="version"
+    defaultvalue="${revision}" />
+
+    <property name="extension" value="tgz"/> 
+    <propertyfile file="upload.properties">
+           <entry  key="extension" value="${extension}"/>
+    </propertyfile>
+
+    <tar compression="gzip"  longfile="gnu"  destfile="raspberrypi/mpide-${version}.tgz">
+      <tarfileset dir="raspberrypi/work" 
+		  prefix="mpide-${version}" 
+		  excludes="mpide, 
+			    hardware/tools/avrdude,
+			    java/**,
+			    hardware/pic32/compiler/pic32-tools/**"
+		  /> 
+      <tarfileset dir="raspberrypi/work/hardware/pic32/compiler/pic32-tools/" dirmode="755" prefix="mpide-${version}/hardware/pic32/compiler/pic32-tools" />
+      <tarfileset file="raspberrypi/work/hardware/pic32/compiler/pic32-tools/**" filemode="755" prefix="mpide-${version}/hardware/pic32/compiler/pic32-tools" />
+
+      <tarfileset file="raspberrypi/work/mpide" filemode="755" prefix="mpide-${version}" />
+      <tarfileset file="raspberrypi/work/hardware/tools/avrdude" filemode="755" prefix="mpide-${version}/hardware/tools" />
+    </tar>
+
+    <echo>
+      =======================================================
+      mpide for Raspberry Pi was built. Grab the archive from   
+      
+      build/raspberrypi/mpide-${version}.tgz
+      =======================================================
+    </echo>
   </target>
 
   <target name="linux-dist" depends="build" 
@@ -493,6 +581,67 @@
       =======================================================
     </echo>
   </target>
+
+  <target name="get-version">
+    <input message="Enter version number:"
+    addproperty="version"
+    defaultvalue="${revision}-${platform}" />
+  </target>
+
+  <target name="raspberrypi-deb" depends="revision-check, get-version, raspberrypi-build"
+      description="Build .deb of raspberrypi version">
+
+    <property name="extension" value="deb"/>
+
+    <propertyfile file="upload.properties">
+           <entry  key="extension" value="${extension}"/>
+    </propertyfile>
+
+    <mkdir dir="raspberrypi/mpide-${version}" />
+    <!-- These are currently generic linux files - .desktop, PNG icons, etc.
+         Nothing Pi specific here, so there's no point in duplicating them
+         in the Pi dist tree. -->
+    <copy todir="raspberrypi/mpide-${version}/usr">
+      <fileset dir="linux/dist/usr" />
+    </copy>
+
+    <copy todir="raspberrypi/mpide-${version}/usr/share/mpide">
+        <fileset dir="raspberrypi/work" />
+    </copy>
+    <chmod perm="755">
+      <fileset dir="raspberrypi/mpide-${version}/usr/share/mpide" includes="mpide" />
+      <fileset dir="raspberrypi/mpide-${version}/usr/share/mpide/tools" includes="**/*" />
+      <fileset dir="raspberrypi/mpide-${version}/usr/share/mpide/hardware/tools" includes="**/*" />
+      <fileset dir="raspberrypi/mpide-${version}/usr/share/mpide/hardware/pic32/compiler" includes="**/*" />
+      <!--fileset dir="raspberrypi/mpide-${version}/usr/share/mpide/hardware/pic32/tools" includes="**/*" /-->
+    </chmod>
+    <symlink link="raspberrypi/mpide-${version}/usr/bin/mpide" resource="/usr/share/mpide/mpide" overwrite="true" />
+
+    <mkdir dir="raspberrypi/mpide-${version}/DEBIAN" />
+    <echo file="raspberrypi/mpide-${version}/DEBIAN/control">
+Package: mpide
+Version: ${version}
+Maintainer: matt@majenko.co.uk
+Architecture: armhf
+Section: Programming
+Depends: avr-libc, avrdude, binutils-avr, extra-xdg-menus, gcc-avr, libftdi1, libjna-java, librxtx-java
+Description: chipKIT MPIDE Development environment
+
+</echo>
+    <exec executable="dpkg-deb" dir="raspberrypi">
+      <arg value="-b"/>
+      <arg value="mpide-${version}"/>
+    </exec>
+    <delete dir="raspberrypi/mpide-${version}" />
+
+    <echo>
+      =======================================================
+      mpide for Raspberry Pi was built. Grab the package from   
+      
+      build/raspberrypi/mpide-${version}.deb
+      =======================================================
+    </echo>
+</target>
 
   <target name="linux-deb" depends="build"
       description="Build .deb of linux version">
@@ -722,7 +871,7 @@ Description: chipKIT MPIDE Development environment
   <!-- - - - - - - - -->
   
   <target name="clean" description="Perform a spring cleaning" 
-	  depends="linux-clean, windows-clean, macosx-clean, subprojects-clean">
+	  depends="linux-clean, windows-clean, macosx-clean, raspberrypi-clean, subprojects-clean">
   </target>
 
 
