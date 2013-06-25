@@ -442,18 +442,17 @@
       <param name="target.path" value="raspberrypi/work" />
     </antcall>
 
-    <!-- Uncomment this when Jason gets the compiler packaging to work as zip -->
-    <!--get src="http://chipkit.s3.amazonaws.com/raspberrypi/compiler.zip"
+    <get src="http://chipkit.s3.amazonaws.com/compilers/pic32-tools-chipKIT-cxx-master-arm-linux-image.zip"
          dest="raspberrypi/dist"
          verbose="false"
-         usetimestamp="true"/-->
+         usetimestamp="true"/>
 
     <get src="http://chipkit.s3.amazonaws.com/raspberrypi/tools.tar"
         dest="raspberrypi/dist"
         verbose="false"
         usetimestamp="true"/>
 
-    <untar dest="raspberrypi/work/hardware/" src="raspberrypi/dist/tools.tar" overwrite="false" />
+    <untar dest="raspberrypi/work/hardware/tools/" src="raspberrypi/dist/tools.tar" overwrite="false" />
     <chmod perm="755" file="raspberrypi/work/hardware/tools/avrdude" />
 
     <!-- For now we'll just leach the generic linux startup script.  If we want
@@ -461,7 +460,7 @@
          raspberrypi/dist folder instead. -->
     <copy todir="raspberrypi/work" file="linux/dist/mpide" />
     <chmod perm="755" file="raspberrypi/work/mpide" />
-    <unzip dest="raspberrypi/work/hardware/pic32" src="raspberrypi/dist/compiler.zip" overwrite="false"/>
+    <unzip dest="raspberrypi/work/hardware/pic32" src="raspberrypi/dist/pic32-tools-chipKIT-cxx-master-arm-linux-image.zip" overwrite="false"/>
     <chmod perm="+x">
       <fileset dir="raspberrypi/work/hardware/pic32/compiler" includes="**/*" />
     </chmod>
