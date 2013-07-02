@@ -65,6 +65,8 @@
 #include "p32_defs.h"
 #include "pins_arduino.h"
 
+extern "C" void __attribute__((interrupt(),nomips16)) Timer1Handler(void);
+
 //	timerx_toggle_count:
 //	> 0 - duration specified
 //	= 0 - stopped
@@ -103,6 +105,7 @@ uint8_t port;
 		{
 			// No tone currently playing. Init the timer.
 			T1CON = TACON_PS_256;
+            setIntVector(_TIMER_1_VECTOR, Timer1Handler);
 			clearIntFlag(_TIMER_1_IRQ);
 			setIntPriority(_TIMER_1_VECTOR, _T1_IPL_IPC, _T1_SPL_IPC);
 			setIntEnable(_TIMER_1_IRQ);
@@ -142,9 +145,10 @@ uint8_t port;
 //************************************************************************
 void disableTimer(uint8_t _timer)
 {
-	clearIntEnable(_TIMER_1_IRQ);
-	T1CON		=	0;
-	tone_pin	=	255;
+    clearIntEnable(_TIMER_1_IRQ);
+    T1CON		=	0;
+    tone_pin	=	255;
+    clearIntVector(_TIMER_1_VECTOR);
 }
 
 //************************************************************************
@@ -166,7 +170,7 @@ extern "C"
 
 //*	not done yet
 //************************************************************************
-void __ISR(_TIMER_1_VECTOR, _T1_IPL_ISR) Timer1Handler(void)
+void __attribute__((interrupt(),nomips16)) Timer1Handler(void)
 {
 
 	if (timer1_toggle_count != 0)

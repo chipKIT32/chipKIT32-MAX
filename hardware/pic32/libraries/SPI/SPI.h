@@ -22,6 +22,7 @@
 /*	10/28/2011(GeneApperson): revised for new board variant scheme, and	*/
 /*		fixed bug in clock divider values so that they produce the same	*/
 /*		SPI clock frequency on PIC32 as they do on AVR.					*/
+/*	05/27/2013(ClaudiaGoga): added PPS support for PIC32MX1 and PIC32MX2*/
 /*                                                                      */
 /************************************************************************/
 /*  
@@ -96,8 +97,21 @@ private:
 	static int			irq;
 	static int			vec;
 
+// Code for PPS support
+#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
+	static uint8_t			pinMISO;		//digital pin number for MISO
+	static uint8_t			pinMOSI;		//digital pin number for MOSI
+	static ppsFunctionType	ppsMISO;		//PPS select for SPI MISO
+	static ppsFunctionType	ppsMOSI;		//PPS select for SPI MOSI
+#endif
+	
 public:
-		SPIClass(p32_spi * spiP, int irqP, int vecP);
+// Code for PPS support
+#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
+	SPIClass(p32_spi * spiP, int irgP, int vecP, int pinMI, int pinMO, ppsFunctionType ppsMI, ppsFunctionType ppsMO);
+#else
+	SPIClass(p32_spi * spiP, int irqP, int vecP);
+#endif
 
   inline static uint8_t transfer(uint8_t _data);
 

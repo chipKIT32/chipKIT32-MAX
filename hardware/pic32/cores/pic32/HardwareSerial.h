@@ -84,6 +84,7 @@ class HardwareSerial : public Stream
 {
 	private:
 		p32_uart *		uart;		//uart register map
+        isrFunc         isr;        // the ISR routine to use
 		uint8_t			irq;		//base IRQ number for the UART
 		uint8_t			vec;		//interrupt vector for the UART
 		uint8_t			ipl;		//interrupt priority level
@@ -103,9 +104,9 @@ class HardwareSerial : public Stream
 
 	public:
 #if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
-		HardwareSerial(p32_uart * uartP, int irq, int vec, int ipl, int spl, int pinT, int pinR, ppsFunctionType ppsT, ppsFunctionType ppsR);
+		HardwareSerial(p32_uart * uartP, int irq, int vec, int ipl, int spl, isrFunc isrHandler, int pinT, int pinR, ppsFunctionType ppsT, ppsFunctionType ppsR);
 #else
-		HardwareSerial(p32_uart * uartP, int irq, int vec, int ipl, int spl);
+		HardwareSerial(p32_uart * uartP, int irq, int vec, int ipl, int spl, isrFunc isrHandler);
 #endif
 
 		void			doSerialInt(void);

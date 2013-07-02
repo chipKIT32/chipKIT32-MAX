@@ -53,6 +53,7 @@ static volatile uint8_t twi_error;
 /* Forware declarations for internal utility functions.
 */
 uint32_t twi_computeBrg(uint32_t frqReq);
+void __attribute__((interrupt(),nomips16)) I2CHandler(void);
 
 
 /* Variables used to manage access to the I2C controller and interrupt
@@ -77,6 +78,8 @@ void twi_init(p32_i2c * ptwiT, uint8_t irqBus, uint8_t irqSlv, uint8_t irqMst, u
 	int				bnVec;
 
 	ptwi = ptwiT;
+
+    setIntVector(_TWI_VECTOR, I2CHandler);
 
 	/* Compute the address of the interrupt enable and interrupt flag registers.
 	** This can be computed from the IRQ numbers. The assumption is made that
@@ -342,7 +345,7 @@ uint32_t twi_computeBrg(uint32_t frqReq)
  * Input    none
  * Output   none
  */
-void __ISR(_TWI_VECTOR, _TWI_IPL_ISR) I2CHandler(void)
+void __attribute__((interrupt(),nomips16)) I2CHandler(void)
 {
 	if (ptwi->ixStat.reg & (1 << _I2CSTAT_BCL) ) 
 	{

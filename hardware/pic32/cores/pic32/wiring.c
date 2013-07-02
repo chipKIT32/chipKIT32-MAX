@@ -62,8 +62,13 @@
 //*	This sets the MPIDE version number in the image header as defined in the linker script
 extern const uint32_t __attribute__((section(".mpide_version"))) _verMPIDE_Stub = MPIDEVER;    // assigns the build number in the header section in the image
 
+// core timer ISR
+void __attribute__((interrupt(),nomips16)) CoreTimerHandler(void);
+
 //************************************************************************
 //*	globals
+//************************************************************************
+
 unsigned int	__PIC32_pbClk;
 
 // the prescaler is set so that timer0 ticks every 64 clock cycles, and the
@@ -187,7 +192,11 @@ void init()
 
 	// Initialize the core timer for use to maintain the system timer tick.
 	_initCoreTimer(CORE_TICK_RATE);
+
+    initIntVector();
+
 	setIntPriority(_CORE_TIMER_VECTOR, _CT_IPL_IPC, _CT_SPL_IPC);
+	setIntVector(_CORE_TIMER_VECTOR, CoreTimerHandler);
 	setIntEnable(_CORE_TIMER_IRQ);
 
 	// Save the peripheral bus frequency for later use.
@@ -708,7 +717,7 @@ uint32_t millisecondCoreTimerService(uint32_t curTime)
 **      the real compare value to be interrupted to notify the Serivces when count hits that value.
 **
 */
-void __ISR(_CORE_TIMER_VECTOR, _CT_IPL_ISR) CoreTimerHandler(void)
+void __attribute__((interrupt(),nomips16)) CoreTimerHandler(void)
 {
     uint32_t curTime;
     uint32_t compare;
@@ -791,3 +800,4 @@ void __ISR(_CORE_TIMER_VECTOR, _CT_IPL_ISR) CoreTimerHandler(void)
     // have a valid lower base to shift our times to for comparisons.
     gLastBaseCount = nextBase;
 }
+

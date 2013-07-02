@@ -47,18 +47,18 @@
 //  currently existing PIC32 devices, but this needs to be rewritten to be
 //	more generic.
 
-void __ISR(_TIMER_3_VECTOR, _T3_IPL_ISR) T3_IntHandler (void){
+void __attribute__((interrupt(),nomips16)) T3_IntHandler (void){
  	handle_interrupts(TIMER3, &TMR3, &PR3); 
 	IFS0CLR = 0x1000; // Clear timer interrupt status flag
 }
 
 
-void __ISR(_TIMER_4_VECTOR, _T4_IPL_ISR) T4_IntHandler (void){
+void __attribute__((interrupt(),nomips16)) T4_IntHandler (void){
  	handle_interrupts(TIMER4, &TMR4, &PR4); 
 	IFS0CLR = 0x10000; // Clear timer interrupt status flag
 }
 
-void __ISR(_TIMER_5_VECTOR, _T5_IPL_ISR) T5_IntHandler (void){
+void __attribute__((interrupt(),nomips16)) T5_IntHandler (void){
  	handle_interrupts(TIMER5, &TMR5, &PR5); 
 	IFS0CLR = 0x100000; // Clear timer interrupt status flag
 }
@@ -69,6 +69,10 @@ void initISR(int timer)
     
     if(timer == TIMER3)
     {
+
+        // set the vector up
+        setIntVector(_TIMER_3_VECTOR, T3_IntHandler;
+
          //timer 3 set clock period 20ms 
         T3CON = 0x0060; // set prescalar 1:64
         TMR3 = 0;
@@ -84,6 +88,9 @@ void initISR(int timer)
     }
     if(timer == TIMER4)
     {
+        // set the vector up
+        setIntVector(_TIMER_4_VECTOR, T4_IntHandler;
+ 
         //timer 4 set clock period 20ms 
         T4CON = 0x0060; // set prescalar 1:64
         TMR4 = 0;
@@ -99,7 +106,10 @@ void initISR(int timer)
     }
     if(timer == TIMER5)
     {
-         //timer 5 set clock period 20ms 
+        // set the vector up
+        setIntVector(_TIMER_5_VECTOR, T5_IntHandler;
+
+        //timer 5 set clock period 20ms 
         T5CON = 0x0060; // set prescalar 1:64
         TMR5 = 0;
         PR5 = 0x61A8;        

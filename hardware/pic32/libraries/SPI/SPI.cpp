@@ -21,6 +21,7 @@
 //*					by the initial port of the original Arduino library. Changed
 //*					all use of the types BYTE and WORD to uint8_t and uint16_t.
 //*	Oct 28, 2011	<GeneApperson> revised for new board variant scheme
+//*	May 27, 2013	<(ClaudiaGoga>: added PPS support for PIC32MX1 and PIC32MX2
 //************************************************************************
 //*	This library is free software; you can redistribute it and/or
 //*	modify it under the terms of the GNU Lesser General Public
@@ -51,16 +52,44 @@ extern p32_regset * SPIClass::ifs;
 extern int			SPIClass::irq;
 extern int			SPIClass::vec;
 
-SPIClass SPI((p32_spi *) _SPI_BASE, _SPI_ERR_IRQ, _SPI_VECTOR);
+// Code for PPS support
+#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
+	extern uint8_t		SPIClass::pinMISO;	
+	extern uint8_t		SPIClass::pinMOSI;		
+	extern ppsFunctionType	SPIClass::ppsMISO;		
+	extern ppsFunctionType	SPIClass::ppsMOSI;	
+#endif
+
+// Code for PPS support
+#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
+	SPIClass SPI((p32_spi *) _SPI_BASE, _SPI_ERR_IRQ, _SPI_VECTOR, _SPI_MISO_PIN, _SPI_MOSI_PIN, _SPI_MISO_IN, _SPI_MOSI_OUT);
+#else
+	SPIClass SPI((p32_spi *) _SPI_BASE, _SPI_ERR_IRQ, _SPI_VECTOR);
+#endif
 
 //************************************************************************
+
+// Code for PPS support
+#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
+SPIClass::SPIClass(p32_spi * spiP, int irqP, int vecP, int pinMI, int pinMO, ppsFunctionType ppsMI, ppsFunctionType ppsMO)
+#else
 SPIClass::SPIClass(p32_spi * spiP, int irqP, int vecP)
+#endif
 {
 	/* Save the pointer to the SPI port and the base IRQ number.
 	*/
 	spi = spiP;
 	irq = irqP;
 	vec = vecP;
+
+	// Code for PPS support
+#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
+	pinMISO = (uint8_t)pinMI;
+	pinMOSI = (uint8_t)pinMO;
+	ppsMISO = ppsMI;
+	ppsMOSI = ppsMO;
+#endif
+		
 }
 
 //************************************************************************
@@ -73,6 +102,18 @@ void SPIClass::begin()
 	uint8_t			tmp;
 	p32_regset *	ipc;		//interrupt priority register
 	int				ipl_shift;
+
+#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
+	/* Map the SPI MISO to the appropriate pin.
+	*/
+    mapPps(pinMISO, ppsMISO);
+
+	/* Map the SPI MOSI to the appropriate pin.
+	*/
+    mapPps(pinMOSI, ppsMOSI);
+
+#endif
+
 
 	/* Initialize the pins. The pin directions for SDO, SDI and SCK
 	** are set automatically when the SPI controller is enabled. The

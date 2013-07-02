@@ -1,6 +1,6 @@
 /************************************************************************/
 /*																		*/
-/*	Board_Defs.h --	DP32 Board Customization Declarations			*/
+/*	Board_Defs.h --	CmodCK1 Board Customization Declarations			*/
 /*																		*/
 /************************************************************************/
 /*	Author: Gene Apperson												*/
@@ -24,7 +24,9 @@
 /*		functions to Board_Data.c										*/
 /*	11/29/2011(GeneA): Moved int priority definitions to System_Defs.h	*/
 /*  01/23/2013(KeithV): Modified for CK1 board                          */
-/*  03/26/2013(KeithV): Modified for DP32 board                          */
+/*  03/26/2013(KeithV): Modified for DP32 board                         */
+/*	05/27/2013(ClaudiaGoga): Fixed MISO, MOSI definitions.       		*/
+/*							Added definitions to support PPS for SPI1	*/
 /*																		*/
 /************************************************************************/
 //*	This library is free software; you can redistribute it and/or
@@ -158,15 +160,14 @@
 ** SPI library and the original pins_arduino.h. 
 */
 const static uint8_t SS   = 9;		// RA0  CS1     PGED3/VREF+/CVREF+/AN0/C3INC/RPA0/CTED1/PMD7/RA0 
-const static uint8_t MISO =	10;		// RA1  SDI1    SDI1R = RPA1 = 0 
-const static uint8_t MOSI = 18;		// RA4  SDO1    RPA4R = SDO1 = 3    
+const static uint8_t MISO = 10;		// RA1  SDI1    SDI1R = RPA1 = 0 
+const static uint8_t MOSI =	18;		// RA4  SDO1    RPA4R = SDO1 = 3    
 const static uint8_t SCK  = 7;		// RB14 SCK1    CVREF/AN10/C3INB/RPB14/VBUSON/SCK1/CTED5/RB14
 
 /* The Digilent DSPI library uses these ports.
 */
 #define	PIN_DSPI0_SS	9           // 9    RA0  PGED3/VREF+/CVREF+/AN0/C3INC/RPA0/CTED1/PMD7/RA0          
-#define	PIN_DSPI1_SS	33          // 33   RC4  RPC4/PMA4/RC4
-
+#define	PIN_DSPI1_SS	14          // 14	RB3  AN5/C1INA/C2INC/RTCC/RPB3/SCL2/PMWR/RB3
 /* ------------------------------------------------------------ */
 /*					Analog Pins									*/
 /* ------------------------------------------------------------ */
@@ -326,13 +327,20 @@ extern const uint8_t	external_int_to_digital_pin_PGM[];
 #define	_SPI_IPL		_SPI1_IPL_IPC
 #define	_SPI_SPL		_SPI1_SPL_IPC
 
+/* SPI pin declarations
+*/
+#define _SPI_MISO_IN	PPS_IN_SDI1
+#define	_SPI_MISO_PIN	MISO
+#define _SPI_MOSI_OUT	PPS_OUT_SDO1
+#define	_SPI_MOSI_PIN	MOSI
+
 /* SPI1 
 */
 // RA0  CS1     PGED3/VREF+/CVREF+/AN0/C3INC/RPA0/CTED1/PMD7/RA0 
 // RA4  SDO1    RPA4R = SDO1 = 3    
 // RA1  SDI1    SDI1R = RPA1 = 0 
 // RB14 SCK1    CVREF/AN10/C3INB/RPB14/VBUSON/SCK1/CTED5/RB14
-#define	_DSPI0_BASE			_SPI1_BASE_ADDRESS0 anss
+#define	_DSPI0_BASE			_SPI1_BASE_ADDRESS
 #define	_DSPI0_ERR_IRQ		_SPI1_ERR_IRQ
 #define	_DSPI0_RX_IRQ		_SPI1_RX_IRQ
 #define	_DSPI0_TX_IRQ		_SPI1_TX_IRQ
@@ -340,6 +348,11 @@ extern const uint8_t	external_int_to_digital_pin_PGM[];
 #define	_DSPI0_IPL_ISR		_SPI1_IPL_ISR
 #define	_DSPI0_IPL			_SPI1_IPL_IPC
 #define	_DSPI0_SPL			_SPI1_SPL_IPC
+
+#define _DSPI0_MISO_IN		PPS_IN_SDI1
+#define _DSPI0_MISO_PIN		10				// RA1  SDI1    SDI1R = RPA1 = 0 
+#define _DSPI0_MOSI_OUT		PPS_OUT_SDO1
+#define _DSPI0_MOSI_PIN		18				// RA4  SDO1    RPA4R = SDO1 = 3
 
 /* SPI2 
 */
@@ -355,6 +368,11 @@ extern const uint8_t	external_int_to_digital_pin_PGM[];
 #define	_DSPI1_IPL_ISR		_SPI2_IPL_ISR
 #define	_DSPI1_IPL			_SPI2_IPL_IPC
 #define	_DSPI1_SPL			_SPI2_SPL_IPC
+
+#define _DSPI1_MISO_IN		PPS_IN_SDI2
+#define _DSPI1_MISO_PIN		13				// RB2  SDI2    SDI2R = RPB2 = 4
+#define _DSPI1_MOSI_OUT		PPS_OUT_SDO2
+#define _DSPI1_MOSI_PIN		2				// RB8  SDO2    RPB8R = SDO2 = 4 
 
 /* ------------------------------------------------------------ */
 /*					I2C Port Declarations						*/

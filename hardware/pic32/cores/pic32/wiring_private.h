@@ -82,6 +82,7 @@
 	void _enableMultiVectorInterrupts();
 	void _initCoreTimer(uint32_t prd);
 	void __attribute__((noreturn)) _softwareReset(void);
+    void initIntVector(void);
 	
 	typedef void (*voidFuncPtr)(void);
 

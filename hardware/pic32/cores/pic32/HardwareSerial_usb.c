@@ -34,6 +34,8 @@
 #include	"HardwareSerial_usb.h"
 #include	"HardwareSerial_cdcacm.h"
 
+void __attribute__((interrupt(),nomips16)) IntUSB1Handler(void);
+
 // XXX -- move to relocated compat.h
 #define MCF_USB_OTG_CTL  U1CON
 #define MCF_USB_OTG_CTL_USB_EN_SOF_EN  _U1CON_SOFEN_MASK
@@ -326,7 +328,7 @@ static byte configuration[CONFIGURATION_DESCRIPTOR_SIZE];
 // called by usb on device attach
 //************************************************************************
 #ifdef _USE_USB_IRQ_
-	void __ISR(_USB_1_VECTOR, ipl6) IntUSB1Handler(void)
+	void __attribute__((interrupt(),nomips16)) IntUSB1Handler(void)
 #else
 	void	usb_isr(void)
 #endif
@@ -742,12 +744,20 @@ void	usb_uninitialize(void)
 
 	// power off
 	U1PWRCbits.USBPWR = 0;
+
+#ifdef _USE_USB_IRQ_
+    clearIntVector(_USB_1_VECTOR);
+#endif
 }
 
 //************************************************************************
 void	usb_initialize(void)
 {
 	static __attribute__ ((aligned(512))) byte bdt_ram[BDT_RAM_SIZE];
+
+#ifdef _USE_USB_IRQ_
+    setIntVector(_USB_1_VECTOR, IntUSB1Handler);
+#endif
 
 	bdts = (struct bdt *)bdt_ram;
 

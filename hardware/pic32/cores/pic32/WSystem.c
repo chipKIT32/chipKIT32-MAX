@@ -31,6 +31,7 @@
 /*  Revision History:													*/
 /*																		*/
 /*	08/23/2012(GeneApperson): Created									*/
+/*	06/18/2013(Keith Vogel): Finished the interrupt vector handler									*/
 /*																		*/
 /************************************************************************/
 
@@ -47,15 +48,22 @@
 
 #include	"wiring.h"
 
+
 /* ------------------------------------------------------------ */
 /*				Local Type Definitions							*/
 /* ------------------------------------------------------------ */
-
 
 /* ------------------------------------------------------------ */
 /*				Global Variables								*/
 /* ------------------------------------------------------------ */
 
+//************************************************************************
+//* Interrupt vector dispatch table
+//* This table contains pointers to the dynamically installed interrupt service routines.
+//* The interrupt vectors in program flash memory have been populated with dispatch
+//* functions that indirect to the ISR specified by this table.
+extern const uint32_t _GEN_EXCPT_ADDR;
+void (*volatile _isr_primary_install[NUM_INT_VECTOR]) (void) = {[0 ... NUM_INT_VECTOR-1] = (isrFunc) &_GEN_EXCPT_ADDR}; /* Initialize all 64*/
 
 /* ------------------------------------------------------------ */
 /*				Local Variables									*/
@@ -69,6 +77,147 @@
 
 /* ------------------------------------------------------------ */
 /*				Public Interface Functions						*/
+/* ------------------------------------------------------------ */
+/*			Interrupt Vector Management Functions				*/
+/* ------------------------------------------------------------ */
+
+/***	initIntVector
+**
+**	Parameters:
+**
+**	Return Value:
+**		none
+**
+**	Errors:
+**		none
+**
+**	Description:
+**		Initializes the RAM IntVector table to
+**		all of the compiler generated interrupt vectors
+**		This will provide backwards compatibility should
+**		someone not set their interrupt vector by calling
+**		setIntVector; but by not setting the IntVector
+**      your vector may be maked by a conflicting peripheral
+*/
+void initIntVector(void)
+{
+    const IMAGE_HEADER_INFO * pImageHeader = getImageHeaderInfoStructure();
+    int i = 0;
+    void * pvOrgIntVec = pImageHeader->pOrgVector0;
+
+    for(i=0; i<NUM_INT_VECTOR; i++)
+    {
+        // If a compiler installed interrupt handler exits, pre-load it
+        // and don't fool with the priority
+        if(*((uint32_t *) pvOrgIntVec) != 0xFFFFFFFF)
+        {
+            _isr_primary_install[i] = (isrFunc) pvOrgIntVec;
+        }
+
+        pvOrgIntVec += pImageHeader->cbVectorSpacing;
+    }
+
+    return;
+}
+
+/***	setIntVector
+**
+**	Parameters:
+**		vec		- interrupt vector number
+**		func	- interrupt service routine to install
+**
+**	Return Value:
+**		Returns pointer to previous interrupt service routine for the vector
+**              This may return the compiler installed routine if the compiler set one.
+**              It will return the address of the general exception handler if no previous ISR was set.
+**              It will return 0/NULL if the vector requested is out of range of the processor
+**
+**	Errors:
+**		None as this is used in begin() methods that have no error returns.
+**
+**	Description:
+**		Dynamically install an interrupt service routine for the specified
+**		interrupt vector; This will blast over exiting ones without an error
+**      because many Arduino begin methods return no errors and just expect this to
+**      work. However, this may overwrite a previeously installed ISR.
+**
+**      This does not change the priority level of the interrupt routine
+*/
+isrFunc setIntVector(int vec, isrFunc func)
+{
+    const IMAGE_HEADER_INFO * pImageHeader = getImageHeaderInfoStructure();
+    isrFunc t = 0;
+
+    if (vec < NUM_INT_VECTOR)
+    {
+        t = _isr_primary_install[vec];
+        _isr_primary_install[vec] = func;       
+    }
+
+    return t;
+}
+
+/* ------------------------------------------------------------ */
+/***	getIntVector
+**
+**	Parameters:
+**		vec		- interrupt vector number
+**
+**	Return Value:
+**              The current ISR function
+**
+**	Errors:
+**              NULL if vector is out of range
+**
+**	Description:
+**          Returns the currently assigned ISR function without
+**          changeing anything.
+**
+*/
+isrFunc getIntVector(int vec)
+{
+
+    if (vec < NUM_INT_VECTOR)
+    {
+        return _isr_primary_install[vec];
+    }
+    else
+    {
+        return 0;
+    }
+}
+
+/* ------------------------------------------------------------ */
+/***	clearIntVector
+**
+**	Parameters:
+**		vec		- interrupt vector number
+**
+**	Return Value:
+**      Returns the currently set ISR before clearing it
+**
+**	Errors:
+**		Returns NULL if the vector number specified is out of range
+**
+**	Description:
+**		Sets the priority to 0 thus disabling the ISR, and sets the 
+**      pointer to the general exception handler.
+*/
+isrFunc clearIntVector(int vec)
+{
+    const IMAGE_HEADER_INFO * pImageHeader = getImageHeaderInfoStructure();
+    void * pvOrgIntVec = pImageHeader->pOrgVector0 + (vec * pImageHeader->cbVectorSpacing);
+    isrFunc rISR = 0;
+
+    if (vec < NUM_INT_VECTOR)
+    {
+        rISR = _isr_primary_install[vec];
+        setIntPriority(vec, 0, 0);                                  // this will disable the interrupt
+        _isr_primary_install[vec] = (isrFunc) &_GEN_EXCPT_ADDR;
+    }
+    return(rISR);
+}
+
 /* ------------------------------------------------------------ */
 /*				Interrupt Management Functions					*/
 /* ------------------------------------------------------------ */

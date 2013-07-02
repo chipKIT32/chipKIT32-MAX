@@ -441,45 +441,6 @@
 #define	_ETH_SPL_IPC	0
 
 /* ------------------------------------------------------------ */
-/*				Task Manager Declarations						*/
-/* ------------------------------------------------------------ */
-
-#if !defined(NUM_TASKS)
-#define	NUM_TASKS	8
-#endif
-
-#define	TASK_ENABLE			0xFFFF
-#define	TASK_DISABLE		0
-#define	TASK_RUN_ONCE		1
-
-#ifdef __cplusplus
-extern "C"{
-#endif
-
-typedef void (*taskFunc)(int id, void * tptr);
-
-int				createTask(taskFunc task, unsigned long period, unsigned short state, void * var);
-void			destroyTask(int id);
-int				getTaskId(taskFunc task);
-void			startTaskAt(int id, unsigned long time, unsigned short st);
-unsigned long	getTaskNextExec(int id);
-void			setTaskState(int id, unsigned short st);
-unsigned short	getTaskState(int id);
-void			setTaskPeriod(int id, unsigned long period);
-unsigned long	getTaskPeriod(int id);
-void			setTaskVar(int id, void * var);
-void *			getTaskVar(int id);
-
-#if defined(OPT_SYSTEM_INTERNAL)
-void	_initTaskManager();
-void	_scheduleTask();
-#endif
-
-#ifdef __cplusplus
-} // extern "C"
-#endif
-
-/* ------------------------------------------------------------ */
 
 #endif	// SYSTEM_DEFS_H
 

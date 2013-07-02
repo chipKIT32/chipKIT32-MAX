@@ -86,6 +86,18 @@
 //	#define	_DEBUG_USB_VIA_SERIAL0_
 #endif
 
+extern "C"
+{
+void __attribute__((interrupt(),nomips16)) IntSer0Handler(void);
+void __attribute__((interrupt(),nomips16)) IntSer1Handler(void);
+void __attribute__((interrupt(),nomips16)) IntSer2Handler(void);
+void __attribute__((interrupt(),nomips16)) IntSer3Handler(void);
+void __attribute__((interrupt(),nomips16)) IntSer4Handler(void);
+void __attribute__((interrupt(),nomips16)) IntSer5Handler(void);
+void __attribute__((interrupt(),nomips16)) IntSer6Handler(void);
+void __attribute__((interrupt(),nomips16)) IntSer7Handler(void);
+}
+
 /* ------------------------------------------------------------ */
 /*			General Declarations								*/
 /* ------------------------------------------------------------ */
@@ -116,9 +128,9 @@
 */
 
 #if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
-HardwareSerial::HardwareSerial(p32_uart * uartT, int irqT, int vecT, int iplT, int splT, int pinT, int pinR, ppsFunctionType ppsT, ppsFunctionType ppsR)
+HardwareSerial::HardwareSerial(p32_uart * uartT, int irqT, int vecT, int iplT, int splT, isrFunc isrHandler, int pinT, int pinR, ppsFunctionType ppsT, ppsFunctionType ppsR)
 #else
-HardwareSerial::HardwareSerial(p32_uart * uartT, int irqT, int vecT, int iplT, int splT)
+HardwareSerial::HardwareSerial(p32_uart * uartT, int irqT, int vecT, int iplT, int splT, isrFunc isrHandler)
 #endif
 {
 	uart = uartT;
@@ -128,6 +140,7 @@ HardwareSerial::HardwareSerial(p32_uart * uartT, int irqT, int vecT, int iplT, i
 	vec  = (uint8_t)vecT;
 	ipl  = (uint8_t)iplT;
 	spl  = (uint8_t)splT;
+    isr  = isrHandler;
 
 #if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
 	pinTx = (uint8_t)pinT;
@@ -194,6 +207,8 @@ void HardwareSerial::begin(unsigned long baudRate)
     mapPps(pinRx, ppsRx);
 #endif
 
+    setIntVector(_SER0_VECTOR, isr);
+
 	/* Set the interrupt privilege level and sub-privilege level
 	*/
 	setIntPriority(vec, ipl, spl);
@@ -253,6 +268,7 @@ void HardwareSerial::end()
 	*/
 	uart->uxMode.reg =	0;
 
+    clearIntVector(vec);
 }
 
 /* ------------------------------------------------------------ */
@@ -744,7 +760,7 @@ extern "C" {
 */
 #if defined(_SER0_VECTOR)
 
-void __ISR(_SER0_VECTOR, _SER0_IPL_ISR) IntSer0Handler(void)
+void __attribute__((interrupt(), nomips16)) IntSer0Handler(void)
 {
 #if defined(_USB) && defined(_USE_USB_FOR_SERIAL_)
 	Serial0.doSerialInt();
@@ -772,7 +788,7 @@ void __ISR(_SER0_VECTOR, _SER0_IPL_ISR) IntSer0Handler(void)
 */
 #if defined(_SER1_VECTOR)
 
-void __ISR(_SER1_VECTOR, _SER1_IPL_ISR) IntSer1Handler(void)
+void __attribute__((interrupt(), nomips16)) IntSer1Handler(void)
 {
 	Serial1.doSerialInt();
 }
@@ -796,7 +812,7 @@ void __ISR(_SER1_VECTOR, _SER1_IPL_ISR) IntSer1Handler(void)
 */
 #if defined(_SER2_VECTOR)
 
-void __ISR(_SER2_VECTOR, _SER2_IPL_ISR) IntSer2Handler(void)
+void __attribute__((interrupt(), nomips16)) IntSer2Handler(void)
 {
 	Serial2.doSerialInt();
 }
@@ -820,7 +836,7 @@ void __ISR(_SER2_VECTOR, _SER2_IPL_ISR) IntSer2Handler(void)
 */
 #if defined(_SER3_VECTOR)
 
-void __ISR(_SER3_VECTOR, _SER3_IPL_ISR) IntSer3Handler(void)
+void __attribute__((interrupt(), nomips16)) IntSer3Handler(void)
 {
 	Serial3.doSerialInt();
 }
@@ -844,7 +860,7 @@ void __ISR(_SER3_VECTOR, _SER3_IPL_ISR) IntSer3Handler(void)
 */
 #if defined(_SER4_VECTOR)
 
-void __ISR(_SER4_VECTOR, _SER4_IPL_ISR) IntSer4Handler(void)
+void __attribute__((interrupt(), nomips16)) IntSer4Handler(void)
 {
 	Serial4.doSerialInt();
 }
@@ -868,7 +884,7 @@ void __ISR(_SER4_VECTOR, _SER4_IPL_ISR) IntSer4Handler(void)
 */
 #if defined(_SER5_VECTOR)
 
-void __ISR(_SER5_VECTOR, _SER5_IPL_ISR) IntSer5Handler(void)
+void __attribute__((interrupt(), nomips16)) IntSer5Handler(void)
 {
 	Serial5.doSerialInt();
 }
@@ -892,7 +908,7 @@ void __ISR(_SER5_VECTOR, _SER5_IPL_ISR) IntSer5Handler(void)
 */
 #if defined(_SER6_VECTOR)
 
-void __ISR(_SER6_VECTOR, _SER6_IPL_ISR) IntSer6Handler(void)
+void __attribute__((interrupt(), nomips16)) IntSer6Handler(void)
 {
 	Serial6.doSerialInt();
 }
@@ -916,7 +932,7 @@ void __ISR(_SER6_VECTOR, _SER6_IPL_ISR) IntSer6Handler(void)
 */
 #if defined(_SER7_VECTOR)
 
-void __ISR(_SER7_VECTOR, _SER7_IPL_ISR) IntSer7Handler(void)
+void __attribute__((interrupt(), nomips16)) IntSer7Handler(void)
 {
 	Serial7.doSerialInt();
 }
@@ -936,9 +952,9 @@ void __ISR(_SER7_VECTOR, _SER7_IPL_ISR) IntSer7Handler(void)
 USBSerial		Serial(&rx_bufferUSB);
 #if defined(_SER0_BASE)
 #if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
-HardwareSerial Serial0((p32_uart *)_SER0_BASE, _SER0_IRQ, _SER0_VECTOR, _SER0_IPL, _SER0_SPL, _SER0_TX_PIN, _SER0_RX_PIN, _SER0_TX_OUT, _SER0_RX_IN);
+HardwareSerial Serial0((p32_uart *)_SER0_BASE, _SER0_IRQ, _SER0_VECTOR, _SER0_IPL, _SER0_SPL, IntSer0Handler, _SER0_TX_PIN, _SER0_RX_PIN, _SER0_TX_OUT, _SER0_RX_IN);
 #else
-HardwareSerial Serial0((p32_uart *)_SER0_BASE, _SER0_IRQ, _SER0_VECTOR, _SER0_IPL, _SER0_SPL);
+HardwareSerial Serial0((p32_uart *)_SER0_BASE, _SER0_IRQ, _SER0_VECTOR, _SER0_IPL, _SER0_SPL, IntSer0Handler);
 #endif
 #endif
 
@@ -950,9 +966,9 @@ HardwareSerial Serial0((p32_uart *)_SER0_BASE, _SER0_IRQ, _SER0_VECTOR, _SER0_IP
 */
 #if defined(_SER0_BASE)
 #if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
-HardwareSerial Serial((p32_uart *)_SER0_BASE, _SER0_IRQ, _SER0_VECTOR, _SER0_IPL, _SER0_SPL, _SER0_TX_PIN, _SER0_RX_PIN, _SER0_TX_OUT, _SER0_RX_IN);
+HardwareSerial Serial((p32_uart *)_SER0_BASE, _SER0_IRQ, _SER0_VECTOR, _SER0_IPL, _SER0_SPL, IntSer0Handler, _SER0_TX_PIN, _SER0_RX_PIN, _SER0_TX_OUT, _SER0_RX_IN);
 #else
-HardwareSerial Serial((p32_uart *)_SER0_BASE, _SER0_IRQ, _SER0_VECTOR, _SER0_IPL, _SER0_SPL);
+HardwareSerial Serial((p32_uart *)_SER0_BASE, _SER0_IRQ, _SER0_VECTOR, _SER0_IPL, _SER0_SPL, IntSer0Handler);
 #endif
 #endif
 
@@ -960,34 +976,34 @@ HardwareSerial Serial((p32_uart *)_SER0_BASE, _SER0_IRQ, _SER0_VECTOR, _SER0_IPL
 
 #if defined(_SER1_BASE)
 #if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
-HardwareSerial Serial1((p32_uart *)_SER1_BASE, _SER1_IRQ, _SER1_VECTOR, _SER1_IPL, _SER1_SPL, _SER1_TX_PIN, _SER1_RX_PIN, _SER1_TX_OUT, _SER1_RX_IN);
+HardwareSerial Serial1((p32_uart *)_SER1_BASE, _SER1_IRQ, _SER1_VECTOR, _SER1_IPL, _SER1_SPL, IntSer1Handler, _SER1_TX_PIN, _SER1_RX_PIN, _SER1_TX_OUT, _SER1_RX_IN);
 #else
-HardwareSerial Serial1((p32_uart *)_SER1_BASE, _SER1_IRQ, _SER1_VECTOR, _SER1_IPL, _SER1_SPL);
+HardwareSerial Serial1((p32_uart *)_SER1_BASE, _SER1_IRQ, _SER1_VECTOR, _SER1_IPL, _SER1_SPL, IntSer1Handler);
 #endif
 #endif
 
 #if defined(_SER2_BASE)
-HardwareSerial Serial2((p32_uart *)_SER2_BASE, _SER2_IRQ, _SER2_VECTOR, _SER2_IPL, _SER2_SPL);
+HardwareSerial Serial2((p32_uart *)_SER2_BASE, _SER2_IRQ, _SER2_VECTOR, _SER2_IPL, _SER2_SPL, IntSer2Handler);
 #endif
 
 #if defined(_SER3_BASE)
-HardwareSerial Serial3((p32_uart *)_SER3_BASE, _SER3_IRQ, _SER3_VECTOR, _SER3_IPL, _SER3_SPL);
+HardwareSerial Serial3((p32_uart *)_SER3_BASE, _SER3_IRQ, _SER3_VECTOR, _SER3_IPL, _SER3_SPL, IntSer3Handler);
 #endif
 
 #if defined(_SER4_BASE)
-HardwareSerial Serial4((p32_uart *)_SER4_BASE, _SER4_IRQ, _SER4_VECTOR, _SER4_IPL, _SER4_SPL);
+HardwareSerial Serial4((p32_uart *)_SER4_BASE, _SER4_IRQ, _SER4_VECTOR, _SER4_IPL, _SER4_SPL, IntSer4Handler);
 #endif
 
 #if defined(_SER5_BASE)
-HardwareSerial Serial5((p32_uart *)_SER5_BASE, _SER5_IRQ, _SER5_VECTOR, _SER5_IPL, _SER5_SPL);
+HardwareSerial Serial5((p32_uart *)_SER5_BASE, _SER5_IRQ, _SER5_VECTOR, _SER5_IPL, _SER5_SPL, IntSer5Handler);
 #endif
 
 #if defined(_SER6_BASE)
-HardwareSerial Serial6((p32_uart *)_SER6_BASE, _SER6_IRQ, _SER6_VECTOR, _SER6_IPL, _SER6_SPL);
+HardwareSerial Serial6((p32_uart *)_SER6_BASE, _SER6_IRQ, _SER6_VECTOR, _SER6_IPL, _SER6_SPL, IntSer6Handler);
 #endif
 
 #if defined(_SER7_BASE)
-HardwareSerial Serial7((p32_uart *)_SER7_BASE, _SER7_IRQ, _SER7_VECTOR, _SER7_IPL, _SER7_SPL);
+HardwareSerial Serial7((p32_uart *)_SER7_BASE, _SER7_IRQ, _SER7_VECTOR, _SER7_IPL, _SER7_SPL, IntSer7Handler);
 #endif
 
 /* ------------------------------------------------------------ */

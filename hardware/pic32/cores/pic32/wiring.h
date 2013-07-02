@@ -131,6 +131,8 @@ extern "C"{
 
 typedef unsigned int word;
 
+typedef void (*isrFunc)(void);
+
 #define bit(b) (1UL << (b))
 
 typedef uint8_t boolean;
@@ -168,16 +170,58 @@ uint32_t clearIntEnable(int irq);
 void restoreIntEnable(int irq, uint32_t st);
 void setIntPriority(int vec, int ipl, int spl);
 void getIntPriority(int vec, int * pipl, int * pspl);
+isrFunc setIntVector(int vec, isrFunc func);
+isrFunc getIntVector(int vec);
+isrFunc clearIntVector(int vec);
 uint32_t getPeripheralClock();
 uint32_t __attribute__((nomips16)) readCoreTimer(void);
 void __attribute__((nomips16)) writeCoreTimer(uint32_t tmr);
-
 
 unsigned int executeSoftReset(uint32_t options);
 
 unsigned int attachCoreTimerService(uint32_t (*)(uint32_t count));
 unsigned int detachCoreTimerService(uint32_t (*)(uint32_t count));
 unsigned int callCoreTimerServiceNow(uint32_t (* service)(uint32_t));
+
+/* ------------------------------------------------------------ */
+/*				Task Manager Declarations						*/
+/* ------------------------------------------------------------ */
+
+#if !defined(NUM_TASKS)
+#define	NUM_TASKS	8
+#endif
+
+#define	TASK_ENABLE			0xFFFF
+#define	TASK_DISABLE		0
+#define	TASK_RUN_ONCE		1
+
+#ifdef __cplusplus
+extern "C"{
+#endif
+
+typedef void (*taskFunc)(int id, void * tptr);
+
+int				createTask(taskFunc task, unsigned long period, unsigned short state, void * var);
+void			destroyTask(int id);
+int				getTaskId(taskFunc task);
+void			startTaskAt(int id, unsigned long time, unsigned short st);
+unsigned long	getTaskNextExec(int id);
+void			setTaskState(int id, unsigned short st);
+unsigned short	getTaskState(int id);
+void			setTaskPeriod(int id, unsigned long period);
+unsigned long	getTaskPeriod(int id);
+void			setTaskVar(int id, void * var);
+void *			getTaskVar(int id);
+
+#if defined(OPT_SYSTEM_INTERNAL)
+void	_initTaskManager();
+void	_scheduleTask();
+#endif
+
+#ifdef __cplusplus
+} // extern "C"
+#endif
+
 
 void setup(void);
 void loop(void);
@@ -310,6 +354,9 @@ typedef struct {
     RAM_HEADER_INFO * pRamHeader;     // pointer to the ram header
     uint32_t  cbRamHeader;            // length of the ram header as specified by the linker and will be cleared/used by the bootloader
     uint32_t  cbBlPreservedRam;       // the amount RAM the bootloader will not touch, 0xA0000000 -> 0xA0000000 + cbBlPerservedRam; Debug data, Ram Header and Persistent data must be in this section
+    uint32_t  pOrgVector0;            // A pointer to the compiler generated vector 0 in the execption memory
+    uint32_t  pIndirectVector0;       // A pointer to the indirect jump vector 0 required to resolve conflicting peripherals
+    uint32_t  cbVectorSpacing;        // the number of bytes between the vector table entries, applies to both org/new
 } IMAGE_HEADER_INFO;
 #pragma pack(pop)
 
@@ -317,8 +364,28 @@ extern const IMAGE_HEADER_INFO _image_header_info;      // this is the header in
 
 // psudo function to get the flash header info.
 #define getImageHeaderInfoStructure()   (&_image_header_info)
-#define _IMAGE_PTR_TABLE_OFFSET         (0x0F8ul)
-#define _IMAGE_HEADER_ADDR_OFFSET       (0x0FCul)
+
+// The following 5 items are not really of interest to MPIDE
+// But they exist for the bootloader to find the the ebase address and the image header info
+// Please do not remove this as test sketches verify this information so I can tell the bootloaer will get the right stuff.
+// These add no additional overhead to MPIDE as the data must exist for the bootloader; we are only making them visible to sketches.
+// These are in a very "fixed" location" offset from the begining of the sketch 
+// in program flash. In particular the bootloader uses the offset
+// to find the ebase address. Unfortunately, STK500v2 does not give the 
+// upper 16 bits of the ebase address when programming program flash.
+// So the bootloader must get the "full" ebase address by offsetting into the first
+// page passed to it from avrdude, and then finding the linker written ebase address
+// In the original bootloader, the ebase address was a hard coded value known to the bootloader. (0x9D000000).
+// We can now have alternate ebase addresses and the bootloader will load them properly.
+// Then the bootloader finds the image header structure and 
+// programs some of its own data when writing the header to program flash.
+// The bootloader will add such things as the bootloader version and capabilities
+// vend ID, prod ID etc...
+extern const uint32_t _IMAGE_PTR_TABLE;                         // a pointer to a table of 2 items, ebase and image header
+extern const uint32_t _IMAGE_HEADER_ADDR;                       // a pointer to the image header, the second item given in the table
+#define _IMAGE_EBASE_ADDR _IMAGE_PTR_TABLE                      // Really, the first item in the table is the ebase address.
+#define _IMAGE_PTR_TABLE_OFFSET         (0x0F8ul)               // Fixed offset of the ebase addr in the first page of the sketch
+#define _IMAGE_HEADER_ADDR_OFFSET       (0x0FCul)               // Fixed offset of the image table addr in the first page of the sketch
 
 #endif
 

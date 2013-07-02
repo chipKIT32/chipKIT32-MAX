@@ -16,6 +16,7 @@
 /*  Revision History:													*/
 /*																		*/
 /*	10/28/2011(Gene Apperson): Created									*/
+/*	05/27/2013(Claudia Goga) : Added PPS support for PIC32MX1/2			*/
 /*																		*/
 /************************************************************************/
 /*
@@ -43,6 +44,14 @@
 #define OPT_BOARD_INTERNAL
 #include	<sys/attribs.h>
 #include	<DSPI.h>
+
+/* ------------------------------------------------------------ */
+/*				Forward references to int handlers              */
+/* ------------------------------------------------------------ */
+extern "C" void __attribute__((interrupt(),nomips16)) IntDspi0Handler(void);
+extern "C" void __attribute__((interrupt(),nomips16)) IntDspi1Handler(void);
+extern "C" void __attribute__((interrupt(),nomips16)) IntDspi2Handler(void);
+extern "C" void __attribute__((interrupt(),nomips16)) IntDspi3Handler(void);
 
 /* ------------------------------------------------------------ */
 /*				Local Type and Constant Definitions				*/
@@ -106,10 +115,22 @@ static DSPI *	pdspi3 = 0;
 **		can be instantiated.
 */
 
-DSPI::DSPI() {
+#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
+DSPI::DSPI(int pinMI, int pinMO, ppsFunctionType ppsMI, ppsFunctionType ppsMO)
+#else
+DSPI::DSPI()
+#endif
+ {
 
 	pspi = 0;
 	cbCur = 0;
+
+#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
+	pinMISO = (uint8_t)pinMI;
+	pinMOSI = (uint8_t)pinMO;
+	ppsMISO = ppsMI;
+	ppsMOSI = ppsMO;
+#endif
 
 }
 
@@ -133,7 +154,7 @@ DSPI::DSPI() {
 */
 
 void
-DSPI::init(uint8_t irqErr, uint8_t irqRx, uint8_t irqTx) {
+DSPI::init(uint8_t irqErr, uint8_t irqRx, uint8_t irqTx, isrFunc isrHandler) {
 
 	/* The interrupt flag and enable control register addresses and
 	** the bit numbers for the flag bits can be computed from the
@@ -150,6 +171,7 @@ DSPI::init(uint8_t irqErr, uint8_t irqRx, uint8_t irqTx) {
 	bitRx  = 1 << (irqRx % 32);		// rx interrupt flag/enable bit
 	bitTx  = 1 << (irqTx % 32);		// tx interrupt flag/enable bit
 
+    isr = isrHandler;
 }
 
 /* ------------------------------------------------------------ */
@@ -203,7 +225,20 @@ DSPI::begin(uint8_t pinT) {
 	uint8_t			bTmp;
 	uint16_t		brg;
 
-	/* Initialize the pins. The pin directions for SDO, SDI and SCK
+#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
+	/* Map the SPI MISO to the appropriate pin.
+	*/
+    mapPps(pinMISO, ppsMISO);
+
+	/* Map the SPI MOSI to the appropriate pin.
+	*/
+    mapPps(pinMOSI, ppsMOSI);
+#endif
+
+    // set up the interrupt handler 
+    setIntVector(vec, isr);
+
+/* Initialize the pins. The pin directions for SDO, SDI and SCK
 	** are set automatically when the SPI controller is enabled. The
 	** SS pin isn't explicitly used by the SPI controller when in
 	** master mode, so we need to initialize it ourselves.
@@ -288,7 +323,7 @@ DSPI::end() {
 
 	pspi->sxCon.reg = 0;	
 	cbCur = 0;
-	
+	clearIntVector(vec);	
 }
 
 /* ------------------------------------------------------------ */
@@ -871,15 +906,19 @@ DSPI::doDspiInterrupt() {
 **		Constructor.
 */
 
-DSPI0::DSPI0()
-	{
+#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
+DSPI0::DSPI0() : DSPI(_DSPI0_MISO_PIN, _DSPI0_MOSI_PIN, _DSPI0_MISO_IN, _DSPI0_MOSI_OUT)
+#else
+DSPI0::DSPI0() 
+#endif
+{
 
 	pspi = (p32_spi *) _DSPI0_BASE;
 	vec = _DSPI0_VECTOR;
 	ipl = ((_DSPI0_IPL & 0x07) << 2) + (_DSPI0_SPL & 0x03);
 	pinSS = PIN_DSPI0_SS;
 
-	init(_DSPI0_ERR_IRQ, _DSPI0_RX_IRQ, _DSPI0_TX_IRQ);
+	init(_DSPI0_ERR_IRQ, _DSPI0_RX_IRQ, _DSPI0_TX_IRQ, IntDspi0Handler);
 }
 
 /* ------------------------------------------------------------ */
@@ -952,15 +991,19 @@ DSPI0::disableInterruptTransfer() {
 **		Constructor.
 */
 
+#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
+DSPI1::DSPI1() : DSPI(_DSPI1_MISO_PIN, _DSPI1_MOSI_PIN, _DSPI1_MISO_IN, _DSPI1_MOSI_OUT)
+#else
 DSPI1::DSPI1()
-	{
+#endif
+{
 
 	pspi = (p32_spi *) _DSPI1_BASE;
 	vec = _DSPI1_VECTOR;
 	ipl = ((_DSPI1_IPL & 0x07) << 2) + (_DSPI1_SPL & 0x03);
 	pinSS = PIN_DSPI1_SS;
 
-	init(_DSPI1_ERR_IRQ, _DSPI1_RX_IRQ, _DSPI1_TX_IRQ);
+	init(_DSPI1_ERR_IRQ, _DSPI1_RX_IRQ, _DSPI1_TX_IRQ, IntDspi1Handler);
 }
 
 /* ------------------------------------------------------------ */
@@ -1034,15 +1077,19 @@ DSPI1::disableInterruptTransfer() {
 **		Constructor.
 */
 
+#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
+DSPI2::DSPI2() : DSPI(_DSPI2_MISO_PIN, _DSPI2_MOSI_PIN, _DSPI2_MISO_IN, _DSPI2_MOSI_OUT)
+#else
 DSPI2::DSPI2()
-	{
+#endif
+{
 
 	pspi = (p32_spi *) _DSPI2_BASE;
 	vec = _DSPI2_VECTOR;
 	ipl = ((_DSPI2_IPL & 0x07) << 2) + (_DSPI2_SPL & 0x03);
 	pinSS = PIN_DSPI2_SS;
 
-	init(_DSPI2_ERR_IRQ, _DSPI2_RX_IRQ, _DSPI2_TX_IRQ);
+	init(_DSPI2_ERR_IRQ, _DSPI2_RX_IRQ, _DSPI2_TX_IRQ, IntDspi2Handler);
 }
 
 /* ------------------------------------------------------------ */
@@ -1115,15 +1162,19 @@ DSPI2::disableInterruptTransfer() {
 **		Constructor.
 */
 
+#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
+DSPI3::DSPI3() : DSPI(_DSPI3_MISO_PIN, _DSPI3_MOSI_PIN, _DSPI3_MISO_IN, _DSPI3_MOSI_OUT)
+#else
 DSPI3::DSPI3()
-	{
+#endif
+{
 
 	pspi = (p32_spi *) _DSPI3_BASE;
 	vec = _DSPI3_VECTOR;
 	ipl = ((_DSPI3_IPL & 0x07) << 2) + (_DSPI3_SPL & 0x03);
 	pinSS = PIN_DSPI3_SS;
 
-	init(_DSPI3_ERR_IRQ, _DSPI3_RX_IRQ, _DSPI3_TX_IRQ);
+	init(_DSPI3_ERR_IRQ, _DSPI3_RX_IRQ, _DSPI3_TX_IRQ, IntDspi3Handler);
 }
 
 /* ------------------------------------------------------------ */
@@ -1199,7 +1250,8 @@ extern "C" {
 */
 #if defined(_DSPI0_VECTOR)
 
-void __ISR(_DSPI0_VECTOR, _DSPI0_IPL_ISR) IntDspi0Handler(void) {
+void __attribute__((interrupt(), nomips16)) IntDspi0Handler(void)
+{
 	if (pdspi0 != 0) {
 		pdspi0->doDspiInterrupt();
 	}
@@ -1224,7 +1276,8 @@ void __ISR(_DSPI0_VECTOR, _DSPI0_IPL_ISR) IntDspi0Handler(void) {
 */
 #if defined(_DSPI1_VECTOR)
 
-void __ISR(_DSPI1_VECTOR, _DSPI1_IPL_ISR) IntDspi1Handler(void) {
+void __attribute__((interrupt(), nomips16)) IntDspi1Handler(void)
+{
 	if (pdspi1 != 0) {
 		pdspi1->doDspiInterrupt();
 	}
@@ -1249,7 +1302,8 @@ void __ISR(_DSPI1_VECTOR, _DSPI1_IPL_ISR) IntDspi1Handler(void) {
 */
 #if defined(_DSPI2_VECTOR)
 
-void __ISR(_DSPI2_VECTOR, _DSPI2_IPL_ISR) IntDspi2Handler(void) {
+void __attribute__((interrupt(), nomips16)) IntDspi2Handler(void)
+{
 	if (pdspi2 != 0) {
 		pdspi2->doDspiInterrupt();
 	}
@@ -1274,7 +1328,8 @@ void __ISR(_DSPI2_VECTOR, _DSPI2_IPL_ISR) IntDspi2Handler(void) {
 */
 #if defined(_DSPI3_VECTOR)
 
-void __ISR(_DSPI3_VECTOR, _DSPI3_IPL_ISR) IntDspi3Handler(void) {
+void __attribute__((interrupt(), nomips16)) IntDspi3Handler(void)
+{
 	if (pdspi3 != 0) {
 		pdspi3->doDspiInterrupt();
 	}
