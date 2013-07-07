@@ -71,7 +71,7 @@ void initISR(int timer)
     {
 
         // set the vector up
-        setIntVector(_TIMER_3_VECTOR, T3_IntHandler;
+        setIntVector(_TIMER_3_VECTOR, T3_IntHandler);
 
          //timer 3 set clock period 20ms 
         T3CON = 0x0060; // set prescalar 1:64
@@ -89,7 +89,7 @@ void initISR(int timer)
     if(timer == TIMER4)
     {
         // set the vector up
-        setIntVector(_TIMER_4_VECTOR, T4_IntHandler;
+        setIntVector(_TIMER_4_VECTOR, T4_IntHandler);
  
         //timer 4 set clock period 20ms 
         T4CON = 0x0060; // set prescalar 1:64
@@ -107,7 +107,7 @@ void initISR(int timer)
     if(timer == TIMER5)
     {
         // set the vector up
-        setIntVector(_TIMER_5_VECTOR, T5_IntHandler;
+        setIntVector(_TIMER_5_VECTOR, T5_IntHandler);
 
         //timer 5 set clock period 20ms 
         T5CON = 0x0060; // set prescalar 1:64
