@@ -229,7 +229,7 @@ const static uint8_t SCK  = 102;		// PIC32 SCK2
 extern const uint32_t	port_to_tris_PGM[];
 extern const uint8_t	digital_pin_to_port_PGM[];
 extern const uint16_t	digital_pin_to_bit_mask_PGM[];
-extern const uint8_t	digital_pin_to_timer_PGM[];
+extern const uint16_t	digital_pin_to_timer_PGM[];
 
 #if defined(_NOT_USED_)
 extern const uint8_t 	digital_pin_to_analog_PGM[];

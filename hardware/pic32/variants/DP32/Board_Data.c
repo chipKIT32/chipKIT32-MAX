@@ -165,7 +165,7 @@ const uint16_t	digital_pin_to_bit_mask_PGM[] = {
 ** compare number, input capture number, and timer external clock
 ** input associated with that pin.
 */
-const uint8_t	digital_pin_to_timer_PGM[] = {
+const uint16_t	digital_pin_to_timer_PGM[] = {
     // Pins 0 through 18
     NOT_ON_TIMER,                           //  0   J4-1    RB5     USB                     TMS/RPB5/USBID/RB5
     NOT_ON_TIMER,                           //  1   J4-2    RB7     INT0                    TDI/RPB7/CTED3/PMD5/INT0/RB7   

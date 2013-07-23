@@ -42,6 +42,25 @@
 	#define latSCK				LATG
 	#define bnSCK				BIT_6
 
+#elif defined(_BOARD_WF32_)
+        //uc Pin 52
+        #define prtSDO				IOPORT_G
+        #define	trisSDO				TRISG
+        #define	latSDO				LATG
+        #define	bnSDO				BIT_13
+
+        //uc Pin 49
+        #define prtSDI				IOPORT_G
+        #define trisSDI				TRISG
+        #define	latSDI				LATG
+        #define bnSDI				BIT_15
+
+        //uc Pin 50
+        #define prtSCK				IOPORT_G
+        #define trisSCK				TRISG
+        #define latSCK				LATG
+        #define bnSCK				BIT_14
+
 #elif defined(_BOARD_PONTECH_QUICK240_USB_)
         //uc Pin 72
         #define prtSDO				IOPORT_D
@@ -60,6 +79,7 @@
         #define trisSCK				TRISD
         #define latSCK				LATD
         #define bnSCK				BIT_10
+
 #elif defined(_BOARD_CEREBOT_MX3CK_)
 
 	#define	prtSDO				IOPORT_F	//JC

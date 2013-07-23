@@ -286,7 +286,7 @@ const uint16_t	digital_pin_to_bit_mask_PGM[] = {
 /* This table is used to map from digital pin number to the output
 ** compare number associated with that pin.
 */
-const uint8_t	digital_pin_to_timer_PGM[] = {
+const uint16_t	digital_pin_to_timer_PGM[] = {
     // Connector JA
 	NOT_ON_TIMER,		//  0 RB2 		AN2/C2IN-/CN4/RB2
 	NOT_ON_TIMER,		//  1 RB3		AN3/C2IN+/CN5/RB3
