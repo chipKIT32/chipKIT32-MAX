@@ -18,7 +18,7 @@ chipkit_Pi.compiler.cpp.flags=-O2::-c::-mno-smart-io::-w::-fno-exceptions::-ffun
 
 chipkit_Pi.upload.protocol=stk500v2
 # 128KB - 4K for EEPROM - 4K for bootloader
-fubarino_mini.upload.maximum_size=122880
+chipkit_Pi.upload.maximum_size=122880
 chipkit_Pi.upload.speed=115200
 
 chipkit_Pi.bootloader.low_fuses=0xff
