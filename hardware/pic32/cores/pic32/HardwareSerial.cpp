@@ -207,7 +207,7 @@ void HardwareSerial::begin(unsigned long baudRate)
     mapPps(pinRx, ppsRx);
 #endif
 
-    setIntVector(_SER0_VECTOR, isr);
+    setIntVector(vec, isr);
 
 	/* Set the interrupt privilege level and sub-privilege level
 	*/
