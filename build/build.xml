@@ -7,11 +7,6 @@
     <property file="upload.properties"/>
     <property name="aws.bucket" value="chipkit" />
 
-
-    <input message="Enter platform: "
-	addproperty="platform"
-	/>
-
  <condition property="macosx"><os family="mac" /></condition>
   <condition property="windows"><os family="windows" /></condition>
   <condition property="linux"><os family="unix" /></condition>
