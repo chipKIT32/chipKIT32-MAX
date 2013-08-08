@@ -164,7 +164,7 @@ static int			gRX_length[NRX];
 static volatile byte			gRX_in;
 static volatile byte			gRX_out;
 
-static boolean		gDiscard;	// true when we don't think anyone is listening
+static boolean      gConnected = false;
 
 
 //*******************************************************************************
@@ -205,14 +205,14 @@ static	int	SPLX(int level)
 //************************************************************************
 void	cdcacm_print(const byte *buffer, int length)
 {
-int availableBuffers;
-int buffersNeeded;
-int m;
-int previousInterrutLevel;
+    int availableBuffers;
+    int buffersNeeded;
+    int m;
+    int previousInterrutLevel;
 		
 	// ASSERT(length);
 
-	if (! gCdcacm_attached || gDiscard || (length <= 0))
+	if (! gCdcacm_attached || !gConnected || (length <= 0))
 	{
 		return;
 	}
@@ -245,7 +245,6 @@ int previousInterrutLevel;
 		delay(1);
 		if (m++ > 1000)
 		{
-			gDiscard	=	true;
 			return;
 		}
 		previousInterrutLevel	=	SPLX(7);
@@ -353,6 +352,7 @@ static int	cdcacm_control_transfer(struct setup *setup, byte *buffer, int length
 			break;
 		case CDCRQ_SET_CONTROL_LINE_STATE:
 			assert(! (setup->requesttype & 0x80));
+            gConnected = setup->value & 0x01; 
 			length	=	0;
 			break;
 		case CDCRQ_SEND_BREAK:
@@ -397,8 +397,6 @@ static int	cdcacm_bulk_transfer(boolean in, byte *buffer, int length)
 {
 	if (! in)
 	{
-		gDiscard	=	false;
-	
 		gCdcacm_active	=	true;
 		
 		// accumulate commands
