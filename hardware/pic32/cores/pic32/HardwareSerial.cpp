@@ -582,6 +582,10 @@ USBSerial::USBSerial(ring_buffer	*rx_buffer)
 	_rx_buffer->tail	=	0;
 }
 
+USBSerial::operator int() {
+    return gConnected ? 1 : 0;
+}
+
 #ifdef _DEBUG_USB_VIA_SERIAL0_
 	#define	DebugViaSerial0(x)	Serial0.println(x)
 #else

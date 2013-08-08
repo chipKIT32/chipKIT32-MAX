@@ -7,6 +7,7 @@
 #define     USB_SERIAL_MIN_BUFFER_FREE      128
 
 extern boolean gCdcacm_active;
+extern boolean gConnected;
 
 typedef void (*cdcacm_reset_cbfn)(void);
 typedef boolean (*cdcacm_storedata_cbfn)(const byte *buffer, int length);

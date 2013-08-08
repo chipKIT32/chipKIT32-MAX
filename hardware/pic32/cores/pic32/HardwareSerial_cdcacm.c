@@ -164,7 +164,7 @@ static int			gRX_length[NRX];
 static volatile byte			gRX_in;
 static volatile byte			gRX_out;
 
-static boolean      gConnected = false;
+boolean      gConnected = false;
 
 
 //*******************************************************************************
