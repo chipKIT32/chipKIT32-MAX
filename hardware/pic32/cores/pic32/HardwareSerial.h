@@ -141,6 +141,7 @@ class USBSerial : public Stream
 		virtual	void	write(uint8_t);
 		virtual void	write(const char *str);
 		virtual void	write(const uint8_t *buffer, size_t size);
+        operator        int();
 
 		using	Print::write; // pull in write(str) and write(buf, size) from Print
 };
