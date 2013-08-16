@@ -18,7 +18,7 @@ cmod.compiler.cpp.flags=-O2::-c::-mno-smart-io::-w::-fno-exceptions::-ffunction-
 
 cmod.upload.protocol=stk500v2
 # 128KB - 4K for EEPROM
-cmod.upload.maximum_size=122880
+cmod.upload.maximum_size=126976
 cmod.upload.speed=115200
 
 cmod.bootloader.low_fuses=0xff
