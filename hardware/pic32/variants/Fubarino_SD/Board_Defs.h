@@ -69,7 +69,7 @@
 #define	NUM_SPI_PORTS		1
 #define	NUM_I2C_PORTS		1
 
-#define NUM_DSPI_PORTS		1
+#define NUM_DSPI_PORTS		2
 #define NUM_DTWI_PORTS		2
 
 /* Define I/O devices on the board.
@@ -163,6 +163,7 @@ const static uint8_t SCK  = 102;		// PIC32 SCK2
 */
 /// TODO: For Fubarino, do we need these?
 #define	PIN_DSPI0_SS	105
+#define PIN_DSPI1_SS    1
 
 /* ------------------------------------------------------------ */
 /*					Analog Pins									*/
@@ -358,6 +359,15 @@ extern const uint8_t	analog_pin_to_channel_PGM[];
 #define	_DSPI0_IPL_ISR		_SPI2_IPL_ISR
 #define	_DSPI0_IPL			_SPI2_IPL_IPC
 #define	_DSPI0_SPL			_SPI2_SPL_IPC
+
+#define	_DSPI1_BASE			_SPI3_BASE_ADDRESS
+#define	_DSPI1_ERR_IRQ		_SPI3_ERR_IRQ
+#define	_DSPI1_RX_IRQ		_SPI3_RX_IRQ
+#define	_DSPI1_TX_IRQ		_SPI3_TX_IRQ
+#define	_DSPI1_VECTOR		_SPI_3_VECTOR
+#define	_DSPI1_IPL_ISR		_SPI3_IPL_ISR
+#define	_DSPI1_IPL			_SPI3_IPL_IPC
+#define	_DSPI1_SPL			_SPI3_SPL_IPC
 
 /* ------------------------------------------------------------ */
 /*					I2C Port Declarations						*/
