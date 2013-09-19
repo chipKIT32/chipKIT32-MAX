@@ -52,7 +52,7 @@
 /*				Public Board Declarations						*/
 /* ------------------------------------------------------------ */
 /* The following define symbols that can be used in a sketch to
-** refer to periperhals on the board generically.
+** refer to peripherals on the board generically.
 */
 
 #define	_BOARD_NAME_	"chipKIT Pi"
@@ -60,7 +60,7 @@
 /* Define the peripherals available on the board.
 */
 #define	NUM_DIGITAL_PINS	18
-#define	NUM_ANALOG_PINS		2
+#define	NUM_ANALOG_PINS		10
 #define NUM_OC_PINS			5
 #define	NUM_IC_PINS			5
 #define	NUM_TCK_PINS		5
@@ -85,8 +85,7 @@
 /* ------------------------------------------------------------ */
 
 /* Define the pin numbers for the LEDs
-NOTE: The ChipKIT Pi has no user LEDs, but some sketches use
-PIN_LED1, so we'll define that as Digital pin 3 (D3)
+NOTE: The ChipKIT Pi has two user LEDs
 */
 #define	PIN_LED1	14      // 11  RA0
 #define	PIN_LED2	11      // 14  RA1
@@ -98,7 +97,7 @@ PIN_LED1, so we'll define that as Digital pin 3 (D3)
 /* No buttons or this board
 */
 
-/* Also define the virutal program button for soft reset */
+/* Also define the virtual program button for soft reset */
 //#define USE_VIRTUAL_PROGRAM_BUTTON      1
 //#define VIRTUAL_PROGRAM_BUTTON_TRIS     TRISBbits.TRISB4
 //#define VIRTUAL_PROGRAM_BUTTON          LATBbits.LATB4
@@ -174,6 +173,8 @@ const static uint8_t SCK  = 13;		// RB14 SCK1    CVREF/AN10/C3INB/RPB14/VBUSON/S
 */
 #define	A0		14  // RA0		
 #define	A1		15  // RB15
+#define	A4		16  // RB2		
+#define	A5		17  // RB3
 
 /* ------------------------------------------------------------ */
 /*					Change Notice Pins							*/
@@ -284,8 +285,8 @@ extern const uint8_t	external_int_to_digital_pin_PGM[];
 #define       _SER0_SPL            _UART1_SPL_IPC
 #define       _SER0_TX_OUT         PPS_OUT_U1TX     // RPB3R = U1TX = 1   
 #define       _SER0_TX_PIN         1                // RB4
-#define       _SER0_RX_IN          PPS_IN_U1RX      // U1RXR = RPB13 = 3
-#define       _SER0_RX_PIN         6                // RB13 AN11/RPB13/CTPLS/PMRD/RB13  
+#define       _SER0_RX_IN          PPS_IN_U1RX      // U1RXR = RA4 = 0
+#define       _SER0_RX_PIN         0                // RA4 
 
 
 /* Serial port 1 uses UART2
@@ -296,10 +297,10 @@ extern const uint8_t	external_int_to_digital_pin_PGM[];
 #define       _SER1_IPL_ISR        _UART2_IPL_ISR
 #define       _SER1_IPL            _UART2_IPL_IPC
 #define       _SER1_SPL            _UART2_SPL_IPC
-#define       _SER1_TX_OUT         PPS_OUT_U2TX     // RPB14R = U2TX = 2
-#define       _SER1_TX_PIN         7                // RB14 CVREF/AN10/C3INB/RPB14/VBUSON/SCK1/CTED5/RB14
-#define       _SER1_RX_IN          PPS_IN_U2RX      // U2RXR = RPA1 = 0
-#define       _SER1_RX_PIN         10               // RA1  PGEC3/VREF-/CVREF-/AN1/RPA1/CTED2/PMD6/RA1 
+#define       _SER1_TX_OUT         PPS_OUT_U2TX     // RPB0R = U2TX = 5
+#define       _SER1_TX_PIN         5                // RB0
+#define       _SER1_RX_IN          PPS_IN_U2RX      // U2RXR = RPB1 = 4
+#define       _SER1_RX_PIN         4                // RB1
 
 
 /* ------------------------------------------------------------ */
