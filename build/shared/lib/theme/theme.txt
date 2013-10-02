@@ -70,26 +70,27 @@ editor.brackethighlight.color = #006699
 
 # TEXT - KEYWORDS
 
-# e.g abstract, final, private
+# C++ kewords and datatypes, e.g., void, true, return, float, uint16_t.
 editor.keyword1.style = #ff0000,plain
 
-# e.g. beginShape, point, line
+# Functions, methods, and macros, e.g., pinMode(), abs(), begin().
 editor.keyword2.style = #ff8000,plain
 
-# e.g. byte, char, short, color
+# Objects/classes, e.g., Serial, Keyboard.
 editor.keyword3.style = #8b308b,bold
 
 
 # TEXT - LITERALS
 
-# constants: e.g. null, true, this, RGB, TWO_PI
+# Board-independent constants, e.g., HIGH, LOW, M_PI.
 editor.literal1.style = #0066FF,plain
+
+# Board-specific constants, e.g., PIN_LED1, PIN_BTN1.
+editor.literal2.style = #ffcc00,plain
 
 # http://arduino.cc/
 editor.url.style = #0000ff,underlined
 
-# p5 built in variables: e.g. mouseX, width, pixels
-editor.literal2.style = #ffcc00,plain
 
 # e.g. + - = /
 editor.operator.style = #000000,plain
