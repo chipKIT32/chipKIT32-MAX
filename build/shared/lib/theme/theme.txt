@@ -71,22 +71,22 @@ editor.brackethighlight.color = #006699
 # TEXT - KEYWORDS
 
 # C++ kewords and datatypes, e.g., void, true, return, float, uint16_t.
-editor.keyword1.style = #ff0000,plain
+editor.keyword1.style = #ff0000,bold
 
 # Functions, methods, and macros, e.g., pinMode(), abs(), begin().
 editor.keyword2.style = #ff8000,plain
 
 # Objects/classes, e.g., Serial, Keyboard.
-editor.keyword3.style = #8b308b,bold
+editor.keyword3.style = #8b308b,plain
 
 
 # TEXT - LITERALS
 
 # Board-independent constants, e.g., HIGH, LOW, M_PI.
-editor.literal1.style = #0066FF,plain
+editor.literal1.style = #0000FF,plain
 
 # Board-specific constants, e.g., PIN_LED1, PIN_BTN1.
-editor.literal2.style = #ffcc00,plain
+editor.literal2.style = #697cd6,plain
 
 # http://arduino.cc/
 editor.url.style = #0000ff,underlined

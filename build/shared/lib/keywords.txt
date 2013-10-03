@@ -9,31 +9,50 @@
 # LITERAL1 specifies board-independent constants.
 ################################################################
 
-HIGH	LITERAL1	Constants
-LOW	LITERAL1	Constants
-INPUT	LITERAL1	Constants
-INPUT_PULLUP	LITERAL1	Constants
-INPUT_PULLDOWN	LITERAL1	Constants
-INPUT_PULLUPDOWN	LITERAL1	Constants
-OUTPUT	LITERAL1	Constants
 DEC	LITERAL1	Serial_Print
 BIN	LITERAL1	Serial_Print
 HEX	LITERAL1	Serial_Print
 OCT	LITERAL1	Serial_Print
 BYTE	LITERAL1	Serial_Print
-PI	LITERAL1
-HALF_PI	LITERAL1
-TWO_PI	LITERAL1
-LSBFIRST	LITERAL1	ShiftOut
-MSBFIRST	LITERAL1	ShiftOut
+
+# Defined in wiring.h.
 CHANGE	LITERAL1	AttachInterrupt
-FALLING	LITERAL1	AttachInterrupt
-RISING	LITERAL1	AttachInterrupt
+CORE_TICK_RATE	LITERAL1
 DEFAULT	LITERAL1	AnalogReference
+DEG_TO_RAD	LITERAL1
+DISPLAY	LITERAL1	
+ENTER_BOOTLOADER_ON_BOOT	LITERAL1
 EXTERNAL	LITERAL1	AnalogReference
+EXTMINUS	LITERAL1
+EXTPLUSMINUS	LITERAL1
+FALLING	LITERAL1	AttachInterrupt
+HALF_PI	LITERAL1
+HIGH	LITERAL1	Constants
+INPUT	LITERAL1	Constants
+INPUT_PULLUP	LITERAL1	Constants
+INPUT_PULLDOWN	LITERAL1	Constants
+INPUT_PULLUPDOWN	LITERAL1	Constants
 INTERNAL	LITERAL1	AnalogReference
 INTERNAL1V1	LITERAL1	AnalogReference
 INTERNAL2V56	LITERAL1	AnalogReference
+LOW	LITERAL1	Constants
+LSBFIRST	LITERAL1	ShiftOut
+MSBFIRST	LITERAL1	ShiftOut
+NUM_TASKS	LITERAL1
+OUTPUT	LITERAL1	Constants
+OPEN	LITERAL1
+PI	LITERAL1
+RAD_TO_DEG	LITERAL1
+RISING	LITERAL1	AttachInterrupt
+RUN_SKETCH_ON_BOOT	LITERAL1
+SERIAL	LITERAL1
+TASK_ENABLE	LITERAL1
+TASK_DISABLE	LITERAL1
+TASK_RUN_ONCE	LITERAL1
+TOGGLES_PER_SEC	LITERAL1
+TWO_PI	LITERAL1
+
+
 
 # From math.h.
 M_E	LITERAL1
@@ -273,7 +292,7 @@ _DTWI4_SPL	LITERAL2
 
 ################################################################
 # KEYWORD1 specifies C/C++ keywords and non-keyword data types
-# such as int8_t and uint32_t.
+# such as int8_t and uint32_t that are typedef'ed in header files.
 ################################################################
 
 and	KEYWORD1
@@ -318,6 +337,7 @@ int32_t	KEYWORD1
 int64_t	KEYWORD1
 int	KEYWORD1	Int
 intptr_t	KEYWORD1
+isrFunc	KEYWORD1
 ldiv_t	KEYWORD1
 long	KEYWORD1	Long
 mutable	KEYWORD1
@@ -345,6 +365,7 @@ static_cast	KEYWORD1
 String	KEYWORD1	String	
 struct	KEYWORD1
 switch	KEYWORD1	SwitchCase
+taskFunc KEYWORD1
 template	KEYWORD1
 this	KEYWORD1	
 #throw	KEYWORD1 # It appears exception handling is disabled by default in MPIDE.
@@ -375,7 +396,7 @@ xor_eq	KEYWORD1
 # functions.
 ################################################################
 
-# Functions from the math library.
+# Math-related functions from the math library or wiring.h.
 abs	KEYWORD2	Abs
 acos	KEYWORD2	ACos
 acosh	KEYWORD2
@@ -442,7 +463,6 @@ scalbn	KEYWORD2
 sin	KEYWORD2	Sin
 signbit	KEYWORD2
 sinh	KEYWORD2
-sq	KEYWORD2	Sq
 sqrt	KEYWORD2	Sqrt
 tan	KEYWORD2	Tan
 tanh	KEYWORD2
@@ -456,27 +476,31 @@ yn	KEYWORD2
 setup	KEYWORD2	Setup
 loop	KEYWORD2	Loop
 
-# chipKit/Arduino supplied functions.
-bitRead	KEYWORD2	BitRead
-bitWrite	KEYWORD2	BitWrite
-bitSet	KEYWORD2	BitSet
-bitClear	KEYWORD2	BitClear
-bit	KEYWORD2	Bit
-highByte	KEYWORD2	HighByte
-lowByte	KEYWORD2	LowByte
+# Other functions from wiring.h.
 
 analogReference	KEYWORD2	AnalogReference
 analogRead	KEYWORD2	AnalogRead
 analogWrite	KEYWORD2	AnalogWrite
 attachInterrupt	KEYWORD2	AttachInterrupt
+bit	KEYWORD2	Bit
+bitClear	KEYWORD2	BitClear
+bitSet	KEYWORD2	BitSet
+bitRead	KEYWORD2	BitRead
+bitWrite	KEYWORD2	BitWrite
+clockCyclesPerMicrosecond	KEYWORD2
+clockCyclesToMicroseconds	KEYWORD2
 detachInterrupt	KEYWORD2	DetachInterrupt
 delay	KEYWORD2	Delay
 delayMicroseconds	KEYWORD2	DelayMicroseconds
 digitalWrite	KEYWORD2	DigitalWrite
 digitalRead	KEYWORD2	DigitalRead
+highByte	KEYWORD2	HighByte
+init	KEYWORD2
 interrupts	KEYWORD2
-millis	KEYWORD2	Millis
+lowByte	KEYWORD2	LowByte
 micros	KEYWORD2	Micros
+microsecondsToClockCycles	KEYWORD2
+millis	KEYWORD2	Millis
 noInterrupts	KEYWORD2	NoInterrupts
 noTone	KEYWORD2	NoTone
 pinMode	KEYWORD2	PinMode
@@ -484,6 +508,41 @@ pulseIn	KEYWORD2	PulseIn
 shiftIn	KEYWORD2	ShiftIn
 shiftOut	KEYWORD2	ShiftOut
 tone	KEYWORD2	Tone
+
+enableInterrupts	KEYWORD2
+disableInterrupts	KEYWORD2
+restoreInterrupts	KEYWORD2
+getIntFlag	KEYWORD2
+clearIntFlag	KEYWORD2
+setIntEnable	KEYWORD2
+clearIntEnable	KEYWORD2
+restoreIntEnable	KEYWORD2
+setIntPriority	KEYWORD2
+getIntPriority	KEYWORD2
+setIntVector	KEYWORD2
+getIntVector	KEYWORD2
+clearIntVector	KEYWORD2
+getPeripheralClock	KEYWORD2
+readCoreTimer	KEYWORD2
+writeCoreTimer	KEYWORD2
+executeSoftReset	KEYWORD2
+attachCoreTimerService	KEYWORD2
+detachCoreTimerService	KEYWORD2
+callCoreTimerServiceNow	KEYWORD2
+createTask	KEYWORD2
+destroyTask	KEYWORD2
+getTaskId	KEYWORD2
+tartTaskAt	KEYWORD2
+getTaskNextExec	KEYWORD2
+setTaskState	KEYWORD2
+getTaskState	KEYWORD2
+etTaskPeriod	KEYWORD2
+getTaskPeriod	KEYWORD2
+setTaskVar	KEYWORD2
+getTaskVar	KEYWORD2
+_initTaskManager	KEYWORD2
+_scheduleTask	KEYWORD2
+
 
 # Board-specific function defined in Board_Defs.h
 digitalPinToAnalog	KEYWORD2
