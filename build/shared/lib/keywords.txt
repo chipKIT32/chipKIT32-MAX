@@ -52,7 +52,60 @@ TASK_RUN_ONCE	LITERAL1
 TOGGLES_PER_SEC	LITERAL1
 TWO_PI	LITERAL1
 
-
+# From pins_arduino.h.
+NOT_A_PIN
+NOT_A_PORT
+NOT_ON_TIMER
+NOT_ANALOG_PIN
+NOT_PPS_PIN
+NOT_CN_PIN
+NUM_DIGITAL_PINS_EXTENDED
+_BN_TIMER_OC
+_BN_TIMER_IC
+_BN_TIMER_TCK
+_BOARD_AN0
+_BOARD_AN1
+_BOARD_AN2
+_BOARD_AN3
+_BOARD_AN4
+_BOARD_AN5
+_BOARD_AN6
+_BOARD_AN7
+_BOARD_AN8
+_BOARD_AN9
+_BOARD_AN10
+_BOARD_AN11
+_BOARD_AN12
+_BOARD_AN13
+_BOARD_AN14
+_BOARD_AN15
+_MSK_TIMER_OC
+_MSK_TIMER_IC
+_MSK_TIMER_TCK
+_IOPORT_PA
+_IOPORT_PB
+_IOPORT_PC
+_IOPORT_PD
+_IOPORT_PE
+_IOPORT_PF
+_IOPORT_PG
+_RPOBASE
+_RPIBASE
+_TIMER_OC1
+_TIMER_OC2
+_TIMER_OC3
+_TIMER_OC4
+_TIMER_OC5
+_TIMER_IC1
+_TIMER_IC2
+_TIMER_IC3
+_TIMER_IC4
+_TIMER_IC5
+_TIMER_TCK1
+_TIMER_TCK2
+_TIMER_TCK3
+_TIMER_TCK4
+_TIMER_TCK5
 
 # From math.h.
 M_E	LITERAL1
@@ -71,7 +124,7 @@ M_SQRT1_2	LITERAL1
 
 
 ################################################################
-#	LITERAL2 specifies board-specific constants.
+# LITERAL2 specifies board-specific constants.
 #
 # THIS LIST IS LARGELY, THOUGH NOT SOLELY, BASED ON
 # ~/hardware/pic32/variants/Max32/Board_Defs.h.
@@ -92,7 +145,6 @@ NUM_LED	LITERAL2
 NUM_BTN	LITERAL2		
 NUM_SWT	LITERAL2
 NUM_SERVO	LITERAL2	
-NUM_DIGITAL_PINS_EXTENDED	LITERAL2
 NUM_ANALOG_PINS_EXTENDED	LITERAL2
 PIN_LED1	LITERAL2
 PIN_LED2	LITERAL2
@@ -292,7 +344,7 @@ _DTWI4_SPL	LITERAL2
 
 ################################################################
 # KEYWORD1 specifies C/C++ keywords and non-keyword data types
-# such as int8_t and uint32_t that are typedef'ed in header files.
+# such as int8_t and uint32_t.
 ################################################################
 
 and	KEYWORD1
@@ -391,12 +443,14 @@ word	KEYWORD1	Word
 xor	KEYWORD1
 xor_eq	KEYWORD1
 
+
 ################################################################
-#	KEYWORD2 specifies functions, macros, and object member
+# KEYWORD2 specifies functions, macros, and object member
 # functions.
 ################################################################
 
-# Math-related functions from the math library or wiring.h.
+# Math-related functions from the math library or functions whose
+# prototype appears in wiring.h.
 abs	KEYWORD2	Abs
 acos	KEYWORD2	ACos
 acosh	KEYWORD2
@@ -477,7 +531,6 @@ setup	KEYWORD2	Setup
 loop	KEYWORD2	Loop
 
 # Other functions from wiring.h.
-
 analogReference	KEYWORD2	AnalogReference
 analogRead	KEYWORD2	AnalogRead
 analogWrite	KEYWORD2	AnalogWrite
@@ -543,12 +596,42 @@ getTaskVar	KEYWORD2
 _initTaskManager	KEYWORD2
 _scheduleTask	KEYWORD2
 
-
-# Board-specific function defined in Board_Defs.h
+# Macros from pins_arduino.h.
+_BV	KEYWORD2
+_PPS_OUT	KEYWORD2
+_PPS_IN	KEYWORD2
+digitalPinToPort	KEYWORD2
+digitalPinToBitMask	KEYWORD2
+digitalPinToTimerOC	KEYWORD2
+digitalPinToTimerIC	KEYWORD2
+digitalPinToTimerTCK	KEYWORD2
+digitalPinToTimer	KEYWORD2
+digitalPinToCN	KEYWORD2
+portRegisters	KEYWORD2
+isPpsPin	KEYWORD2
+ppsInputSelect	KEYWORD2
+ppsOutputSelect	KEYWORD2
+ppsSetFromPin	KEYWORD2
+ppsSetFromFunc	KEYWORD2
+ppsInputFromFunc	KEYWORD2
+ppsOutputFromFunc	KEYWORD2
+ppsFuncIsInput	KEYWORD2
+ppsFuncIsOutput	KEYWORD2
+ppsOutputRegister	KEYWORD2
+ppsInputRegister	KEYWORD2
+timerOCtoDigitalPin	KEYWORD2
+timerOCtoOutputSelect	KEYWORD2
+externalIntToDigitalPin	KEYWORD2
+externalIntToInputSelect	KEYWORD2
+portModeRegister	KEYWORD2
+portInputRegister	KEYWORD2
+portOutputRegister	KEYWORD2
 digitalPinToAnalog	KEYWORD2
+analogInPinToChannel	KEYWORD2
+
 
 ################################################################
-#	KEYWORD3 specified objects.  Also listed here are the member
+# KEYWORD3 specified objects.  Also listed here are the member
 # functions associated with the object (i.e., entries that are
 # actually of type	KEYWORD2).
 ################################################################
@@ -590,7 +673,8 @@ isPressed	KEYWORD2
 
 
 ################################################################
-# operators aren't highlighted, but may have documentation
+# Operators aren't highlighted, but may have documentation.
+# This list was kept from the original keywords file.
 ################################################################
 
 +=		IncrementCompound
@@ -608,8 +692,8 @@ isPressed	KEYWORD2
 /*		Comments
 .		dot
 ==		
-<		greaterthan
-<=		greaterthanorequalto
+>		greaterthan
+>=		greaterthanorequalto
 ++		Increment
 !=		inequality
 <<		Bitshift
