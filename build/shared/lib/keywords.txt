@@ -1,73 +1,681 @@
-# Added: [u]int{8|16|32|64}_t types
+################################################################
+################################################################
+####          NOTE: The first two fields must be            ####
+####              separated by a single tab.                ####
+################################################################
+################################################################
 
-# LITERAL1 specifies constants
+################################################################
+# LITERAL1 specifies board-independent constants.
+################################################################
 
-HIGH	LITERAL1	Constants
-LOW	LITERAL1	Constants
-INPUT	LITERAL1	Constants
-INPUT_PULLUP	LITERAL1	Constants
-INPUT_PULLDOWN	LITERAL1	Constants
-INPUT_PULLUPDOWN	LITERAL1	Constants
-OUTPUT	LITERAL1	Constants
 DEC	LITERAL1	Serial_Print
 BIN	LITERAL1	Serial_Print
 HEX	LITERAL1	Serial_Print
 OCT	LITERAL1	Serial_Print
 BYTE	LITERAL1	Serial_Print
-PI	LITERAL1
-HALF_PI	LITERAL1
-TWO_PI	LITERAL1
-LSBFIRST	LITERAL1	ShiftOut
-MSBFIRST	LITERAL1	ShiftOut
+
+# Defined in wiring.h.
 CHANGE	LITERAL1	AttachInterrupt
-FALLING	LITERAL1	AttachInterrupt
-RISING	LITERAL1	AttachInterrupt
+CORE_TICK_RATE	LITERAL1
 DEFAULT	LITERAL1	AnalogReference
+DEG_TO_RAD	LITERAL1
+DISPLAY	LITERAL1	
+ENTER_BOOTLOADER_ON_BOOT	LITERAL1
 EXTERNAL	LITERAL1	AnalogReference
+EXTMINUS	LITERAL1
+EXTPLUSMINUS	LITERAL1
+FALLING	LITERAL1	AttachInterrupt
+HALF_PI	LITERAL1
+HIGH	LITERAL1	Constants
+INPUT	LITERAL1	Constants
+INPUT_PULLUP	LITERAL1	Constants
+INPUT_PULLDOWN	LITERAL1	Constants
+INPUT_PULLUPDOWN	LITERAL1	Constants
 INTERNAL	LITERAL1	AnalogReference
 INTERNAL1V1	LITERAL1	AnalogReference
 INTERNAL2V56	LITERAL1	AnalogReference
+LOW	LITERAL1	Constants
+LSBFIRST	LITERAL1	ShiftOut
+MSBFIRST	LITERAL1	ShiftOut
+NUM_TASKS	LITERAL1
+OUTPUT	LITERAL1	Constants
+OPEN	LITERAL1
+PI	LITERAL1
+RAD_TO_DEG	LITERAL1
+RISING	LITERAL1	AttachInterrupt
+RUN_SKETCH_ON_BOOT	LITERAL1
+SERIAL	LITERAL1
+TASK_ENABLE	LITERAL1
+TASK_DISABLE	LITERAL1
+TASK_RUN_ONCE	LITERAL1
+TOGGLES_PER_SEC	LITERAL1
+TWO_PI	LITERAL1
 
-# KEYWORD1 specifies datatypes and C/C++ keywords
+# From pins_arduino.h.
+NOT_A_PIN
+NOT_A_PORT
+NOT_ON_TIMER
+NOT_ANALOG_PIN
+NOT_PPS_PIN
+NOT_CN_PIN
+NUM_DIGITAL_PINS_EXTENDED
+_BN_TIMER_OC
+_BN_TIMER_IC
+_BN_TIMER_TCK
+_BOARD_AN0
+_BOARD_AN1
+_BOARD_AN2
+_BOARD_AN3
+_BOARD_AN4
+_BOARD_AN5
+_BOARD_AN6
+_BOARD_AN7
+_BOARD_AN8
+_BOARD_AN9
+_BOARD_AN10
+_BOARD_AN11
+_BOARD_AN12
+_BOARD_AN13
+_BOARD_AN14
+_BOARD_AN15
+_MSK_TIMER_OC
+_MSK_TIMER_IC
+_MSK_TIMER_TCK
+_IOPORT_PA
+_IOPORT_PB
+_IOPORT_PC
+_IOPORT_PD
+_IOPORT_PE
+_IOPORT_PF
+_IOPORT_PG
+_RPOBASE
+_RPIBASE
+_TIMER_OC1
+_TIMER_OC2
+_TIMER_OC3
+_TIMER_OC4
+_TIMER_OC5
+_TIMER_IC1
+_TIMER_IC2
+_TIMER_IC3
+_TIMER_IC4
+_TIMER_IC5
+_TIMER_TCK1
+_TIMER_TCK2
+_TIMER_TCK3
+_TIMER_TCK4
+_TIMER_TCK5
 
+# From math.h.
+M_E	LITERAL1
+M_LOG2E	LITERAL1
+M_LOG10E	LITERAL1
+M_LN2	LITERAL1
+M_LN10	LITERAL1
+M_PI	LITERAL1
+M_PI_2	LITERAL1
+M_PI_4	LITERAL1
+M_1_PI	LITERAL1
+M_2_PI	LITERAL1
+M_2_SQRTPI	LITERAL1
+M_SQRT2	LITERAL1
+M_SQRT1_2	LITERAL1
+
+
+################################################################
+# LITERAL2 specifies board-specific constants.
+#
+# THIS LIST IS LARGELY, THOUGH NOT SOLELY, BASED ON
+# ~/hardware/pic32/variants/Max32/Board_Defs.h.
+################################################################
+
+NUM_DIGITAL_PINS	LITERAL2
+NUM_ANALOG_PINS	LITERAL2
+NUM_OC_PINS	LITERAL2
+NUM_IC_PINS	LITERAL2
+NUM_TCK_PINS	LITERAL2
+NUM_INT_PINS	LITERAL2	
+NUM_SERIAL_PORTS	LITERAL2
+NUM_SPI_PORTS	LITERAL2
+NUM_I2C_PORTS	LITERAL2
+NUM_DSPI_PORTS	LITERAL2
+NUM_DTWI_PORTS	LITERAL2	
+NUM_LED	LITERAL2
+NUM_BTN	LITERAL2		
+NUM_SWT	LITERAL2
+NUM_SERVO	LITERAL2	
+NUM_ANALOG_PINS_EXTENDED	LITERAL2
+PIN_LED1	LITERAL2
+PIN_LED2	LITERAL2
+PIN_LED3	LITERAL2
+PIN_LED4	LITERAL2
+PIN_BTN1	LITERAL2
+PIN_BTN2	LITERAL2
+PIN_BTN3	LITERAL2
+PIN_OC1	LITERAL2
+PIN_OC2	LITERAL2
+PIN_OC3	LITERAL2
+PIN_OC4	LITERAL2
+PIN_OC5	LITERAL2
+PIN_IC1	LITERAL2
+PIN_IC2	LITERAL2
+PIN_IC3	LITERAL2
+PIN_IC4	LITERAL2
+PIN_IC5	LITERAL2
+PIN_TCK1	LITERAL2
+PIN_TCK2	LITERAL2
+PIN_TCK3	LITERAL2
+PIN_TCK4	LITERAL2
+PIN_TCK5	LITERAL2
+PIN_INT0	LITERAL2
+PIN_INT1	LITERAL2
+PIN_INT2	LITERAL2
+PIN_INT3	LITERAL2
+PIN_INT4	LITERAL2
+SS	LITERAL2
+MOSI	LITERAL2
+MISO	LITERAL2
+SCK	LITERAL2
+PIN_DSPI0_SS	LITERAL2
+PIN_DSPI1_SS	LITERAL2
+PIN_DSPI2_SS	LITERAL2
+PIN_DSPI3_SS	LITERAL2
+A0	LITERAL2
+A1	LITERAL2
+A2	LITERAL2
+A3	LITERAL2
+A4	LITERAL2
+A5	LITERAL2
+A6	LITERAL2
+A7	LITERAL2
+A8	LITERAL2
+A9	LITERAL2
+A10	LITERAL2
+A11	LITERAL2
+A12	LITERAL2
+A13	LITERAL2
+A14	LITERAL2
+A15	LITERAL2
+PIN_CN0	LITERAL2
+PIN_CN1	LITERAL2
+PIN_CN2	LITERAL2
+PIN_CN3	LITERAL2
+PIN_CN4	LITERAL2
+PIN_CN5	LITERAL2
+PIN_CN6	LITERAL2
+PIN_CN7	LITERAL2
+PIN_CN8	LITERAL2
+PIN_CN9	LITERAL2
+PIN_CN10	LITERAL2
+PIN_CN11	LITERAL2
+PIN_CN12	LITERAL2
+PIN_CN13	LITERAL2
+PIN_CN14	LITERAL2
+PIN_CN15	LITERAL2
+PIN_CN16	LITERAL2
+PIN_CN17	LITERAL2
+PIN_CN18	LITERAL2
+PIN_CN19	LITERAL2
+PIN_CN20	LITERAL2
+PIN_CN21	LITERAL2
+port_to_tris_PGM	LITERAL2
+digital_pin_to_port_PGM	LITERAL2
+digital_pin_to_bit_mask_PGM	LITERAL2
+digital_pin_to_timer_PGM	LITERAL2
+OPT_BOARD_INIT	LITERAL2
+OPT_BOARD_DIGITAL_IO	LITERAL2
+OPT_BOARD_ANALOG_READ	LITERAL2
+OPT_BOARD_ANALOG_WRITE	LITERAL2
+_SER0_BASE	LITERAL2
+_SER0_IRQ	LITERAL2
+_SER0_VECTOR	LITERAL2
+_SER0_IPL_ISR	LITERAL2
+_SER0_IPL	LITERAL2
+_SER0_SPL	LITERAL2
+_SER1_BASE	LITERAL2
+_SER1_IRQ	LITERAL2
+_SER1_VECTOR	LITERAL2
+_SER1_IPL_ISR	LITERAL2
+_SER1_IPL	LITERAL2
+_SER1_SPL	LITERAL2
+_SER2_BASE	LITERAL2
+_SER2_IRQ	LITERAL2
+_SER2_VECTOR	LITERAL2
+_SER2_IPL_ISR	LITERAL2
+_SER2_IPL	LITERAL2
+_SER2_SPL	LITERAL2
+_SER3_BASE	LITERAL2
+_SER3_IRQ	LITERAL2
+_SER3_VECTOR	LITERAL2
+_SER3_IPL_ISR	LITERAL2
+_SER3_IPL	LITERAL2
+_SER3_SPL	LITERAL2
+_SPI_BASE	LITERAL2
+_SPI_ERR_IRQ	LITERAL2
+_SPI_RX_IRQ	LITERAL2
+_SPI_TX_IRQ	LITERAL2
+_SPI_VECTOR	LITERAL2
+_SPI_IPL_ISR	LITERAL2
+_SPI_IPL	LITERAL2
+_SPI_SPL	LITERAL2
+_DSPI0_BASE	LITERAL2
+_DSPI0_ERR_IRQ	LITERAL2
+_DSPI0_RX_IRQ	LITERAL2
+_DSPI0_TX_IRQ	LITERAL2
+_DSPI0_VECTOR	LITERAL2
+_DSPI0_IPL_ISR	LITERAL2
+_DSPI0_IPL	LITERAL2
+_DSPI0_SPL	LITERAL2
+_DSPI1_BASE	LITERAL2
+_DSPI1_ERR_IRQ	LITERAL2
+_DSPI1_RX_IRQ	LITERAL2
+_DSPI1_TX_IRQ	LITERAL2
+_DSPI1_VECTOR	LITERAL2
+_DSPI1_IPL_ISR	LITERAL2
+_DSPI1_IPL	LITERAL2
+_DSPI1_SPL	LITERAL2
+_SPI3_ERR_IRQ	LITERAL2
+_DSPI2_BASE	LITERAL2
+_DSPI2_ERR_IRQ	LITERAL2
+_DSPI2_RX_IRQ	LITERAL2
+_DSPI2_TX_IRQ	LITERAL2
+_DSPI2_VECTOR	LITERAL2
+_DSPI2_IPL_ISR	LITERAL2
+_DSPI2_IPL	LITERAL2
+_DSPI2_SPL	LITERAL2
+_DSPI3_BASE	LITERAL2
+_DSPI3_ERR_IRQ	LITERAL2
+_DSPI3_RX_IRQ	LITERAL2
+_DSPI3_TX_IRQ	LITERAL2
+_DSPI3_VECTOR	LITERAL2
+_DSPI3_IPL_ISR	LITERAL2
+_DSPI3_IPL	LITERAL2
+_DSPI3_SPL	LITERAL2
+_TWI_BASE	LITERAL2
+_TWI_BUS_IRQ	LITERAL2
+_TWI_SLV_IRQ	LITERAL2
+_TWI_MST_IRQ	LITERAL2
+_TWI_VECTOR	LITERAL2
+_TWI_IPL_ISR	LITERAL2
+_TWI_IPL	LITERAL2
+_TWI_SPL	LITERAL2
+_DTWI0_BASE	LITERAL2
+_DTWI0_BUS_IRQ	LITERAL2
+_DTWI0_SLV_IRQ	LITERAL2
+_DTWI0_MST_IRQ	LITERAL2
+_DTWI0_VECTOR	LITERAL2
+_DTWI0_IPL_ISR	LITERAL2
+_DTWI0_IPL	LITERAL2
+_DTWI0_SPL	LITERAL2
+_DTWI1_BASE	LITERAL2
+_DTWI1_BUS_IRQ	LITERAL2
+_DTWI1_SLV_IRQ	LITERAL2
+_DTWI1_MST_IRQ	LITERAL2
+_DTWI1_VECTOR	LITERAL2
+_DTWI1_IPL_ISR	LITERAL2
+_DTWI1_IPL	LITERAL2
+_DTWI1_SPL	LITERAL2
+_DTWI2_BASE	LITERAL2
+_DTWI2_BUS_IRQ	LITERAL2
+_DTWI2_SLV_IRQ	LITERAL2
+_DTWI2_MST_IRQ	LITERAL2
+_DTWI2_VECTOR	LITERAL2
+_DTWI2_IPL_ISR	LITERAL2
+_DTWI2_IPL	LITERAL2
+_DTWI2_SPL	LITERAL2
+_DTWI3_BASE	LITERAL2
+_DTWI3_BUS_IRQ	LITERAL2
+_DTWI3_SLV_IRQ	LITERAL2
+_DTWI3_MST_IRQ	LITERAL2
+_DTWI3_VECTOR	LITERAL2
+_DTWI3_IPL_ISR	LITERAL2
+_DTWI3_IPL	LITERAL2
+_DTWI3_SPL	LITERAL2
+_DTWI4_BASE	LITERAL2
+_DTWI4_BUS_IRQ	LITERAL2
+_DTWI4_SLV_IRQ	LITERAL2
+_DTWI4_MST_IRQ	LITERAL2
+_DTWI4_VECTOR	LITERAL2
+_DTWI4_IPL_ISR	LITERAL2
+_DTWI4_IPL	LITERAL2
+_DTWI4_SPL	LITERAL2
+
+
+################################################################
+# KEYWORD1 specifies C/C++ keywords and non-keyword data types
+# such as int8_t and uint32_t.
+################################################################
+
+and	KEYWORD1
+and_eq	KEYWORD1
+asm	KEYWORD1
+bitand	KEYWORD1
+bitor	KEYWORD1
+bool	KEYWORD1
 boolean	KEYWORD1	BooleanVariables
 break	KEYWORD1	Break
 byte	KEYWORD1	Byte
 case	KEYWORD1	SwitchCase
+#catch	KEYWORD1 # It appears exception handling is disabled by default in MPIDE.
 char	KEYWORD1	Char
 class	KEYWORD1
+clock_t	KEYWORD1
+compl	KEYWORD1
+const	KEYWORD1
+const_cast	KEYWORD1
 continue	KEYWORD1	Continue
 default	KEYWORD1	SwitchCase	
+delete	KEYWORD1
+div_t	KEYWORD1
 do	KEYWORD1	DoWhile
 double	KEYWORD1	Double
+#dynamic_cast	KEYWORD1 # Disabled in MPIDE.
 else	KEYWORD1	Else
+enum	KEYWORD1
+explicit	KEYWORD1
+#export	KEYWORD1 # Depreciated keyword, so not highlighted.
+extern	KEYWORD1
 false	KEYWORD1	Constants
+FILE	KEYWORD1
 float	KEYWORD1	Float
 for	KEYWORD1	For
+fpos_t	KEYWORD1
+goto	KEYWORD1
 if	KEYWORD1	If
+int8_t	KEYWORD1
+int16_t	KEYWORD1
+int32_t	KEYWORD1
+int64_t	KEYWORD1
 int	KEYWORD1	Int
+intptr_t	KEYWORD1
+isrFunc	KEYWORD1
+ldiv_t	KEYWORD1
 long	KEYWORD1	Long
+mutable	KEYWORD1
+namespace	KEYWORD1
 new	KEYWORD1	
+not	KEYWORD1
+not_eq	KEYWORD1
 null	KEYWORD1	
+_off_t	KEYWORD1
+operator	KEYWORD1
+or	KEYWORD1
+or_eq	KEYWORD1
 private	KEYWORD1
 protected	KEYWORD1	
+ptrdiff_t	KEYWORD1
 public	KEYWORD1	
+register	KEYWORD1
+reinterpret_cast	KEYWORD1
 return	KEYWORD1	Return	
 short	KEYWORD1
 signed	KEYWORD1
+size_t	KEYWORD1
 static	KEYWORD1	Static
+static_cast	KEYWORD1
 String	KEYWORD1	String	
+struct	KEYWORD1
 switch	KEYWORD1	SwitchCase
+taskFunc KEYWORD1
+template	KEYWORD1
 this	KEYWORD1	
-throw	KEYWORD1	
-try	KEYWORD1	
+#throw	KEYWORD1 # It appears exception handling is disabled by default in MPIDE.
+time_t	KEYWORD1	
 true	KEYWORD1	
+#try	KEYWORD1 # It appears exception handling is disabled by default in MPIDE.
+typedef	KEYWORD1
+#typeid	KEYWORD1 # Not enabled in MPIDE.
+typename	KEYWORD1
+uint8_t	KEYWORD1
+uint16_t	KEYWORD1
+uint32_t	KEYWORD1
+uint64_t	KEYWORD1
+union	KEYWORD1
 unsigned	KEYWORD1
+using	KEYWORD1
+virtual	KEYWORD1
 void	KEYWORD1	Void
+volatile	KEYWORD1
+wchar_t	KEYWORD1
 while	KEYWORD1	While
 word	KEYWORD1	Word
+xor	KEYWORD1
+xor_eq	KEYWORD1
 
-# operators aren't highlighted, but may have documentation
+
+################################################################
+# KEYWORD2 specifies functions, macros, and object member
+# functions.
+################################################################
+
+# Math-related functions from the math library or functions whose
+# prototype appears in wiring.h.
+abs	KEYWORD2	Abs
+acos	KEYWORD2	ACos
+acosh	KEYWORD2
+asin	KEYWORD2	ASin
+asinh	KEYWORD2
+atan	KEYWORD2	ATan
+atanh	KEYWORD2
+atan2	KEYWORD2	ATan2
+cbrt	KEYWORD2
+ceil	KEYWORD2	Ceil
+constrain	KEYWORD2	Constrain
+copysign	KEYWORD2
+cos	KEYWORD2	Cos
+cosh	KEYWORD2
+degrees	KEYWORD2
+erf	KEYWORD2
+erfc	KEYWORD2
+exp	KEYWORD2	Exp
+exp2	KEYWORD2
+expm1	KEYWORD2
+fabs	KEYWORD2
+floor	KEYWORD2	Floor
+fma	KEYWORD2
+fmod	KEYWORD2
+fpclassify	KEYWORD2
+frexp	KEYWORD2
+hypot	KEYWORD2
+ilogb	KEYWORD2
+isfinite	KEYWORD2
+isinf	KEYWORD2
+isnan	KEYWORD2
+isnormal	KEYWORD2
+j0	KEYWORD2
+j1	KEYWORD2
+jn	KEYWORD2
+ldexp	KEYWORD2
+lgamma	KEYWORD2
+lrint	KEYWORD2
+llrint	KEYWORD2
+log	KEYWORD2	Log
+log2	KEYWORD2
+log10	KEYWORD2
+log1p	KEYWORD2
+logb	KEYWORD2
+llround	KEYWORD2
+lround	KEYWORD2
+map	KEYWORD2	Map
+max	KEYWORD2	Max
+min	KEYWORD2	Min
+modf	KEYWORD2
+nan	KEYWORD2
+nearbyint	KEYWORD2
+nextafter	KEYWORD2
+pow	KEYWROD2
+radians	KEYWORD2
+random	KEYWORD2	Random
+randomSeed	KEYWORD2	RandomSeed
+remainder	KEYWORD2
+remquo	KEYWORD2
+rint	KEYWORD2
+round	KEYWORD2
+scalbln	KEYWORD2
+scalbn	KEYWORD2
+sin	KEYWORD2	Sin
+signbit	KEYWORD2
+sinh	KEYWORD2
+sqrt	KEYWORD2	Sqrt
+tan	KEYWORD2	Tan
+tanh	KEYWORD2
+tgamma	KEYWORD2
+trunc	KEYWORD2
+y0	KEYWORD2
+y1	KEYWORD2
+yn	KEYWORD2
+
+# Required functions.
+setup	KEYWORD2	Setup
+loop	KEYWORD2	Loop
+
+# Other functions from wiring.h.
+analogReference	KEYWORD2	AnalogReference
+analogRead	KEYWORD2	AnalogRead
+analogWrite	KEYWORD2	AnalogWrite
+attachInterrupt	KEYWORD2	AttachInterrupt
+bit	KEYWORD2	Bit
+bitClear	KEYWORD2	BitClear
+bitSet	KEYWORD2	BitSet
+bitRead	KEYWORD2	BitRead
+bitWrite	KEYWORD2	BitWrite
+clockCyclesPerMicrosecond	KEYWORD2
+clockCyclesToMicroseconds	KEYWORD2
+detachInterrupt	KEYWORD2	DetachInterrupt
+delay	KEYWORD2	Delay
+delayMicroseconds	KEYWORD2	DelayMicroseconds
+digitalWrite	KEYWORD2	DigitalWrite
+digitalRead	KEYWORD2	DigitalRead
+highByte	KEYWORD2	HighByte
+init	KEYWORD2
+interrupts	KEYWORD2
+lowByte	KEYWORD2	LowByte
+micros	KEYWORD2	Micros
+microsecondsToClockCycles	KEYWORD2
+millis	KEYWORD2	Millis
+noInterrupts	KEYWORD2	NoInterrupts
+noTone	KEYWORD2	NoTone
+pinMode	KEYWORD2	PinMode
+pulseIn	KEYWORD2	PulseIn
+shiftIn	KEYWORD2	ShiftIn
+shiftOut	KEYWORD2	ShiftOut
+tone	KEYWORD2	Tone
+
+enableInterrupts	KEYWORD2
+disableInterrupts	KEYWORD2
+restoreInterrupts	KEYWORD2
+getIntFlag	KEYWORD2
+clearIntFlag	KEYWORD2
+setIntEnable	KEYWORD2
+clearIntEnable	KEYWORD2
+restoreIntEnable	KEYWORD2
+setIntPriority	KEYWORD2
+getIntPriority	KEYWORD2
+setIntVector	KEYWORD2
+getIntVector	KEYWORD2
+clearIntVector	KEYWORD2
+getPeripheralClock	KEYWORD2
+readCoreTimer	KEYWORD2
+writeCoreTimer	KEYWORD2
+executeSoftReset	KEYWORD2
+attachCoreTimerService	KEYWORD2
+detachCoreTimerService	KEYWORD2
+callCoreTimerServiceNow	KEYWORD2
+createTask	KEYWORD2
+destroyTask	KEYWORD2
+getTaskId	KEYWORD2
+tartTaskAt	KEYWORD2
+getTaskNextExec	KEYWORD2
+setTaskState	KEYWORD2
+getTaskState	KEYWORD2
+etTaskPeriod	KEYWORD2
+getTaskPeriod	KEYWORD2
+setTaskVar	KEYWORD2
+getTaskVar	KEYWORD2
+_initTaskManager	KEYWORD2
+_scheduleTask	KEYWORD2
+
+# Macros from pins_arduino.h.
+_BV	KEYWORD2
+_PPS_OUT	KEYWORD2
+_PPS_IN	KEYWORD2
+digitalPinToPort	KEYWORD2
+digitalPinToBitMask	KEYWORD2
+digitalPinToTimerOC	KEYWORD2
+digitalPinToTimerIC	KEYWORD2
+digitalPinToTimerTCK	KEYWORD2
+digitalPinToTimer	KEYWORD2
+digitalPinToCN	KEYWORD2
+portRegisters	KEYWORD2
+isPpsPin	KEYWORD2
+ppsInputSelect	KEYWORD2
+ppsOutputSelect	KEYWORD2
+ppsSetFromPin	KEYWORD2
+ppsSetFromFunc	KEYWORD2
+ppsInputFromFunc	KEYWORD2
+ppsOutputFromFunc	KEYWORD2
+ppsFuncIsInput	KEYWORD2
+ppsFuncIsOutput	KEYWORD2
+ppsOutputRegister	KEYWORD2
+ppsInputRegister	KEYWORD2
+timerOCtoDigitalPin	KEYWORD2
+timerOCtoOutputSelect	KEYWORD2
+externalIntToDigitalPin	KEYWORD2
+externalIntToInputSelect	KEYWORD2
+portModeRegister	KEYWORD2
+portInputRegister	KEYWORD2
+portOutputRegister	KEYWORD2
+digitalPinToAnalog	KEYWORD2
+analogInPinToChannel	KEYWORD2
+
+
+################################################################
+# KEYWORD3 specified objects.  Also listed here are the member
+# functions associated with the object (i.e., entries that are
+# actually of type	KEYWORD2).
+################################################################
+
+Serial	KEYWORD3	Serial
+Serial0	KEYWORD3	Serial
+Serial1	KEYWORD3	Serial
+Serial2	KEYWORD3	Serial
+Serial3	KEYWORD3	Serial
+begin	KEYWORD2	Serial_Begin
+end	KEYWORD2	Serial_End
+find	KEYWORD2
+findUntil	KEYWORD2
+flush	KEYWORD2	Serial_Flush
+parseFloat	KEYWORD2
+parseInt	KEYWORD2
+peek	KEYWORD2	Serial_Peek
+print	KEYWORD2	Serial_Print
+println	KEYWORD2	Serial_Println
+read	KEYWORD2	Serial_Read
+readBytes	KEYWORD2
+readBytesUntil	KEYWORD2
+readString	KEYWORD2
+readStringUntil	KEYWORD2
+available	KEYWORD2	Serial_Available
+serialEvent	KEYWORD2
+setTimeout	KEYWORD2
+
+# USB-related keywords
+Keyboard	KEYWORD3
+Mouse	KEYWORD3
+press	KEYWORD2
+release	KEYWORD2
+releaseAll	KEYWORD2
+accept	KEYWORD2
+click	KEYWORD2
+move	KEYWORD2
+isPressed	KEYWORD2
+
+
+################################################################
+# Operators aren't highlighted, but may have documentation.
+# This list was kept from the original keywords file.
+################################################################
 
 +=		IncrementCompound
 +		Arithmetic
@@ -84,8 +692,8 @@ word	KEYWORD1	Word
 /*		Comments
 .		dot
 ==		
-<		greaterthan
-<=		greaterthanorequalto
+>		greaterthan
+>=		greaterthanorequalto
 ++		Increment
 !=		inequality
 <<		Bitshift
@@ -102,91 +710,3 @@ word	KEYWORD1	Word
 ;		SemiColon
 -=		IncrementCompound
 
-# these are datatypes, but we've also defined functions to cast to them
-
-boolean	KEYWORD2	boolean_
-byte	KEYWORD2	byte_
-char	KEYWORD2	char_
-float	KEYWORD2	float_
-int	KEYWORD2	int_
-long	KEYWORD2	long_
-word	KEYWORD2	word_
-int8_t	KEYWORD2
-int16_t	KEYWORD2
-int32_t	KEYWORD2
-int64_t	KEYWORD2
-uint8_t	KEYWORD2
-uint16_t	KEYWORD2
-uint32_t	KEYWORD2
-uint64_t	KEYWORD2
-
-# KEYWORD2 specifies methods and functions
-
-abs	KEYWORD2	Abs
-acos	KEYWORD2	ACos
-asin	KEYWORD2	ASin
-atan	KEYWORD2	ATan
-atan2	KEYWORD2	ATan2
-ceil	KEYWORD2	Ceil
-constrain	KEYWORD2	Constrain
-cos	KEYWORD2	Cos
-degrees	KEYWORD2
-exp	KEYWORD2	Exp
-floor	KEYWORD2	Floor
-log	KEYWORD2	Log
-map	KEYWORD2	Map
-max	KEYWORD2	Max
-min	KEYWORD2	Min
-radians	KEYWORD2
-random	KEYWORD2	Random
-randomSeed	KEYWORD2	RandomSeed
-round	KEYWORD2
-sin	KEYWORD2	Sin
-sq	KEYWORD2	Sq
-sqrt	KEYWORD2	Sqrt
-tan	KEYWORD2	Tan
-
-bitRead	KEYWORD2	BitRead
-bitWrite	KEYWORD2	BitWrite
-bitSet	KEYWORD2	BitSet
-bitClear	KEYWORD2	BitClear
-bit	KEYWORD2	Bit
-highByte	KEYWORD2	HighByte
-lowByte	KEYWORD2	LowByte
-
-analogReference	KEYWORD2	AnalogReference
-analogRead	KEYWORD2	AnalogRead
-analogWrite	KEYWORD2	AnalogWrite
-attachInterrupt	KEYWORD2	AttachInterrupt
-detachInterrupt	KEYWORD2	DetachInterrupt
-delay	KEYWORD2	Delay
-delayMicroseconds	KEYWORD2	DelayMicroseconds
-digitalWrite	KEYWORD2	DigitalWrite
-digitalRead	KEYWORD2	DigitalRead
-interrupts	KEYWORD2
-millis	KEYWORD2	Millis
-micros	KEYWORD2	Micros
-noInterrupts	KEYWORD2	NoInterrupts
-noTone	KEYWORD2	NoTone
-pinMode	KEYWORD2	PinMode
-pulseIn	KEYWORD2	PulseIn
-shiftIn	KEYWORD2	ShiftIn
-shiftOut	KEYWORD2	ShiftOut
-tone	KEYWORD2	Tone
-
-Serial	KEYWORD3	Serial
-Serial0	KEYWORD3	Serial
-Serial1	KEYWORD3	Serial
-Serial2	KEYWORD3	Serial
-Serial3	KEYWORD3	Serial
-begin	KEYWORD2	Serial_Begin
-end	KEYWORD2	Serial_End
-peek	KEYWORD2	Serial_Peek
-read	KEYWORD2	Serial_Read
-print	KEYWORD2	Serial_Print
-println	KEYWORD2	Serial_Println
-available	KEYWORD2	Serial_Available
-flush	KEYWORD2	Serial_Flush
-
-setup	KEYWORD3	Setup
-loop	KEYWORD3	Loop

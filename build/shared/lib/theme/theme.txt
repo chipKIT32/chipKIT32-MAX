@@ -1,7 +1,4 @@
-#
-# GUI with chipKIT related colours
-#
-
+# GUI with chipKIT related colors
 
 # GUI - STATUS
 status.notice.fgcolor = #000000
@@ -69,27 +66,27 @@ editor.brackethighlight.color = #006699
 
 
 # TEXT - KEYWORDS
-
-# e.g abstract, final, private
+# True keywords and data types.
 editor.keyword1.style = #ff0000,plain
 
-# e.g. beginShape, point, line
+# Functions, macros, and member functions.
 editor.keyword2.style = #ff8000,plain
 
-# e.g. byte, char, short, color
+# Objects.
 editor.keyword3.style = #8b308b,bold
 
 
 # TEXT - LITERALS
-
-# constants: e.g. null, true, this, RGB, TWO_PI
+# Board independent constants.
 editor.literal1.style = #0066FF,plain
+
+# Board-independent constants.
+editor.literal2.style = #2dbad6,plain
+
 
 # http://arduino.cc/
 editor.url.style = #0000ff,underlined
 
-# p5 built in variables: e.g. mouseX, width, pixels
-editor.literal2.style = #ffcc00,plain
 
 # e.g. + - = /
 editor.operator.style = #000000,plain
