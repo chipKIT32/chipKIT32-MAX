@@ -86,6 +86,49 @@
 #define	NUM_DIGITAL_PINS_EXTENDED	NUM_DIGITAL_PINS
 #define	NUM_ANALOG_PINS_EXTENDED	NUM_ANALOG_PINS
 
+#define C0ADR 32
+#define C1ADR 31
+#define C2ADR 30
+#define C3ADR 52
+#define C4ADR 29
+#define C5ADR 85
+
+#define C0IO0 68
+#define C0IO1 58
+#define C0IO2 62
+#define C0IO3 55
+#define C0IO4 82
+
+#define C1IO0 57
+#define C1IO1 56
+#define C1IO2 63
+#define C1IO3 54
+#define C1IO4 83
+
+#define C2IO0 86
+#define C2IO1 64
+#define C2IO2 5
+#define C2IO3 70
+#define C2IO4 84
+
+#define C3IO0 22
+#define C3IO1 76
+#define C3IO2 9
+#define C3IO3 2
+#define C3IO4 35
+
+#define C4IO0 23
+#define C4IO1 39
+#define C4IO2 8
+#define C4IO3 21
+#define C4IO4 34
+
+#define C5IO0 78
+#define C5IO1 79
+#define C5IO2 36
+#define C5IO3 20
+#define C5IO4 33
+
 /* ------------------------------------------------------------ */
 /*						LED Declarations						*/
 /* ------------------------------------------------------------ */
