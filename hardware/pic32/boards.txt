@@ -688,7 +688,7 @@ CUI32stem.bootloader.lock_bits=0x0F
 CUI32stem.build.mcu=32MX795F512H
 CUI32stem.build.f_cpu=80000000L
 CUI32stem.build.core=pic32
-CUI32stem.build.variant=Default_64
+CUI32stem.build.variant=CUI32stem
 #CUI32stem.upload.using=
 
 
