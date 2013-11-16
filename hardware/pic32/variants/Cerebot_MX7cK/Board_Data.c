@@ -20,6 +20,7 @@
 /*  Revision History:													*/
 /*																		*/
 /*	11/28/2011(GeneA): Created by splitting data out of Board_Defs.h	*/
+/*	11/15/2013(KeithV): This file applies to the chipKIT Pro MX7 also   */
 /*																		*/
 /************************************************************************/
 //*	This library is free software; you can redistribute it and/or
