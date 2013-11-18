@@ -23,6 +23,7 @@
 /*	11/28/2011(GeneA): Moved data definitions and configuration			*/
 /*		functions to Board_Data.c										*/
 /*	11/29/2011(GeneA): Moved int priority definitions to System_Defs.h	*/
+/*	11/15/2013(KeithV): This file applies to the chipKIT Pro MX4 also   */
 /*																		*/
 /************************************************************************/
 //*	This library is free software; you can redistribute it and/or

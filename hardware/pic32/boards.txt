@@ -240,6 +240,42 @@ cerebot_mx3ck.build.variant=Cerebot_MX3cK
 #cerebot_mx3ck.upload.using=
 
 ############################################################
+chipkit_mx3.name=chipKIT MX3
+chipkit_mx3.group=chipKIT
+
+# new items
+chipkit_mx3.platform=pic32
+chipkit_mx3.board=_BOARD_CEREBOT_MX3CK_
+chipkit_mx3.board.define=
+chipkit_mx3.ccflags=ffff
+chipkit_mx3.ldscript=chipKIT-application-32MX320F128.ld
+# end of new items
+
+# Use a high -Gnum for devices that have less than 64K of data memory
+# For -G1024, objects 1024 bytes or smaller will be accessed by
+# gp-relative addressing
+chipkit_mx3.compiler.c.flags=-O2::-c::-mno-smart-io::-w::-ffunction-sections::-fdata-sections::-G1024::-g::-mdebugger::-Wcast-align::-fno-short-double
+chipkit_mx3.compiler.cpp.flags=-O2::-c::-mno-smart-io::-w::-fno-exceptions::-ffunction-sections::-fdata-sections::-G1024::-g::-mdebugger::-Wcast-align::-fno-short-double
+
+chipkit_mx3.upload.protocol=stk500v2
+chipkit_mx3.upload.maximum_size=126976
+chipkit_mx3.upload.speed=115200
+
+chipkit_mx3.bootloader.low_fuses=0xff
+chipkit_mx3.bootloader.high_fuses=0xdd
+chipkit_mx3.bootloader.extended_fuses=0x00
+chipkit_mx3.bootloader.path=not-supported
+chipkit_mx3.bootloader.file=not-supported
+chipkit_mx3.bootloader.unlock_bits=0x3F
+chipkit_mx3.bootloader.lock_bits=0x0F
+
+chipkit_mx3.build.mcu=32MX320F128H
+chipkit_mx3.build.f_cpu=80000000L
+chipkit_mx3.build.core=pic32
+chipkit_mx3.build.variant=Cerebot_MX3cK
+#chipkit_mx3.upload.using=
+
+############################################################
 cerebot_mx4ck.name=Cerebot MX4cK
 cerebot_mx4ck.group=Cerebot
 
@@ -270,6 +306,36 @@ cerebot_mx4ck.build.variant=Cerebot_MX4cK
 #cerebot_mx4ck.upload.using=
 
 ############################################################
+chipkit_pro_mx4.name=chipKIT Pro MX4
+chipkit_pro_mx4.group=chipKIT
+
+# new items
+chipkit_pro_mx4.platform=pic32
+chipkit_pro_mx4.board=_BOARD_CEREBOT_MX4CK_
+chipkit_pro_mx4.board.define=
+chipkit_pro_mx4.ccflags=ffff
+chipkit_pro_mx4.ldscript=chipKIT-application-32MX460F512.ld
+# end of new items
+
+chipkit_pro_mx4.upload.protocol=stk500v2
+chipkit_pro_mx4.upload.maximum_size=520192
+chipkit_pro_mx4.upload.speed=115200
+
+chipkit_pro_mx4.bootloader.low_fuses=0xff
+chipkit_pro_mx4.bootloader.high_fuses=0xdd
+chipkit_pro_mx4.bootloader.extended_fuses=0x00
+chipkit_pro_mx4.bootloader.path=not-supported
+chipkit_pro_mx4.bootloader.file=not-supported
+chipkit_pro_mx4.bootloader.unlock_bits=0x3F
+chipkit_pro_mx4.bootloader.lock_bits=0x0F
+
+chipkit_pro_mx4.build.mcu=32MX460F512L
+chipkit_pro_mx4.build.f_cpu=80000000L
+chipkit_pro_mx4.build.core=pic32
+chipkit_pro_mx4.build.variant=Cerebot_MX4cK
+#chipkit_pro_mx4.upload.using=
+
+############################################################
 cerebot_mx7ck.name=Cerebot MX7cK
 cerebot_mx7ck.group=Cerebot
 
@@ -298,6 +364,36 @@ cerebot_mx7ck.build.f_cpu=80000000L
 cerebot_mx7ck.build.core=pic32
 cerebot_mx7ck.build.variant=Cerebot_MX7cK
 #cerebot_mx7ck.upload.using=
+
+############################################################
+chipkit_pro_mx7.name=chipKIT Pro MX7
+chipkit_pro_mx7.group=chipKIT
+
+# new items
+chipkit_pro_mx7.platform=pic32
+chipkit_pro_mx7.board=_BOARD_CEREBOT_MX7CK_
+chipkit_pro_mx7.board.define=
+chipkit_pro_mx7.ccflags=ffff
+chipkit_pro_mx7.ldscript=chipKIT-application-32MX795F512.ld
+# end of new items
+
+chipkit_pro_mx7.upload.protocol=stk500v2
+chipkit_pro_mx7.upload.maximum_size=520192
+chipkit_pro_mx7.upload.speed=115200
+
+chipkit_pro_mx7.bootloader.low_fuses=0xff
+chipkit_pro_mx7.bootloader.high_fuses=0xdd
+chipkit_pro_mx7.bootloader.extended_fuses=0x00
+chipkit_pro_mx7.bootloader.path=not-supported
+chipkit_pro_mx7.bootloader.file=not-supported
+chipkit_pro_mx7.bootloader.unlock_bits=0x3F
+chipkit_pro_mx7.bootloader.lock_bits=0x0F
+
+chipkit_pro_mx7.build.mcu=32MX795F512L
+chipkit_pro_mx7.build.f_cpu=80000000L
+chipkit_pro_mx7.build.core=pic32
+chipkit_pro_mx7.build.variant=Cerebot_MX7cK
+#chipkit_pro_mx7.upload.using=
 
 ############################################################
 #MX7ck_dbg.name=Cerebot MX7cK - MPLAB Debug
