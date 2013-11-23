@@ -56,6 +56,10 @@
 
 #define	_BOARD_NAME_	"chipKIT Max32"
 
+#define VIRTUAL_PROGRAM_BUTTON_TRIS TRISGbits.TRISG15
+#define VIRTUAL_PROGRAM_BUTTON LATGbits.LATG15
+#define USE_VIRTUAL_PROGRAM_BUTTON 1
+
 /* Define the Microcontroller peripherals available on the board.
 */
 #define	NUM_DIGITAL_PINS	87
