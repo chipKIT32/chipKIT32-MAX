@@ -236,7 +236,7 @@ void analogWrite(uint8_t pin, int val)
 	*/
 	if (pin >= NUM_DIGITAL_PINS_EXTENDED)
 	{
-		return 0;
+		return;
 	}
 
 #if (OPT_BOARD_ANALOG_WRITE != 0)

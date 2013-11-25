@@ -217,6 +217,18 @@ const static uint8_t SCK  = 35;		// PIC32 SCK2
 ** These are mostly generic, but some of them may be board specific.
 ** These perform slightly better as macros compared to inline functions
 */
+
+// We are overriding system macros, so let's undef the originals first
+#ifdef portRegisters
+#undef portRegisters
+#endif
+#ifdef digitalPinToAnalog
+#undef digitalPinToAnalog
+#endif
+#ifdef analogInPinToChannel
+#undef analogInPinToChannel
+#endif
+
 #define digitalPinToPort(P) ( digital_pin_to_port_PGM[P]  )
 #define digitalPinToBitMask(P) ( digital_pin_to_bit_mask_PGM[P]  )
 #define digitalPinToTimerOC(P) ( (digital_pin_to_timer_PGM[P] & _MSK_TIMER_OC)  )

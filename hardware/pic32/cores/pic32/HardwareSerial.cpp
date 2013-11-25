@@ -190,8 +190,8 @@ HardwareSerial::HardwareSerial(p32_uart * uartT, int irqT, int vecT, int iplT, i
 
 void HardwareSerial::begin(unsigned long baudRate)
 {
-	p32_regset *	ipc;	//interrupt priority control register set
-	int				irq_shift;
+//	p32_regset *	ipc;	//interrupt priority control register set
+//	int				irq_shift;
 
 	/* Initialize the receive buffer.
 	*/
@@ -507,8 +507,8 @@ void HardwareSerial::doSerialInt(void)
 
 //*******************************************************************************************
 
-#pragma mark -
-#pragma mark -----------------USB support
+// #pragma mark -
+// #pragma mark -----------------USB support
 
 #if defined(_USB) && defined(_USE_USB_FOR_SERIAL_)
 
@@ -554,7 +554,7 @@ void	USBresetRoutine(void)
 // Need to return FALSE if we need USB to hold off for awhile
 boolean	USBstoreDataRoutine(const byte *buffer, int length)
 {
-    unsigned int	i;
+    int	i;
 
     // Put each byte into the serial recieve buffer
     for (i=0; i<length; i++)

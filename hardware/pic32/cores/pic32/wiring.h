@@ -201,6 +201,8 @@ extern "C"{
 
 typedef void (*taskFunc)(int id, void * tptr);
 
+extern uint32_t ReadCoreTimer();
+
 int				createTask(taskFunc task, unsigned long period, unsigned short state, void * var);
 void			destroyTask(int id);
 int				getTaskId(taskFunc task);

@@ -58,7 +58,7 @@ struct setup	{
 					short value;
 					short index;
 					short length;
-				};
+				} __attribute__((packed));
 
 extern volatile boolean usb_in_isr;		// set when in isr
 

@@ -88,7 +88,7 @@ volatile uint16_t		tone_pin_mask;
 //************************************************************************
 void tone(uint8_t _pin, unsigned int frequency, unsigned long duration)
 {
-uint32_t tonePeriod;
+// uint32_t tonePeriod;
 uint8_t port;
 
 	// Should have an error check here for pin number out of range.

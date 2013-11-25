@@ -50,7 +50,9 @@ uint32_t				bit;
 uint8_t					port;
 volatile p32_ioport *	iop;
 uint8_t		            timer;
+#if !defined(__PIC32MX1XX__) && !defined(__PIC32MX2XX__)
 uint32_t                cn;
+#endif
 
 	/* Check if pin number is in valid range.
 	*/
@@ -77,7 +79,7 @@ int	_board_pinMode(uint8_t pin, uint8_t mode)
 	}
 
 	//* Obtain pointer to the registers for this io port.
-	iop = portRegisters(port);
+	iop = (p32_ioport *)portRegisters(port);
 
 	//* Obtain bit mask for the specific bit for this pin.
 	bit = digitalPinToBitMask(pin);
@@ -197,7 +199,7 @@ volatile p32_ioport *	iop;
 	*/
 	if (pin >= NUM_DIGITAL_PINS_EXTENDED)
 	{
-		return;
+		return 0;
 	}
 
 #if (OPT_BOARD_DIGITAL_IO != 0)
@@ -221,7 +223,7 @@ uint8_t		tmp;
 	}
 
 	//* Obtain pointer to the registers for this io port.
-	iop = portRegisters(port);
+	iop = (p32_ioport *)portRegisters(port);
 
 	//* Obtain bit mask for the specific bit for this pin.
 	bitMask = digitalPinToBitMask(pin);
@@ -259,7 +261,9 @@ volatile p32_ioport *	iop;
 uint8_t					port;
 uint16_t				bit;
 uint8_t					timer;
+#if !defined(__PIC32MX1XX__) && !defined(__PIC32MX2XX__)
 uint32_t                cn;
+#endif
 
 	/* Check if pin number is in valid range.
 	*/
@@ -286,7 +290,7 @@ int	_board_digitalWrite(uint8_t pin, uint8_t val);
 	}
 
 	//* Obtain pointer to the registers for this io port.
-	iop = portRegisters(port);
+	iop = (p32_ioport *)portRegisters(port);
 
 	//* Obtain bit mask for the specific bit for this pin.
 	bit = digitalPinToBitMask(pin);
@@ -340,7 +344,7 @@ int	_board_digitalWrite(uint8_t pin, uint8_t val);
 int digitalRead(uint8_t pin)
 {
 volatile p32_ioport *	iop;
-uint8_t					timer;
+//uint8_t					timer;
 uint16_t				bit;
 uint8_t					port;
 int						highLow;
@@ -349,7 +353,7 @@ int						highLow;
 	*/
 	if (pin >= NUM_DIGITAL_PINS_EXTENDED)
 	{
-		return;
+		return 0;
 	}
 
 #if (OPT_BOARD_DIGITAL_IO != 0)
@@ -371,7 +375,7 @@ uint8_t	tmp;
 	}
 
 	//* Obtain pointer to the registers for this io port.
-	iop = (p32_regset *)portRegisters(port);
+	iop = (p32_ioport *)portRegisters(port);
 
 	//* Obtain bit mask for the specific bit for this pin.
 	bit = digitalPinToBitMask(pin);

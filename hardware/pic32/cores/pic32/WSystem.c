@@ -103,7 +103,7 @@ void initIntVector(void)
 {
     const IMAGE_HEADER_INFO * pImageHeader = getImageHeaderInfoStructure();
     int i = 0;
-    void * pvOrgIntVec = pImageHeader->pOrgVector0;
+    void * pvOrgIntVec = (void *)pImageHeader->pOrgVector0;
 
     for(i=0; i<NUM_INT_VECTOR; i++)
     {
@@ -145,7 +145,7 @@ void initIntVector(void)
 */
 isrFunc setIntVector(int vec, isrFunc func)
 {
-    const IMAGE_HEADER_INFO * pImageHeader = getImageHeaderInfoStructure();
+ //   const IMAGE_HEADER_INFO * pImageHeader = getImageHeaderInfoStructure();
     isrFunc t = 0;
 
     if (vec < NUM_INT_VECTOR)
@@ -205,8 +205,8 @@ isrFunc getIntVector(int vec)
 */
 isrFunc clearIntVector(int vec)
 {
-    const IMAGE_HEADER_INFO * pImageHeader = getImageHeaderInfoStructure();
-    void * pvOrgIntVec = pImageHeader->pOrgVector0 + (vec * pImageHeader->cbVectorSpacing);
+//    const IMAGE_HEADER_INFO * pImageHeader = getImageHeaderInfoStructure();
+//    void * pvOrgIntVec = (void *)(pImageHeader->pOrgVector0 + (vec * pImageHeader->cbVectorSpacing));
     isrFunc rISR = 0;
 
     if (vec < NUM_INT_VECTOR)
@@ -768,7 +768,7 @@ void __attribute__((nomips16)) _initCoreTimer(uint32_t prd)
 
  void __attribute__((noreturn)) _softwareReset(void)
 {
-	volatile int * p = &RSWRST;
+	volatile int * p = (volatile int *)&RSWRST;
 
 	// Unlock the system
 	disableInterrupts();
