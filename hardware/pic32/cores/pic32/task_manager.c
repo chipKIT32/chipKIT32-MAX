@@ -118,7 +118,7 @@ int
 createTask(taskFunc task, unsigned long period, unsigned short state, void * var) {
 	int				id;
 	int				idSet;
-	int				idFree;
+//	int				idFree;
 	unsigned long	tmsCur;
 	unsigned int	st;
 
@@ -185,7 +185,7 @@ createTask(taskFunc task, unsigned long period, unsigned short state, void * var
 
 void
 destroyTask(int id) {
-	int				itask;
+//	int				itask;
 	unsigned int	st;
 
 	/* Remove the specified task from the table.

@@ -461,7 +461,7 @@ static void	cdcacm_reset(void)
 }
 
 //************************************************************************
-static int	check(const byte *descriptor, int length)
+static int __attribute__((unused)) check(const byte *descriptor, int length)
 {
 	int i;
 	int j;

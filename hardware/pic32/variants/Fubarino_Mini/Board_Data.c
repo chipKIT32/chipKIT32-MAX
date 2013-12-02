@@ -239,7 +239,7 @@ const uint16_t	digital_pin_to_timer_PGM[] = {
 ** treats these registers as an array of DWORDs an stores the index
 ** to the register.
 */
-const uint8_t digital_pin_to_pps_out_PGM[] = {
+const uint16_t digital_pin_to_pps_out_PGM[] = {
 	_PPS_OUT(_PPS_RPB13R),	//	0	RB13
 	NOT_PPS_PIN,	        //	1	RA10
 	NOT_PPS_PIN,	        //	2	RA7

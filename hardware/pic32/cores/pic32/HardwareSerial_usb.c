@@ -126,7 +126,7 @@ static struct bdt
 {
 	int flags;
 	byte *buffer;
-} *bdts;  // 512 byte aligned in buffer
+} __attribute__((packed)) *bdts;  // 512 byte aligned in buffer
 
 // N.B. only bdt endpoint 0 is used for host mode!
 
@@ -321,8 +321,8 @@ static byte next_address;	// set after successful status
 
 // *** isr ***
 
-static byte descriptor[DEVICE_DESCRIPTOR_SIZE];
-static byte configuration[CONFIGURATION_DESCRIPTOR_SIZE];
+//static byte descriptor[DEVICE_DESCRIPTOR_SIZE];
+//static byte configuration[CONFIGURATION_DESCRIPTOR_SIZE];
 
 //************************************************************************
 // called by usb on device attach
@@ -333,7 +333,7 @@ static byte configuration[CONFIGURATION_DESCRIPTOR_SIZE];
 	void	usb_isr(void)
 #endif
 {
-	int rv;
+	int rv __attribute__((aligned));
 
 	if (! bdts)
 	{
@@ -689,7 +689,7 @@ XXX_SKIP2_XXX:;
 		MCF_USB_OTG_INT_STAT	=	MCF_USB_OTG_INT_STAT_SLEEP;
 	}
 	
-XXX_SKIP_XXX:
+//XXX_SKIP_XXX:
 	assert(usb_in_isr);
 	assert((usb_in_isr = false) ? true : true);
 }

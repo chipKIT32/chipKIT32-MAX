@@ -60,7 +60,7 @@
 
 //************************************************************************
 //*	This sets the MPIDE version number in the image header as defined in the linker script
-extern const uint32_t __attribute__((section(".mpide_version"))) _verMPIDE_Stub = MPIDEVER;    // assigns the build number in the header section in the image
+const uint32_t __attribute__((section(".mpide_version"))) _verMPIDE_Stub = MPIDEVER;    // assigns the build number in the header section in the image
 
 // core timer ISR
 void __attribute__((interrupt(),nomips16)) CoreTimerHandler(void);
@@ -126,7 +126,7 @@ unsigned long micros()
 {
 	uint32_t	st;
 	unsigned int cur_timer_val	=	0;
-	unsigned int micros_delta	=	0;
+//	unsigned int micros_delta	=	0;
 
 	unsigned int result;
 	
@@ -281,7 +281,7 @@ void unlockPps()
 // that can be mapped ro each <func>.
 boolean mapPps(uint8_t pin, ppsFunctionType func)
 {
-	p32_ppsin *		pps;
+	volatile p32_ppsin *		pps;
 
     // if the pps system is locked, then don't do anything
     if (ppsGlobalLock)
@@ -349,7 +349,6 @@ boolean mapPps(uint8_t pin, ppsFunctionType func)
 
 unsigned int executeSoftReset(uint32_t options)
 {
-    const IMAGE_HEADER_INFO * pImageHeader = getImageHeaderInfoStructure();
 
     // We will use the LAT bit of the program button (if the board has one)
     // as the 'virutal' program button. The bootloader will read this bit
@@ -357,6 +356,8 @@ unsigned int executeSoftReset(uint32_t options)
     // bootload mode or just run the sketch.
 
  #if  (USE_VIRTUAL_PROGRAM_BUTTON == 1)
+
+    const IMAGE_HEADER_INFO * pImageHeader = getImageHeaderInfoStructure();
 
     // Set/clear the LAT bit
     if (options == ENTER_BOOTLOADER_ON_BOOT)
@@ -669,7 +670,7 @@ unsigned int callCoreTimerServiceNow(uint32_t (* service)(uint32_t))
 */
 uint32_t millisecondCoreTimerService(uint32_t curTime)
 {
-    static nextInt = 0;
+    static int nextInt = 0;
     uint32_t relWait = 0;
     uint32_t relTime = curTime - nextInt;
     uint32_t millisLocal = gTimer0_millis;  // defeat volatility
