@@ -37,6 +37,7 @@
 #define Wiring_h
 
 #include <inttypes.h>
+#include <peripheral/timer.h>
 #include "binary.h"
 
 #include <p32xxxx.h>
@@ -200,8 +201,6 @@ extern "C"{
 #endif
 
 typedef void (*taskFunc)(int id, void * tptr);
-
-extern uint32_t ReadCoreTimer();
 
 int				createTask(taskFunc task, unsigned long period, unsigned short state, void * var);
 void			destroyTask(int id);
