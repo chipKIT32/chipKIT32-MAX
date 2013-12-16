@@ -36,16 +36,16 @@
 
 #define PACKET_SIZE	64
 
-#ifndef USBCDC_MAN 
-#define USBCDC_MAN "www.cpustick.com"
+#ifndef CDCACM_MAN 
+#define CDCACM_MAN "www.cpustick.com"
 #endif
 
-#ifndef USBCDC_PROD
-#define USBCDC_PROD "stk500v2"
+#ifndef CDCACM_PROD
+#define CDCACM_PROD "stk500v2"
 #endif
 
-#ifndef USBCDC_SER
-#define USBCDC_SER "BURxxx"
+#ifndef CDCACM_SER
+#define CDCACM_SER "BURxxx"
 #endif
 
 // We have allocated 8 PIDs to you from A660 to A667 (hex).
@@ -570,7 +570,7 @@ void	cdcacm_register(cdcacm_reset_cbfn reset, cdcacm_storedata_cbfn storeData)
 	usb_configuration_descriptor(cdcacm_configuration_descriptor, sizeof(cdcacm_configuration_descriptor));
 
 	assert(check(cdcacm_string_descriptor, sizeof(cdcacm_string_descriptor)) == 3);
-    setStrings(USBCDC_MAN, USBCDC_PROD, USBCDC_SER);
+    setStrings(CDCACM_MAN, CDCACM_PROD, CDCACM_SER);
 //	usb_string_descriptor(cdcacm_string_descriptor, sizeof(cdcacm_string_descriptor));
 }
 
