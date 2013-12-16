@@ -227,7 +227,7 @@ void setStrings(char *man, char *prod, char *ser) {
     // Serial number
     cdcacm_string_descriptor[pos++] = strlen(ser)*2 + 2;
     cdcacm_string_descriptor[pos++] = 0x03;
-    for (i = 0; i < strlen(prod); i++) {
+    for (i = 0; i < strlen(ser); i++) {
         cdcacm_string_descriptor[pos++] = ser[i];
         cdcacm_string_descriptor[pos++] = 0;
     }
