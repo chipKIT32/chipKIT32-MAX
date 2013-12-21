@@ -18,7 +18,7 @@
  */
  
 /* 
- Plase see the README.TXT file for more detail on how the internals of the
+ Please see the README.TXT file for more detail on how the internals of the
  library work.
 */
 
@@ -33,6 +33,8 @@
       attach() and detach() functions that Keith put into wiring.c
   02/07/2013 <GeneApperson>:
 	* Removed dependency on Microchip plib library.
+  12/21/2013 <BrianSchmalz>;
+    * Fixed bug that caused glitches every 107 seconds.
 */
 
 /* Note: plib.h must be included before WProgram.h. There is a fundamental
@@ -48,8 +50,9 @@
 #include "wiring_private.h"
 
 /************ local defines **************************************************/
-#define EXTRA_ISR_ENTRY_CYCLES              (48)
+//#define EXTRA_ISR_ENTRY_CYCLES              (48)
 #define EXTRA_ISR_EXIT_CYCLES               (50)
+#define EXTRA_ISR_ENTRY_CYCLES              (0)
 
 /************ local prototypes ***********************************************/
 uint32_t HandlePWMServo(uint32_t count);     // Can't be static because we pass it in to attach()
@@ -97,13 +100,13 @@ static bool Initalized;                         // Set true once we've installed
 
 /****************** Public Functions ******************************/
 
-// Inialize all static variables to default state
+// Initialize all static variables to default state
 // Insert SoftPWM ISR into Core Timer ISR
 int32_t SoftPWMServoInit(void)
 {
     uint32_t i, j;
 
-    // Inialize all of our static arrays
+    // Initialize all of our static arrays
     for (j = 0; j < 2; j++)
     {
         for (i = 0; i < SOFTPWMSERVO_MAX_PINS; i++)
@@ -152,10 +155,10 @@ int32_t SoftPWMServoUnload(void)
     return SOFTPWMSERVO_OK;
 }
 
-// Enable SoftPWM functionaliy on a particular pin number
+// Enable SoftPWM functionality on a particular pin number
 int32_t SoftPWMServoPinEnable(uint32_t Pin, bool PinType)
 {
-    // If user has not already enabled this pin for SoftPWM, then initalize it
+    // If user has not already enabled this pin for SoftPWM, then initialize it
     if (Chan[InactiveBuffer][Pin].SetPort == NULL)
     {
         // Set up this pin's 
@@ -338,7 +341,12 @@ uint32_t HandlePWMServo(uint32_t CurrentCount)
     static ChanType * CurChanP = NULL;      // Pointer to the current channel we're operating on
     bool DoItAgain = false;                 // True if we don't have time to leave the ISR and come back in
     uint32_t NextTimeAcc = CurrentCount;    // Records the sum of NextTime values while we stay in the do-while loop
+	uint32_t TempCoreTimer;					// Hold current core timer value so only one read is necessary
 
+	LATDbits.LATD8 = 1;
+	LATDbits.LATD9 = 1;
+	TRISDbits.TRISD8 = 0;
+	TRISDbits.TRISD9 = 0;
     
     // This do-while loop keeps us inside this function as long as there are
     // edges to process. Only once we have enough time to leave and get back
@@ -387,7 +395,7 @@ uint32_t HandlePWMServo(uint32_t CurrentCount)
             else
             {
                 // We have no channels actually turned on (enabled or otherwise)
-                // So just load the NextTime with the duraction of the whole PWM cycle and do this
+                // So just load the NextTime with the duration of the whole PWM cycle and do this
                 // all over again.
                 NextTime = FrameTime;
                 // Don't set SoftPWMRisingEdge to FALSE - leave it TRUE so we just keep doing this
@@ -412,7 +420,7 @@ uint32_t HandlePWMServo(uint32_t CurrentCount)
                 }
             }
 
-            // Count this frame, for the serov pins
+            // Count this frame, for the servo pins
             ServoFrameCounter++;
             // If we're reached our ServoFrames, limit, then set to zero to mark that
             // the next frame will have all servos do their rising edges.
@@ -513,34 +521,38 @@ uint32_t HandlePWMServo(uint32_t CurrentCount)
         // If not, then just stay in the do-while loop (by setting DoItAgain) and 
         // don't leave, and just pretend that we let the CoreTimer fire.
         // There's a fudge factor added in to where we think we are in time so that
-        // we can copmensate for the number of CoreTimer counts it takes to leave
+        // we can compensate for the number of CoreTimer counts it takes to leave
         // the ISR.
         //
         // Change from v1.0 to v1.1: we now do this calculation by first subtracting
         // off the OldPeriod from our current CoreTimer value. This subtraction will
-        // eleminate problems where adding NextTimeAcc rolls OldPeriod over, or where
+        // eliminate problems where adding NextTimeAcc rolls OldPeriod over, or where
         // the CoreTimer has rolled over from OldPeriod.
-        if (NextTimeAcc  < (readCoreTimer() + EXTRA_ISR_EXIT_CYCLES))
-        {
-            DoItAgain = true;
-
-            // We need to wait until the time when we _would_ have actually let the
-            // CoreTimer fire has come and gone. We also put a fuge factor in here to
-            // simulate the number of cycles necessary to get into the ISR and to the 
-            // point where the top of the do-while loop starts executing.
-            while(readCoreTimer() < (NextTimeAcc + EXTRA_ISR_ENTRY_CYCLES))
-            {
-            }
-        }
-        else
-        {
-            DoItAgain = false;
-        }
-    }
-    // We will continue to stay in this loop (which encompases almost the entire function)
+		TempCoreTimer = readCoreTimer();
+		if ((NextTimeAcc - TempCoreTimer) <= EXTRA_ISR_EXIT_CYCLES)
+		{
+			DoItAgain = true;
+			// We need to wait until the time when we _would_ have actually let the
+			// CoreTimer fire has come and gone. We also put a fudge factor in here to
+			// simulate the number of cycles necessary to get into the ISR and to the 
+			// point where the top of the do-while loop starts executing.
+			while(readCoreTimer() < (NextTimeAcc + EXTRA_ISR_ENTRY_CYCLES))
+			{
+			}
+		}
+		else
+		{
+			DoItAgain = false;
+		}
+		LATDbits.LATD9 = !LATDbits.LATD9;
+	}
+    // We will continue to stay in this loop (which encompasses almost the entire function)
     // until our next edge (PWM or 1ms) is far enough in the future that we can spend the
     // cycles leaving the ISR and coming back in again.
     while (DoItAgain);
+
+	LATDbits.LATD8 = 0;
+	LATDbits.LATD9 = 0;
     
 
     // Return 0 so we don't run the 1ms 'stuff' in the main Core Timer ISR, or 1
@@ -560,7 +572,7 @@ void Remove(uint32_t Channel)
     // Walk through the linked list, looking for our target
     while (ChanP != NULL)
     {
-        // Is this elemnt the one we're looking for?
+        // Is this element the one we're looking for?
         if (ChanP == &Chan[InactiveBuffer][Channel])
         {
             // Yup. So let's remove it from the linked list then
@@ -575,7 +587,7 @@ void Remove(uint32_t Channel)
                 // Nope, we're in the list. So change this element's previous pointer
                 LastChanP->NextChanP = ChanP->NextChanP;
             }
-            // And always zero this elment's next pointer out
+            // And always zero this element's next pointer out
             ChanP->NextChanP = NULL;
             
             // And we're done so bail
@@ -651,7 +663,7 @@ static void CopyBuffers(void)
             Chan[InactiveBuffer][i] = Chan[ActiveBuffer][i];
             // Now comes the hard part. Because we have pointers in this array, we can't 
             // just use the copy we have (to inactive) as is. We need to go fix it up so 
-            // that all of the pointers are internally consistant and point only to 
+            // that all of the pointers are internally consistent and point only to 
             // channels in InactiveBuffer.
             // TODO: There MUST be a better way to do this without resorting to indexes 
             //  rather than pointers.

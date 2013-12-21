@@ -18,15 +18,15 @@
 */
 
 /* 
-  This library allows simultainous PWM or Servo outupt on any or all pins
-  of a PIC32 based system. Because the pin transisions are driven by software,
+  This library allows simultaneous PWM or Servo output on any or all pins
+  of a PIC32 based system. Because the pin transitions are driven by software,
   there are limits to how accurate the pulses are, but for almost all uses,
   this library will work just fine, even with a large number of pins being
   used for PWM or Servo. Also, this library does add CPU load to the system,
   which is proportional to the number of pins being used for PWM or Servo output.
   
   Please see the accompanying README.TXT file for more information and 
-  explination about how the internals of the library work.
+  explanation about how the internals of the library work.
 */
 
 /*
@@ -36,7 +36,7 @@
   08/22/2011 : Version 1.1 release
     * Fixed math bug where every 107s the overflow of the CoreTimer would cause 
       bad pulse outputs.
-    * Internal optomization : removal of explicit Active bit : a pin's existance
+    * Internal optimization : removal of explicit Active bit : a pin's existence
       in the linked list of active pins now defines its active status
     * Switched from generic LATch registers to SET and CLR for a slight speed
       improvement
@@ -72,7 +72,7 @@
 #define ticksToUs(_ticks) (((uint32_t)_ticks ) / (float)CORE_TICKS_PER_US)
 
 /*
- * Initalizes the SoftPWMServo library. It clears out all internal variables
+ * Initializes the SoftPWMServo library. It clears out all internal variables
  * to their default states, and hooks the SoftPWMServo CoreTimer ISR function
  * into the main CoreTimer interrupt
  *
@@ -174,7 +174,7 @@ int32_t SoftPWMServoServoWrite(uint32_t Pin, float Value);
  *   your pin to stay high.
  * 
  * Use this function to set a pin to be a PWM pin, and specify its
- * pulse width. Equvilent to the normal analogWrite() call.
+ * pulse width. Equivalent to the normal analogWrite() call.
  *
  * Returns: SOFTPWMSERVO_OK
  *
@@ -222,7 +222,7 @@ int8_t SoftPWMServoPWMRead(uint32_t Pin);
 
  int32_t SoftPWMServoSetFrameTime(uint32_t NewTime);
 /*
- * Sets a new value for how manuy frames between rising edges
+ * Sets a new value for how many frames between rising edges
  * of the servo pins.
  *
  * NewTime: New frame count, in frames
