@@ -50,9 +50,8 @@
 #include "wiring_private.h"
 
 /************ local defines **************************************************/
-//#define EXTRA_ISR_ENTRY_CYCLES              (48)
+#define EXTRA_ISR_ENTRY_CYCLES              (48)
 #define EXTRA_ISR_EXIT_CYCLES               (50)
-#define EXTRA_ISR_ENTRY_CYCLES              (0)
 
 /************ local prototypes ***********************************************/
 uint32_t HandlePWMServo(uint32_t count);     // Can't be static because we pass it in to attach()
@@ -341,12 +340,7 @@ uint32_t HandlePWMServo(uint32_t CurrentCount)
     static ChanType * CurChanP = NULL;      // Pointer to the current channel we're operating on
     bool DoItAgain = false;                 // True if we don't have time to leave the ISR and come back in
     uint32_t NextTimeAcc = CurrentCount;    // Records the sum of NextTime values while we stay in the do-while loop
-	uint32_t TempCoreTimer;					// Hold current core timer value so only one read is necessary
-
-	LATDbits.LATD8 = 1;
-	LATDbits.LATD9 = 1;
-	TRISDbits.TRISD8 = 0;
-	TRISDbits.TRISD9 = 0;
+    uint32_t TempCoreTimer;                 // Hold current core timer value so only one read is necessary
     
     // This do-while loop keeps us inside this function as long as there are
     // edges to process. Only once we have enough time to leave and get back
@@ -528,32 +522,27 @@ uint32_t HandlePWMServo(uint32_t CurrentCount)
         // off the OldPeriod from our current CoreTimer value. This subtraction will
         // eliminate problems where adding NextTimeAcc rolls OldPeriod over, or where
         // the CoreTimer has rolled over from OldPeriod.
-		TempCoreTimer = readCoreTimer();
-		if ((NextTimeAcc - TempCoreTimer) <= EXTRA_ISR_EXIT_CYCLES)
-		{
-			DoItAgain = true;
-			// We need to wait until the time when we _would_ have actually let the
-			// CoreTimer fire has come and gone. We also put a fudge factor in here to
-			// simulate the number of cycles necessary to get into the ISR and to the 
-			// point where the top of the do-while loop starts executing.
-			while(readCoreTimer() < (NextTimeAcc + EXTRA_ISR_ENTRY_CYCLES))
-			{
-			}
-		}
-		else
-		{
-			DoItAgain = false;
-		}
-		LATDbits.LATD9 = !LATDbits.LATD9;
-	}
+        TempCoreTimer = readCoreTimer();
+        if ((NextTimeAcc - TempCoreTimer) <= EXTRA_ISR_EXIT_CYCLES)
+        {
+            DoItAgain = true;
+            // We need to wait until the time when we _would_ have actually let the
+            // CoreTimer fire has come and gone. We also put a fudge factor in here to
+            // simulate the number of cycles necessary to get into the ISR and to the 
+            // point where the top of the do-while loop starts executing.
+            while(readCoreTimer() < (NextTimeAcc + EXTRA_ISR_ENTRY_CYCLES))
+            {
+            }
+        }
+        else
+        {
+            DoItAgain = false;
+        }
+    }
     // We will continue to stay in this loop (which encompasses almost the entire function)
     // until our next edge (PWM or 1ms) is far enough in the future that we can spend the
     // cycles leaving the ISR and coming back in again.
-    while (DoItAgain);
-
-	LATDbits.LATD8 = 0;
-	LATDbits.LATD9 = 0;
-    
+    while (DoItAgain);    
 
     // Return 0 so we don't run the 1ms 'stuff' in the main Core Timer ISR, or 1
     // so that we do (this is set only once, to a 1, if we have the 1ms tick
