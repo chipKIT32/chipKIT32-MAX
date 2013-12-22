@@ -338,6 +338,13 @@ extern const uint8_t	external_int_to_digital_pin_PGM[];
 #define	_DSPI0_IPL			_SPI2_IPL_IPC
 #define	_DSPI0_SPL			_SPI2_SPL_IPC
 
+#define _DSPI0_MISO_IN      PPS_IN_SDI2
+#define _DSPI0_MISO_PIN     0
+#define _DSPI0_MOSI_OUT     PPS_OUT_SDO2
+#define _DSPI0_MOSI_PIN     6
+
+// Disabled until I work out the best pins to use - Majenko
+#if 0
 #define	_DSPI1_BASE			_SPI1_BASE_ADDRESS
 #define	_DSPI1_ERR_IRQ		_SPI1_ERR_IRQ
 #define	_DSPI1_RX_IRQ		_SPI1_RX_IRQ
@@ -346,6 +353,7 @@ extern const uint8_t	external_int_to_digital_pin_PGM[];
 #define	_DSPI1_IPL_ISR		_SPI1_IPL_ISR
 #define	_DSPI1_IPL			_SPI1_IPL_IPC
 #define	_DSPI1_SPL			_SPI1_SPL_IPC
+#endif
 
 /* ------------------------------------------------------------ */
 /*					I2C Port Declarations						*/
