@@ -41,9 +41,13 @@ class TwoWire
     static void (*user_onReceive)(int);
     static void onRequestService(void);
     static void onReceiveService(uint8_t*, int);
+
+    static uint32_t beginCount;
+
   public:
     TwoWire();
     void begin();
+    void end();
     void begin(uint8_t);
     void begin(int);
     void beginTransmission(uint8_t);
@@ -51,10 +55,14 @@ class TwoWire
     uint8_t endTransmission(void);
     uint8_t requestFrom(uint8_t, uint8_t);
     uint8_t requestFrom(int, int);
-    void send(uint8_t);
-    void send(uint8_t*, uint8_t);
-    void send(int);
-    void send(char*);
+    void __attribute__((deprecated("Use write() instead"))) send(uint8_t);
+    void __attribute__((deprecated("Use write() instead"))) send(uint8_t*, uint8_t);
+    void __attribute__((deprecated("Use write() instead"))) send(int);
+    void __attribute__((deprecated("Use write() instead"))) send(char*);
+    int write(uint8_t);
+    int write(uint8_t*, uint8_t);
+    int write(int);
+    int write(char*);
     uint8_t available(void);
     uint8_t receive(void);
     void onReceive( void (*)(int) );
