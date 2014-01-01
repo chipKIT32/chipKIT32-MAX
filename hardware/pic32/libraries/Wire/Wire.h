@@ -24,6 +24,9 @@
 
 #define BUFFER_LENGTH 32
 
+// Uncomment this to enable the end function
+//#define ENABLE_END 1
+
 class TwoWire
 {
   private:
@@ -47,7 +50,9 @@ class TwoWire
   public:
     TwoWire();
     void begin();
+#ifdef ENABLE_END
     void end();
+#endif
     void begin(uint8_t);
     void begin(int);
     void beginTransmission(uint8_t);

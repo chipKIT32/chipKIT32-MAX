@@ -88,6 +88,10 @@ void TwoWire::begin(uint8_t address)
 // The end function is a non-standard function which is intended to mirror the end function
 // of the SPI and DSPI libraries.  It decrements the open counter and, when zero, will
 // (eventually) disable the I2C interface.  This is yet to be completed.
+//
+// Until it is completed this is an option function enabled in the Wire.h header file.
+
+#ifdef ENABLE_END
 void TwoWire::end() {
     if (beginCount == 0) {
         return;
@@ -99,6 +103,7 @@ void TwoWire::end() {
         // That's not something I can delve into right now.
     }
 }
+#endif
 
 void TwoWire::begin(int address)
 {
