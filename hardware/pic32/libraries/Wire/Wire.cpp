@@ -57,6 +57,10 @@ TwoWire::TwoWire()
 
 void TwoWire::begin(void)
 {
+    // This will protect the code from being called more than once.
+    // Not only will this work around the multipl twi_init bug, but
+    // it also protects the buffer index and length static variables
+    // from being reset by a subsequent call to Wire.begin().
     beginCount++;
     if (beginCount == 1) { // First init
         rxBufferIndex = 0;
@@ -72,6 +76,8 @@ void TwoWire::begin(void)
 void TwoWire::begin(uint8_t address)
 {
     begin();
+    // Likewise, in the other begin function, this will prevent
+    // the attach events being called more than once.
     if (beginCount == 1) { // First init
         twi_setAddress(address);
         twi_attachSlaveTxEvent(onRequestService);
@@ -79,6 +85,9 @@ void TwoWire::begin(uint8_t address)
     }
 }
 
+// The end function is a non-standard function which is intended to mirror the end function
+// of the SPI and DSPI libraries.  It decrements the open counter and, when zero, will
+// (eventually) disable the I2C interface.  This is yet to be completed.
 void TwoWire::end() {
     if (beginCount == 0) {
         return;
