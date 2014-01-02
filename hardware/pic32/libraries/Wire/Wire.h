@@ -17,6 +17,26 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
+/* 
+ * Wire library BUGS
+ * =================
+ *
+ * Multiple init bug - bperrybap
+ * -----------------------------
+ * What I saw is that there is some sort of h/w initialization issue in the twi_init() code.
+ * I tracked it down to the twi_init() function down in the pic32 libraries/Wire/utility/twi.c
+ * Here is the line that creates the issue:
+ * 
+ * // Enable the interrupt controller and turn on clock stretching.
+ * ptwi->ixCon.reg = (1 << _I2CCON_ON) | (1 << _I2CCON_STREN);
+ * 
+ * But it is more complex than just that line.
+ * 
+ * The system really doesn't lock up there, as the twi_init() function does return.
+ * It gets stuck on future Wire calls.
+ */
+
+
 /*
  * Wire library TODO List
  * ======================
@@ -25,7 +45,7 @@
  * causes the I2C interface to lock up, and all subsequent transfers will
  * cause the system to freeze waiting for transfers to complete.  Armour
  * code has been added to circumvent the problem, but a proper investigation
- * needs to be done into why.
+ * needs to be done into why (see above).
  *
  * The armor code needs to have a bus deconfiguration routine written to
  * reset the I2C bus to a clean state (as it was before begin was called)
