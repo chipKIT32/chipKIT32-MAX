@@ -17,6 +17,22 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
+/*
+ * Wire library TODO List
+ * ======================
+ *
+ * There is a major flaw in the twi_init function which, if called twice,
+ * causes the I2C interface to lock up, and all subsequent transfers will
+ * cause the system to freeze waiting for transfers to complete.  Armour
+ * code has been added to circumvent the problem, but a proper investigation
+ * needs to be done into why.
+ *
+ * The armor code needs to have a bus deconfiguration routine written to
+ * reset the I2C bus to a clean state (as it was before begin was called)
+ * so that the whole module can be disabled any time and re-enabled cleanly
+ * later.
+ */
+
 #ifndef TwoWire_h
 #define TwoWire_h
 
