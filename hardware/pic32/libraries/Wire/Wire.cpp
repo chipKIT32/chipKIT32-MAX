@@ -45,6 +45,8 @@ uint8_t TwoWire::transmitting = 0;
 void (*TwoWire::user_onRequest)(void);
 void (*TwoWire::user_onReceive)(int);
 
+uint32_t TwoWire::beginCount = 0;
+
 // Constructors ////////////////////////////////////////////////////////////////
 
 TwoWire::TwoWire()
@@ -55,22 +57,53 @@ TwoWire::TwoWire()
 
 void TwoWire::begin(void)
 {
-  rxBufferIndex = 0;
-  rxBufferLength = 0;
+    // This will protect the code from being called more than once.
+    // Not only will this work around the multipl twi_init bug, but
+    // it also protects the buffer index and length static variables
+    // from being reset by a subsequent call to Wire.begin().
+    beginCount++;
+    if (beginCount == 1) { // First init
+        rxBufferIndex = 0;
+        rxBufferLength = 0;
 
-  txBufferIndex = 0;
-  txBufferLength = 0;
+        txBufferIndex = 0;
+        txBufferLength = 0;
 
-  twi_init((p32_i2c *)_TWI_BASE, _TWI_BUS_IRQ, _TWI_SLV_IRQ, _TWI_MST_IRQ, _TWI_VECTOR);
+        twi_init((p32_i2c *)_TWI_BASE, _TWI_BUS_IRQ, _TWI_SLV_IRQ, _TWI_MST_IRQ, _TWI_VECTOR);
+    }
 }
 
 void TwoWire::begin(uint8_t address)
 {
-  begin();
-  twi_setAddress(address);
-  twi_attachSlaveTxEvent(onRequestService);
-  twi_attachSlaveRxEvent(onReceiveService);
+    begin();
+    // Likewise, in the other begin function, this will prevent
+    // the attach events being called more than once.
+    if (beginCount == 1) { // First init
+        twi_setAddress(address);
+        twi_attachSlaveTxEvent(onRequestService);
+        twi_attachSlaveRxEvent(onReceiveService);
+    }
 }
+
+// The end function is a non-standard function which is intended to mirror the end function
+// of the SPI and DSPI libraries.  It decrements the open counter and, when zero, will
+// (eventually) disable the I2C interface.  This is yet to be completed.
+//
+// Until it is completed this is an option function enabled in the Wire.h header file.
+
+#ifdef ENABLE_END
+void TwoWire::end() {
+    if (beginCount == 0) {
+        return;
+    }
+
+    beginCount--;
+    if (beginCount == 0) {
+        // We need code in here to undo whatever begin() does.
+        // That's not something I can delve into right now.
+    }
+}
+#endif
 
 void TwoWire::begin(int address)
 {
@@ -125,61 +158,68 @@ uint8_t TwoWire::endTransmission(void)
   return ret;
 }
 
+
 // must be called in:
 // slave tx event callback
 // or after beginTransmission(address)
-void TwoWire::send(uint8_t data)
+int TwoWire::write(uint8_t data)
 {
-  if(transmitting){
-  // in master transmitter mode
-    // don't bother if buffer is full
-    if(txBufferLength >= BUFFER_LENGTH){
-      return;
+    if(transmitting) {
+        // in master transmitter mode
+        // don't bother if buffer is full
+        if(txBufferLength >= BUFFER_LENGTH){
+            return 1;
+        }
+        // put byte in tx buffer
+        txBuffer[txBufferIndex] = data;
+        ++txBufferIndex;
+        // update amount in buffer   
+        txBufferLength = txBufferIndex;
+    } else {
+        // in slave send mode
+        // reply to master
+        twi_transmit(&data, 1);
     }
-    // put byte in tx buffer
-    txBuffer[txBufferIndex] = data;
-    ++txBufferIndex;
-    // update amount in buffer   
-    txBufferLength = txBufferIndex;
-  }else{
-  // in slave send mode
-    // reply to master
-    twi_transmit(&data, 1);
-  }
+    return 1;
 }
+void TwoWire::send(uint8_t data) { write(data); }
 
 // must be called in:
 // slave tx event callback
 // or after beginTransmission(address)
-void TwoWire::send(uint8_t* data, uint8_t quantity)
+int TwoWire::write(uint8_t* data, uint8_t quantity)
 {
-  if(transmitting){
-  // in master transmitter mode
-    for(uint8_t i = 0; i < quantity; ++i){
-      send(data[i]);
+    if(transmitting){
+        // in master transmitter mode
+        for(uint8_t i = 0; i < quantity; ++i){
+            write(data[i]);
+        }
+    } else {
+        // in slave send mode
+        // reply to master
+        twi_transmit(data, quantity);
     }
-  }else{
-  // in slave send mode
-    // reply to master
-    twi_transmit(data, quantity);
-  }
+    return 1;
 }
+void TwoWire::send(uint8_t* data, uint8_t quantity) { write(data, quantity); }
 
 // must be called in:
 // slave tx event callback
 // or after beginTransmission(address)
-void TwoWire::send(char* data)
+int TwoWire::write(char* data)
 {
-  send((uint8_t*)data, strlen(data));
+    return write((uint8_t*)data, strlen(data));
 }
+void TwoWire::send(char* data) { write(data); }
 
 // must be called in:
 // slave tx event callback
 // or after beginTransmission(address)
-void TwoWire::send(int data)
+int TwoWire::write(int data)
 {
-  send((uint8_t)data);
+    return write((uint8_t)data);
 }
+void TwoWire::send(int data) { write(data); }
 
 // must be called in:
 // slave rx event callback
