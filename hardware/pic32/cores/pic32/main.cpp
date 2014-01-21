@@ -32,6 +32,8 @@
 //*					to loop().
 //************************************************************************
 
+//!!! This section is a read only section !!!
+
 #define OPT_SYSTEM_INTERNAL
 #include <System_Defs.h>
 
