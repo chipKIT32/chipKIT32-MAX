@@ -45,7 +45,7 @@
 #endif
 
 #ifndef CDCACM_SER
-#define CDCACM_SER "BURxxx"
+#define CDCACM_SER ""
 #endif
 
 // We have allocated 8 PIDs to you from A660 to A667 (hex).
