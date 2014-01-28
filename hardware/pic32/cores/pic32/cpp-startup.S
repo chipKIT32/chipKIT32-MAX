@@ -33,15 +33,48 @@
  *
  ********************************************************************/
  
-#include <p32xxxx.h>
-#ifdef __LIBBUILD__
-   .file 1 "crt0.S"
-   .loc 1 0
+#include <xc.h>
+#include <cp0defs.h>
+
+#if !defined(__XC32_VERSION)
+#define USE_OLD_INIT
+#define USE_OLD_DOTSECTION
 #endif
+
+#if (__XC32_VERSION > 1000) && !defined(CPP_INIT)
+#define CPP_INIT
+#endif
+
+#if defined (PIC32MZ)
+# ifndef PIC32_SRS_SET_COUNT
+#  define PIC32_SRS_SET_COUNT 8
+# endif
+# ifndef INIT_L1_CACHE
+#  define INIT_L1_CACHE 1
+# endif
+# ifndef INIT_MMU_MZ_FIXED
+#  define INIT_MMU_MZ_FIXED 1
+# endif
+# ifndef INIT_DSPR2
+#  define INIT_DSPR2 1
+# endif
+# ifndef INIT_SSX
+#  define INIT_SSX 1
+# endif
+#else
+# define PIC32_SRS_SET_COUNT 2
+#endif
+
+
         ##################################################################
         # Entry point of the entire application
         ##################################################################
+#if defined(USE_OLD_DOTSECTION)
         .section .reset,"ax",@progbits
+#else
+        .section .reset,code
+#endif
+
         .set noreorder
         .ent _reset
 _reset:
@@ -55,7 +88,12 @@ _reset:
         ##################################################################
         # Startup code
         ##################################################################
+#if defined(USE_OLD_DOTSECTION)
         .section .startup,"ax",@progbits
+#else
+        .section .startup,code
+#endif
+
         .set noreorder
         .ent _startup
 _startup:
@@ -126,7 +164,8 @@ _bss_init:
 _bss_check:
         bltu    t0,t1,_bss_init
         nop
-        
+                
+#if defined(USE_OLD_INIT)
         ##################################################################
         # Copy initialized data from program flash to data memory
         #   src=_data_image_begin dst=_data_begin stop=_data_end
@@ -187,6 +226,85 @@ _ramfunc_check:
         sw      t1,0(t2)
 _ramfunc_done:
 
+#else
+        ##################################################################
+        # Initialize data using the linker-generated .dinit table
+        ##################################################################
+        .equiv FMT_CLEAR,0
+        .equiv FMT_COPY,1
+_dinit_init:
+        la      t0,_dinit_addr
+
+#define SRC t0
+#define DST t1
+#define LEN t2
+#define FMT t3
+
+0:      lw      DST,0(SRC)
+        beqz    DST,9f
+        addu    SRC,4
+        lw      LEN,0(SRC)
+        addu    SRC,4
+        lw      FMT,0(SRC)
+        beq     FMT,$0,_dinit_clear
+        addu    SRC,4
+
+_dinit_copy:
+        lbu     t4,0(SRC)
+        subu    LEN,1
+        addu    SRC,1
+        sb      t4,0(DST)
+        bne     LEN,$0,_dinit_copy
+        addu    DST,1
+
+        b       _dinit_end
+        nop
+
+_dinit_clear:
+        sb      $0,(DST)
+        subu    LEN,1
+        bne     LEN,$0,_dinit_clear
+        addu    DST,1
+
+_dinit_end:
+        addu    SRC,3
+        addiu   LEN,$0,0xFFFFFFFC
+        and     SRC,LEN,SRC
+        lw      DST,0(SRC)
+        bne     DST,$0,0b
+        nop
+9:
+
+        ##################################################################
+        # If there are no RAM functions, skip the next section --
+        # initializing bus matrix registers.
+        ##################################################################
+        la      t1,_ramfunc_begin
+        beqz    t1,_ramfunc_done
+        nop
+
+#if defined(INIT_SSX)
+  /* TODO */
+#else /* Use BMX */
+        ##################################################################
+        # Initialize bus matrix registers if RAM functions exist in the
+        # application
+        ##################################################################
+        la      t1,_bmxdkpba_address
+        la      t2,BMXDKPBA
+        sw      t1,0(t2)
+        la      t1,_bmxdudba_address
+        la      t2,BMXDUDBA
+        sw      t1,0(t2)
+        la      t1,_bmxdupba_address
+        la      t2,BMXDUPBA
+        sw      t1,0(t2)
+#endif /* INIT_SSX */
+
+_ramfunc_done:
+
+#endif  /* OLD_INIT */
+
         ##################################################################
         # Initialize CP0 registers
         ##################################################################
@@ -237,14 +355,29 @@ _ramfunc_done:
         # - Error level is normal <ERL = 0>
         # - Exception level is normal <EXL = 0>
         # - Interrupts are disabled <IE = 0>
+        # - DSPr2 ASE is enabled for devices that support it <MX = 1>
         ##################################################################
         mfc0    t0,_CP0_CONFIG
         ext     t1,t0,22,1              # Extract UDI from Config register
         sll     t1,t1,17                # Move UDI to Status.CEE location
         mfc0    t0,_CP0_STATUS
         and     t0,t0,0x00580000        # Preserve SR, NMI, and BEV
+#if defined(INIT_DSPR2)
+        li      t2, 0x01000000          # Set the Status.MX bit to enable DSP
+        or      t0,t2,t0
+#endif
         or      t0,t1,t0                # Include Status.CEE (from UDI)
         mtc0    t0,_CP0_STATUS
+
+        ##################################################################
+        # Initialize CONFIG register
+        ##################################################################
+#if defined(INIT_L1_CACHE)
+	mfc0    t0,_CP0_CONFIG
+	li      t1,0x00000003
+	or      t0,t1,t0
+	mtc0    t0,_CP0_CONFIG
+#endif
 
         ##################################################################
         # Call the "on bootstrap" procedure
@@ -273,14 +406,19 @@ _ramfunc_done:
         jr      t0
         nop
 
-        
         .end _startup
 
         ##################################################################
         # Boot Exception Vector Handler
         # Jumps to _bootstrap_exception_handler
         ##################################################################
+        
+#if defined(USE_OLD_DOTSECTION)
         .section .bev_handler,"ax",@progbits
+#else
+        .section .bev_handler,code
+#endif
+
         .set noreorder
         .ent _bev_exception
 _bev_exception:
@@ -294,7 +432,13 @@ _bev_exception:
         # General Exception Vector Handler
         # Jumps to _general_exception_handler
         ##################################################################
+        
+#if defined(USE_OLD_DOTSECTION)
         .section .gen_handler,"ax",@progbits
+#else
+        .section .gen_handler,code
+#endif
+
         .set noreorder
         .ent _gen_exception
 _gen_exception:
@@ -309,9 +453,18 @@ _gen_exception:
         .ent _main_entry
 _main_entry:
 
-	# call .init section to run constructors etc
-        jal     _init
+#if defined(CPP_INIT)
+        .weak _init
+        # call .init section to run constructors etc
+        lui	a0,%hi(_init)
+        addiu	sp,sp,-24
+        addiu	a0,a0,%lo(_init)
+        beq	a0,$0,2f
+        sw	$31,20(sp)	 #,
+        jalr	a0
         nop
+2:
+#endif
         and     a0,a0,0
         and     a1,a1,0
         
@@ -324,8 +477,8 @@ _main_entry:
         ##################################################################
         # Call exit
         ##################################################################
-        jal    exit
-        nop
+        #jal    exit
+        #nop
 
         ##################################################################
         # Just in case, go into infinite loop

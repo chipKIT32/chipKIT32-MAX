@@ -540,35 +540,29 @@ SECTIONS
     . = ALIGN(4) ;
   }>kseg0_program_mem
 
-  .preinit_array    :
-  {
-    KEEP (*(.preinit_array))
-    . = ALIGN(4) ;
-  }>kseg0_program_mem
-
   /* Read-only sections */
   .header_info ALIGN(4) :
   {
     _image_header_info = . ;
-    LONG(SIZEOF(.header_info))          /* size of this structure       */
-    LONG(0xFFFFFFFF)                    /* bootloader version           */
-    KEEP(*(.mpide_version))             /* MPIDE build version          */
-    LONG(0xFFFFFFFF)                    /* booloader capabilities       */
-    LONG(0xFFFFFFFF)                    /* VID and PID                  */
-    LONG(_IMAGE_TYPE)                   /* image type and options       */
-    LONG(_JUMP_ADDR)                    /* image execution address      */
-    LONG(_ebase_address)                /* image base address           */
-    LONG(_IMAGE_FLASH_SIZE)             /* size of image flash used     */
-    LONG(ORIGIN(kseg0_eeprom_mem))      /* eeprom location              */
-    LONG(LENGTH(kseg0_eeprom_mem))      /* eeprom size                  */   
-    LONG(ORIGIN(configsfrs))            /* config bits location         */
-    LONG(LENGTH(configsfrs))            /* config bits size             */
-    LONG(_ram_header_addr)              /* ram header pointer           */
-    LONG(SIZEOF(.ram_exchange_data))    /* ram Header size              */
-    LONG(0xFFFFFFFF)                    /* what the bootloader skips    */
-    LONG(_original_vector_0)            /* the original vector 0        */
-    LONG(_new_vector_0)                 /* new/indirect vector 0        */
-    LONG(_vector_spacing << 5)          /* spacing of both org/new vec  */
+    LONG(SIZEOF(.header_info))                 /* size of this structure       */
+    LONG(0xFFFFFFFF)                           /* bootloader version           */
+    KEEP(*(.mpide_version *.mpide_version.*))  /* MPIDE build version          */
+    LONG(0xFFFFFFFF)                           /* booloader capabilities       */
+    LONG(0xFFFFFFFF)                           /* VID and PID                  */
+    LONG(_IMAGE_TYPE)                          /* image type and options       */
+    LONG(_JUMP_ADDR)                           /* image execution address      */
+    LONG(_ebase_address)                       /* image base address           */
+    LONG(_IMAGE_FLASH_SIZE)                    /* size of image flash used     */
+    LONG(ORIGIN(kseg0_eeprom_mem))             /* eeprom location              */
+    LONG(LENGTH(kseg0_eeprom_mem))             /* eeprom size                  */   
+    LONG(ORIGIN(configsfrs))                   /* config bits location         */
+    LONG(LENGTH(configsfrs))                   /* config bits size             */
+    LONG(_ram_header_addr)                     /* ram header pointer           */
+    LONG(SIZEOF(.ram_exchange_data))           /* ram Header size              */
+    LONG(0xFFFFFFFF)                           /* what the bootloader skips    */
+    LONG(_original_vector_0)                   /* the original vector 0        */
+    LONG(_new_vector_0)                        /* new/indirect vector 0        */
+    LONG(_vector_spacing << 5)                 /* spacing of both org/new vec  */
     _image_header_info_end = . ;
   } > kseg0_program_mem
   ASSERT (SIZEOF(.header_info) == 76, "MPIDE Version not specfied correctly")
@@ -602,6 +596,17 @@ SECTIONS
     . = ALIGN(4) ;
   } >kseg0_program_mem
 
+  .eh_frame_hdr   :
+  {
+    *(.eh_frame_hdr)
+  } >kseg0_program_mem
+    . = ALIGN(4) ;
+  .eh_frame   : ONLY_IF_RO
+  {
+    KEEP (*(.eh_frame))
+  } >kseg0_program_mem
+    . = ALIGN(4) ;
+
   .dbg_data ORIGIN(kseg1_data_mem) (NOLOAD) :
   {
     . += (DEFINED (_DEBUGGER) ? 0x200 : 0x0);
@@ -612,6 +617,22 @@ SECTIONS
     _ram_header_addr = . ;
     . += 8 ;
   } >kseg1_data_mem
+
+  .jcr   :
+  {
+    KEEP (*(.jcr))
+    . = ALIGN(4) ;
+  } >kseg1_data_mem
+  .eh_frame    : ONLY_IF_RW
+  {
+    KEEP (*(.eh_frame))
+  } >kseg1_data_mem
+    . = ALIGN(4) ;
+  .gcc_except_table    : ONLY_IF_RW
+  {
+    *(.gcc_except_table .gcc_except_table.*)
+  } >kseg1_data_mem
+    . = ALIGN(4) ;
 
   /* Persistent data */
   .persist ALIGN(4) (NOLOAD) :
@@ -630,12 +651,12 @@ SECTIONS
   .data  _protected_end :
   {
     _data_begin = . ;
-    *(.data .data.* .gnu.linkonce.d.*)
+    *( .gnu.linkonce.d.*)
     KEEP (*(.gnu.linkonce.d.*personality*))
 
     *(.data1)
     . = ALIGN(4) ;
-  } >kseg1_data_mem AT>kseg0_program_mem
+  } >kseg1_data_mem
 
   _data_image_begin = LOADADDR(.data) ;
   . = .;
@@ -653,21 +674,21 @@ SECTIONS
   .sdata ALIGN(4)   :
   {
     _sdata_begin = . ;
-    *(.sdata .sdata.* .gnu.linkonce.s.*)
+    *(.gnu.linkonce.s.*)
     . = ALIGN(4) ;
     _sdata_end = . ;
-  } >kseg1_data_mem AT>kseg0_program_mem
+  } >kseg1_data_mem 
 
   .lit8           :
   {
     *(.lit8)
     . = ALIGN(4) ;
-  } >kseg1_data_mem AT>kseg0_program_mem
+  } >kseg1_data_mem 
 
   .lit4           :
   {
     *(.lit4)
-  } >kseg1_data_mem AT>kseg0_program_mem
+  } >kseg1_data_mem
 
   . = ALIGN (4) ;
   _data_end = . ;
@@ -700,23 +721,6 @@ SECTIONS
   _end = . ;
   _bss_end = . ;
 
-  /* Heap allocating takes a chunk of memory following BSS */
-  .heap ALIGN(8) :
-  {
-    _heap = . ;
-    . += _min_heap_size ;
-    . = ALIGN(8);
-  } >kseg1_data_mem
-
-  /* Stack allocation follows the heap */
-  .stack ALIGN(8) :
-  {
-    _splim = . ;
-    _SPLIM = . ;
-    . += _min_stack_size ;
-    . = ALIGN(8);
-  } >kseg1_data_mem
-
   /*
    * RAM functions go at the end of our stack and heap allocation.
    * Alignment of 2K required by the boundary register (BMXDKPBA).
@@ -734,18 +738,6 @@ SECTIONS
   _bmxdkpba_address = _ramfunc_begin - ORIGIN(kseg1_data_mem) ;
   _bmxdudba_address = LENGTH(kseg1_data_mem) ;
   _bmxdupba_address = LENGTH(kseg1_data_mem) ;
-  /*
-   * The actual top of stack should include the gap between the stack
-   * section and the beginning of the .ramfunc section caused by the
-   * alignment of the .ramfunc section minus 1 word.  If RAM functions
-   * do not exist, then the top of the stack should point to the end of
-   * the data memory.
-   */
-  _stack = (_ramfunc_length > 0)
-         ? _ramfunc_begin - 4
-         : ORIGIN(kseg1_data_mem) + LENGTH(kseg1_data_mem) ;
-  ASSERT((_min_stack_size + _min_heap_size) <= (_stack - _heap),
-    "Not enough space to allocate both stack and heap.  Reduce heap and/or stack size.")
     /* The .pdr section belongs in the absolute section */
     /DISCARD/ : { *(.pdr) }
     /* We don't load .reginfo onto the target, so don't locate it
@@ -798,5 +790,7 @@ SECTIONS
   .mdebug.eabi32 : { KEEP(*(.mdebug.eabi32)) }
   .mdebug.eabi64 : { KEEP(*(.mdebug.eabi64)) }
   /DISCARD/ : { *(.rel.dyn) }
-  /DISCARD/ : { *(.note.GNU-stack) *(.gnu_debuglink) *(.gnu.lto_*) }
+  .gnu.attributes 0 : { KEEP (*(.gnu.attributes)) }
+  /DISCARD/ : { *(.note.GNU-stack) }
+  /DISCARD/ : { *(.note.GNU-stack) *(.gnu_debuglink) *(.gnu.lto_*) *(.discard) }
 }
