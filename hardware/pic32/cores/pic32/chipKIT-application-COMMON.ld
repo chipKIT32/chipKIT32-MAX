@@ -445,7 +445,8 @@ SECTIONS
     KEEP(*(.vector_63))
   } > exception_mem
   ASSERT (_vector_spacing == 0 || SIZEOF(.vector_63) <= (_vector_spacing << 5), "function at exception vector 63 too large")
-  .startup :
+  
+  .startup  :
   {
     KEEP(*(.startup))
   } > kseg0_program_mem
@@ -455,12 +456,12 @@ SECTIONS
   {
     _text_begin = . ;
 
-    *(.text .stub .text.* .gnu.linkonce.t.*)
-    KEEP (*(.text.*personality*))
-    /* .gnu.warning sections are handled specially by elf32.em.  */
-    *(.gnu.warning)
+    *(.stub .gnu.linkonce.t.*)
     *(.mips16.fn.*)
     *(.mips16.call.*)
+    /* .gnu.warning sections are handled specially by elf32.em.  */
+    *(.gnu.warning)
+
     . = ALIGN(4) ;
     _text_end = . ;
   } >kseg0_program_mem =0
@@ -569,7 +570,7 @@ SECTIONS
 
   .rodata  ALIGN(4) :
   {
-    *(.rodata .rodata.* .gnu.linkonce.r.*)
+    *(.gnu.linkonce.r.*)
     *(.rodata1)
     . = ALIGN(4) ;
   } >kseg0_program_mem
@@ -648,24 +649,21 @@ SECTIONS
   /* If this is a bootloader, than skip around the protected memory and don't place anything there */
   _protected_end = ((_IMAGE_TYPE & (_imageSplitFlashBootloader | _imageProgramFlashBootloader | _imageBootFlashBootloader)) != 0) ? (ORIGIN(kseg1_data_mem) + 0x600) : . ;
 
-  .data  _protected_end :
+  .data   :
   {
-    _data_begin = . ;
     *( .gnu.linkonce.d.*)
-    KEEP (*(.gnu.linkonce.d.*personality*))
-
+    SORT(CONSTRUCTORS)
     *(.data1)
     . = ALIGN(4) ;
   } >kseg1_data_mem
-
-  _data_image_begin = LOADADDR(.data) ;
   . = .;
   _gp = ALIGN(16) + 0x7ff0;
-
-  .got ALIGN(4)   :
+  .got ALIGN(4) :
   {
-     *(.got.plt) *(.got)
-  } >kseg1_data_mem AT>kseg0_program_mem
+    *(.got.plt) *(.got)
+    . = ALIGN(4) ;
+  } >kseg1_data_mem
+
   /*
    * We want the small data sections together, so single-instruction offsets
    * can access them all, and initialized data all before uninitialized, so
@@ -674,7 +672,7 @@ SECTIONS
   .sdata ALIGN(4)   :
   {
     _sdata_begin = . ;
-    *(.gnu.linkonce.s.*)
+    *(.sdata .sdata.* .gnu.linkonce.s.*)
     . = ALIGN(4) ;
     _sdata_end = . ;
   } >kseg1_data_mem 
@@ -707,14 +705,12 @@ SECTIONS
   .bss   :
   {
     *(.dynbss)
-    *(.bss .bss.* .gnu.linkonce.b.*)
+    *(.gnu.linkonce.b.*)
     *(COMMON)
-    /*
-     * Align here to ensure that the .bss section occupies space up to
-     * _end.  Align after .bss to ensure correct alignment even if the
-     * .bss section disappears because there are no input sections.
-     */
-    . = ALIGN(4) ;
+   /* Align here to ensure that the .bss section occupies space up to
+      _end.  Align after .bss to ensure correct alignment even if the
+      .bss section disappears because there are no input sections. */
+   . = ALIGN(. != 0 ? 4 : 1);
   } >kseg1_data_mem
 
   . = ALIGN(4) ;
@@ -722,28 +718,37 @@ SECTIONS
   _bss_end = . ;
 
   /*
+   *  The heap and stack are best-fit allocated by the linker after other
+   *  data and bss sections have been allocated.
+   */
+  /*
    * RAM functions go at the end of our stack and heap allocation.
    * Alignment of 2K required by the boundary register (BMXDKPBA).
+   *
+   * RAM functions are now allocated by the linker. The linker generates
+   * _ramfunc_begin and _bmxdkpba_address symbols depending on the
+   * location of RAM functions.
    */
-  .ramfunc ALIGN(2K) :
-  {
-    _ramfunc_begin = . ;
-    *(.ramfunc  .ramfunc.*)
-    . = ALIGN(4) ;
-    _ramfunc_end = . ;
-  } >kseg1_data_mem AT>kseg0_program_mem
-
-  _ramfunc_image_begin = LOADADDR(.ramfunc) ;
-  _ramfunc_length = SIZEOF(.ramfunc) ;
-  _bmxdkpba_address = _ramfunc_begin - ORIGIN(kseg1_data_mem) ;
   _bmxdudba_address = LENGTH(kseg1_data_mem) ;
   _bmxdupba_address = LENGTH(kseg1_data_mem) ;
     /* The .pdr section belongs in the absolute section */
     /DISCARD/ : { *(.pdr) }
+
     /* We don't load .reginfo onto the target, so don't locate it
      * in real memory
      */
     /DISCARD/ : { *(.reginfo) }
+
+  .gptab.sdata : { *(.gptab.data) *(.gptab.sdata) }
+  .gptab.sbss : { *(.gptab.bss) *(.gptab.sbss) }
+  .mdebug.abi32 : { KEEP(*(.mdebug.abi32)) }
+  .mdebug.abiN32 : { KEEP(*(.mdebug.abiN32)) }
+  .mdebug.abi64 : { KEEP(*(.mdebug.abi64)) }
+  .mdebug.abiO64 : { KEEP(*(.mdebug.abiO64)) }
+  .mdebug.eabi32 : { KEEP(*(.mdebug.eabi32)) }
+  .mdebug.eabi64 : { KEEP(*(.mdebug.eabi64)) }
+  .gcc_compiled_long32 : { KEEP(*(.gcc_compiled_long32)) }
+  .gcc_compiled_long64 : { KEEP(*(.gcc_compiled_long64)) }
   /* Stabs debugging sections.  */
   .stab          0 : { *(.stab) }
   .stabstr       0 : { *(.stabstr) }
@@ -752,7 +757,7 @@ SECTIONS
   .stab.index    0 : { *(.stab.index) }
   .stab.indexstr 0 : { *(.stab.indexstr) }
   .comment       0 : { *(.comment) }
-  /* DWARF debug sections.
+  /* DWARF debug sections used by MPLAB X for source-level debugging. 
      Symbols in the DWARF debugging sections are relative to the beginning
      of the section so we begin them at 0.  */
   /* DWARF 1 */
@@ -770,27 +775,18 @@ SECTIONS
   .debug_line     0 : { *(.debug_line) }
   .debug_frame    0 : { *(.debug_frame) }
   .debug_str      0 : { *(.debug_str) }
-  .debug_loc      0  : { *(.debug_loc) }
+  .debug_loc      0 : { *(.debug_loc) }
   .debug_macinfo  0 : { *(.debug_macinfo) }
   /* SGI/MIPS DWARF 2 extensions */
   .debug_weaknames 0 : { *(.debug_weaknames) }
   .debug_funcnames 0 : { *(.debug_funcnames) }
   .debug_typenames 0 : { *(.debug_typenames) }
   .debug_varnames  0 : { *(.debug_varnames) }
-  /* DWARF 3 */
   .debug_pubtypes 0 : { *(.debug_pubtypes) }
   .debug_ranges   0 : { *(.debug_ranges) }
-  .gnu.attributes 0 : { KEEP (*(.gnu.attributes)) }
-  .gptab.sdata : { *(.gptab.data) *(.gptab.sdata) }
-  .gptab.sbss : { *(.gptab.bss) *(.gptab.sbss) }
-  .mdebug.abi32 : { KEEP(*(.mdebug.abi32)) }
-  .mdebug.abiN32 : { KEEP(*(.mdebug.abiN32)) }
-  .mdebug.abi64 : { KEEP(*(.mdebug.abi64)) }
-  .mdebug.abiO64 : { KEEP(*(.mdebug.abiO64)) }
-  .mdebug.eabi32 : { KEEP(*(.mdebug.eabi32)) }
-  .mdebug.eabi64 : { KEEP(*(.mdebug.eabi64)) }
   /DISCARD/ : { *(.rel.dyn) }
   .gnu.attributes 0 : { KEEP (*(.gnu.attributes)) }
   /DISCARD/ : { *(.note.GNU-stack) }
   /DISCARD/ : { *(.note.GNU-stack) *(.gnu_debuglink) *(.gnu.lto_*) *(.discard) }
+
 }
