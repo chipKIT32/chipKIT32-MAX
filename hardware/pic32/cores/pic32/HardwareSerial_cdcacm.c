@@ -186,8 +186,6 @@ static int			gRX_length[NRX];
 static volatile byte			gRX_in;
 static volatile byte			gRX_out;
 
-boolean      gConnected = false;
-
 void setStrings(char *man, char *prod, char *ser) {
     int i;
     int pos = 0;
@@ -280,7 +278,7 @@ void	cdcacm_print(const byte *buffer, int length)
 		
 	// ASSERT(length);
 
-	if (! gCdcacm_attached || !gConnected || (length <= 0))
+	if (! gCdcacm_attached || (length <= 0))
 	{
 		return;
 	}
@@ -420,7 +418,6 @@ static int	cdcacm_control_transfer(struct setup *setup, byte *buffer, int length
 			break;
 		case CDCRQ_SET_CONTROL_LINE_STATE:
 			assert(! (setup->requesttype & 0x80));
-            gConnected = setup->value & 0x01; 
 			length	=	0;
 			break;
 		case CDCRQ_SEND_BREAK:
