@@ -439,6 +439,7 @@ const uint8_t analog_pin_to_channel_PGM[] = {
 */
 
 const uint8_t output_compare_to_digital_pin_PGM[] = {
+	NOT_PPS_PIN,// There is no OC0, so this one needs to be blank
 	PIN_OC1,	// RPB4 (RPB4R = 5)	
 	PIN_OC2,	// RPB8 (RPB8R = 5)
 	PIN_OC3,	// RPB9 (RPB9R = 5)

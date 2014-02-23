@@ -25,7 +25,8 @@
 /*  01/23/2013(KeithV): Modified for CK1 board                          */
 /*  03/26/2013(KeithV): Modified for DP32 board                         */
 /*  06/14/2013(BrianS): Modified for ChipKIT Pi board					*/
-/*																		*/
+/*	02/23/2014(BrianS): Updated so chipKIT PI PWMs work                 */
+/*                                                                      */
 /************************************************************************/
 //*	This library is free software; you can redistribute it and/or
 //*	modify it under the terms of the GNU Lesser General Public
@@ -120,11 +121,11 @@ NOTE: The ChipKIT Pi has two user LEDs
 /*					Timer Pin Declarations						*/
 /* ------------------------------------------------------------ */
 
-#define PIN_OC1		 8      // B15   RPB15R  = 5  
-#define	PIN_OC2		 2      // B8    RPB8R   = 5
-#define	PIN_OC3		 3      // B9    RPB9R   = 5
-#define	PIN_OC4		13      // B2    RPB2R   = 5
-#define	PIN_OC5		 6      // B13   RPB13R  = 6
+#define PIN_OC1		10      // B7    RPB7R   = 5  
+#define	PIN_OC2		 9      // B11   RPB11R  = 5
+#define	PIN_OC3		 8      // B10   RPB10R  = 5
+#define	PIN_OC4		 3      // B13   RPB13R  = 5
+#define	PIN_OC5		 0      // A4    RPA4R   = 6
 
 #define PIN_IC1		 6      // RB13 IC1R = RPB13 = 3
 #define PIN_IC2		11      // B0   IC2R = RPB0  = 2
