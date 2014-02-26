@@ -8,7 +8,7 @@
 /************************************************************************/
 /*  File Description:													*/
 /*																		*/
-/* This file contains the board specific declartions and data structure	*/
+/* This file contains the board specific declarations and data structure	*/
 /* to customize the chipKIT MPIDE for use with a generic board using a	*/
 /* PIC32 part in a 64-pin package.										*/
 /*																		*/
