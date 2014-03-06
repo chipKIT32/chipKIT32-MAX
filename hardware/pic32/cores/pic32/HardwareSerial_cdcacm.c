@@ -106,7 +106,7 @@ static const byte cdcacm_configuration_descriptor[] = {
 	4,			// length
 	0x24,		// abstract control model descriptor
 	0x02,
-	0x00,
+	0x06,
 
 	5,			// length
 	0x24,		// union functional descriptor
