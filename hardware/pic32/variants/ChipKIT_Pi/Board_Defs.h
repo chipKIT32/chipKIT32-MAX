@@ -8,7 +8,7 @@
 /************************************************************************/
 /*  File Description:													*/
 /*																		*/
-/* This file contains the board specific declartions and data structure	*/
+/* This file contains the board specific declarations and data structure*/
 /* to customize the chipKIT MPIDE for use with a ChipKIT PI board using */
 /*																		*/
 /* This code is based on earlier work:									*/
@@ -143,11 +143,11 @@ NOTE: The ChipKIT Pi has two user LEDs
 /*					Interrupt Pin Declarations					*/
 /* ------------------------------------------------------------ */
 
-#define	PIN_INT0	 1      // RB7 non-PPS
-#define	PIN_INT1	 3      // B9  INT1R = RPB9 = 4
-#define PIN_INT2	13      // B2  INT2R = RPB2 = 4
-#define	PIN_INT3	 2      // B8  INT3R = RPB8 = 4
-#define	PIN_INT4	17      // B4  INT4R = RPB4 = 2
+#define	PIN_INT0	11      // RB7 non-PPS
+#define	PIN_INT1	 8      // B10 INT1R = RPB10 = 3
+#define PIN_INT2	 3      // B13 INT2R = RPB13 = 3
+#define	PIN_INT3	 2      // B5  INT3R = RPB5 = 1
+#define	PIN_INT4	 1      // B4  INT4R = RPB4 = 2
 
 /* ------------------------------------------------------------ */
 /*					SPI Pin Declarations						*/
@@ -172,9 +172,9 @@ const static uint8_t SCK  = 13;		// RB14 SCK1    CVREF/AN10/C3INB/RPB14/VBUSON/S
 ** used to map an analog pin number to the corresponding digital
 ** pin number.
 */
-#define	A0		14  // RA0		
+#define	A0		14  // RA0
 #define	A1		15  // RB15
-#define	A4		16  // RB2		
+#define	A4		16  // RB2
 #define	A5		17  // RB3
 
 /* ------------------------------------------------------------ */
@@ -208,7 +208,7 @@ const static uint8_t SCK  = 13;		// RB14 SCK1    CVREF/AN10/C3INB/RPB14/VBUSON/S
 /* ------------------------------------------------------------ */
 /* Macros used to access the port and pin mapping tables.
 ** These are mostly generic, but some of them may be board specific.
-** These perform slightly better as macros compared to inline functions
+** These perform slightly better as macros compared to in-line functions
 */
 #undef digitalPinToAnalog
 #define	digitalPinToAnalog(P) ( digital_pin_to_analog_PGM[P] )
