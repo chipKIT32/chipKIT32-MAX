@@ -65,7 +65,6 @@
 # define PIC32_SRS_SET_COUNT 2
 #endif
 
-
         ##################################################################
         # Entry point of the entire application
         ##################################################################
@@ -84,6 +83,7 @@ _reset:
   
         .end _reset
         .globl _reset
+
 
         ##################################################################
         # Startup code
@@ -123,10 +123,11 @@ _no_nmi:
         ##################################################################
         la      gp,_gp
         
+#if (PIC32_SRS_SET_COUNT == 2)
         ##################################################################
         # Initialize Global Pointer in Shadow Set
         #   The SRSCtl's PSS field must be set to the shadow set in which
-        #   to initialize the global pointer.  Since we only have a
+        #   to initialize the global pointer.  Since we have only a
         #   single shadow set (besides the normal), we will initialize
         #   SRSCtl<PSS> to SRSCtl<HSS>.  We then write the global pointer
         #   to the previous shadow set to ensure that on interrupt, the
@@ -137,8 +138,40 @@ _no_nmi:
         ext     t2,t1,26,4              # to obtain HSS field
         ins     t1,t2,6,4               # Put HSS field
         mtc0    t1,_CP0_SRSCTL          # into SRSCtl<PSS>
+        ehb                             # Clear hazard before using new SRSCTL
         wrpgpr  gp,gp                   # Set global pointer in PSS
         mtc0    t3,_CP0_SRSCTL          # Restore SRSCtl
+        ehb
+
+#elif (PIC32_SRS_SET_COUNT > 2) 
+        ##################################################################
+        # Initialize Global Pointer in Shadow Set(s)
+        #   The SRSCtl PSS field must be set to the shadow set in which
+        #   to initialize the global pointer.  We will initialize
+        #   SRSCtl<PSS> to the number of reg sets and work down to set zero.
+        #   We write the global pointer to the previous shadow set to 
+        #   ensure that on interrupt, the global pointer has been 
+        #   initialized.
+        ##################################################################
+        mfc0    t1,_CP0_SRSCTL          # Read SRSCtl register
+        add     t3,t1,zero              # Save off current SRSCtl
+
+        li      t2,(PIC32_SRS_SET_COUNT-1)
+
+1:      ins     t1,t2,6,4               # Put next shadow set field
+        mtc0    t1,_CP0_SRSCTL          # into SRSCtl<PSS>
+        ehb                             # Clear hazard before using new SRSCTL
+        wrpgpr  gp,gp                   # Set global pointer in PSS
+
+        addiu   t2,t2,-1                # Next lower shadow set
+                                        # Loop for all sets
+        bne     t2,$0,1b                # Down to zero (normal GPR set)
+        nop
+
+        mtc0    t3,_CP0_SRSCTL          # Restore SRSCtl
+        ehb
+
+#endif /* (PIC32_SRS_SET_COUNT > 2) */
 
         ##################################################################
         # Call the "on reset" procedure
@@ -146,6 +179,30 @@ _no_nmi:
         la      t0,_on_reset
         jalr    t0
         nop
+
+#if defined(INIT_MMU_MZ_FIXED)
+        ##################################################################
+        # Initialize TLB for fixed mapping to EBI and SQI
+        ##################################################################
+        .extern __pic32_tlb_init_ebi_sqi
+        la      t0,__pic32_tlb_init_ebi_sqi
+        beq     t0, $0,1f
+        nop
+        jalr    t0
+1:      nop
+#endif
+
+#if defined(INIT_L1_CACHE)
+        ##################################################################
+        # Initialize L1 cache register
+        ##################################################################
+        .extern __pic32_init_cache
+        la      t0,__pic32_init_cache
+        beq     t0, $0,1f
+        nop
+        jalr    t0
+1:      nop
+#endif
 
         ##################################################################
         # Clear uninitialized data sections
