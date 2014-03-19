@@ -445,7 +445,8 @@ SECTIONS
     KEEP(*(.vector_63))
   } > exception_mem
   ASSERT (_vector_spacing == 0 || SIZEOF(.vector_63) <= (_vector_spacing << 5), "function at exception vector 63 too large")
-  .startup :
+  
+  .startup  :
   {
     KEEP(*(.startup))
   } > kseg0_program_mem
@@ -455,12 +456,12 @@ SECTIONS
   {
     _text_begin = . ;
 
-    *(.text .stub .text.* .gnu.linkonce.t.*)
-    KEEP (*(.text.*personality*))
-    /* .gnu.warning sections are handled specially by elf32.em.  */
-    *(.gnu.warning)
+    *(.stub .gnu.linkonce.t.*)
     *(.mips16.fn.*)
     *(.mips16.call.*)
+    /* .gnu.warning sections are handled specially by elf32.em.  */
+    *(.gnu.warning)
+
     . = ALIGN(4) ;
     _text_end = . ;
   } >kseg0_program_mem =0
@@ -540,42 +541,36 @@ SECTIONS
     . = ALIGN(4) ;
   }>kseg0_program_mem
 
-  .preinit_array    :
-  {
-    KEEP (*(.preinit_array))
-    . = ALIGN(4) ;
-  }>kseg0_program_mem
-
   /* Read-only sections */
   .header_info ALIGN(4) :
   {
     _image_header_info = . ;
-    LONG(SIZEOF(.header_info))          /* size of this structure       */
-    LONG(0xFFFFFFFF)                    /* bootloader version           */
-    KEEP(*(.mpide_version))             /* MPIDE build version          */
-    LONG(0xFFFFFFFF)                    /* booloader capabilities       */
-    LONG(0xFFFFFFFF)                    /* VID and PID                  */
-    LONG(_IMAGE_TYPE)                   /* image type and options       */
-    LONG(_JUMP_ADDR)                    /* image execution address      */
-    LONG(_ebase_address)                /* image base address           */
-    LONG(_IMAGE_FLASH_SIZE)             /* size of image flash used     */
-    LONG(ORIGIN(kseg0_eeprom_mem))      /* eeprom location              */
-    LONG(LENGTH(kseg0_eeprom_mem))      /* eeprom size                  */   
-    LONG(ORIGIN(configsfrs))            /* config bits location         */
-    LONG(LENGTH(configsfrs))            /* config bits size             */
-    LONG(_ram_header_addr)              /* ram header pointer           */
-    LONG(SIZEOF(.ram_exchange_data))    /* ram Header size              */
-    LONG(0xFFFFFFFF)                    /* what the bootloader skips    */
-    LONG(_original_vector_0)            /* the original vector 0        */
-    LONG(_new_vector_0)                 /* new/indirect vector 0        */
-    LONG(_vector_spacing << 5)          /* spacing of both org/new vec  */
+    LONG(SIZEOF(.header_info))                 /* size of this structure       */
+    LONG(0xFFFFFFFF)                           /* bootloader version           */
+    KEEP(*(.mpide_version *.mpide_version.*))  /* MPIDE build version          */
+    LONG(0xFFFFFFFF)                           /* booloader capabilities       */
+    LONG(0xFFFFFFFF)                           /* VID and PID                  */
+    LONG(_IMAGE_TYPE)                          /* image type and options       */
+    LONG(_JUMP_ADDR)                           /* image execution address      */
+    LONG(_ebase_address)                       /* image base address           */
+    LONG(_IMAGE_FLASH_SIZE)                    /* size of image flash used     */
+    LONG(ORIGIN(kseg0_eeprom_mem))             /* eeprom location              */
+    LONG(LENGTH(kseg0_eeprom_mem))             /* eeprom size                  */   
+    LONG(ORIGIN(configsfrs))                   /* config bits location         */
+    LONG(LENGTH(configsfrs))                   /* config bits size             */
+    LONG(_ram_header_addr)                     /* ram header pointer           */
+    LONG(SIZEOF(.ram_exchange_data))           /* ram Header size              */
+    LONG(0xFFFFFFFF)                           /* what the bootloader skips    */
+    LONG(_original_vector_0)                   /* the original vector 0        */
+    LONG(_new_vector_0)                        /* new/indirect vector 0        */
+    LONG(_vector_spacing << 5)                 /* spacing of both org/new vec  */
     _image_header_info_end = . ;
   } > kseg0_program_mem
   ASSERT (SIZEOF(.header_info) == 76, "MPIDE Version not specfied correctly")
 
   .rodata  ALIGN(4) :
   {
-    *(.rodata .rodata.* .gnu.linkonce.r.*)
+    *(.gnu.linkonce.r.*)
     *(.rodata1)
     . = ALIGN(4) ;
   } >kseg0_program_mem
@@ -602,6 +597,17 @@ SECTIONS
     . = ALIGN(4) ;
   } >kseg0_program_mem
 
+  .eh_frame_hdr   :
+  {
+    *(.eh_frame_hdr)
+  } >kseg0_program_mem
+    . = ALIGN(4) ;
+  .eh_frame   : ONLY_IF_RO
+  {
+    KEEP (*(.eh_frame))
+  } >kseg0_program_mem
+    . = ALIGN(4) ;
+
   .dbg_data ORIGIN(kseg1_data_mem) (NOLOAD) :
   {
     . += (DEFINED (_DEBUGGER) ? 0x200 : 0x0);
@@ -612,6 +618,22 @@ SECTIONS
     _ram_header_addr = . ;
     . += 8 ;
   } >kseg1_data_mem
+
+  .jcr   :
+  {
+    KEEP (*(.jcr))
+    . = ALIGN(4) ;
+  } >kseg1_data_mem
+  .eh_frame    : ONLY_IF_RW
+  {
+    KEEP (*(.eh_frame))
+  } >kseg1_data_mem
+    . = ALIGN(4) ;
+  .gcc_except_table    : ONLY_IF_RW
+  {
+    *(.gcc_except_table .gcc_except_table.*)
+  } >kseg1_data_mem
+    . = ALIGN(4) ;
 
   /* Persistent data */
   .persist ALIGN(4) (NOLOAD) :
@@ -627,24 +649,21 @@ SECTIONS
   /* If this is a bootloader, than skip around the protected memory and don't place anything there */
   _protected_end = ((_IMAGE_TYPE & (_imageSplitFlashBootloader | _imageProgramFlashBootloader | _imageBootFlashBootloader)) != 0) ? (ORIGIN(kseg1_data_mem) + 0x600) : . ;
 
-  .data  _protected_end :
+  .data   :
   {
-    _data_begin = . ;
-    *(.data .data.* .gnu.linkonce.d.*)
-    KEEP (*(.gnu.linkonce.d.*personality*))
-
+    *( .gnu.linkonce.d.*)
+    SORT(CONSTRUCTORS)
     *(.data1)
     . = ALIGN(4) ;
-  } >kseg1_data_mem AT>kseg0_program_mem
-
-  _data_image_begin = LOADADDR(.data) ;
+  } >kseg1_data_mem
   . = .;
   _gp = ALIGN(16) + 0x7ff0;
-
-  .got ALIGN(4)   :
+  .got ALIGN(4) :
   {
-     *(.got.plt) *(.got)
-  } >kseg1_data_mem AT>kseg0_program_mem
+    *(.got.plt) *(.got)
+    . = ALIGN(4) ;
+  } >kseg1_data_mem
+
   /*
    * We want the small data sections together, so single-instruction offsets
    * can access them all, and initialized data all before uninitialized, so
@@ -656,18 +675,18 @@ SECTIONS
     *(.sdata .sdata.* .gnu.linkonce.s.*)
     . = ALIGN(4) ;
     _sdata_end = . ;
-  } >kseg1_data_mem AT>kseg0_program_mem
+  } >kseg1_data_mem 
 
   .lit8           :
   {
     *(.lit8)
     . = ALIGN(4) ;
-  } >kseg1_data_mem AT>kseg0_program_mem
+  } >kseg1_data_mem 
 
   .lit4           :
   {
     *(.lit4)
-  } >kseg1_data_mem AT>kseg0_program_mem
+  } >kseg1_data_mem
 
   . = ALIGN (4) ;
   _data_end = . ;
@@ -686,72 +705,50 @@ SECTIONS
   .bss   :
   {
     *(.dynbss)
-    *(.bss .bss.* .gnu.linkonce.b.*)
+    *(.gnu.linkonce.b.*)
     *(COMMON)
-    /*
-     * Align here to ensure that the .bss section occupies space up to
-     * _end.  Align after .bss to ensure correct alignment even if the
-     * .bss section disappears because there are no input sections.
-     */
-    . = ALIGN(4) ;
+   /* Align here to ensure that the .bss section occupies space up to
+      _end.  Align after .bss to ensure correct alignment even if the
+      .bss section disappears because there are no input sections. */
+   . = ALIGN(. != 0 ? 4 : 1);
   } >kseg1_data_mem
 
   . = ALIGN(4) ;
   _end = . ;
   _bss_end = . ;
 
-  /* Heap allocating takes a chunk of memory following BSS */
-  .heap ALIGN(8) :
-  {
-    _heap = . ;
-    . += _min_heap_size ;
-    . = ALIGN(8);
-  } >kseg1_data_mem
-
-  /* Stack allocation follows the heap */
-  .stack ALIGN(8) :
-  {
-    _splim = . ;
-    _SPLIM = . ;
-    . += _min_stack_size ;
-    . = ALIGN(8);
-  } >kseg1_data_mem
-
+  /*
+   *  The heap and stack are best-fit allocated by the linker after other
+   *  data and bss sections have been allocated.
+   */
   /*
    * RAM functions go at the end of our stack and heap allocation.
    * Alignment of 2K required by the boundary register (BMXDKPBA).
+   *
+   * RAM functions are now allocated by the linker. The linker generates
+   * _ramfunc_begin and _bmxdkpba_address symbols depending on the
+   * location of RAM functions.
    */
-  .ramfunc ALIGN(2K) :
-  {
-    _ramfunc_begin = . ;
-    *(.ramfunc  .ramfunc.*)
-    . = ALIGN(4) ;
-    _ramfunc_end = . ;
-  } >kseg1_data_mem AT>kseg0_program_mem
-
-  _ramfunc_image_begin = LOADADDR(.ramfunc) ;
-  _ramfunc_length = SIZEOF(.ramfunc) ;
-  _bmxdkpba_address = _ramfunc_begin - ORIGIN(kseg1_data_mem) ;
   _bmxdudba_address = LENGTH(kseg1_data_mem) ;
   _bmxdupba_address = LENGTH(kseg1_data_mem) ;
-  /*
-   * The actual top of stack should include the gap between the stack
-   * section and the beginning of the .ramfunc section caused by the
-   * alignment of the .ramfunc section minus 1 word.  If RAM functions
-   * do not exist, then the top of the stack should point to the end of
-   * the data memory.
-   */
-  _stack = (_ramfunc_length > 0)
-         ? _ramfunc_begin - 4
-         : ORIGIN(kseg1_data_mem) + LENGTH(kseg1_data_mem) ;
-  ASSERT((_min_stack_size + _min_heap_size) <= (_stack - _heap),
-    "Not enough space to allocate both stack and heap.  Reduce heap and/or stack size.")
     /* The .pdr section belongs in the absolute section */
     /DISCARD/ : { *(.pdr) }
+
     /* We don't load .reginfo onto the target, so don't locate it
      * in real memory
      */
     /DISCARD/ : { *(.reginfo) }
+
+  .gptab.sdata : { *(.gptab.data) *(.gptab.sdata) }
+  .gptab.sbss : { *(.gptab.bss) *(.gptab.sbss) }
+  .mdebug.abi32 : { KEEP(*(.mdebug.abi32)) }
+  .mdebug.abiN32 : { KEEP(*(.mdebug.abiN32)) }
+  .mdebug.abi64 : { KEEP(*(.mdebug.abi64)) }
+  .mdebug.abiO64 : { KEEP(*(.mdebug.abiO64)) }
+  .mdebug.eabi32 : { KEEP(*(.mdebug.eabi32)) }
+  .mdebug.eabi64 : { KEEP(*(.mdebug.eabi64)) }
+  .gcc_compiled_long32 : { KEEP(*(.gcc_compiled_long32)) }
+  .gcc_compiled_long64 : { KEEP(*(.gcc_compiled_long64)) }
   /* Stabs debugging sections.  */
   .stab          0 : { *(.stab) }
   .stabstr       0 : { *(.stabstr) }
@@ -760,7 +757,7 @@ SECTIONS
   .stab.index    0 : { *(.stab.index) }
   .stab.indexstr 0 : { *(.stab.indexstr) }
   .comment       0 : { *(.comment) }
-  /* DWARF debug sections.
+  /* DWARF debug sections used by MPLAB X for source-level debugging. 
      Symbols in the DWARF debugging sections are relative to the beginning
      of the section so we begin them at 0.  */
   /* DWARF 1 */
@@ -778,25 +775,18 @@ SECTIONS
   .debug_line     0 : { *(.debug_line) }
   .debug_frame    0 : { *(.debug_frame) }
   .debug_str      0 : { *(.debug_str) }
-  .debug_loc      0  : { *(.debug_loc) }
+  .debug_loc      0 : { *(.debug_loc) }
   .debug_macinfo  0 : { *(.debug_macinfo) }
   /* SGI/MIPS DWARF 2 extensions */
   .debug_weaknames 0 : { *(.debug_weaknames) }
   .debug_funcnames 0 : { *(.debug_funcnames) }
   .debug_typenames 0 : { *(.debug_typenames) }
   .debug_varnames  0 : { *(.debug_varnames) }
-  /* DWARF 3 */
   .debug_pubtypes 0 : { *(.debug_pubtypes) }
   .debug_ranges   0 : { *(.debug_ranges) }
-  .gnu.attributes 0 : { KEEP (*(.gnu.attributes)) }
-  .gptab.sdata : { *(.gptab.data) *(.gptab.sdata) }
-  .gptab.sbss : { *(.gptab.bss) *(.gptab.sbss) }
-  .mdebug.abi32 : { KEEP(*(.mdebug.abi32)) }
-  .mdebug.abiN32 : { KEEP(*(.mdebug.abiN32)) }
-  .mdebug.abi64 : { KEEP(*(.mdebug.abi64)) }
-  .mdebug.abiO64 : { KEEP(*(.mdebug.abiO64)) }
-  .mdebug.eabi32 : { KEEP(*(.mdebug.eabi32)) }
-  .mdebug.eabi64 : { KEEP(*(.mdebug.eabi64)) }
   /DISCARD/ : { *(.rel.dyn) }
-  /DISCARD/ : { *(.note.GNU-stack) *(.gnu_debuglink) *(.gnu.lto_*) }
+  .gnu.attributes 0 : { KEEP (*(.gnu.attributes)) }
+  /DISCARD/ : { *(.note.GNU-stack) }
+  /DISCARD/ : { *(.note.GNU-stack) *(.gnu_debuglink) *(.gnu.lto_*) *(.discard) }
+
 }
