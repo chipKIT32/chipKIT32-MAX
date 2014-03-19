@@ -687,59 +687,60 @@ public class Compiler implements MessageConsumer {
 
 	// 4. link it all together into the .elf file
 	void compileLink(String avrBasePath, String buildPath, String corePath, ArrayList<String> includePaths, HashMap<String, String> configPreferences) 
-			throws RunnerException 
-			{	
-		logger.debug("compileLink: start");
-		String baseCommandString = configPreferences.get("recipe.c.combine.pattern");
-		String commandString = "";
-		MessageFormat compileFormat = new MessageFormat(baseCommandString);	
-		String objectFileList = "";
+		throws RunnerException 
+		{	
+			logger.debug("compileLink: start");
+			String baseCommandString = configPreferences.get("recipe.c.combine.pattern");
+			String commandString = "";
+			MessageFormat compileFormat = new MessageFormat(baseCommandString);	
+			String objectFileList = "";
 
-		for (File file : objectFiles) {
-			objectFileList = objectFileList + file.getAbsolutePath() + "::";
-		}
+			for (File file : objectFiles) {
+				objectFileList = objectFileList + file.getAbsolutePath() + "::";
+			}
 
-        String variant = configPreferences.get("build.variant");
-        Target t;
-        String variantPath;
-        if (variant.indexOf(':') == -1) {
-            t = Base.getTarget();
-            variantPath = t.getVariantFolder(variant).getAbsolutePath();
-        } else {
-            t = Base.targetsTable.get(variant.substring(0, variant.indexOf(':')));
-            variantPath = t.getVariantFolder(variant.substring(0, variant.indexOf(':'))).getAbsolutePath();
-		}
+			String variant = configPreferences.get("build.variant");
+			logger.debug("variant: " + variant);
+			Target t;
+			String variantPath;
+			if (variant.indexOf(':') == -1) {
+				t = Base.getTarget();
+				variantPath = t.getVariantFolder(variant).getAbsolutePath();
+			} else {
+				t = Base.targetsTable.get(variant.substring(0, variant.indexOf(':')));
+				variantPath = t.getVariantFolder(variant.substring(0, variant.indexOf(':'))).getAbsolutePath();
+			}
 
-        String ldscript = configPreferences.get("ldscript");
+			String ldscript = configPreferences.get("ldscript");
 
-        String foundPath = null;
-        if (ldscript != null) {
-            File testFile = null;
+			String foundPath = null;
+			if (ldscript != null) {
+				File testFile = null;
 
-            testFile = new File(variantPath, ldscript);
-            logger.debug("Searching for " + variantPath + "/" + ldscript + "...");
-            if (testFile.exists()) {
-              logger.debug("... found");
-              foundPath = variantPath;
-            } else {
-              logger.debug("Searching for " + corePath + "/" + ldscript + "...");
-              testFile = new File(corePath, ldscript);
-              if (testFile.exists()) {
-                logger.debug("... found");
-                foundPath = corePath;
-              }
-            }
+				testFile = new File(variantPath, ldscript);
+				logger.debug("Searching for " + variantPath + "/" + ldscript + "...");
+				if (testFile.exists()) {
+					logger.debug("... found");
+					foundPath = variantPath;
+				} else {
+					logger.debug("Searching for " + corePath + "/" + ldscript + "...");
+					testFile = new File(corePath, ldscript);
+					if (testFile.exists()) {
+						logger.debug("... found");
+						foundPath = corePath;
+					}
+				}
 
-            if (foundPath == null) {
-                System.out.println("Linker script not found: " + ldscript);
-                return;
-            }
-        } else {
-            ldscript = "";
-            foundPath = "";
-        }
+				if (foundPath == null) {
+					System.out.println("Linker script not found: " + ldscript);
+					return;
+				}
+			} else {
+				ldscript = "";
+				foundPath = "";
+			}
 
-		Object[] Args = {
+			Object[] Args = {
 				avrBasePath,
 				configPreferences.get("compiler.c.elf.cmd"),
 				configPreferences.get("compiler.c.elf.flags"),
@@ -754,11 +755,11 @@ public class Compiler implements MessageConsumer {
 				configPreferences.get("ldscript") != null ? configPreferences.get("ldscript")  : "",
                 corePath,
 				configPreferences.get("ldcommon") != null ? configPreferences.get("ldcommon")  : "",
-		};
-		commandString = compileFormat.format(  Args );
-        logger.debug("Link command: " + commandString);
-		execAsynchronously(commandString);
-			}
+			};
+			commandString = compileFormat.format(  Args );
+			logger.debug("Link command: " + commandString);
+			execAsynchronously(commandString);
+		}
 
 	// 5. extract EEPROM data (from EEMEM directive) to .eep file.
 	void compileEep (String avrBasePath, String buildPath, ArrayList<String> includePaths, HashMap<String, String> configPreferences) 
