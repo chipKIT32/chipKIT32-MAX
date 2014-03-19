@@ -1,6 +1,6 @@
 Tests run on 9/15/2013
 Purpose: To find any errors in the variants files
-Board: ChipKit Pi v3.37
+Board; ChipKit Pi v3.37
 
 Digital I/O:
 
@@ -61,30 +61,7 @@ Analog Input:
 
 PWM Output:
 
-Test that each PWM output (PWM0, and PWM1) can all output PWM signals. (note that there are actually
-five PWM outputs available, and all can be used. They are on digital pins 0, 3, 8, 9 and 10)
-
-	Sketch:
-		void setup()  {
-		} 
-
-		int x = 0;
-
-		void loop()  { 
-		  analogWrite(0, x);
-		  analogWrite(3, x);
-		  analogWrite(8, x);
-		  analogWrite(9, x);
-		  analogWrite(10, x);
-		  delay(100);
-		  x = x + 8;
-		  if (x > 255) {
-			x = 0;
-		  }
-		}
-		
-	Result:
-		All five PWM outputs (on digital pins 0, 3, 8, 9 and 10) work fine
+Test that each PWM output (PWM0, and PWM1) can all output PWM signals.
 
 
 UART:

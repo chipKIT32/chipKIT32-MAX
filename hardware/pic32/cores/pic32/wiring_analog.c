@@ -240,7 +240,7 @@ void analogWrite(uint8_t pin, int val)
 	}
 
 #if (OPT_BOARD_ANALOG_WRITE != 0)
-	/* Perform any board specific processing.
+	/* Peform any board specific processing.
 	*/
 int	_board_analogWrite(uint8_t pin, int val);
 
@@ -278,6 +278,7 @@ int	_board_analogWrite(uint8_t pin, int val);
 	        digitalWrite(pin, HIGH);
 	    }
 	}
+
 	else
 	{
 		/* It's a PWM capable pin. Timer 2 is used for the time base
@@ -310,6 +311,7 @@ int	_board_analogWrite(uint8_t pin, int val);
 		*/
 		if ((pwm_active & pwm_mask) == 0) 
 		{
+
 #if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
 			volatile uint32_t *	pps;
 				
@@ -329,6 +331,7 @@ int	_board_analogWrite(uint8_t pin, int val);
 		/* Set the duty cycle register for the requested output compare
 		*/
 		ocp->ocxRs.reg = ((PWM_TIMER_PERIOD*val)/256);
+
 	}
 }
 

@@ -1,19 +1,9 @@
-#if (__C32_VERSION__ < 200)
-# define USE_OLD_DOTSECTION
-#endif
-
-#ifdef USE_OLD_DOTSECTION
-# define CODE_SECTION(name) .section name, "ax", @progbits
-#else
-# define CODE_SECTION(name) .section name, code
-#endif
-
-	CODE_SECTION(.init)
+	.section .init,"ax",@progbits
 	lw	$31,20($sp)
 	addu	$sp,$sp,32
 	j	$31
 
-	CODE_SECTION(.fini)
+	.section .fini,"ax",@progbits
 	lw	$31,20($sp)
 	addu	$sp,$sp,32
 	j	$31
