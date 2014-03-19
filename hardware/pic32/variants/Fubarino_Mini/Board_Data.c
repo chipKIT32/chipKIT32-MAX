@@ -403,12 +403,12 @@ const uint8_t analog_pin_to_channel_PGM[] = {
 
 /// TODO: UPdate
 const uint8_t output_compare_to_digital_pin_PGM[] = {
-	NOT_PPS_PIN,				// There is no OC0, so this one needs to be blank
-	PIN_OC1,					// OC1, JB-02
-	PIN_OC2,					// OC2, JD-02
-	PIN_OC3,					// OC3, JC-04
-	PIN_OC4,					// OC4, JB-08
-	PIN_OC5						// OC5, JD-04
+	NOT_PPS_PIN,		// not used
+	9,					// OC1, JB-02
+	25,					// OC2, JD-02
+	19,					// OC3, JC-04
+	13,					// OC4, JB-08
+	27					// OC5, JD-04
 };
 
 /* ------------------------------------------------------------ */
