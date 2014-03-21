@@ -7,29 +7,38 @@
  *
  * Processor:       PIC32
  *
- * Compiler:        MPLAB C Compiler for PIC32 MCUs
- *                  MPLAB IDE
+ * Compiler:        MPLAB XC32
+ *                  MPLAB X IDE
  * Company:         Microchip Technology Inc.
  *
  * Software License Agreement
  *
- * The software supplied herewith by Microchip Technology Incorporated
- * (the 'Company') for its PIC32/PIC24F Microcontroller is intended
- * and supplied to you, the Company's customer, for use solely and
- * exclusively on Microchip PIC32/PIC24F Microcontroller products.
- * The software is owned by the Company and/or its supplier, and is
- * protected under applicable copyright laws. All rights are reserved.
- * Any use in violation of the foregoing restrictions may subject the
- * user to criminal sanctions under applicable laws, as well as to
- * civil liability for the breach of the terms and conditions of this
- * license.
+ * This software is developed by Microchip Technology Inc. and its
+ * subsidiaries ("Microchip").
  *
- * THIS SOFTWARE IS PROVIDED IN AN "AS IS" CONDITION. NO WARRANTIES,
- * WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT NOT LIMITED
- * TO, IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
- * PARTICULAR PURPOSE APPLY TO THIS SOFTWARE. THE COMPANY SHALL NOT,
- * IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL OR
- * CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ * 1.      Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ *
+ * 2.      Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
+ *
+ * 3.      Microchip's name may not be used to endorse or promote products
+ * derived from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY MICROCHIP "AS IS" AND ANY EXPRESS OR IMPLIED
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS FOR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL
+ * MICROCHIP BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING BUT NOT LIMITED TO
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA OR PROFITS;
+ * OR BUSINESS INTERRUPTION) HOWSOEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+ * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  ********************************************************************/
  
@@ -65,6 +74,7 @@
 # define PIC32_SRS_SET_COUNT 2
 #endif
 
+
         ##################################################################
         # Entry point of the entire application
         ##################################################################
@@ -83,7 +93,6 @@ _reset:
   
         .end _reset
         .globl _reset
-
 
         ##################################################################
         # Startup code
@@ -122,7 +131,7 @@ _no_nmi:
         #   of the small variables region
         ##################################################################
         la      gp,_gp
-        
+
 #if (PIC32_SRS_SET_COUNT == 2)
         ##################################################################
         # Initialize Global Pointer in Shadow Set
@@ -143,14 +152,14 @@ _no_nmi:
         mtc0    t3,_CP0_SRSCTL          # Restore SRSCtl
         ehb
 
-#elif (PIC32_SRS_SET_COUNT > 2) 
+#elif (PIC32_SRS_SET_COUNT > 2)
         ##################################################################
         # Initialize Global Pointer in Shadow Set(s)
         #   The SRSCtl PSS field must be set to the shadow set in which
         #   to initialize the global pointer.  We will initialize
         #   SRSCtl<PSS> to the number of reg sets and work down to set zero.
-        #   We write the global pointer to the previous shadow set to 
-        #   ensure that on interrupt, the global pointer has been 
+        #   We write the global pointer to the previous shadow set to
+        #   ensure that on interrupt, the global pointer has been
         #   initialized.
         ##################################################################
         mfc0    t1,_CP0_SRSCTL          # Read SRSCtl register
@@ -179,30 +188,6 @@ _no_nmi:
         la      t0,_on_reset
         jalr    t0
         nop
-
-#if defined(INIT_MMU_MZ_FIXED)
-        ##################################################################
-        # Initialize TLB for fixed mapping to EBI and SQI
-        ##################################################################
-        .extern __pic32_tlb_init_ebi_sqi
-        la      t0,__pic32_tlb_init_ebi_sqi
-        beq     t0, $0,1f
-        nop
-        jalr    t0
-1:      nop
-#endif
-
-#if defined(INIT_L1_CACHE)
-        ##################################################################
-        # Initialize L1 cache register
-        ##################################################################
-        .extern __pic32_init_cache
-        la      t0,__pic32_init_cache
-        beq     t0, $0,1f
-        nop
-        jalr    t0
-1:      nop
-#endif
 
         ##################################################################
         # Clear uninitialized data sections
@@ -499,7 +484,7 @@ _bev_exception:
         .set noreorder
         .ent _gen_exception
 _gen_exception:
-        la      k0,_general_exception_context
+        la      k0,_gen_exception
         jr      k0
         nop
 
@@ -511,7 +496,7 @@ _gen_exception:
 _main_entry:
 
 #if defined(CPP_INIT)
-        .weak _init
+#        .weak _init
         # call .init section to run constructors etc
         lui	a0,%hi(_init)
         addiu	sp,sp,-24

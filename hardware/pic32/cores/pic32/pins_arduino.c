@@ -41,7 +41,7 @@
 #include "pins_arduino.h"
 #include "p32_defs.h"
 
-#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
+#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__) || defined(__PIC32MZXX__)
 //* General data tables to support PPS pin mapping on PIC32MX1xx/2xx devices.
 //*
 #if defined(OPT_BOARD_DATA)
@@ -49,13 +49,19 @@
 ** value to load into the output pin PPS select register to map
 ** the output compare to the pin.
 */
-const uint16_t output_compare_to_pps_sel_PGM[] = {
+const uint8_t output_compare_to_pps_sel_PGM[] = {
 	0,					// not used
 	PPS_OUT_OC1,
 	PPS_OUT_OC2,
 	PPS_OUT_OC3,
 	PPS_OUT_OC4,
-	PPS_OUT_OC5
+	PPS_OUT_OC5,
+#if defined(__PIC32MZXX__)
+	PPS_OUT_OC6,
+	PPS_OUT_OC7,
+	PPS_OUT_OC8,
+	PPS_OUT_OC9,
+#endif
 };
 
 /* This table is used to map from an external interrupt number to the
@@ -64,7 +70,7 @@ const uint16_t output_compare_to_pps_sel_PGM[] = {
 ** contains the select value to load to map the input to the board
 ** default pin for the input function.
 */
-const uint16_t ext_int_to_pps_sel_PGM[] = {
+const uint8_t ext_int_to_pps_sel_PGM[] = {
 	NOT_PPS_PIN,			// INT0 is not mappable
 	PPS_IN_INT1,
 	PPS_IN_INT2,

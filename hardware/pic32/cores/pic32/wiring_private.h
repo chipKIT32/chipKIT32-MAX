@@ -82,7 +82,12 @@
 	void _enableMultiVectorInterrupts();
 	void _initCoreTimer(uint32_t prd);
 	void __attribute__((noreturn)) _softwareReset(void);
-    void initIntVector(void);
+
+#if defined(__PIC32MZXX__)
+    #define initIntVector()
+#else
+        void initIntVector(void);
+#endif
 	
 	typedef void (*voidFuncPtr)(void);
 
