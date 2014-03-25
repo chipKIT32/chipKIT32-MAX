@@ -269,8 +269,8 @@
       <arg value="macosx/dist/tools-universal.zip" />
     </exec>
      
-<unzip dest="macosx/work/mpide.app/Contents/Resources/Java/hardware/pic32/compiler" src="macosx/dist/pic32-tools-chipKIT-cxx-master-Darwin-image.zip" overwrite="true"/>
-<chmod perm="+x" maxparallel="300">
+<unzip dest="macosx/work/mpide.app/Contents/Resources/Java/hardware/pic32/compiler" src="macosx/dist/pic32-tools-chipKIT-cxx-master-Darwin-image-20130228.zip" overwrite="false"/>
+<chmod perm="+x" maxparallel="0">
       <fileset dir="macosx/work/mpide.app/Contents/Resources/Java/hardware/pic32/compiler" includes="**/*" />
 </chmod>
 
@@ -416,8 +416,8 @@
 
     <copy todir="linux/work" file="linux/dist/mpide" />
     <chmod perm="755" file="linux/work/mpide" />
-    <unzip dest="linux/work/hardware/pic32/compiler" src="linux/dist/pic32-tools-chipKIT-cxx-master-Linux-image.zip" overwrite="true"/>
-    <chmod perm="+x" maxparallel="300">
+    <unzip dest="linux/work/hardware/pic32/compiler" src="linux/dist/pic32-tools-chipKIT-cxx-master-Linux32-image-20130228.zip" overwrite="false"/>
+    <chmod perm="+x">
       <fileset dir="linux/work/hardware/pic32/compiler" includes="**/*" />
     </chmod>
 
@@ -461,8 +461,8 @@
          raspberrypi/dist folder instead. -->
     <copy todir="raspberrypi/work" file="linux/dist/mpide" />
     <chmod perm="755" file="raspberrypi/work/mpide" />
-    <unzip dest="raspberrypi/work/hardware/pic32/compiler" src="raspberrypi/dist/pic32-tools-chipKIT-cxx-master-arm-linux-image.zip" overwrite="true"/>
-    <chmod perm="+x" maxparallel="300">
+    <unzip dest="raspberrypi/work/hardware/pic32/compiler" src="raspberrypi/dist/pic32-tools-chipKIT-cxx-master-arm-linux-image.zip" overwrite="false"/>
+    <chmod perm="+x">
       <fileset dir="raspberrypi/work/hardware/pic32/compiler" includes="**/*" />
     </chmod>
 
@@ -747,8 +747,8 @@ Description: chipKIT MPIDE Development environment
     <!-- Unzip AVR tools -->
     <unzip dest="windows/work/hardware" src="windows/avr_tools.zip" overwrite="false"/>
     <!-- pic32 compiler -->
-   <unzip dest="windows/work/hardware/pic32/compiler" src="windows/dist/pic32-tools-chipKIT-cxx-master-win32-image.zip" overwrite="true"/>
-    <chmod perm="+x" maxparallel="300">
+   <unzip dest="windows/work/hardware/pic32/compiler" src="windows/dist/pic32-tools-chipKIT-cxx-master-win32-image-20130228.zip" overwrite="false"/>
+    <chmod perm="+x">
       <fileset dir="windows/work/hardware/pic32/compiler" includes="**/*" />
     </chmod>
 
