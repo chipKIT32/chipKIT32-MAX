@@ -30,6 +30,7 @@
 /*																		*/
 /* 09/01/2011(OliverJ):	created											*/
 /* 02/06/2013(GeneA):	removed dependencies on Microchip plib library	*/
+/*  03/24/2014(BrianSchmalz): Added support for MX1/MX2 EEPROM emulation*/
 /*																		*/
 /************************************************************************/
 
@@ -52,12 +53,14 @@
 /*				Global Variables								*/
 /* ------------------------------------------------------------ */
 
-//Aligns the flash memory used for eeprom emulation in the linker script
-__attribute__ ((aligned(4096),section(".eeprom_pic32")))
-unsigned int eedata_addr[_EEPROM_PAGE_COUNT][1024];
+//Aligns the flash memory used for EEPROM emulation in the linker script
+__attribute__ ((aligned(_EEPROM_PAGE_SIZE*4),section(".eeprom_pic32")))
+unsigned int eedata_addr[_EEPROM_PAGE_COUNT][_EEPROM_PAGE_SIZE];
 
-static uint8_t tempBuffer[1024];
-static uint32_t MAX_ADDRESS = 512;
+// Default max EEPROM address sketch can use. Note: can be adjusted by sketch.
+static uint32_t max_address = MAX_ADDRESS_DEFAULT;
+// For storing all data values during 'cleanup' and block erase
+static uint8_t tempBuffer[MAX_ADDRESS_DEFAULT];
 
 /* ------------------------------------------------------------ */
 /*				Procedure Definitions							*/
@@ -68,14 +71,14 @@ static uint32_t MAX_ADDRESS = 512;
 **		value - Desired value to set Max address
 **
 **	Return Value:
-**		Returns true or false wether the operation was successful
-**		or not.
+**		Returns true if the operation was successful, false otherwise
 **
 **	Errors:
 **		none
 **
 **	Description:
 **		Sets the max address
+**		Note: Make sure to clearEeeprom() after changing this value.
 */
 BOOL setMax(uint32_t value)
 {
@@ -83,7 +86,7 @@ BOOL setMax(uint32_t value)
 		return fFalse;
 	}
 
-	MAX_ADDRESS = value;
+	max_address = value;
 
 	return fTrue;
 }
@@ -105,7 +108,7 @@ BOOL setMax(uint32_t value)
 */
 uint32_t getMax(uint32_t value)
 {
-	return MAX_ADDRESS;
+	return max_address;
 }
 
 /* ------------------------------------------------------------ */
@@ -121,13 +124,13 @@ uint32_t getMax(uint32_t value)
 **		none
 **
 **	Description:
-**		Clears all eeprom values to 0xFF
+**		Clears all EEPROM values to 0xFF
 */
 void clearEeprom()
 {
 	int i;
 
-	//Clear page
+	// Clear all pages (all will become 0xFFFFFFFF)
 	for(i=0; i < _EEPROM_PAGE_COUNT; i++) {
 		eraseFlashPage(&eedata_addr[i][0]);
 	}
@@ -141,42 +144,41 @@ void clearEeprom()
 **		data	- data to be written
 **
 **	Return Value:
-**		Returns true or false wether the operation was successful
-**		or not.
+**		Returns true if the operation was successful, false otherwise
 **
 **	Errors:
 **		none
 **
 **	Description:
-**		Writes a data to specifed address location
+**		Writes a data to specified address location
 */
 BOOL writeEeprom(uint32_t address, uint8_t data)
 {
 	int i;
 
-	if(address > MAX_ADDRESS) {
+	if(address > max_address) {
 		return fFalse;
 	}
 
-	//Try writting data to flash
+	//Try writing data to flash
 	for(i=0; i < _EEPROM_PAGE_COUNT; i++) {
 		if(putEeprom(&eedata_addr[i][0], address, data)) {
 			return fTrue;
 		}
 	}
 	
-	for(i=0; i < _EEPROM_PAGE_COUNT; i++) {
 		//Put page to buffer
-		putBuffer(&eedata_addr[i][0], tempBuffer);
+	putBuffer(tempBuffer);
 
-		//Clear page
+	for(i=0; i < _EEPROM_PAGE_COUNT; i++) {
+		//Clear all the pages
 		eraseFlashPage(&eedata_addr[i][0]);
-
-		//Put buffer back to page
-		getBuffer(&eedata_addr[i][0], tempBuffer);
 	}
 
-	//Try writting data to flash again
+		//Put buffer back to page
+	getBuffer(tempBuffer);
+
+	//Try writing data to flash again
 	for(i=0; i < _EEPROM_PAGE_COUNT; i++) {
 		if(putEeprom(&eedata_addr[i][0], address, data)) {
 			return fTrue;
@@ -194,22 +196,21 @@ BOOL writeEeprom(uint32_t address, uint8_t data)
 **		data	- pointer to were data will be stored
 **
 **	Return Value:
-**		Returns true or false wether the operation was successful
-**		or not.
+**		Returns true if the operation was successful, false otherwise
 **
 **	Errors:
 **		none
 **
 **	Description:
-**		Reads data at specifed address location and copys it to
+**		Reads data at specified address location and copies it to
 **		location pointed to by data
 */
 BOOL readEeprom(uint32_t address, uint8_t * data)
 {
 	int i;
 
-	if(address > MAX_ADDRESS) {
 		*data = 0xFF;
+	if(address > max_address) {
 		return fFalse;
 	}
 
@@ -227,19 +228,18 @@ BOOL readEeprom(uint32_t address, uint8_t * data)
 /***	putEeprom
 **
 **	Parameters:
-**		eeprom	- pointer to flash memory acting as emulated eeprom
+**		eeprom	- pointer to a flash memory page acting as emulated EEPROM
 **		address	- location to be written
 **		data	- data to be written
 **
 **	Return Value:
-**		Returns true or false wether the operation was successful
-**		or not.
+**		Returns true if the operation was successful, false otherwise
 **
 **	Errors:
 **		none
 **
 **	Description:
-**		Searches through emulated eeprom for valid address then
+**		Searches through emulated EEPROM page for valid address then
 **		invalidates that location and writes the address and data
 **		to a new unused location.
 */
@@ -269,9 +269,10 @@ BOOL putEeprom(eeSeg * eeprom, uint32_t address, uint8_t data)
 				   writeFlashWord((void*)&eeprom[i],tempSeg.data);
 
 				   // If data is 0xFF return
-				   if(data == 0xFF) {
-						return fTrue;
-				   }
+				//if(data == 0xFF) {
+				//	printf(" and data is 0xFF so done.\n\r");
+				//	return fTrue;
+				//}
 			   }
 		}
 		//If empty eeSeg found save location and break
@@ -297,20 +298,19 @@ BOOL putEeprom(eeSeg * eeprom, uint32_t address, uint8_t data)
 /***	getEeprom
 **
 **	Parameters:
-**		eeprom	- pointer to flash memory acting as emulated eeprom
+**		eeprom	- pointer to flash memory acting as emulated EEPROM
 **		address	- location to be read
 **		data	- data to be read
 **
 **	Return Value:
-**		Returns true or false wether the operation was successful
-**		or not.
+**		Returns true if the operation was successful, false otherwise
 **
 **	Errors:
 **		none
 **
 **	Description:
-**		Searches through emulated eeprom for valid address and
-**		returns data. If no address can be found the funtion
+**		Searches through emulated EEPROM for valid address and
+**		returns data. If no address can be found the function
 **		will return false and set data pointer to 0xFF
 */
 BOOL getEeprom(eeSeg * eeprom, uint32_t address,uint8_t * data)
@@ -340,36 +340,39 @@ BOOL getEeprom(eeSeg * eeprom, uint32_t address,uint8_t * data)
 /***	putBuffer
 **
 **	Parameters:
-**		eeprom	- pointer to flash memory acting as emulated eeprom
+**		eeprom	- pointer to flash memory acting as emulated EEPROM
 **		buffer	- pointer to buffer
 **
 **	Return Value:
-**		Returns true or false wether the operation was successful
-**		or not.
+**		Returns true if the operation was successful, false otherwise
 **
 **	Errors:
 **		none
 **
 **	Description:
-**		Searches through emulated eeprom for valid addresses
+**		Searches through emulated EEPROM for valid addresses
 **		then writes data to buffer using address as the index
+**		buffer must be big enough to hold all addresses (even
+**		those that aren't used) i.e. MAX_ADDRESS_DEFAULT big.
 */
-uint32_t putBuffer(eeSeg * eeprom, uint8_t * buffer)
+uint32_t putBuffer(uint8_t * buffer)
 {
 	uint16_t tempAddress;
 
-	int i;
+	int i, j;
 
 	//Initialize each byte in buffer to 0xFF
-	for(i=0; i < _EEPROM_PAGE_SIZE; i++) {
+	for(i=0; i < max_address; i++) {
 		buffer[i] = 0xFF;
 	}
 	
 	//Find all valid addresses and load them to buffer
+	for(j=0; j < _EEPROM_PAGE_COUNT; j++) {
 	for(i=0; i < _EEPROM_PAGE_SIZE; i++) {
-		if(getValid(eeprom[i]) && !getTaken(eeprom[i])) {
-			tempAddress = getAddress(eeprom[i]);
-			buffer[tempAddress] = getData(eeprom[i]);
+			if(getValid((eeSeg)eedata_addr[j][i]) && !getTaken((eeSeg)eedata_addr[j][i])) {
+				tempAddress = getAddress((eeSeg)eedata_addr[j][i]);
+				buffer[tempAddress] = getData((eeSeg)eedata_addr[j][i]);
+			}
 		}
 	}
 }
@@ -378,21 +381,20 @@ uint32_t putBuffer(eeSeg * eeprom, uint8_t * buffer)
 /***	getBuffer
 **
 **	Parameters:
-**		eeprom	- pointer to flash memory acting as emulated eeprom
+**		eeprom	- pointer to flash memory acting as emulated EEPROM
 **		buffer	- pointer to buffer
 **
 **	Return Value:
-**		Returns true or false wether the operation was successful
-**		or not.
+**		Returns true if the operation was successful, false otherwise
 **
 **	Errors:
 **		none
 **
 **	Description:
 **		Searches through buffer and writes all non 0xFF values to
-**		to eeprom using the index as the address
+**		to EEPROM using the index as the address
 */
-void getBuffer(eeSeg * eeprom, uint8_t * buffer)
+void getBuffer(uint8_t * buffer)
 {
 	eeSeg tempSeg;
 	uint8_t tempData;
@@ -400,14 +402,14 @@ void getBuffer(eeSeg * eeprom, uint8_t * buffer)
  	int i;
 
 	//Cycle through buffer
-	for(i=0; i < _EEPROM_PAGE_SIZE; i++)
+	for(i=0; i < max_address; i++)
 	{
 		//If data in buffer does not equal 0xFF write to flash
-		if(buffer[i] != 0xFF) {
+//		if(buffer[i] != 0xFF) {
 			tempData = buffer[i];
 			tempSeg = pack(i, tempData);
-			writeFlashWord((void*)&eeprom[i],tempSeg.data);
-		}
+			writeFlashWord((void*)&eedata_addr[0][i],tempSeg.data);
+//		}
 	}
 }
 
@@ -444,7 +446,12 @@ eeSeg pack(uint32_t address, uint8_t data)
 
 uint32_t getAddress(eeSeg segment)
 {
+	if (segment.temp.address < max_address) {
 	return segment.temp.address;
+	} 
+	else {
+		return max_address;
+	}
 }
 
 uint8_t getData(eeSeg segment)

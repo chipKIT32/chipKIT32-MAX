@@ -60,7 +60,9 @@ uint8_t EEPROMClass::read(unsigned int address)
 {
 	uint8_t data;
 
-    readEeprom((uint32_t)address, &data);
+    if (!readEeprom((uint32_t)address, &data)) {
+//		store an error here?
+	}
 
 	return data;
 }
@@ -68,7 +70,9 @@ uint8_t EEPROMClass::read(unsigned int address)
 //************************************************************************
 void EEPROMClass::write(unsigned int address, uint8_t value)
 {
-	writeEeprom((uint32_t)address, (uint8_t)value);
+	if(!writeEeprom((uint32_t)address, value)) {
+//		store an error here?
+	}
 }
 
 EEPROMClass EEPROM;

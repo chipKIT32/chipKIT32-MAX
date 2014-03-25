@@ -182,7 +182,7 @@ uint32_t __attribute__((nomips16)) _doNvmOp(uint32_t nvmop)
 	uint32_t	tm;
 
 
-	// M00TODO: When DMA operations are suppored in the core, need
+	// M00TODO: When DMA operations are supported in the core, need
 	// to add code here to suspend DMA during the NVM operation.
 
 	intSt = disableInterrupts();

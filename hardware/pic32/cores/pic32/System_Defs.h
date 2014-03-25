@@ -18,6 +18,7 @@
 /*	12/20/2011(GeneApperson): Added task manager declarations			*/
 /*	07/26/2012(GeneApperson): Added PPS support for PIC32MX1xx/MX2xx	*/
 /*		devices															*/
+/*  03/24/2014(BrianSchmalz): Added support for MX1/MX2 EEPROM emulation*/
 /*																		*/
 /************************************************************************/
 //*	This library is free software; you can redistribute it and/or
@@ -46,8 +47,13 @@
 /*					EEPROM Emulation Declarations				*/
 /* ------------------------------------------------------------ */
 
-#define	_EEPROM_PAGE_SIZE	1024
+#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
+	#define	_EEPROM_PAGE_SIZE	256		// In 32bit words
+	#define	_EEPROM_PAGE_COUNT	4
+#else
+	#define	_EEPROM_PAGE_SIZE	1024	// In 32bit words
 #define	_EEPROM_PAGE_COUNT	1
+#endif
 
 /* ------------------------------------------------------------ */
 /*					General Interrupt Declarations				*/
