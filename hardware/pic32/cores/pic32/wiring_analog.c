@@ -41,6 +41,7 @@
 //* Nov 12, 2011	<Gene Apperson> modified for board variant support
 //*	Jul 26, 2012	<GeneApperson> Added PPS support for PIC32MX1xx/MX2xx devices
 //	Feb  6, 2013	<Gene Apperson> Removed dependencies on the Microchip plib library
+//*	Feb 17, 2012	<KeithV> Added PPS support for MZ devices
 //************************************************************************
 
 #include <p32xxxx.h>
@@ -149,22 +150,50 @@ int	tmp;
 	/* Ensure that the pin associated with the analog channel is in analog
 	** input mode, and select the channel in the input mux.
 	*/
-#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
+#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__) || defined(__PIC32MZXX__)
 	p32_ioport *	iop;
 	uint16_t		bit;
 
-	/* In MX1/MX2 devices, there is a control register ANSEL associated with
+    // here is a nasty bug. In Arduino, the pin number passed in can be a digital pin
+    // or it can be an analog pin; we don't know what was passed in.
+    // so check to see if an analog pin was passed in, and if it was
+    // we have to manually find the actual digital pin so we can set the PIC registers.
+
+    // if this doesn't map, than the analog pin was passed in.
+    if( ain != digital_pin_to_analog_PGM[pin] )
+    {
+        int i = 0;
+
+        // painstakingly find the digital pin
+        for(i=0; i<NUM_DIGITAL_PINS; i++)
+        {
+            // we found the pin
+            if(ain == digital_pin_to_analog_PGM[i])
+            {
+                pin = i;
+                break;
+            }
+        }
+
+        // did not find it
+        if(i == NUM_DIGITAL_PINS)
+        {
+            return(0);
+        }
+    }
+
+	/* In MX1/MX2/MZXX devices, there is a control register ANSEL associated with
 	**  each io port. We need to set the appropriate bit in the ANSEL register
 	**  for the io port associated with this pin to ensure that it is in analog
 	**  input mode.
 	**
 	** Obtain pointer to the registers for this io port.
 	*/
-	iop = portRegisters(digitalPinToPort(pin));
+	iop = portRegisters(digitalPinToPort(pin));             // THIS is way we needed to know the ACTUAL digital pin number.
 
 	/* Obtain bit mask for the specific bit for this pin.
 	*/
-	bit = digitalPinToBitMask(pin);
+	bit = digitalPinToBitMask(pin);                         // THIS is way we needed to know the ACTUAL digital pin number.
 
 	/* Set the bit in the ANSELx register to ensure that the pin is in
 	** analog input mode.
@@ -179,6 +208,96 @@ int	tmp;
 	AD1PCFGCLR = (1 << channelNumber);
 #endif		// defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
 
+#if defined(__PIC32MZXX__)
+
+#define cPiplineWaste       12
+#define cBitsOversample     5
+#define cSumOversample      (1 << cBitsOversample)
+#define cOversampleLoop     (cPiplineWaste + cSumOversample)
+
+    int i = 0;
+    uint8_t vcn = channelNumber;
+
+    // set the channel trigger for GSWTRG source triggering
+    if(channelNumber < 12)                              // class 1 & 2 ADC
+    {
+        ((uint8_t *) (&AD1TRG1))[channelNumber] = 1;
+    }
+    else if(channelNumber < 32)                         // class 3 ADC
+    {
+        AD1CSS1 |= (1 << channelNumber);
+        AD1CON1bits.STRGSRC = 1;
+    }
+    else if(channelNumber < 43)                         // the rest of class 3 ADC
+    {
+        AD1CSS2 |= (1 << (channelNumber - 32));
+        AD1CON1bits.STRGSRC = 1;
+    }
+    else if(channelNumber < 45)                         // these are not convertable inputs
+    {
+        return(0);
+    }
+    else if(channelNumber < 50)                         // alternate inputs
+    {
+        vcn = channelNumber - 45;
+        AD1IMOD |= 1 << ((vcn * 2) + 16);               // say use the alt; set SHxALT
+        ((uint8_t *) (&AD1TRG1))[vcn] = 1;
+    }
+    else                                                // beyond the limit
+    {
+        return(0);
+    }
+
+    // flush the pipeline and collect data
+    analogValue = 0;
+    for(i = 0; i < cOversampleLoop; i++)
+    {
+        // wait until the conversion is done
+        if(vcn >= 32)
+        {
+            AD1DSTAT2 &= ~(1 << (vcn-32));
+            AD1CON3bits.GSWTRG = 1;     // trigger the conversion
+            while(AD1DSTAT2 & (1 << (vcn-32)) == 0);
+        }
+        else
+        {
+            AD1DSTAT1 &= ~(1 << vcn);
+            AD1CON3bits.GSWTRG = 1;     // trigger the conversion
+            while(AD1DSTAT1 & (1 << vcn) == 0);
+        }
+
+        // get the result
+        if(i >= cPiplineWaste)
+        {
+            analogValue += (0x0000FFFF & ((uint32_t *) (&AD1DATA0))[vcn]);
+        }
+    }
+
+    // shift out the error
+    analogValue >>= cBitsOversample;
+
+    // reset the trigger to no trigger
+    if(channelNumber < 12)                          // class 1 & 2 ADC
+    {
+        ((uint8_t *) (&AD1TRG1))[channelNumber] = 0;
+    }
+    else if (channelNumber < 32)    // class 3 ADC
+    {
+        AD1CSS1 &= ~(1 << channelNumber);
+        AD1CON1bits.STRGSRC = 0;
+    }
+    else if(channelNumber < 43)                 // the rest of class 3 ADC
+    {
+        AD1CSS2 &= ~(1 << (channelNumber - 32));
+        AD1CON1bits.STRGSRC = 0;
+    }
+    else                                        // alternate inputs
+    {
+        AD1IMOD &= ~(0b11 << ((vcn * 2) + 16));               // don't use alt
+        ((uint8_t *) (&AD1TRG1))[vcn] = 0;
+    }
+
+#else
 	AD1CHS = (channelNumber & 0xFFFF) << 16;
 	AD1CON1	=	0; //Ends sampling, and starts converting
 
@@ -212,6 +331,7 @@ int	tmp;
 	/* Read the ADC Value
 	*/
 	analogValue	=	ADC1BUF0;
+#endif
 	
 	return (analogValue);
 }
@@ -260,14 +380,14 @@ int	_board_analogWrite(uint8_t pin, int val);
 
 	if ((timer == NOT_ON_TIMER) || (val == 0) || (val >= 255))
 	{
-		/* We're going to be setting the pin to a steady state.
-		** Make sure it is set as a digital output. And then set
-		** it LOW or HIGH depending on the value requested to be
-		** written. The digitalWrite function has the side effect
-		** of turning off PWM on the pin if it happens to be a
-		** PWM capable pin.
-		*/
-		pinMode(pin, OUTPUT);
+            /* We're going to be setting the pin to a steady state.
+            ** Make sure it is set as a digital output. And then set
+            ** it LOW or HIGH depending on the value requested to be
+            ** written. The digitalWrite function has the side effect
+            ** of turning off PWM on the pin if it happens to be a
+            ** PWM capable pin.
+            */
+            pinMode(pin, OUTPUT);
 
 	    if (val < 128)
 	    {
@@ -278,58 +398,63 @@ int	_board_analogWrite(uint8_t pin, int val);
 	        digitalWrite(pin, HIGH);
 	    }
 	}
+
 	else
 	{
-		/* It's a PWM capable pin. Timer 2 is used for the time base
-		** for analog output, so if no PWM are currently active then
-		** Timer 2 needs to be initialized
-		*/
-	    if (pwm_active == 0)
-	    {
-			T2CON = TBCON_PS_256;
-			TMR2 = 0;
-			PR2 = PWM_TIMER_PERIOD;
-			T2CONSET = TBCON_ON;
-	    }
-
-		/* Generate bit mask for this output compare.
-		*/
-		pwm_mask = (1 << (timer - (_TIMER_OC1 >> _BN_TIMER_OC)));
-
-		/* Obtain a pointer to the output compare being being used
-		** NOTE: as of 11/15/2011 All existing PIC32 devices
-		** (PIC32MX1XX/2XX/3XX/4XX/5XX/6XX/7XX) have the output compares
-		** in consecutive locations. The base address is _OCMP1_BASE_ADDRESS
-		** and the distance between their addresses is 0x200.
-		*/
-		ocp = (p32_oc *)(_OCMP1_BASE_ADDRESS + (0x200 * (timer - (_TIMER_OC1 >> _BN_TIMER_OC))));
-
-		/* If the requested PWM isn't active, init its output compare. Enabling
-		** the output compare takes over control of pin direction and forces the
-		** pin to be an output.
-		*/
-		if ((pwm_active & pwm_mask) == 0) 
-		{
-#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
-			volatile uint32_t *	pps;
-				
-			/* On devices with peripheral pin select, it is necessary to connect
-			** the output compare to the pin.
-			*/
-			pps = ppsOutputRegister(timerOCtoDigitalPin(timer));
-			*pps = ppsOutputSelect(timerOCtoOutputSelect(timer));
+            /* It's a PWM capable pin. Timer 2 is used for the time base
+            ** for analog output, so if no PWM are currently active then
+            ** Timer 2 needs to be initialized
+            */
+            if (pwm_active == 0)
+            {
+#if defined(__PIC32MZXX__)
+                CFGCONbits.OCACLK = 0;
 #endif
-	        ocp->ocxR.reg   = ((PWM_TIMER_PERIOD*val)/256);
-			ocp->ocxCon.reg = OCCON_SRC_TIMER2 | OCCON_PWM_FAULT_DISABLE;
-			ocp->ocxCon.set = OCCON_ON;
+                T2CON = TBCON_PS_256;
+                TMR2 = 0;
+                PR2 = PWM_TIMER_PERIOD;
+                T2CONSET = TBCON_ON;
+            }
 
-	        pwm_active |= pwm_mask;
-	    }
+            /* Generate bit mask for this output compare.
+            */
+            pwm_mask = (1 << (timer - (_TIMER_OC1 >> _BN_TIMER_OC)));
 
-		/* Set the duty cycle register for the requested output compare
-		*/
-		ocp->ocxRs.reg = ((PWM_TIMER_PERIOD*val)/256);
-	}
+            /* Obtain a pointer to the output compare being being used
+            ** NOTE: as of 11/15/2011 All existing PIC32 devices
+            ** (PIC32MX1XX/2XX/3XX/4XX/5XX/6XX/7XX) have the output compares
+            ** in consecutive locations. The base address is _OCMP1_BASE_ADDRESS
+            ** and the distance between their addresses is 0x200.
+            */
+            ocp = (p32_oc *)(_OCMP1_BASE_ADDRESS + (0x200 * (timer - (_TIMER_OC1 >> _BN_TIMER_OC))));
+
+            /* If the requested PWM isn't active, init its output compare. Enabling
+            ** the output compare takes over control of pin direction and forces the
+            ** pin to be an output.
+            */
+            if ((pwm_active & pwm_mask) == 0)
+            {
+
+#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__) || defined(__PIC32MZXX__)
+                volatile uint32_t *	pps;
+
+                /* On devices with peripheral pin select, it is necessary to connect
+                ** the output compare to the pin.
+                */
+                pps = ppsOutputRegister(pin);
+                *pps = ppsOutputSelect(timerOCtoOutputSelect(timer));
+#endif
+                ocp->ocxR.reg   = ((PWM_TIMER_PERIOD*val)/256);
+                ocp->ocxCon.reg = OCCON_SRC_TIMER2 | OCCON_PWM_FAULT_DISABLE;
+                ocp->ocxCon.set = OCCON_ON;
+
+                pwm_active |= pwm_mask;
+            }
+
+            /* Set the duty cycle register for the requested output compare
+            */
+            ocp->ocxRs.reg = ((PWM_TIMER_PERIOD*val)/256);
+        }
 }
 
 

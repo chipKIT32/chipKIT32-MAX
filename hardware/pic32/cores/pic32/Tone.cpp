@@ -103,12 +103,12 @@ uint8_t port;
 		// This is currently hard coded to use timer1.
 		if (tone_pin == 255)
 		{
-			// No tone currently playing. Init the timer.
-			T1CON = TACON_PS_256;
-            setIntVector(_TIMER_1_VECTOR, Timer1Handler);
-			clearIntFlag(_TIMER_1_IRQ);
-			setIntPriority(_TIMER_1_VECTOR, _T1_IPL_IPC, _T1_SPL_IPC);
-			setIntEnable(_TIMER_1_IRQ);
+                    // No tone currently playing. Init the timer.
+                    T1CON = TACON_PS_256;
+                    setIntVector(_TIMER_1_VECTOR, Timer1Handler);
+                    clearIntFlag(_TIMER_1_IRQ);
+                    setIntPriority(_TIMER_1_VECTOR, _T1_IPL_IPC, _T1_SPL_IPC);
+                    setIntEnable(_TIMER_1_IRQ);
 		}
 		else if (_pin != tone_pin)
 		{
@@ -170,7 +170,11 @@ extern "C"
 
 //*	not done yet
 //************************************************************************
+#if defined(__PIC32MZXX__)
+void __attribute__((nomips16,vector(_TIMER_1_VECTOR),interrupt(_T1_IPL_ISR))) Timer1Handler(void)
+#else
 void __attribute__((interrupt(),nomips16)) Timer1Handler(void)
+#endif
 {
 
 	if (timer1_toggle_count != 0)

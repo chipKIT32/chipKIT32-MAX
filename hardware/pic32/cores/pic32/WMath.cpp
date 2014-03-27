@@ -38,7 +38,7 @@ void randomSeed(unsigned int seed)
 {
 	if (seed != 0)
 	{
-	#if defined(__PIC32MX__)
+	#if defined(__PIC32MX__) || defined(__PIC32MZ__)
 		srand(seed);
 	#else
 		srandom(seed);
@@ -53,7 +53,7 @@ long random(long howbig)
 	{
 		return 0;
 	}
-#if defined(__PIC32MX__)
+#if defined(__PIC32MX__) || defined(__PIC32MZ__)
 	return rand() % howbig;
 #else
 	return random() % howbig;
