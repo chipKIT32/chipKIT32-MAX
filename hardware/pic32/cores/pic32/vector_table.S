@@ -1,6 +1,10 @@
 #include <p32xxxx.h>
 #include <System_Defs.h>
 
+// MZ has a totally different interrupt
+// mechanism, so we don't need this table.
+#if !defined(__PIC32MZXX__)
+
 .extern _isr_primary_install
 
 .globl __use_isr_install
@@ -100,3 +104,6 @@ __use_isr_install:
  VECTOR_ENTRY(61)
  VECTOR_ENTRY(62)
  VECTOR_ENTRY(63)
+
+
+#endif // not an MZ

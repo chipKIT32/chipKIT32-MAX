@@ -115,7 +115,7 @@ static DSPI *	pdspi3 = 0;
 **		can be instantiated.
 */
 
-#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
+#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__) || defined(__PIC32MZXX__)
 DSPI::DSPI(int pinMI, int pinMO, ppsFunctionType ppsMI, ppsFunctionType ppsMO)
 #else
 DSPI::DSPI()
@@ -225,7 +225,7 @@ DSPI::begin(uint8_t pinT) {
 	uint8_t			bTmp;
 	uint16_t		brg;
 
-#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
+#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__) || defined(__PIC32MZXX__)
 	/* Map the SPI MISO to the appropriate pin.
 	*/
     mapPps(pinMISO, ppsMISO);
@@ -991,7 +991,7 @@ DSPI0::disableInterruptTransfer() {
 **		Constructor.
 */
 
-#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
+#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__) || defined(__PIC32MZXX__)
 DSPI1::DSPI1() : DSPI(_DSPI1_MISO_PIN, _DSPI1_MOSI_PIN, _DSPI1_MISO_IN, _DSPI1_MOSI_OUT)
 #else
 DSPI1::DSPI1()
@@ -1077,7 +1077,7 @@ DSPI1::disableInterruptTransfer() {
 **		Constructor.
 */
 
-#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
+#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__) || defined(__PIC32MZXX__)
 DSPI2::DSPI2() : DSPI(_DSPI2_MISO_PIN, _DSPI2_MOSI_PIN, _DSPI2_MISO_IN, _DSPI2_MOSI_OUT)
 #else
 DSPI2::DSPI2()
@@ -1162,7 +1162,7 @@ DSPI2::disableInterruptTransfer() {
 **		Constructor.
 */
 
-#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
+#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__) || defined(__PIC32MZXX__)
 DSPI3::DSPI3() : DSPI(_DSPI3_MISO_PIN, _DSPI3_MOSI_PIN, _DSPI3_MISO_IN, _DSPI3_MOSI_OUT)
 #else
 DSPI3::DSPI3()
@@ -1250,7 +1250,11 @@ extern "C" {
 */
 #if defined(_DSPI0_VECTOR)
 
+#if defined(__PIC32MZXX__)
+void __attribute__((nomips16,vector(_DSPI0_VECTOR),interrupt(_DSPI0_IPL_ISR))) IntDspi0Handler(void)
+#else
 void __attribute__((interrupt(), nomips16)) IntDspi0Handler(void)
+#endif
 {
 	if (pdspi0 != 0) {
 		pdspi0->doDspiInterrupt();
@@ -1276,7 +1280,11 @@ void __attribute__((interrupt(), nomips16)) IntDspi0Handler(void)
 */
 #if defined(_DSPI1_VECTOR)
 
+#if defined(__PIC32MZXX__)
+void __attribute__((nomips16,vector(_DSPI1_VECTOR),interrupt(_DSPI1_IPL_ISR))) IntDspi1Handler(void)
+#else
 void __attribute__((interrupt(), nomips16)) IntDspi1Handler(void)
+#endif
 {
 	if (pdspi1 != 0) {
 		pdspi1->doDspiInterrupt();
@@ -1302,7 +1310,11 @@ void __attribute__((interrupt(), nomips16)) IntDspi1Handler(void)
 */
 #if defined(_DSPI2_VECTOR)
 
+#if defined(__PIC32MZXX__)
+void __attribute__((nomips16,vector(_DSPI2_VECTOR),interrupt(_DSPI2_IPL_ISR))) IntDspi2Handler(void)
+#else
 void __attribute__((interrupt(), nomips16)) IntDspi2Handler(void)
+#endif
 {
 	if (pdspi2 != 0) {
 		pdspi2->doDspiInterrupt();
@@ -1328,7 +1340,11 @@ void __attribute__((interrupt(), nomips16)) IntDspi2Handler(void)
 */
 #if defined(_DSPI3_VECTOR)
 
+#if defined(__PIC32MZXX__)
+void __attribute__((nomips16,vector(_DSPI3_VECTOR),interrupt(_DSPI3_IPL_ISR))) IntDspi3Handler(void)
+#else
 void __attribute__((interrupt(), nomips16)) IntDspi3Handler(void)
+#endif
 {
 	if (pdspi3 != 0) {
 		pdspi3->doDspiInterrupt();

@@ -18,7 +18,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 #include <p32xxxx.h>
-#include <plib.h>
+//#include <plib.h>
 
 
 
@@ -252,9 +252,22 @@ uint8_t Sd2Card::init(uint8_t sckRateID, uint8_t chipSelectPin) {
 
   SPI2CON = 0;
 
-  DDPCONbits.JTAGEN = 0;
+  // not needed done in init()
+  // DDPCONbits.JTAGEN = 0;
 
-  AD1PCFG = 0xFFFF;
+#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__) || defined(__PIC32MZXX__)
+    PORTSetAsDigitalPin(prtSDO, bnSDO);
+    PORTSetAsDigitalPin(prtSDI, bnSDI);
+    PORTSetAsDigitalPin(prtSCK, bnSCK);
+    SD_SDO_PPS();
+    SD_SDI_PPS();
+    SD_SCK_PPS();
+#else
+    // this is bogus...! Just whacked all of your analog pins even if it is not used by the SD card
+    // TODO: got to fix this some day!
+    AD1PCFG = 0xFFFF;
+#endif
+
 
   chipSelectPin_ = chipSelectPin;
 

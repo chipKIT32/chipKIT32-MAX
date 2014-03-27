@@ -53,7 +53,7 @@ extern int			SPIClass::irq;
 extern int			SPIClass::vec;
 
 // Code for PPS support
-#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
+#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__) || defined(__PIC32MZXX__)
 	extern uint8_t		SPIClass::pinMISO;	
 	extern uint8_t		SPIClass::pinMOSI;		
 	extern ppsFunctionType	SPIClass::ppsMISO;		
@@ -61,7 +61,7 @@ extern int			SPIClass::vec;
 #endif
 
 // Code for PPS support
-#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
+#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__) || defined(__PIC32MZXX__)
 	SPIClass SPI((p32_spi *) _SPI_BASE, _SPI_ERR_IRQ, _SPI_VECTOR, _SPI_MISO_PIN, _SPI_MOSI_PIN, _SPI_MISO_IN, _SPI_MOSI_OUT);
 #else
 	SPIClass SPI((p32_spi *) _SPI_BASE, _SPI_ERR_IRQ, _SPI_VECTOR);
@@ -70,7 +70,7 @@ extern int			SPIClass::vec;
 //************************************************************************
 
 // Code for PPS support
-#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
+#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__) || defined(__PIC32MZXX__)
 SPIClass::SPIClass(p32_spi * spiP, int irqP, int vecP, int pinMI, int pinMO, ppsFunctionType ppsMI, ppsFunctionType ppsMO)
 #else
 SPIClass::SPIClass(p32_spi * spiP, int irqP, int vecP)
@@ -83,7 +83,7 @@ SPIClass::SPIClass(p32_spi * spiP, int irqP, int vecP)
 	vec = vecP;
 
 	// Code for PPS support
-#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
+#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__) || defined(__PIC32MZXX__)
 	pinMISO = (uint8_t)pinMI;
 	pinMOSI = (uint8_t)pinMO;
 	ppsMISO = ppsMI;
@@ -103,7 +103,7 @@ void SPIClass::begin()
 	p32_regset *	ipc;		//interrupt priority register
 	int				ipl_shift;
 
-#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
+#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__) || defined(__PIC32MZXX__)
 	/* Map the SPI MISO to the appropriate pin.
 	*/
     mapPps(pinMISO, ppsMISO);

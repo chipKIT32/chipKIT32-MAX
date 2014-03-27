@@ -48,7 +48,6 @@
 
 #include	"wiring.h"
 
-
 /* ------------------------------------------------------------ */
 /*				Local Type Definitions							*/
 /* ------------------------------------------------------------ */
@@ -80,7 +79,7 @@ void (*volatile _isr_primary_install[NUM_INT_VECTOR]) (void) = {[0 ... NUM_INT_V
 /* ------------------------------------------------------------ */
 /*			Interrupt Vector Management Functions				*/
 /* ------------------------------------------------------------ */
-
+#if !defined(__PIC32MZXX__)
 /***	initIntVector
 **
 **	Parameters:
@@ -145,7 +144,6 @@ void initIntVector(void)
 */
 isrFunc setIntVector(int vec, isrFunc func)
 {
- //   const IMAGE_HEADER_INFO * pImageHeader = getImageHeaderInfoStructure();
     isrFunc t = 0;
 
     if (vec < NUM_INT_VECTOR)
@@ -205,8 +203,6 @@ isrFunc getIntVector(int vec)
 */
 isrFunc clearIntVector(int vec)
 {
-//    const IMAGE_HEADER_INFO * pImageHeader = getImageHeaderInfoStructure();
-//    void * pvOrgIntVec = (void *)(pImageHeader->pOrgVector0 + (vec * pImageHeader->cbVectorSpacing));
     isrFunc rISR = 0;
 
     if (vec < NUM_INT_VECTOR)
@@ -217,6 +213,7 @@ isrFunc clearIntVector(int vec)
     }
     return(rISR);
 }
+#endif
 
 /* ------------------------------------------------------------ */
 /*				Interrupt Management Functions					*/
@@ -469,7 +466,7 @@ void restoreIntEnable(int irq, uint32_t st)
 void setIntPriority(int vec, int ipl, int spl)
 {
 	p32_regset *	ipc;
-	int				bn;
+	int             bn;
 
 	/* Compute the address of the interrupt priority control register used
 	** by this interrupt vector
@@ -485,6 +482,7 @@ void setIntPriority(int vec, int ipl, int spl)
 	*/
 	ipc->clr = (0x1F << bn);
 	ipc->set = ((ipl << 2) + spl) << bn;
+
 }
 
 /* ------------------------------------------------------------ */
@@ -551,10 +549,14 @@ uint32_t getPeripheralClock()
 	uint32_t	clkPb;
 
     clkPb = F_CPU;
+
+#if defined(__PIC32MZXX__)
+    clkPb = (F_CPU / (PB2DIVbits.PBDIV + 1));      // TODO: set ALL PBDIV to 40 MHZ     
+#else
     clkPb >>= OSCCONbits.PBDIV;
+#endif
 
     return clkPb;
-
 }
 
 /* ------------------------------------------------------------ */
@@ -639,7 +641,80 @@ void __attribute__ ((nomips16)) _configSystem(uint32_t clk)
 
 	/* Disable wait states in data ram.
 	*/
+#if defined(__PIC32MZXX__)
+
+    // set up the ADCs
+
+    /* Configure AD1CON1 */
+    AD1CON1 = 0;                // No AD1CON1 features are enabled including: Stop-in-Idle, early
+                                // interrupt, filter delay Fractional mode and scan trigger source.
+
+    /* Configure AD1CON2 */
+    AD1CON2 = 0;                // Boost, Low-power mode off, SAMC set to min, set up the ADC Clock
+    AD1CON2bits.ADCSEL  = 1;    // 1 = SYSCLK, 2 REFCLK03, 3 FRC
+//    AD1CON2bits.ADCDIV  = 4;    // DIV_8 TQ = 1/200 MHz; Tad = 4 * (TQ * 2) = 40 ns; 25 MHz ADC clock
+    AD1CON2bits.ADCDIV  = 10;   // DIV_20 TQ = 1/200 MHz; Tad = 10 * (TQ * 2) = 40 ns; 10 MHz ADC clock; the sweet spot
+    AD1CON2bits.SAMC    = 3;    // settling time is 4 TADs
+
+    /* Configure AD1CON3 */
+    AD1CON3 = 0;                // ADINSEL is not configured for this example. VREFSEL of ?0?
+                                // selects AVDD and AVSS as the voltage reference.
+
+    /* Configure AD1GIRGENx */
+    AD1GIRQEN1 = 0; // No global interrupts are used.
+    AD1GIRQEN2 = 0;
+
+    /* Configure AD1CSSx */
+    AD1CSS1 = 0; // No channel scanning is used.
+    AD1CSS2 = 0;
+
+    /* Configure AD1CMPCONx */
+    AD1CMPCON1 = 0; // No digital comparators are used. Setting the AD1CMPCONx
+    AD1CMPCON2 = 0; // register to ?0? ensures that the comparator is disabled. Other
+    AD1CMPCON3 = 0; // registers are ?don?t care?.
+    AD1CMPCON4 = 0;
+    AD1CMPCON5 = 0;
+    AD1CMPCON6 = 0;
+
+    /* Configure AD1FLTRx */
+    AD1FLTR1 = 0; // No oversampling filters are used.
+    AD1FLTR2 = 0;
+    AD1FLTR3 = 0;
+    AD1FLTR4 = 0;
+    AD1FLTR5 = 0;
+    AD1FLTR6 = 0;
+
+    /* Set up the trigger sources */
+    AD1TRG1 = 0; // Initialize all sources to no trigger.
+    AD1TRG2 = 0;
+    AD1TRG3 = 0;
+
+    /* Set up the CAL registers */
+    AD1CAL1 = DEVADC1;          // Copy the configuration data to the
+    AD1CAL2 = DEVADC2;          // AD1CALx special function registers.
+    AD1CAL3 = DEVADC3;
+    AD1CAL4 = DEVADC4;
+    AD1CAL5 = DEVADC5;
+
+    /* Turn the ADC on, start calibration */
+    AD1IMODbits.SH0MOD =  2;            // put in differiential mode for self calibration
+    AD1IMODbits.SH1MOD =  2;            // put in differiential mode for self calibration
+    AD1IMODbits.SH2MOD =  2;            // put in differiential mode for self calibration
+    AD1IMODbits.SH3MOD =  2;            // put in differiential mode for self calibration
+    AD1IMODbits.SH4MOD =  2;            // put in differiential mode for self calibration
+    AD1IMODbits.SH5MOD =  2;            // put in differiential mode for self calibration
+    AD1CON1bits.ADCEN = 1;              // enable, start calibration
+    while (AD1CON2bits.ADCRDY == 0);    // wait for calibration to complete
+    AD1IMODbits.SH0MOD =  0;            // put in unipolar encoding
+    AD1IMODbits.SH1MOD =  0;            // put in unipolar encoding
+    AD1IMODbits.SH2MOD =  0;            // put in unipolar encoding
+    AD1IMODbits.SH3MOD =  0;            // put in unipolar encoding
+    AD1IMODbits.SH4MOD =  0;            // put in unipolar encoding
+    AD1IMODbits.SH5MOD =  0;            // put in unipolar encoding
+
+#else
 	BMXCONCLR = (1 << _BMXCON_BMXWSDRM_POSITION);
+#endif
 
 #ifdef _PCACHE
 
@@ -708,6 +783,12 @@ void __attribute__ ((nomips16)) _enableMultiVectorInterrupts()
 	/* Turn on multi-vectored interrupts.
 	*/
     INTCONSET = _INTCON_MVEC_MASK;
+
+// set up some default shadow registers for each interrupt priority level
+// the shadow register set used is the same as the priority level
+#if defined(__PIC32MZXX__)
+        PRISS = 0x76543210;
+#endif
 
     /* Enable interrupts.
 	*/
