@@ -124,7 +124,7 @@ unsigned long micros()
 	
 	st = disableInterrupts();
 	result = gTimer0_millis * 1000;
-	cur_timer_val = ReadCoreTimer();
+	cur_timer_val = readCoreTimer();
 	cur_timer_val -= gCore_timer_last_val;
 	cur_timer_val += CORETIMER_TICKS_PER_MICROSECOND/2;  // rounding
 	cur_timer_val /= CORETIMER_TICKS_PER_MICROSECOND;  // convert to microseconds
@@ -413,21 +413,21 @@ uint32_t millisecondCoreTimerService(uint32_t curTime);
 
     The rules:
 
-    1.	You do NOT set “compare”!
+    1.	You do NOT set "compare"!
     2.  Do not do anything that could cause CoreTimerHandler to be called recursively. For example, do not enable interrupts as the CT flag is still set
         and will immeditely cause the system to call CoreTimerHandler.
     3.	The value of the count register is passed to you, however this could be several ticks old. Usually this is not a problem. It is allowed 
         for you to read the count register directly, however you must return a compare value that is greater in time (so it can be a uint32 wrapped value) 
         than the count value passed to you. 
     4.	You will NOT be called before your compare value has been hit; however you may be called late should interrupts get disabled.
-    5.	Unfortunately, because of things like the EEProm writes, you can be called late and you must “catch-up” however best you can and return 
-        the next requested “compare” time on your next call.
+    5.	Unfortunately, because of things like the EEProm writes, you can be called late and you must "catch-up" however best you can and return 
+        the next requested "compare" time on your next call.
     6.	There are limits to how far in the future you can set your next "compare" time. Right now this is limited to 90 seconds. If you need a longer delay you
         should be using something other than a CoreTimer Services to do this. You probably should really limit your next "compare" time to less than few seconds.
-    7.	Your next requested “compare” time MUST be equal to or after (in time) the “current” time as passed in to you. You may add up to 90 seconds to the 
+    7.	Your next requested "compare" time MUST be equal to or after (in time) the "current" time as passed in to you. You may add up to 90 seconds to the 
         current time, even if this causes uint32 wrap; but do not subtract from the current time and return that. There is a region known to CoreTimerHandler 
         that is before the current time, but that uint32 "value" is after the current time + 90 seconds.
-     8.	CoreTimerHandler will keep looping until count is less than whatever the next compare is “after” CT was cleared to insure that CT is not missed. 
+     8.	CoreTimerHandler will keep looping until count is less than whatever the next compare is "after" CT was cleared to insure that CT is not missed. 
         It is possible that you could be called a second time before exiting the CoreTimerHandler ISR if you request a new compare time that is very close to 
         the current time.
     9.	After attaching, your service will be called on the next schedule call to CoreTimerHandler. Since there is always a ms service that gets triggered, 
