@@ -66,10 +66,10 @@
 #define	NUM_INT_PINS		5
 
 #define	NUM_SERIAL_PORTS	2   
-#define	NUM_SPI_PORTS		3   
+#define	NUM_SPI_PORTS		1   
 #define	NUM_I2C_PORTS		1   
 
-#define NUM_DSPI_PORTS		3
+#define NUM_DSPI_PORTS		4
 #define	NUM_DTWI_PORTS		1
 
 /* Define I/O devices on the board.
@@ -143,7 +143,7 @@
 #define PIN_IC2		7      
 #define PIN_IC3		8      
 #define PIN_IC4		10
-#define PIN_IC4		35
+#define PIN_IC5		35
 
 //#define	PIN_TCK1	not connected
 #define	PIN_TCK2	34      
@@ -175,7 +175,7 @@ const static uint8_t SCK  = 13;		// PIC32 SCK2
 /* The Digilent DSPI library uses these ports.
 */
 #define	PIN_DSPI0_SS	10      // SS2; 
-#define	PIN_DSPI1_SS	71      // SS1; TODO
+#define	PIN_DSPI1_SS	5       // SS1; 
 #define	PIN_DSPI2_SS	52      // SS3; Dedicated to the SD
 #define	PIN_DSPI3_SS	56      // SS4; Dedicated to the MRF
 
@@ -357,9 +357,6 @@ extern const uint8_t	digital_pin_to_pps_in_PGM[];
 #define _SER1_RX_IN     PPS_IN_U1RX      // (U4RXR = 0b1011)    RPF2 -> U4RX
 #define _SER1_RX_PIN    39                // EBIRDY3/RPF2/SDA3/RF2 
 
-/* Serial port 2 uses UART3
-*/
-// TODO
 
 /* ------------------------------------------------------------ */
 /*					SPI Port Declarations						*/
@@ -403,20 +400,20 @@ extern const uint8_t	digital_pin_to_pps_in_PGM[];
 #define _DSPI0_MOSI_PIN		MOSI		    // RA4  SDO1    RPA4R = SDO1 = 3
 
 
-// TODO
-#define	_DSPI1_BASE			_SPI2_BASE_ADDRESS
-#define	_DSPI1_ERR_IRQ		_SPI2_ERR_IRQ
-#define	_DSPI1_RX_IRQ		_SPI2_RX_IRQ
-#define	_DSPI1_TX_IRQ		_SPI2_TX_IRQ
-#define	_DSPI1_VECTOR		_SPI_2_VECTOR
-#define _DSPI1_IPL_ISR		_SPI2_IPL_ISR
-#define	_DSPI1_IPL			_SPI2_IPL_IPC
-#define	_DSPI1_SPL			_SPI2_SPL_IPC
+// 2nd SPI
+#define	_DSPI1_BASE			_SPI1_BASE_ADDRESS
+#define	_DSPI1_ERR_IRQ		_SPI1_ERR_IRQ
+#define	_DSPI1_RX_IRQ		_SPI1_RX_IRQ
+#define	_DSPI1_TX_IRQ		_SPI1_TX_IRQ
+#define	_DSPI1_VECTOR		_SPI_1_VECTOR
+#define _DSPI1_IPL_ISR		_SPI1_IPL_ISR
+#define	_DSPI1_IPL			_SPI1_IPL_IPC
+#define	_DSPI1_SPL			_SPI1_SPL_IPC
 
-#define _DSPI1_MISO_IN		PPS_IN_SDI2
-#define _DSPI1_MISO_PIN		MISO		    // RA1  SDI1    SDI1R = RPA1 = 0 
-#define _DSPI1_MOSI_OUT		PPS_OUT_SDO2
-#define _DSPI1_MOSI_PIN		MOSI		    // RA4  SDO1    RPA4R = SDO1 = 3
+#define _DSPI1_MISO_IN		PPS_IN_SDI1
+#define _DSPI1_MISO_PIN		36		        // RA1  SDI1    SDI1R = RPA1 = 0 
+#define _DSPI1_MOSI_OUT		PPS_OUT_SDO1
+#define _DSPI1_MOSI_PIN		35		        // RA4  SDO1    RPA4R = SDO1 = 3
 
 // SD Card
 #define	_DSPI2_BASE			_SPI3_BASE_ADDRESS
