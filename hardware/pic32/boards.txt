@@ -789,7 +789,7 @@ CUI32stem.build.variant=CUI32stem
 
 
 ############################################################
-fubarino_sd_seeed.name=Fubarino SD (Seeed)
+fubarino_sd_seeed.name=Fubarino SD (Seeed/1.4)
 fubarino_sd_seeed.group=Fubarino
 
 fubarino_sd_seeed.platform=pic32
@@ -816,7 +816,7 @@ fubarino_sd_seeed.build.core=pic32
 fubarino_sd_seeed.build.variant=Fubarino_SD
 
 ############################################################
-fubarino_sd.name=Fubarino SD
+fubarino_sd.name=Fubarino SD (1.5)
 fubarino_sd.group=Fubarino
 
 fubarino_sd.platform=pic32
