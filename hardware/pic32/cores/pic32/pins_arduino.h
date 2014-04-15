@@ -180,12 +180,12 @@
 
 
 #define	timerOCtoDigitalPin(P) (uint8_t)(output_compare_to_digital_pin_PGM[P])
-#define	timerOCtoOutputSelect(P) (uint8_t)(output_compare_to_pps_sel_PGM[P])
+#define	timerOCtoOutputSelect(P) (uint16_t)(output_compare_to_pps_sel_PGM[P])
 #define	externalIntToDigitalPin(P) (uint8_t)(external_int_to_digital_pin_PGM[P])
-#define	externalIntToInputSelect(P) (uint8_t)(ext_int_to_pps_sel_PGM[P])
+#define	externalIntToInputSelect(P) (uint16_t)(ext_int_to_pps_sel_PGM[P])
 #else
 // This macro returns a pointer to a p32_ioport structure as defined in p32_defs.h
-// For MX3xx-MX7xx devices, the port registger map starts with the TRISx register
+// For MX3xx-MX7xx devices, the port register map starts with the TRISx register
 #define portRegisters(P) ((p32_ioport *)(port_to_tris_PGM[P]))
 #endif
 
@@ -225,8 +225,8 @@
 #if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
 #if !defined(OPT_BOARD_DATA)
 
-extern const uint8_t output_compare_to_pps_sel_PGM[];
-extern const uint8_t ext_int_to_pps_sel_PGM[];
+extern const uint16_t output_compare_to_pps_sel_PGM[];
+extern const uint16_t ext_int_to_pps_sel_PGM[];
 
 #endif
 #endif
