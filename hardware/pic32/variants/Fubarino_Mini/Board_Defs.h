@@ -8,7 +8,7 @@
 /************************************************************************/
 /*  File Description:													*/
 /*																		*/
-/* This file contains the board specific declartions and data structure	*/
+/* This file contains the board specific declarations and data structure*/
 /* to customize the chipKIT MPIDE for use with a generic board using a	*/
 /* PIC32 part in a 64-pin package.										*/
 /*																		*/
@@ -51,7 +51,7 @@
 /*				Public Board Declarations						*/
 /* ------------------------------------------------------------ */
 /* The following define symbols that can be used in a sketch to
-** refer to periperhals on the board generically.
+** refer to peripherals on the board generically.
 */
 
 #define	_BOARD_NAME_	"Fubarino Mini"
@@ -118,10 +118,10 @@
 /* ------------------------------------------------------------ */
 
 #define PIN_OC1		4
-#define	PIN_OC2		7
-#define	PIN_OC3		8
+#define	PIN_OC3		7
+#define	PIN_OC2		8
 #define	PIN_OC4		9
-#define	PIN_OC5		10
+#define	PIN_OC5		0
 
 #define PIN_IC1		0
 #define PIN_IC2		1

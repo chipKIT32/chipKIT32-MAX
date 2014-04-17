@@ -106,7 +106,6 @@ class TwoWire
     int write(char*);
     uint8_t available(void);
     uint8_t receive(void);
-    uint8_t read(void);
     void onReceive( void (*)(int) );
     void onRequest( void (*)(void) );
 };

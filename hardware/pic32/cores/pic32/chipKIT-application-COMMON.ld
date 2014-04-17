@@ -460,7 +460,9 @@ SECTIONS
 
   .text  :
   {
-    *(.stub .gnu.linkonce.t.*)
+    _text_begin = . ;
+
+    *(.text .stub .text.* .gnu.linkonce.t.*)
     KEEP (*(.text.*personality*))
     /* .gnu.warning sections are handled specially by elf32.em.  */
     *(.gnu.warning)
@@ -544,6 +546,12 @@ SECTIONS
     . = ALIGN(4) ;
   }>kseg0_program_mem
 
+  .preinit_array    :
+  {
+    KEEP (*(.preinit_array))
+    . = ALIGN(4) ;
+  }>kseg0_program_mem
+
   /* Read-only sections */
   .header_info ALIGN(4) :
   {
@@ -573,7 +581,7 @@ SECTIONS
 
   .rodata  ALIGN(4) :
   {
-    *(.gnu.linkonce.r.*)
+    *(.rodata .rodata.* .gnu.linkonce.r.*)
     *(.rodata1)
     . = ALIGN(4) ;
   } >kseg0_program_mem
@@ -600,17 +608,6 @@ SECTIONS
     . = ALIGN(4) ;
   } >kseg0_program_mem
 
-  .eh_frame_hdr   :
-  {
-    *(.eh_frame_hdr)
-  } >kseg0_program_mem
-    . = ALIGN(4) ;
-  .eh_frame   : ONLY_IF_RO
-  {
-    KEEP (*(.eh_frame))
-  } >kseg0_program_mem
-    . = ALIGN(4) ;
-
   .dbg_data ORIGIN(kseg1_data_mem) (NOLOAD) :
   {
     . += (DEFINED (_DEBUGGER) ? 0x200 : 0x0);
@@ -621,22 +618,6 @@ SECTIONS
     _ram_header_addr = . ;
     . += 8 ;
   } >kseg1_data_mem
-
-  .jcr   :
-  {
-    KEEP (*(.jcr))
-    . = ALIGN(4) ;
-  } >kseg1_data_mem
-  .eh_frame    : ONLY_IF_RW
-  {
-    KEEP (*(.eh_frame))
-  } >kseg1_data_mem
-    . = ALIGN(4) ;
-  .gcc_except_table    : ONLY_IF_RW
-  {
-    *(.gcc_except_table .gcc_except_table.*)
-  } >kseg1_data_mem
-    . = ALIGN(4) ;
 
   /* Persistent data */
   .persist ALIGN(4) (NOLOAD) :
@@ -654,13 +635,15 @@ SECTIONS
 
   .data  _protected_end :
   {
-    *( .gnu.linkonce.d.*)
-    SORT(CONSTRUCTORS)
+    _data_begin = . ;
+    *(.data .data.* .gnu.linkonce.d.*)
     KEEP (*(.gnu.linkonce.d.*personality*))
 
     *(.data1)
     . = ALIGN(4) ;
-  } >kseg1_data_mem
+  } >kseg1_data_mem AT>kseg0_program_mem
+
+  _data_image_begin = LOADADDR(.data) ;
   . = .;
   _gp = ALIGN(16) + 0x7ff0;
 
@@ -679,18 +662,18 @@ SECTIONS
     *(.gnu.linkonce.s.*)
     . = ALIGN(4) ;
     _sdata_end = . ;
-  } >kseg1_data_mem 
+  } >kseg1_data_mem AT>kseg0_program_mem
 
   .lit8           :
   {
     *(.lit8)
     . = ALIGN(4) ;
-  } >kseg1_data_mem 
+  } >kseg1_data_mem AT>kseg0_program_mem
 
   .lit4           :
   {
     *(.lit4)
-  } >kseg1_data_mem
+  } >kseg1_data_mem AT>kseg0_program_mem
 
   . = ALIGN (4) ;
   _data_end = . ;
@@ -709,45 +692,72 @@ SECTIONS
   .bss   :
   {
     *(.dynbss)
-    *(.gnu.linkonce.b.*)
+    *(.bss .bss.* .gnu.linkonce.b.*)
     *(COMMON)
-   /* Align here to ensure that the .bss section occupies space up to
-      _end.  Align after .bss to ensure correct alignment even if the
-      .bss section disappears because there are no input sections. */
-   . = ALIGN(. != 0 ? 4 : 1);
+    /*
+     * Align here to ensure that the .bss section occupies space up to
+     * _end.  Align after .bss to ensure correct alignment even if the
+     * .bss section disappears because there are no input sections.
+     */
+    . = ALIGN(4) ;
   } >kseg1_data_mem
 
   . = ALIGN(4) ;
   _end = . ;
   _bss_end = . ;
 
-  /*
-   *  The heap and stack are best-fit allocated by the linker after other
-   *  data and bss sections have been allocated.
-   */
+  /* Heap allocating takes a chunk of memory following BSS */
+  .heap ALIGN(8) :
+  {
+    _heap = . ;
+    . += _min_heap_size ;
+    . = ALIGN(8);
+  } >kseg1_data_mem
+
+  /* Stack allocation follows the heap */
+  .stack ALIGN(8) :
+  {
+    _splim = . ;
+    _SPLIM = . ;
+    . += _min_stack_size ;
+    . = ALIGN(8);
+  } >kseg1_data_mem
+
   /*
    * RAM functions go at the end of our stack and heap allocation.
    * Alignment of 2K required by the boundary register (BMXDKPBA).
-   *
-   * RAM functions are now allocated by the linker. The linker generates
-   * _ramfunc_begin and _bmxdkpba_address symbols depending on the
-   * location of RAM functions.
    */
+  .ramfunc ALIGN(2K) :
+  {
+    _ramfunc_begin = . ;
+    *(.ramfunc  .ramfunc.*)
+    . = ALIGN(4) ;
+    _ramfunc_end = . ;
+  } >kseg1_data_mem AT>kseg0_program_mem
+
+  _ramfunc_image_begin = LOADADDR(.ramfunc) ;
+  _ramfunc_length = SIZEOF(.ramfunc) ;
+  _bmxdkpba_address = _ramfunc_begin - ORIGIN(kseg1_data_mem) ;
   _bmxdudba_address = LENGTH(kseg1_data_mem) ;
   _bmxdupba_address = LENGTH(kseg1_data_mem) ;
+  /*
+   * The actual top of stack should include the gap between the stack
+   * section and the beginning of the .ramfunc section caused by the
+   * alignment of the .ramfunc section minus 1 word.  If RAM functions
+   * do not exist, then the top of the stack should point to the end of
+   * the data memory.
+   */
+  _stack = (_ramfunc_length > 0)
+         ? _ramfunc_begin - 4
+         : ORIGIN(kseg1_data_mem) + LENGTH(kseg1_data_mem) ;
+  ASSERT((_min_stack_size + _min_heap_size) <= (_stack - _heap),
+    "Not enough space to allocate both stack and heap.  Reduce heap and/or stack size.")
     /* The .pdr section belongs in the absolute section */
     /DISCARD/ : { *(.pdr) }
-  .gptab.sdata : { *(.gptab.data) *(.gptab.sdata) }
-  .gptab.sbss : { *(.gptab.bss) *(.gptab.sbss) }
-  .mdebug.abi32 : { KEEP(*(.mdebug.abi32)) }
-  .mdebug.abiN32 : { KEEP(*(.mdebug.abiN32)) }
-  .mdebug.abi64 : { KEEP(*(.mdebug.abi64)) }
-  .mdebug.abiO64 : { KEEP(*(.mdebug.abiO64)) }
-  .mdebug.eabi32 : { KEEP(*(.mdebug.eabi32)) }
-  .mdebug.eabi64 : { KEEP(*(.mdebug.eabi64)) }
-  .gcc_compiled_long32 : { KEEP(*(.gcc_compiled_long32)) }
-  .gcc_compiled_long64 : { KEEP(*(.gcc_compiled_long64)) }
-
+    /* We don't load .reginfo onto the target, so don't locate it
+     * in real memory
+     */
+    /DISCARD/ : { *(.reginfo) }
   /* Stabs debugging sections.  */
   .stab          0 : { *(.stab) }
   .stabstr       0 : { *(.stabstr) }
@@ -794,7 +804,5 @@ SECTIONS
   .mdebug.eabi32 : { KEEP(*(.mdebug.eabi32)) }
   .mdebug.eabi64 : { KEEP(*(.mdebug.eabi64)) }
   /DISCARD/ : { *(.rel.dyn) }
-  .gnu.attributes 0 : { KEEP (*(.gnu.attributes)) }
-  /DISCARD/ : { *(.note.GNU-stack) }
-  /DISCARD/ : { *(.note.GNU-stack) *(.gnu_debuglink) *(.gnu.lto_*) *(.discard) }
+  /DISCARD/ : { *(.note.GNU-stack) *(.gnu_debuglink) *(.gnu.lto_*) }
 }

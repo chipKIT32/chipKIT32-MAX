@@ -1,6 +1,6 @@
 
 	.section	.text.pic32softwarereset,code
-	.align	2
+	# .align	2
 	.globl	__pic32_software_reset
 	.globl	SoftReset
 	.set	nomips16

@@ -8,7 +8,7 @@
 /************************************************************************/
 /*  File Description:													*/
 /*																		*/
-/* This file contains the board specific declartions and data structure	*/
+/* This file contains the board specific declarations and data structure*/
 /* to customize the chipKIT MPIDE for use with a generic board using a	*/
 /* PIC32 part in a 64-pin package.										*/
 /*																		*/
@@ -194,16 +194,16 @@ const uint16_t	digital_pin_to_bit_mask_PGM[] = {
 ** input associated with that pin.
 */
 const uint16_t	digital_pin_to_timer_PGM[] = {
-	NOT_ON_TIMER ,	//  0  RB13
+	_TIMER_OC5 ,	//  0  RB13
 	NOT_ON_TIMER ,	//  1  RA10
 	NOT_ON_TIMER ,	//  2  RA7
 	NOT_ON_TIMER ,	//  3  RB14
-	NOT_ON_TIMER ,	//  4  RB15
+	_TIMER_OC1 ,	//  4  RB15
 	NOT_ON_TIMER ,	//  5  RA0
 	NOT_ON_TIMER ,	//  6  RA1
-	NOT_ON_TIMER ,	//  7  RB0
-	NOT_ON_TIMER ,	//  8  RB1
-	NOT_ON_TIMER ,	//  9  RB2
+	_TIMER_OC3 ,	//  7  RB0
+	_TIMER_OC2 ,	//  8  RB1
+	_TIMER_OC4 ,	//  9  RB2
 	NOT_ON_TIMER ,  // 10  RB3
 	NOT_ON_TIMER ,	// 11  RC0
 	NOT_ON_TIMER ,	// 12  RC1
@@ -232,14 +232,14 @@ const uint16_t	digital_pin_to_timer_PGM[] = {
 /* ------------------------------------------------------------ */
 /* This table maps from a digital pin number to the corresponding
 ** PPS register. This register is used to select the peripheral output
-** connected to the pin. The register is set to 0 to disconnedt the
+** connected to the pin. The register is set to 0 to disconnect the
 ** pin from any peripheral so it can be used as GPIO.
 ** For PIC32MX1xx/2xx series devices, the PPS output select registers
 ** are arranged as a contiguous series of 32 bit registers. This table
 ** treats these registers as an array of DWORDs an stores the index
 ** to the register.
 */
-const uint16_t digital_pin_to_pps_out_PGM[] = {
+const uint8_t digital_pin_to_pps_out_PGM[] = {
 	_PPS_OUT(_PPS_RPB13R),	//	0	RB13
 	NOT_PPS_PIN,	        //	1	RA10
 	NOT_PPS_PIN,	        //	2	RA7
@@ -401,14 +401,13 @@ const uint8_t analog_pin_to_channel_PGM[] = {
 ** devices.
 */
 
-/// TODO: UPdate
 const uint8_t output_compare_to_digital_pin_PGM[] = {
 	NOT_PPS_PIN,				// There is no OC0, so this one needs to be blank
-	PIN_OC1,					// OC1, JB-02
-	PIN_OC2,					// OC2, JD-02
-	PIN_OC3,					// OC3, JC-04
-	PIN_OC4,					// OC4, JB-08
-	PIN_OC5						// OC5, JD-04
+	PIN_OC1,					// A0, B3, B4, B15, B7  ; B15   RPB15R  = 5
+	PIN_OC2,					// A1, B5, B1, B11, B8  ; B1    RPB1R   = 5
+	PIN_OC3,					// A3, B14, B0, B10, B9 ; B0    RPB0R   = 5
+	PIN_OC4,					// A2, B6, A4, B13, B2  ; B2    RPB2R   = 5
+	PIN_OC5						// A2, B6, A4, B13, B2	; B13   RPB13R  = 6
 };
 
 /* ------------------------------------------------------------ */
