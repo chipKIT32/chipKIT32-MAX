@@ -342,7 +342,7 @@ boolean mapPps(uint8_t pin, ppsFunctionType func)
 //*	Deal with the 'virtual' program button and SoftReset(). This allows
 //* a sketch to cause the board to reboot, and either force entry into
 //* the bootloader, or not.
-//* Will return FALSE if ENTER_BOOTLOADER_ON_BOOT is not suppored.
+//* Will return FALSE if ENTER_BOOTLOADER_ON_BOOT is not supported.
 //* On return of FALSE, no registers or latches will have been disturbed.
 //* RUN_SKETCH_ON_BOOT is always supported.
 //************************************************************************
@@ -351,7 +351,7 @@ unsigned int executeSoftReset(uint32_t options)
 {
 
     // We will use the LAT bit of the program button (if the board has one)
-    // as the 'virutal' program button. The bootloader will read this bit
+    // as the 'virtual' program button. The bootloader will read this bit
     // upon boot (only after a software reset) to see if it should go into
     // bootload mode or just run the sketch.
 
@@ -390,7 +390,7 @@ unsigned int executeSoftReset(uint32_t options)
 #endif  // end virtual program button
  
     // At this point either we have a virtual program buttons and we can support ENTER_BOOTLOADER_ON_BOOT
-    // or we just want to soft reset. A RUN_SKETCH_ON_BOOT soft reset requires no special funcitonality in the bootloader.
+    // or we just want to soft reset. A RUN_SKETCH_ON_BOOT soft reset requires no special functionality in the bootloader.
     // so we can always do a RUN_SKETCH_ON_BOOT.
 
     // Always clear the EXTR bit to make sure we don't read the real program 

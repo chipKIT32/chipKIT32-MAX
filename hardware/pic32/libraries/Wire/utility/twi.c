@@ -50,7 +50,7 @@ static volatile uint8_t twi_rxBufferLength;
 
 static volatile uint8_t twi_error;
 
-/* Forware declarations for internal utility functions.
+/* Forward declarations for internal utility functions.
 */
 uint32_t twi_computeBrg(uint32_t frqReq);
 void __attribute__((interrupt(),nomips16)) I2CHandler(void);
@@ -95,7 +95,7 @@ void twi_init(p32_i2c * ptwiT, uint8_t irqBus, uint8_t irqSlv, uint8_t irqMst, u
 
 	/* Compute the address of the interrupt priority control register
 	** for the specified interrupt vector. Each IPC register contains the
-	** the priority bits for four vectors. Each byte of an IPC registger contains
+	** the priority bits for four vectors. Each byte of an IPC register contains
 	** the priority and sub-priority bits arranged such that bits 0-1 are
 	** the sub-priority, bits 2-4 the priority, and bits 5-7 unused.
 	*/
@@ -162,7 +162,7 @@ uint8_t twi_readFrom(uint8_t address, uint8_t* data, uint8_t length)
     return 0;
   }
 
-  // reset error state (0xFF.. no error occured)
+  // reset error state (0xFF.. no error occurred)
   twi_error = 0xFF;
 
   // initialize buffer iteration vars
@@ -180,7 +180,7 @@ uint8_t twi_readFrom(uint8_t address, uint8_t* data, uint8_t length)
 	asm volatile("nop");
   }
 
-  // Set length to what was actualy sent
+  // Set length to what was actually sent
   length = twi_masterBufferIndex;
 
   // copy twi buffer to data
@@ -220,7 +220,7 @@ uint8_t twi_writeTo(uint8_t address, uint8_t* data, uint8_t length, uint8_t wait
     return 1;
   }
 
-  // reset error state (0xFF.. no error occured)
+  // reset error state (0xFF.. no error occurred)
   twi_error = 0xFF;
 
   // initialize buffer iteration vars
@@ -400,7 +400,7 @@ void __attribute__((interrupt(),nomips16)) I2CHandler(void)
 
 		//Master Transmitter
 		case TW_MT_SLA:
-  		    // Check if adress was acked or nacked
+  		    // Check if address was acked or nacked
 			if (ptwi->ixStat.reg & (1 << _I2CSTAT_ACKSTAT))
 			{	
 				twi_error = TW_MT_SLA_NACK;		
@@ -438,7 +438,7 @@ void __attribute__((interrupt(),nomips16)) I2CHandler(void)
 		
 		//Master Receiver
 		case TW_MR_SLA: // address sent, ack received
-			// Check if adress was acked or nacked
+			// Check if address was acked or nacked
 			if (ptwi->ixStat.reg & (1 << _I2CSTAT_ACKSTAT))
 			{	
 				twi_error = TW_MR_SLA_NACK;		
@@ -470,7 +470,7 @@ void __attribute__((interrupt(),nomips16)) I2CHandler(void)
 			break;
 
 		case TW_MR_ACK_SENT:
-			// Set I2C for recieving
+			// Set I2C for receiving
 			ptwi->ixCon.set = (1 << _I2CCON_RCEN);
 			TW_STATUS = TW_MR_DATA;
 			break;
@@ -481,7 +481,7 @@ void __attribute__((interrupt(),nomips16)) I2CHandler(void)
 			TW_STATUS = TW_STOP;
 			break;
 
-		//Slave Reciever
+		//Slave Receiver
 		case TW_SR_SLA:
 			twi_rxBufferIndex = 0;
 			TW_STATUS = TW_SR_DATA;

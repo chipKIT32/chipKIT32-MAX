@@ -1,9 +1,16 @@
-Purpose: To find any errors in the variants files
-Board; ChipKit Pi v3.37
+chipKIT Pi Built In Peripheral Test Plan and Results
+
+	Tests run on 9/15/2013 through 4/16/2014
+	By Brian Schmalz (brian@schmalzhaus.com)
+
+	Purpose: To find any errors in the variants files
+	
+	Board: ChipKit Pi v3.37 (which I think is the same as Rev A)
 
 Digital I/O:
-
-	Test that each digital I/O (D0, D1, D2, D3, D8, D9, D10, D11, D12, D13) can drive an LED High and Low
+	Purpose:
+		Test that each digital I/O (D0, D1, D2, D3, D8, D9, D10, D11, D12, 
+		D13) can drive an LED High and Low
 
 	Sketch: (With TEST_PIN changing to all GPIO)
 
@@ -33,8 +40,9 @@ Digital I/O:
 		D13 works
 
 Analog Input:
-
-	Test that each analog input (A0, A1, A4, A5) can read from 0 through 1023 when 0 to 3.3V is applied to each pin.
+	Purpose:
+		Test that each analog input (A0, A1, A4, A5) can read from 0 through 
+		1023 when 0 to 3.3V is applied to each pin.
 
 	Sketch (With TEST_ANALOG changed to each analog input pin):
 	
@@ -59,23 +67,62 @@ Analog Input:
 
 
 PWM Output:
+	Purpose:
+		Test that each PWM output (PWM0, and PWM1) can all output PWM signals. 
+		(note that there are actually five PWM outputs available, and all can 
+		be used. They are on digital pins 0, 3, 8, 9 and 10.)
 
-Test that each PWM output (PWM0, and PWM1) can all output PWM signals.
+	Sketch:
+		void setup()  {
+		} 
+
+		int x = 0;
+
+		void loop()  { 
+		  analogWrite(0, x);
+		  analogWrite(3, x);
+		  analogWrite(8, x);
+		  analogWrite(9, x);
+		  analogWrite(10, x);
+		  delay(100);
+		  x = x + 8;
+		  if (x > 255) {
+			x = 0;
+		  }
+		}
+		
+	Result:
+		Pin 0 works
+		Pin 3 works
+		Pin 8 works (with JP13 set to D8)
+		Pin 9 works (with JP12 set to PWM1)
+		Pin 10 works (with JP14 set to SS)
 
 
 UART:
+	Purpose:	
+		Test that the USB connector can be used for serial I/O from the sketch.
+		Test that TXD/RXD (on D1/D0) can be used for serial I/O. (Serial)
+		Test that TX2/RX2 (on Pi connector pin 8 and 10) can be used for serial I/O.
 
-	Test that the USB connector can be used for serial I/O from the sketch.
-
-	Test that TXD/RXD (on D1/D0) can be used for serial I/O. (Serial)
-
-	Test that TX2/RX2 (on Pi connector pin 8 and 10) can be used for serial I/O.
-
-	Sketch:
+		To run the first test below, use the board type "chipKIT Pi". Load the
+		sketch and run it, then connect a TTL Level serial port (like an FTDI
+		3.3V USB to serial cable) to each set of pins (GND, then either
+		TXD/RXD or TX2/RX2) and set your terminal emulator to 115200 8N1 and
+		then type a character in your terminal emulator. You should see a number
+		printed back to you if the UART is working.
+		
+		For the second test below, you will need to load the sketch using the
+		"chipKIT Pi USB_serial" board type. (This enables USB serial support.)
+		Then open a terminal emulator on the COM port created by the USB connection
+		to the PC and again send single characters and look for numbers coming back.
+		
+	Sketch: UART Serial Tests (Run this sketch using the chipKIT Pi board type)
 		int inByte = 0;
 		void setup()
 		{
 		  Serial.begin(9600);
+		  Serial1.begin(9600);
 		}
 
 		void loop()
@@ -84,24 +131,61 @@ UART:
 			inByte = Serial.read();
 			Serial.print(inByte, DEC);
 		  }
+		  if (Serial1.available() > 0) {
+			inByte = Serial1.read();
+			Serial1.print(inByte, DEC);
+		  }
+		  delay(250);
+		}
+		
+	Sketch: UART_USB Serial Tests (Run this sketch using the chipKIT Pi USB_Serial board type)
+		int inByte = 0;
+		void setup()
+		{
+		  Serial.begin(115200);
+		  Serial0.begin(115200);
+		  Serial1.begin(115200);
+		}
+
+		void loop()
+		{
+		  if (Serial.available() > 0) {
+			inByte = Serial.read();
+			Serial.print(inByte, DEC);
+		  }
+		  if (Serial0.available() > 0) {
+			inByte = Serial0.read();
+			Serial0.print(inByte, DEC);
+		  }
+		  if (Serial1.available() > 0) {
+			inByte = Serial1.read();
+			Serial1.print(inByte, DEC);
+		  }
 		  delay(250);
 		}
 		
 	Results:
+		For the first sketch, we are testing the two hardware UARTS.
+		For the second test we are testing not only the two UARTS but
+		also the USB serial port at the same time.		
+	
 		TXD/RXD works (JP9 set to RX1 and JP7 set to RX1) (Serial)
 		TX2/RX2 works (JP4 set to TX2 and JP1 set to RX2) (Serial1)
-		USB does not work (JP13 set to RD+ and JP12 set to RD-, and use chipKIT Pi USB_serial board) (Serial)
+		USB works (JP13 set to RD+ and JP12 set to RD-, and 
+			use chipKIT Pi USB_serial board) (Serial)
 
 Change Notice:
+	Purpose:
+		Test that all CN inputs can be used to trigger an interrupt.
 
-Test that all CN inputs can be used to trigger an interrupt.
-
-	Currently no Change Notification library exists for chipKIT, and so these CN inputs have to be hard-coded. 
-	Thus they are not being tested here.
+	Results: 
+		Currently no Change Notification library exists for chipKIT, 
+		and so these CN inputs have to be hard-coded. Thus they are not being 
+		tested here.
 
 Interrupts:
-
-Test that INT1 and INT2 can be used to trigger an interrupt
+	Purpose:
+		Test that INT1 and INT2 can be used to trigger an interrupt
 
 	Sketch:
 		// Move a wire from pin 12 to each of the hardware interrupt pins to show that
@@ -119,7 +203,7 @@ Test that INT1 and INT2 can be used to trigger an interrupt
 		void setup() 
 		{
 		  
-		  Serial1.begin(9600);               // Turn on UART to pi
+		  Serial1.begin(9600);              // Turn on UART to pi
 		  digitalWrite(PIN_LED1, LOW);      // Start of with LED off
 		  pinMode(PIN_LED1, OUTPUT);        // Make LED pin an output
 		  pinMode(PIN_INT0, INPUT);         // Interrupt pin must be an input
@@ -177,23 +261,201 @@ Test that INT1 and INT2 can be used to trigger an interrupt
 		}
 	
 	Results:
-		All 5 external interrupts (on pin 
+		To see LED1 blink on each interrupt make sure to have jumper JP15 set to LED1.
+	
+		As you move the wire from the stimulus pin (12) to the five external
+		interrupt pins, all 5 external interrupts (on pins 11, 8, 3, 2, and 1 
+		for INT0 through INT4 respectively) cause the proper messages to
+		be printed.
+		
+		For pin 2, make sure jumper JP10 is set to D2.
+		For pin 8, make sure jumper JP13 is set to D8.
 
 SPI:
+	Purpose:
+		Test that a SPI peripheral can be communicated with on SCK, MISO, MOSI and SS.
 
-Test that a SPI peripheral can be communicated with on SCK, MISO, MOSI and SS.
+		Test setup - to perform this loopback test, simply connect MISO and MOSI with
+		a wire. Also, make sure to have JP14 set to SS.
+		
+	Sketch:
+		// SPI Loopback test - connect MISO and MOSI
+		#include <SPI.h>
 
+		const int slaveSelectPin = 10;
+		char x;
 
+		void setup() {
+		  Serial1.begin(115200);
+		  delay(5000);
+		  pinMode (slaveSelectPin, OUTPUT);
+		  SPI.begin(); 
+		}
+
+		void loop() {
+		  digitalWrite(slaveSelectPin,LOW);
+		  Serial1.println(SPI.transfer(x), DEC);
+		  digitalWrite(slaveSelectPin,HIGH); 
+		  delay(250);
+		  x++;
+		}
+	
+	Results:
+		If SPI is working, you will see incrementing numbers on the serial output.
+		
+		This test passes.
+	
 I2C:
+	Purpose:
+		Test that an I2C peripheral can be communicated with on SDA/SCL. Note that chipKIT Pi
+		uses 5V levels for I2C, and that it has 10K pull up resistors on both lines already
+		installed on the board. These two pins are not shared with any other functions on 
+		the chipKIT Pi.
 
-Test that an I2C peripheral can be communicated with on SDA/SCL.
+		The test setup for this one is a bit more involved. You need something to talk to
+		over I2C. To show that I2C is working on the chipKIT Pi, I used another chipKIT
+		board - the Fubarino Mini. I hooked them together (pin 25 of the Mini to pin
+		SCL of the Pi, and pin 26 of the Mini to the SDA pin of the Pi) along with two
+		4.7K pull up resistors to 3.3V. I then ran the I2CMasterReaderTest sketch on
+		the Mini and the I2CSlaveSenderTest sketch on the chipKIT Pi.
 
+	Sketch - I2C Master Reader Test (run on Fubarino Mini board)
+		// Run this on the Fubarino Mini
+		// connected to another board running the
+		// I2CSlaveSenterTest sketch
+		#include <Wire.h>
+
+		void setup() {
+		  Wire.begin();
+		  Serial.begin(9600);
+		  delay(5000);
+		}
+
+		void loop() {
+		  Wire.requestFrom(20, 6);
+		  while(Wire.available()) { 
+			char c = Wire.receive();
+			Serial.print(c);
+		  }
+		  delay(500);
+		}	
+
+	Sketch - I2C Slave Sender Test (run on chipKIT Pi board)
+		// Run this on the chipKIT Pi
+		// connected to another board running the 
+		// I2CMasterReaderTest sketch
+		#include <Wire.h>
+
+		void setup() {
+		  pinMode(PIN_LED1, OUTPUT);
+		  Wire.begin(20);
+		  Wire.onRequest(requestEvent);
+		}
+
+		void loop() {
+		}
+
+		static char i = 0;
+
+		void requestEvent() {
+		  i = ~i;
+		  digitalWrite(PIN_LED1,i);
+		  Wire.send("hello ");
+		}
+		
+	Results:
+		If both boards have functioning I2C, and they are connected properly with 
+		pull up resistors on the SDA and SCL lines, then the chipKIT Pi board will 
+		blink it's LED1 every 500ms indicating that it's receiving a read request
+		from the other board, and the Fubarino Mini will print out the data (to
+		it's USB Serial port) that it receives back from the chipKIT Pi board,
+		which should be the string "hello ".
+		
+		To see LED1 blink on the chipKIT Pi, make sure to have jumper JP15 set to LED1.
+		
+		This test passed.
 
 EEPROM;
+	Purpose:
+		Test that the EEPROM section of Flash is usable for both reading and writing.
 
-Test that the EEPROM section of Flash is usable for both reading and writing.
+	Sketch:	
+		#include <EEPROM.h>
 
+		void setup() {       
+		  unsigned int addr = 0;
+		  unsigned char val = 0;
+		  unsigned int count = 0;
+		  bool done = false;
+		  Serial1.begin(115200);
+
+		  delay(5000);
+		  EEPROM.clear();
+
+		  while (!done) {
+			Serial1.print(" Count = ");
+			Serial1.println(count);  
+			// Write new conents in  
+			val = EEPROM.read(511) + 10;  // Some value to make a change
+			for (addr=0; addr < 512; addr++) {
+			  EEPROM.write(addr, val);
+			  if (EEPROM.read(addr) != val) {
+				Serial1.print("Verify error at address ");
+				Serial1.print(addr, DEC);
+				Serial1.print(" wrote ");
+				Serial1.print(val, DEC);
+				Serial1.print(" read ");
+				Serial1.println(EEPROM.read(addr), DEC);
+				done = true;
+			  }
+			  val = val - 1;
+			}
+			count++;
+		  }
+
+		  // Read through again and print out the new contents
+		  Serial1.println("Reading all values:");
+		  for (addr=0; addr < 512; addr++) {
+			Serial1.print("Address: ");
+			Serial1.print(addr, DEC);
+			Serial1.print(" Data: ");
+			Serial1.println(EEPROM.read(addr), DEC);
+		  }
+		}
+
+		void loop()
+		{
+		}
+		
+	Results:
+		The test passes if the serial monitor shows "Count = x" where x increments. 
+		If there are any lines that say "Verify error at address " then the test has
+		failed. Each count increment is another pass through the whole EEPROM, reading
+		and writing different values.
 
 Virtual Bootloader Button:
+	Purpose:
+		Test that the virtual bootloader button function works to trigger the bootloader from a sketch.
+		
+		To run this test, load the following sketch. When it is done uploading to the 
+		chipKIT Pi, LED1 will turn on for 5 seconds. Then chipKIT Pi will then reboot
+		into the bootloader (without holding down any buttons) and the fast blink of 
+		LED1 should be seen indicating that the bootloader is waiting for a new
+		sketch.
+		
+	Sketch:
+		void setup() {
+		  pinMode(PIN_LED1, OUTPUT);
+		  digitalWrite(PIN_LED1, 0);
+		  delay(5000);
+		  executeSoftReset(ENTER_BOOTLOADER_ON_BOOT);
+		}
 
-Test that the virtual bootloader button function works to trigger the bootloader from a sketch.
+		void loop() {
+		}	
+		
+		
+	Results:
+		To see LED1 turn on, make sure to set jumper JP15 to LED1.
+	
+		This test passes.
