@@ -8,7 +8,7 @@
 /************************************************************************/
 /*  File Description:													*/
 /*																		*/
-/* This file contains the board specific declartions and data structure	*/
+/* This file contains the board specific declarations and data structure*/
 /* to customize the chipKIT MPIDE for use with a ChipKIT PI board using */
 /*																		*/
 /* This code is based on earlier work:									*/
@@ -25,7 +25,8 @@
 /*  01/23/2013(KeithV): Modified for CK1 board                          */
 /*  03/26/2013(KeithV): Modified for DP32 board                         */
 /*  06/14/2013(BrianS): Modified for ChipKIT Pi board					*/
-/*																		*/
+/*	02/23/2014(BrianS): Updated so chipKIT PI PWMs work                 */
+/*                                                                      */
 /************************************************************************/
 //*	This library is free software; you can redistribute it and/or
 //*	modify it under the terms of the GNU Lesser General Public
@@ -88,7 +89,7 @@
 NOTE: The ChipKIT Pi has two user LEDs
 */
 #define	PIN_LED1	14      // 11  RA0
-#define	PIN_LED2	11      // 14  RA1
+#define	PIN_LED2	15       // 14  RB15
 
 /* ------------------------------------------------------------ */
 /*					Button Declarations							*/
@@ -120,11 +121,11 @@ NOTE: The ChipKIT Pi has two user LEDs
 /*					Timer Pin Declarations						*/
 /* ------------------------------------------------------------ */
 
-#define PIN_OC1		 8      // B15   RPB15R  = 5  
-#define	PIN_OC2		 2      // B8    RPB8R   = 5
-#define	PIN_OC3		 3      // B9    RPB9R   = 5
-#define	PIN_OC4		13      // B2    RPB2R   = 5
-#define	PIN_OC5		 6      // B13   RPB13R  = 6
+#define PIN_OC1		10      // B7    RPB7R   = 5  
+#define	PIN_OC2		 9      // B11   RPB11R  = 5
+#define	PIN_OC3		 8      // B10   RPB10R  = 5
+#define	PIN_OC4		 3      // B13   RPB13R  = 5
+#define	PIN_OC5		 0      // A4    RPA4R   = 6
 
 #define PIN_IC1		 6      // RB13 IC1R = RPB13 = 3
 #define PIN_IC2		11      // B0   IC2R = RPB0  = 2
@@ -142,11 +143,11 @@ NOTE: The ChipKIT Pi has two user LEDs
 /*					Interrupt Pin Declarations					*/
 /* ------------------------------------------------------------ */
 
-#define	PIN_INT0	 1      // RB7 non-PPS
-#define	PIN_INT1	 3      // B9  INT1R = RPB9 = 4
-#define PIN_INT2	13      // B2  INT2R = RPB2 = 4
-#define	PIN_INT3	 2      // B8  INT3R = RPB8 = 4
-#define	PIN_INT4	17      // B4  INT4R = RPB4 = 2
+#define	PIN_INT0	11      // RB7 non-PPS
+#define	PIN_INT1	 8      // B10 INT1R = RPB10 = 3
+#define PIN_INT2	 3      // B13 INT2R = RPB13 = 3
+#define	PIN_INT3	 2      // B5  INT3R = RPB5 = 1
+#define	PIN_INT4	 1      // B4  INT4R = RPB4 = 2
 
 /* ------------------------------------------------------------ */
 /*					SPI Pin Declarations						*/
@@ -171,9 +172,9 @@ const static uint8_t SCK  = 13;		// RB14 SCK1    CVREF/AN10/C3INB/RPB14/VBUSON/S
 ** used to map an analog pin number to the corresponding digital
 ** pin number.
 */
-#define	A0		14  // RA0		
+#define	A0		14  // RA0
 #define	A1		15  // RB15
-#define	A4		16  // RB2		
+#define	A4		16  // RB2
 #define	A5		17  // RB3
 
 /* ------------------------------------------------------------ */
@@ -207,7 +208,7 @@ const static uint8_t SCK  = 13;		// RB14 SCK1    CVREF/AN10/C3INB/RPB14/VBUSON/S
 /* ------------------------------------------------------------ */
 /* Macros used to access the port and pin mapping tables.
 ** These are mostly generic, but some of them may be board specific.
-** These perform slightly better as macros compared to inline functions
+** These perform slightly better as macros compared to in-line functions
 */
 #undef digitalPinToAnalog
 #define	digitalPinToAnalog(P) ( digital_pin_to_analog_PGM[P] )
@@ -355,14 +356,14 @@ extern const uint8_t	external_int_to_digital_pin_PGM[];
 /* The standard I2C1 port uses I2C1 (SCL1/SDA1). 
 ** RB8/RB9 pins 38/4
 */
-#define	_TWI_BASE		_I2C1_BASE_ADDRESS
-#define	_TWI_BUS_IRQ	_I2C1_BUS_IRQ
-#define	_TWI_SLV_IRQ	_I2C1_SLAVE_IRQ
-#define	_TWI_MST_IRQ	_I2C1_MASTER_IRQ
-#define	_TWI_VECTOR		_I2C_1_VECTOR
-#define	_TWI_IPL_ISR	_I2C1_IPL_ISR
-#define _TWI_IPL		_I2C1_IPL_IPC
-#define	_TWI_SPL		_I2C1_SPL_IPC
+#define	_TWI_BASE		_I2C2_BASE_ADDRESS
+#define	_TWI_BUS_IRQ	_I2C2_BUS_IRQ
+#define	_TWI_SLV_IRQ	_I2C2_SLAVE_IRQ
+#define	_TWI_MST_IRQ	_I2C2_MASTER_IRQ
+#define	_TWI_VECTOR		_I2C_2_VECTOR
+#define	_TWI_IPL_ISR	_I2C2_IPL_ISR
+#define _TWI_IPL		_I2C2_IPL_IPC
+#define	_TWI_SPL		_I2C2_SPL_IPC
 
 /* Declarations for Digilent DTWI library.
 **		DTWI0 is on RB8/RB9 pins 38/4 
