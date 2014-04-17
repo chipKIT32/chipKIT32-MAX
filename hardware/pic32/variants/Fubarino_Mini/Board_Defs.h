@@ -359,10 +359,9 @@ extern const uint8_t	external_int_to_digital_pin_PGM[];
 /*					I2C Port Declarations						*/
 /* ------------------------------------------------------------ */
 
-/* The standard I2C port uses I2C1 (SCL1/SDA1). These come to pins
-** A4/A5 on the analog connector. It is necessary to have jumpers
-** JP6/JP8 set appropriately (RG2/RG3 position) to access the I2C
-** signals.
+/* The standard I2C port uses I2C1 (SCL1/SDA1). On the Fubarino 
+** Mini, these come out to pins RB8 (SCL1) and RB9 (SDA1) 
+** (Arduino pins 25 and 26 respectively).
 */
 #define	_TWI_BASE		_I2C1_BASE_ADDRESS
 #define	_TWI_BUS_IRQ	_I2C1_BUS_IRQ
@@ -374,8 +373,8 @@ extern const uint8_t	external_int_to_digital_pin_PGM[];
 #define	_TWI_SPL		_I2C1_SPL_IPC
 
 /* Declarations for Digilent DTWI library.
-**		DTWI0 is on A4/A5 (see above comment).
-**		DTWI1 is on digital pins 38 & 39.
+**		DTWI0 is on Arduino pins 25 (SCL1) and 26 (SDA1).
+**		DTWI1 is on Arduino pins 10 (SCL2) and  9 (SDA2).
 */
 #define	_DTWI0_BASE		_I2C1_BASE_ADDRESS
 #define	_DTWI0_BUS_IRQ	_I2C1_BUS_IRQ

@@ -112,7 +112,7 @@ const uint32_t	port_to_tris_PGM[] = {
 ** for every possible port bit in order from PORTA to PORTG.
 */
 const uint8_t	digital_pin_to_port_PGM[] = {
-    // Pins 0 through 16
+    // Pins 0 through 32
     _IOPORT_PB, //  0  RB13
 	_IOPORT_PA, //  1  RA10
 	_IOPORT_PA, //  2  RA7

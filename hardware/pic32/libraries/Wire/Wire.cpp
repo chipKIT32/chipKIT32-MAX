@@ -58,7 +58,7 @@ TwoWire::TwoWire()
 void TwoWire::begin(void)
 {
     // This will protect the code from being called more than once.
-    // Not only will this work around the multipl twi_init bug, but
+    // Not only will this work around the multiple twi_init bug, but
     // it also protects the buffer index and length static variables
     // from being reset by a subsequent call to Wire.begin().
     beginCount++;
