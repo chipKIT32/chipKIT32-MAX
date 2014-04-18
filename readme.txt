@@ -1,6 +1,7 @@
 The chipKIT project is based on Arduino which is an open-source physical computing platform based on a simple i/o
 board and a development environment that implements the Processing/Wiring
-language. Arduino can be used to develop stand-alone interactive objects or
+language. The chipKIT project initiated with the pic32 chips from Microchip, and we have support for the MX line. Now we will 
+adding support for the new MZ line.  Arduino can be used to develop stand-alone interactive objects or
 can be connected to software on your computer (e.g. Flash, Processing, MaxMSP).
 The boards can be assembled by hand or purchased preassembled; the open-source
 IDE can be downloaded for free.

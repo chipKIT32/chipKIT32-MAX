@@ -47,18 +47,33 @@
 //  currently existing PIC32 devices, but this needs to be rewritten to be
 //	more generic.
 
-void __attribute__((interrupt(),nomips16)) T3_IntHandler (void){
+#if defined(__PIC32MZXX__)
+void __attribute__((nomips16,vector(_TIMER_3_VECTOR),interrupt(_T3_IPL_ISR))) T3_IntHandler(void)
+#else
+void __attribute__((interrupt(),nomips16)) T3_IntHandler (void)
+#endif
+{
  	handle_interrupts(TIMER3, &TMR3, &PR3); 
 	IFS0CLR = 0x1000; // Clear timer interrupt status flag
 }
 
 
-void __attribute__((interrupt(),nomips16)) T4_IntHandler (void){
+#if defined(__PIC32MZXX__)
+void __attribute__((nomips16,vector(_TIMER_3_VECTOR),interrupt(_T3_IPL_ISR))) T3_IntHandler(void)
+#else
+void __attribute__((interrupt(),nomips16)) T4_IntHandler (void)
+#endif
+{
  	handle_interrupts(TIMER4, &TMR4, &PR4); 
 	IFS0CLR = 0x10000; // Clear timer interrupt status flag
 }
 
-void __attribute__((interrupt(),nomips16)) T5_IntHandler (void){
+#if defined(__PIC32MZXX__)
+void __attribute__((nomips16,vector(_TIMER_3_VECTOR),interrupt(_T3_IPL_ISR))) T3_IntHandler(void)
+#else
+void __attribute__((interrupt(),nomips16)) T5_IntHandler (void)
+#endif
+{
  	handle_interrupts(TIMER5, &TMR5, &PR5); 
 	IFS0CLR = 0x100000; // Clear timer interrupt status flag
 }

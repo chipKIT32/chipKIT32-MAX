@@ -37,7 +37,7 @@
 #define Wiring_h
 
 #include <inttypes.h>
-#include <peripheral/timer.h>
+//#include <peripheral/timer.h>
 #include "binary.h"
 
 #include <p32xxxx.h>
@@ -169,11 +169,6 @@ void clearIntFlag(int irq);
 uint32_t setIntEnable(int irq);
 uint32_t clearIntEnable(int irq);
 void restoreIntEnable(int irq, uint32_t st);
-void setIntPriority(int vec, int ipl, int spl);
-void getIntPriority(int vec, int * pipl, int * pspl);
-isrFunc setIntVector(int vec, isrFunc func);
-isrFunc getIntVector(int vec);
-isrFunc clearIntVector(int vec);
 uint32_t getPeripheralClock();
 uint32_t __attribute__((nomips16)) readCoreTimer(void);
 void __attribute__((nomips16)) writeCoreTimer(uint32_t tmr);
@@ -183,6 +178,19 @@ unsigned int executeSoftReset(uint32_t options);
 unsigned int attachCoreTimerService(uint32_t (*)(uint32_t count));
 unsigned int detachCoreTimerService(uint32_t (*)(uint32_t count));
 unsigned int callCoreTimerServiceNow(uint32_t (* service)(uint32_t));
+
+#if defined(__PIC32MZXX__)
+    #define setIntVector(_vec, _func) NULL
+    #define getIntVector(_vec) NULL
+    #define clearIntVector(_vec) NULL
+#else
+    isrFunc setIntVector(int vec, isrFunc func);
+    isrFunc getIntVector(int vec);
+    isrFunc clearIntVector(int vec);
+#endif
+    void setIntPriority(int vec, int ipl, int spl);
+    void getIntPriority(int vec, int * pipl, int * pspl);
+
 
 /* ------------------------------------------------------------ */
 /*				Task Manager Declarations						*/
@@ -257,7 +265,7 @@ void loop(void);
 	#define	prog_int64_t	const int64_t
 	#define	prog_uint64_t	const uint64_t
 #endif
-#if defined(__PIC32MX__)
+#if defined(__PIC32MX__) || defined(__PIC32MZ__)
 
 //************************************************************************
 // This is image header info used by the bootloader and eeprom functionality
@@ -390,11 +398,11 @@ extern const uint32_t _IMAGE_HEADER_ADDR;                       // a pointer to 
 
 #endif
 
-#if defined(__PIC32MX__)
+#if defined(__PIC32MX__) || defined(__PIC32MZ__) 
 	extern unsigned int	__PIC32_pbClk;
 #endif
 
-#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
+#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__) || defined(__PIC32MZ__) 
 
 // PPS Support for PIC32MX1 and PIC32MX2 parts
 // Locks all PPS functions so that calls to mapPpsInput() or mapPpsOutput() always fail.
