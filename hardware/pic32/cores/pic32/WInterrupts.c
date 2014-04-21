@@ -71,7 +71,7 @@ void attachInterrupt(uint8_t interruptNum, void (*userFunc)(void), int mode)
     {
         intFunc[interruptNum]	=	userFunc;
 
-#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
+#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__) || defined(__PIC32MZXX__)
         /* For devices with peripheral pin select (PPS), it is necessary to
         ** map the input function to the pin. This is done by loading the
         ** PPS input select register for the specific interrupt with the value
@@ -100,6 +100,65 @@ void attachInterrupt(uint8_t interruptNum, void (*userFunc)(void), int mode)
         {
             edge	=	1;
         }
+
+#if defined(__PIC32MZXX__)
+
+        // Select the active edge, set the privilege and sub-privilege levels,
+        // and enable the interrupt.
+        switch (interruptNum)
+        {
+            case EXT_INT0:
+                setIntVector(_EXTERNAL_0_VECTOR, (isrFunc) ExtInt0Handler);
+                IEC0bits.INT0IE     =	0;
+                IFS0bits.INT0IF     =	0;
+                INTCONbits.INT0EP   =	edge;
+                IPC0bits.INT0IP     =	_INT0_IPL_IPC;
+                IPC0bits.INT0IS     =	_INT0_SPL_IPC;
+                IEC0bits.INT0IE     =	1;
+                break;
+
+            case EXT_INT1:
+                setIntVector(_EXTERNAL_1_VECTOR, (isrFunc) ExtInt1Handler);
+                IEC0bits.INT1IE		=	0;
+                IFS0bits.INT1IF		=	0;
+                INTCONbits.INT1EP	=	edge;
+                IPC2bits.INT1IP		=	_INT1_IPL_IPC;
+                IPC2bits.INT1IS		=	_INT1_SPL_IPC;
+                IEC0bits.INT1IE		=	1;
+                break;
+
+            case EXT_INT2:
+                setIntVector(_EXTERNAL_2_VECTOR, (isrFunc) ExtInt2Handler);
+                IEC0bits.INT2IE		=	0;
+                IFS0bits.INT2IF		=	0;
+                INTCONbits.INT2EP	=	edge;
+                IPC3bits.INT2IP		=	_INT2_IPL_IPC;
+                IPC3bits.INT2IS		=	_INT2_SPL_IPC;
+                IEC0bits.INT2IE		=	1;
+                break;
+
+            case EXT_INT3:
+                setIntVector(_EXTERNAL_3_VECTOR, (isrFunc) ExtInt3Handler);
+                IEC0bits.INT3IE		=	0;
+                IFS0bits.INT3IF		=	0;
+                INTCONbits.INT3EP	=	edge;
+                IPC4bits.INT3IP		=	_INT3_IPL_IPC;
+                IPC4bits.INT3IS		=	_INT3_SPL_IPC;
+                IEC0bits.INT3IE		=	1;
+                break;
+
+            case EXT_INT4:
+                setIntVector(_EXTERNAL_4_VECTOR, (isrFunc) ExtInt4Handler);
+                IEC0bits.INT4IE		=	0;
+                IFS0bits.INT4IF		=	0;
+                INTCONbits.INT4EP	=	edge;
+                IPC5bits.INT4IP		=	_INT4_IPL_IPC;
+                IPC5bits.INT4IS		=	_INT4_SPL_IPC;
+                IEC0bits.INT4IE		=	1;
+                break;
+        }
+
+#else
 
         // Select the active edge, set the privilege and sub-privilege levels,
         // and enable the interrupt.
@@ -155,6 +214,7 @@ void attachInterrupt(uint8_t interruptNum, void (*userFunc)(void), int mode)
                 IEC0bits.INT4IE		=	1;
                 break;
         }
+#endif
     }
 }
 
@@ -197,7 +257,11 @@ void detachInterrupt(uint8_t interruptNum)
 
 //************************************************************************
 // INT0 ISR
+#if defined(__PIC32MZXX__)
+void __attribute__((nomips16,vector(_EXTERNAL_0_VECTOR),interrupt(_INT0_IPL_ISR))) ExtInt0Handler(void)
+#else
 void __attribute__((interrupt(),nomips16)) ExtInt0Handler(void)
+#endif
 {
 
 	if (intFunc[EXT_INT0] != 0)
@@ -209,7 +273,11 @@ void __attribute__((interrupt(),nomips16)) ExtInt0Handler(void)
 
 //************************************************************************
 // INT1 ISR
+#if defined(__PIC32MZXX__)
+void __attribute__((nomips16,vector(_EXTERNAL_1_VECTOR),interrupt(_INT1_IPL_ISR))) ExtInt1Handler(void)
+#else
 void __attribute__((interrupt(),nomips16)) ExtInt1Handler(void)
+#endif
 {
 
 	if (intFunc[EXT_INT1] != 0)
@@ -221,7 +289,11 @@ void __attribute__((interrupt(),nomips16)) ExtInt1Handler(void)
 
 //************************************************************************
 // INT2 ISR
+#if defined(__PIC32MZXX__)
+void __attribute__((nomips16,vector(_EXTERNAL_2_VECTOR),interrupt(_INT2_IPL_ISR))) ExtInt2Handler(void)
+#else
 void __attribute__((interrupt(),nomips16)) ExtInt2Handler(void)
+#endif
 {
 
 	if (intFunc[EXT_INT2] != 0)
@@ -233,7 +305,11 @@ void __attribute__((interrupt(),nomips16)) ExtInt2Handler(void)
 
 //************************************************************************
 // INT3 ISR
+#if defined(__PIC32MZXX__)
+void __attribute__((nomips16,vector(_EXTERNAL_3_VECTOR),interrupt(_INT3_IPL_ISR))) ExtInt3Handler(void)
+#else
 void __attribute__((interrupt(),nomips16)) ExtInt3Handler(void)
+#endif
 {
 
 	if (intFunc[EXT_INT3] != 0)
@@ -245,7 +321,11 @@ void __attribute__((interrupt(),nomips16)) ExtInt3Handler(void)
 
 //************************************************************************
 // INT4 ISR
+#if defined(__PIC32MZXX__)
+void __attribute__((nomips16,vector(_EXTERNAL_4_VECTOR),interrupt(_INT4_IPL_ISR))) ExtInt4Handler(void)
+#else
 void __attribute__((interrupt(),nomips16)) ExtInt4Handler(void)
+#endif
 {
 
 	if (intFunc[EXT_INT4] != 0)

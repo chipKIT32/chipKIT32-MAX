@@ -1,0 +1,33 @@
+############################################################
+chipkit_WiFire.name=chipKIT WiFire
+chipkit_WiFire.group=chipKIT
+
+
+# new items
+chipkit_WiFire.platform=pic32
+chipkit_WiFire.board=_BOARD_WIFIRE_
+chipkit_WiFire.board.define=
+chipkit_WiFire.ccflags=ffff
+chipkit_WiFire.ldscript=MZ-application-32MZ2048ECX.ld
+# end of new items
+
+chipkit_WiFire.upload.protocol=stk500v2
+chipkit_WiFire.upload.maximum_size=520192
+chipkit_WiFire.upload.speed=115200
+
+chipkit_WiFire.bootloader.low_fuses=0xff
+chipkit_WiFire.bootloader.high_fuses=0xdd
+chipkit_WiFire.bootloader.extended_fuses=0x00
+chipkit_WiFire.bootloader.path=not-supported
+chipkit_WiFire.bootloader.file=not-supported
+chipkit_WiFire.bootloader.unlock_bits=0x3F
+chipkit_WiFire.bootloader.lock_bits=0x0F
+
+chipkit_WiFire.build.mcu=32MZ2048ECH100
+chipkit_WiFire.build.f_cpu=200000000UL
+chipkit_WiFire.build.core=pic32
+chipkit_WiFire.ldcommon=chipKIT-application-COMMON-MZ.ld
+chipkit_WiFire.build.variant=WiFire
+#chipkit_WiFire.upload.using=avrdude1
+
+############################################################
