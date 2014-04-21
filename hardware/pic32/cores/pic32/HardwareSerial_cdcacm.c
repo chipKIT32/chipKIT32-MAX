@@ -106,7 +106,7 @@ static const byte cdcacm_configuration_descriptor[] = {
 	4,			// length
 	0x24,		// abstract control model descriptor
 	0x02,
-	0x00,
+	0x06,
 
 	5,			// length
 	0x24,		// union functional descriptor
@@ -420,7 +420,7 @@ static int	cdcacm_control_transfer(struct setup *setup, byte *buffer, int length
 			break;
 		case CDCRQ_SET_CONTROL_LINE_STATE:
 			assert(! (setup->requesttype & 0x80));
-            gConnected = setup->value & 0x01; 
+            gConnected = (setup->value > 0); 
 			length	=	0;
 			break;
 		case CDCRQ_SEND_BREAK:
