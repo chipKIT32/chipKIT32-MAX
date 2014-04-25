@@ -175,7 +175,7 @@ const static uint8_t SCK  = 13;		// PIC32 SCK2
 /* The Digilent DSPI library uses these ports.
 */
 #define	PIN_DSPI0_SS	10      // SS2; 
-#define	PIN_DSPI1_SS	5       // SS1; 
+#define	PIN_DSPI1_SS	7       // SS1; 
 #define	PIN_DSPI2_SS	52      // SS3; Dedicated to the SD
 #define	PIN_DSPI3_SS	56      // SS4; Dedicated to the MRF
 
