@@ -14,4 +14,5 @@ build/linux/dist/*.tar.gz
 build/linux/*.tgz
 test-bin
 *.iml
+build/macosx/dist/pic32-tools-chipKIT-cxx-dev_pic32mz_B-Darwin-image.zip
 
