@@ -588,7 +588,7 @@
 
 
   </target>
-  
+
   <target name="linux-run" depends="linux-build" 
 	  description="Run Linux (32-bit) version">
     <exec executable="./linux/work/mpide" spawn="false"/>
@@ -598,6 +598,13 @@
 	  description="Run Linux (64-bit) version">
     <exec executable="./linux/work/mpide" spawn="false"/>
   </target>
+
+  
+  <target name="raspberrypi-run" depends="raspberrypi-build" 
+	  description="Run Linux (64-bit) version">
+    <exec executable="./raspberrypi/work/mpide" spawn="false"/>
+  </target>
+
 
   <target name="raspberrypi-dist" depends="raspberrypi-build" 
 	  description="Build .tar.gz of raspberry pi linux version">
