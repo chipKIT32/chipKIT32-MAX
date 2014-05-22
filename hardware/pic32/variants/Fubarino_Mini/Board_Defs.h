@@ -153,14 +153,15 @@
 ** the default SPI port as it's pin numbers stay constant on all
 ** devices.
 */
-const static uint8_t SS   = 27;		// PIC32 SS2
-const static uint8_t MOSI =	26;		// PIC32 SDO2
-const static uint8_t MISO = 25;		// PIC32 SDI2
-const static uint8_t SCK  = 24;		// PIC32 SCK2
+const static uint8_t SS   = 30;		// PIC32 SS2
+const static uint8_t MOSI = 29;		// PIC32 SDO2
+const static uint8_t MISO = 27;		// PIC32 SDI2
+const static uint8_t SCK  = 4;		// PIC32 SCK2
 
 /* The Digilent DSPI library uses these ports.
 */
-#define	PIN_DSPI0_SS	27
+#define	PIN_DSPI0_SS	17
+#define	PIN_DSPI1_SS	30
 
 /* ------------------------------------------------------------ */
 /*					Analog Pins									*/
@@ -327,33 +328,46 @@ extern const uint8_t	external_int_to_digital_pin_PGM[];
 #define	_SPI_IPL		_SPI2_IPL_IPC
 #define	_SPI_SPL		_SPI2_SPL_IPC
 
-/* The Digilent DSPI library uses the same port.
+/* SPI pin declarations
 */
-#define	_DSPI0_BASE			_SPI2_BASE_ADDRESS
-#define	_DSPI0_ERR_IRQ		_SPI2_ERR_IRQ
-#define	_DSPI0_RX_IRQ		_SPI2_RX_IRQ
-#define	_DSPI0_TX_IRQ		_SPI2_TX_IRQ
-#define	_DSPI0_VECTOR		_SPI_2_VECTOR
-#define	_DSPI0_IPL_ISR		_SPI2_IPL_ISR
-#define	_DSPI0_IPL			_SPI2_IPL_IPC
-#define	_DSPI0_SPL			_SPI2_SPL_IPC
+#define _SPI_MISO_IN	PPS_IN_SDI2
+#define	_SPI_MISO_PIN	MISO
+#define _SPI_MOSI_OUT	PPS_OUT_SDO2
+#define	_SPI_MOSI_PIN	MOSI
 
-#define _DSPI0_MISO_IN      PPS_IN_SDI2
-#define _DSPI0_MISO_PIN     0
-#define _DSPI0_MOSI_OUT     PPS_OUT_SDO2
-#define _DSPI0_MOSI_PIN     6
+/* SPI1
+ * Note SCK1 only comes out B14, which is Arduino pin 3
+ */
+#define	_DSPI0_BASE			_SPI1_BASE_ADDRESS
+#define	_DSPI0_ERR_IRQ		_SPI1_ERR_IRQ
+#define	_DSPI0_RX_IRQ		_SPI1_RX_IRQ
+#define	_DSPI0_TX_IRQ		_SPI1_TX_IRQ
+#define	_DSPI0_VECTOR		_SPI_1_VECTOR
+#define	_DSPI0_IPL_ISR		_SPI1_IPL_ISR
+#define	_DSPI0_IPL			_SPI1_IPL_IPC
+#define	_DSPI0_SPL			_SPI1_SPL_IPC
 
-// Disabled until I work out the best pins to use - Majenko
-#if 0
-#define	_DSPI1_BASE			_SPI1_BASE_ADDRESS
-#define	_DSPI1_ERR_IRQ		_SPI1_ERR_IRQ
-#define	_DSPI1_RX_IRQ		_SPI1_RX_IRQ
-#define	_DSPI1_TX_IRQ		_SPI1_TX_IRQ
-#define	_DSPI1_VECTOR		_SPI_1_VECTOR
-#define	_DSPI1_IPL_ISR		_SPI1_IPL_ISR
-#define	_DSPI1_IPL			_SPI1_IPL_IPC
-#define	_DSPI1_SPL			_SPI1_SPL_IPC
-#endif
+#define _DSPI0_MISO_IN		PPS_IN_SDI1
+#define _DSPI0_MISO_PIN		19
+#define _DSPI0_MOSI_OUT		PPS_OUT_SDO1
+#define _DSPI0_MOSI_PIN		18
+
+/* SPI2
+ * Note SCK2 only comes out B15, which is Arduino pin 4
+ */
+#define	_DSPI1_BASE			_SPI2_BASE_ADDRESS
+#define	_DSPI1_ERR_IRQ		_SPI2_ERR_IRQ
+#define	_DSPI1_RX_IRQ		_SPI2_RX_IRQ
+#define	_DSPI1_TX_IRQ		_SPI2_TX_IRQ
+#define	_DSPI1_VECTOR		_SPI_2_VECTOR
+#define	_DSPI1_IPL_ISR		_SPI2_IPL_ISR
+#define	_DSPI1_IPL			_SPI2_IPL_IPC
+#define	_DSPI1_SPL			_SPI2_SPL_IPC
+
+#define _DSPI1_MISO_IN      PPS_IN_SDI2
+#define _DSPI1_MISO_PIN     MISO
+#define _DSPI1_MOSI_OUT     PPS_OUT_SDO2
+#define _DSPI1_MOSI_PIN     MOSI
 
 /* ------------------------------------------------------------ */
 /*					I2C Port Declarations						*/
