@@ -301,6 +301,84 @@
 
 
   <target name="macosx-dist" if="macosx" depends="macosx-build" description="Create a .dmg of the Mac OS X version">
+	  <property name="extension" value="dmg"/>
+	  <propertyfile file="upload.properties">
+		  <entry  key="extension" value="${extension}"/>
+	  </propertyfile>
+
+	  <!-- now build the dmg -->
+	  <!--
+	  <gunzip src="macosx/template.dmg.gz" dest="macosx/working.dmg" />
+		-->
+	  <mkdir dir="macosx/working_dir" />
+	  <copy todir="macosx/working_dir">
+		  <fileset dir="macosx/work">
+			  <exclude name="**/mpideTestSuite/**" />
+		  </fileset>
+	  </copy>
+	  <copy file="macosx/dist/img/FTDIUSBSerialDriver_v2_2_16.dmg" todir="macosx/working_dir" />
+	
+
+	  <!-- The ant copy command does not preserve permissions. -->
+	  <chmod file="macosx/working_dir/mpide.app/Contents/MacOS/JavaApplicationStub" perm="+x" />
+	  <chmod perm="+x" parallel="false"  maxparallel="300">
+		  <fileset dir="macosx/working_dir/mpide.app/Contents/Resources/Java/hardware/pic32/compiler" includes="**/*" />
+	  </chmod>
+	  <chmod perm="+x">
+		  <fileset dir="macosx/working_dir/mpide.app/Contents/Resources/Java/hardware/tools/avr/bin" includes="**/*" />
+		  <fileset dir="macosx/working_dir/mpide.app/Contents/Resources/Java/hardware/tools/avr/avr/bin" includes="**/*" />
+		  <fileset dir="macosx/working_dir/mpide.app/Contents/Resources/Java/hardware/tools/avr/avr-3/bin" includes="**/*" />
+		  <fileset dir="macosx/working_dir/mpide.app/Contents/Resources/Java/hardware/tools/avr/avr-4/bin" includes="**/*" />
+		  <fileset dir="macosx/working_dir/mpide.app/Contents/Resources/Java/hardware/tools/avr/libexec/gcc/avr/3.4.6/" includes="**/cc1*" />
+		  <fileset dir="macosx/working_dir/mpide.app/Contents/Resources/Java/hardware/tools/avr/libexec/gcc/avr/4.3.2/" includes="**/cc1*" />
+	  </chmod>
+
+	  <!-- Pause briefly for the OS to catch up with the DMG changes. 
+	  This prevents "hdiutil: couldn't eject "disk3" - Resource busy"
+	          errors when ejecting the disk in the next step.
+	           You may need to set this value higher for your system. -->
+	  <!-- <sleep seconds="3" /> -->
+
+	  <exec executable="mkisofs">
+		  <arg value="-J" />
+		  <arg value="-R" />
+		  <arg value="-apple" />
+		  <arg value="-v"/>
+		  <arg value="-part"/>
+		  <arg value="-z"/>
+		  <arg value="-V"/>
+		  <arg value="mpide"/>
+		  <arg value="-o" />
+		  <arg value="macosx/dist/mpide-${version}.dmg" />
+		  <arg value="macosx/working_dir/" />
+	  </exec>
+
+	  <zip destfile="macosx/dist/mpide-${version}.dmg.zip" >
+		  <fileset dir="macosx/dist">
+       <include name="mpide-${version}.dmg" />
+     </fileset>
+	  </zip>
+
+	  <!-- Clean up the interim files. -->
+	  <delete file="macosx/dist/mpide-${version}.dmg" />
+	  <delete file="macosx/working.dmg" />
+	  <delete dir="macosx/working_dir" />
+
+	  <echo>
+		  =======================================================
+		  mpide for Mac OS X was built. Grab the image from
+
+		  macosx/mpide-${version}.dmg.zip
+		  =======================================================
+	  </echo>
+	  <propertyfile file="upload.properties">
+		  <entry  key="uploadversion" value="${version}"/>
+	  </propertyfile>
+
+  </target>
+
+
+  <target name="macosx-old" if="macosx" depends="macosx-build" description="Create a .dmg of the Mac OS X version">
    	<property name="extension" value="dmg"/>  
 	<propertyfile file="upload.properties">
       		<entry  key="extension" value="${extension}"/>
@@ -510,7 +588,7 @@
 
 
   </target>
-  
+
   <target name="linux-run" depends="linux-build" 
 	  description="Run Linux (32-bit) version">
     <exec executable="./linux/work/mpide" spawn="false"/>
@@ -520,6 +598,13 @@
 	  description="Run Linux (64-bit) version">
     <exec executable="./linux/work/mpide" spawn="false"/>
   </target>
+
+  
+  <target name="raspberrypi-run" depends="raspberrypi-build" 
+	  description="Run Linux (64-bit) version">
+    <exec executable="./raspberrypi/work/mpide" spawn="false"/>
+  </target>
+
 
   <target name="raspberrypi-dist" depends="raspberrypi-build" 
 	  description="Build .tar.gz of raspberry pi linux version">
