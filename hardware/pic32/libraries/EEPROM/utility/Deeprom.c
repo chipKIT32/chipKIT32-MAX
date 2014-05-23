@@ -54,7 +54,7 @@
 /* ------------------------------------------------------------ */
 
 //Aligns the flash memory used for EEPROM emulation in the linker script
-__attribute__ ((aligned(_EEPROM_PAGE_SIZE*4),section(".eeprom_pic32")))
+__attribute__ ((space(code),aligned(_EEPROM_PAGE_SIZE*4),section(".eeprom_pic32")))
 unsigned int eedata_addr[_EEPROM_PAGE_COUNT][_EEPROM_PAGE_SIZE];
 
 // Default max EEPROM address sketch can use. Note: can be adjusted by sketch.
