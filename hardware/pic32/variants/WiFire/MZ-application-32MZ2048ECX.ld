@@ -73,8 +73,8 @@ MEMORY
 {
   kseg0_vector_mem            : ORIGIN = 0x9D000000, LENGTH = 0x1000
   kseg1_vector_mem            : ORIGIN = 0xBD000000, LENGTH = 0x1000
-  kseg0_program_mem    (rx)   : ORIGIN = 0x9D001000, LENGTH = 0x1FEE00
-  kseg0_eeprom_mem            : ORIGIN = 0x9D1FF000, LENGTH = 0x1000
+  kseg0_program_mem    (rx)   : ORIGIN = 0x9D001000, LENGTH = 0x1FB000
+  kseg0_eeprom_mem            : ORIGIN = 0x9D1FC000, LENGTH = 0x4000
   kseg0_boot_mem              : ORIGIN = 0x9FC004B0, LENGTH = 0x0
   kseg1_boot_mem              : ORIGIN = 0xBFC00000, LENGTH = 0x0
   kseg1_boot_mem_4B0          : ORIGIN = 0xBFC004B0, LENGTH = 0x0
