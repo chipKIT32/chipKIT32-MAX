@@ -35,13 +35,10 @@
  * For interrupt vector handling
  *************************************************************************/
 PROVIDE(_vector_spacing = 0x00000001);
-
 INPUT("crtbegin.o")
-
 INPUT("crtend.o")
-
 INPUT("crtn.o")
-
+OPTIONAL("libmchp_peripheral.a") 
 
 /*************************************************************************
  * Start the layout of memory, the sections...
