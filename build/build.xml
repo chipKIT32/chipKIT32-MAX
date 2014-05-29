@@ -316,7 +316,7 @@
 			  <exclude name="**/mpideTestSuite/**" />
 		  </fileset>
 	  </copy>
-	  <copy file="macosx/dist/img/FTDIUSBSerialDriver_v2_2_16.dmg" todir="macosx/working_dir" />
+	  <copy file="macosx/dist/FTDIUSBSerialDriver_v2_2_18.dmg" todir="macosx/working_dir" />
 	
 
 	  <!-- The ant copy command does not preserve permissions. -->
