@@ -528,8 +528,8 @@
 
 /* USB Interrupt
 */
-#define	_USB_IPL_ISR	ipl2
-#define	_USB_IPL_IPC	2
+#define	_USB_IPL_ISR	ipl6
+#define	_USB_IPL_IPC	6
 #define	_USB_SPL_IPC	0
 
 /* CAN Interrupts
