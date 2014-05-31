@@ -269,12 +269,12 @@
       <arg value="macosx/dist/tools-universal.zip" />
     </exec>
      
-<get src="https://chipkit.s3.amazonaws.com/compilers/mz/pic32-tools-chipKIT-cxx-dev_pic32mz_B-Darwin-image.zip"
+<get src="https://chipkit.s3.amazonaws.com/compilers/pic32-tools-Darwin-image-20140530.zip"
          dest="macosx/dist"
          verbose="false"
          usetimestamp="true"/>
 
-<unzip dest="macosx/work/mpide.app/Contents/Resources/Java/hardware/pic32/compiler" src="macosx/dist/pic32-tools-chipKIT-cxx-dev_pic32mz_B-Darwin-image.zip" overwrite="false"/>
+<unzip dest="macosx/work/mpide.app/Contents/Resources/Java/hardware/pic32/compiler" src="macosx/dist/pic32-tools-Darwin-image-20140530" overwrite="false"/>
 <chmod perm="+x" maxparallel="300">
       <fileset dir="macosx/work/mpide.app/Contents/Resources/Java/hardware/pic32/compiler" includes="**/*" />
 </chmod>
@@ -500,12 +500,12 @@
     <copy todir="linux/work" file="linux/dist/mpide" />
     <chmod perm="755" file="linux/work/mpide" />
  
-  <get src="https://chipkit.s3.amazonaws.com/compilers/mz/pic32-tools-chipKIT-cxx-dev_pic32mz_B-Linux-image.zip"
+  <get src="https://chipkit.s3.amazonaws.com/compilers/pic32-tools-Linux32-image-20140530.zip"
          dest="linux/dist"
          verbose="false"
          usetimestamp="true"/>
 
-    <unzip dest="linux/work/hardware/pic32/compiler" src="linux/dist/pic32-tools-chipKIT-cxx-dev_pic32mz_B-Linux-image.zip" overwrite="false"/>
+    <unzip dest="linux/work/hardware/pic32/compiler" src="linux/dist/pic32-tools-Linux32-image-20140530.zip" overwrite="false"/>
     <chmod perm="+x">
       <fileset dir="linux/work/hardware/pic32/compiler/pic32-tools/bin" includes="**/*" />
     </chmod>
@@ -538,7 +538,7 @@
       <param name="target.path" value="raspberrypi/work" />
     </antcall>
 
-    <get src="https://chipkit.s3.amazonaws.com/compilers/mz/pic32-tools-chipKIT-cxx-dev_pic32mz_B-arm-linux-image.zip"
+    <get src="https://chipkit.s3.amazonaws.com/compilers/pic32-tools-arm-linux-image-20140530.zip"
          dest="raspberrypi/dist"
          verbose="false"
          usetimestamp="true"/>
@@ -556,7 +556,7 @@
          raspberrypi/dist folder instead. -->
     <copy todir="raspberrypi/work" file="linux/dist/mpide" />
     <chmod perm="755" file="raspberrypi/work/mpide" />
-    <unzip dest="raspberrypi/work/hardware/pic32/compiler" src="raspberrypi/dist/pic32-tools-chipKIT-cxx-dev_pic32mz_B-arm-linux-image.zip" overwrite="false"/>
+    <unzip dest="raspberrypi/work/hardware/pic32/compiler" src="raspberrypi/dist/pic32-tools-arm-linux-image-20140530.zip" overwrite="false"/>
     <chmod perm="+x">
       <fileset dir="raspberrypi/work/hardware/pic32/compiler" includes="**/*" />
     </chmod>
@@ -849,12 +849,12 @@ Description: chipKIT MPIDE Development environment
     <!-- Unzip AVR tools -->
     <unzip dest="windows/work/hardware" src="windows/avr_tools.zip" overwrite="false"/>
     <!-- pic32 compiler -->
-     <get src="https://chipkit.s3.amazonaws.com/compilers/mz/pic32-tools-chipKIT-cxx-dev_pic32mz_B-win32-image.zip "
+     <get src="https://chipkit.s3.amazonaws.com/compilers/pic32-tools-win32-image-20140530.zip "
          dest="windows/dist"
          verbose="false"
          usetimestamp="true"/>
 
-   <unzip dest="windows/work/hardware/pic32/compiler" src="windows/dist/pic32-tools-chipKIT-cxx-dev_pic32mz_B-win32-image.zip" overwrite="false"/>
+   <unzip dest="windows/work/hardware/pic32/compiler" src="windows/dist/pic32-tools-win32-image-20140530.zip" overwrite="false"/>
     <chmod perm="+x">
       <fileset dir="windows/work/hardware/pic32/compiler" includes="**/*" />
     </chmod>
