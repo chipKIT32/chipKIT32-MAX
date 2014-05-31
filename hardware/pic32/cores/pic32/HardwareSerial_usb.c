@@ -31,8 +31,8 @@
 #include <stddef.h>
 #include <sys/kmem.h>
 
-#include	"HardwareSerial_usb.h"
-#include	"HardwareSerial_cdcacm.h"
+#include "HardwareSerial_usb.h"
+#include "HardwareSerial_cdcacm.h"
 #include "System_Defs.h"
 
 void __attribute__((vector(_USB_1_VECTOR), interrupt(_USB_IPL_ISR), nomips16)) IntUSB1Handler(void);
@@ -764,6 +764,14 @@ void	usb_initialize(void)
 	// power on
 	U1PWRCbits.USBPWR = 1;
 
+	MCF_USB_OTG_SOF_THLD = 74;
+
+	// initialize usb bdt
+	assert(! ((unsigned int)bdts & 0x1ff));
+	MCF_USB_OTG_BDT_PAGE_01 = (uint8)(KVA_TO_PA((unsigned int)bdts) >> 8);
+	MCF_USB_OTG_BDT_PAGE_02 = (uint8)(KVA_TO_PA((unsigned int)bdts) >> 16);
+	MCF_USB_OTG_BDT_PAGE_03 = (uint8)(KVA_TO_PA((unsigned int)bdts) >> 24);
+
 	// enable int
 #ifdef _USE_USB_IRQ_
 #if defined(__PIC32MX2XX__)
@@ -778,14 +786,6 @@ void	usb_initialize(void)
 	IEC1bits.USBIE = 1;
 #endif
 #endif
-
-	MCF_USB_OTG_SOF_THLD = 74;
-
-	// initialize usb bdt
-	assert(! ((unsigned int)bdts & 0x1ff));
-	MCF_USB_OTG_BDT_PAGE_01 = (uint8)(KVA_TO_PA((unsigned int)bdts) >> 8);
-	MCF_USB_OTG_BDT_PAGE_02 = (uint8)(KVA_TO_PA((unsigned int)bdts) >> 16);
-	MCF_USB_OTG_BDT_PAGE_03 = (uint8)(KVA_TO_PA((unsigned int)bdts) >> 24);
 
 	// enable usb to interrupt on reset
 	usb_device_wait();
