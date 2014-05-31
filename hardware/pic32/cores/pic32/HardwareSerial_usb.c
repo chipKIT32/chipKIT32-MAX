@@ -33,8 +33,9 @@
 
 #include	"HardwareSerial_usb.h"
 #include	"HardwareSerial_cdcacm.h"
+#include "System_Defs.h"
 
-void __attribute__((interrupt(),nomips16)) IntUSB1Handler(void);
+void __attribute__((vector(_USB_1_VECTOR), interrupt(_USB_IPL_ISR), nomips16)) IntUSB1Handler(void);
 
 // XXX -- move to relocated compat.h
 #define MCF_USB_OTG_CTL  U1CON
@@ -87,6 +88,7 @@ void __attribute__((interrupt(),nomips16)) IntUSB1Handler(void);
 #define PA_TO_KVA0(pa)  ((pa) | 0x80000000)  // cachable
 #define PA_TO_KVA1(pa)  ((pa) | 0xa0000000)
 */
+#define LENGTHOF(x)  ( sizeof(x)/sizeof(x[0]) )
 
 #define HWRETRIES  1
 #define SWRETRIES  3
@@ -328,12 +330,16 @@ static byte next_address;	// set after successful status
 // called by usb on device attach
 //************************************************************************
 #ifdef _USE_USB_IRQ_
-	void __attribute__((interrupt(),nomips16)) IntUSB1Handler(void)
+	void __attribute__((vector(_USB_1_VECTOR), interrupt(_USB_IPL_ISR),nomips16)) IntUSB1Handler(void)
 #else
 	void	usb_isr(void)
 #endif
 {
 	int rv __attribute__((aligned));
+
+#ifdef _USE_USB_IRQ_
+	IFS1bits.USBIF = 0;
+#endif
 
 	if (! bdts)
 	{
@@ -342,16 +348,7 @@ static byte next_address;	// set after successful status
 	
 	assert(! usb_in_isr);
 	assert((usb_in_isr	=	true) ? true : true);
-    assert((usb_in_ticks = ticks) ? true : true);
 	
-#ifdef _USE_USB_IRQ_
-#if defined(__PIC32MX2XX__)
-    /// TODO: Plib replacement function should go here
-    IFS1CLR	=	0x00000008; // USBIF
-#else
-	IFS1CLR	=	0x02000000; // USBIF
-#endif
-#endif	
 	// *** device ***
 	
 	// if we just transferred a token...
@@ -762,6 +759,7 @@ void	usb_initialize(void)
 	bdts = (struct bdt *)bdt_ram;
 
 	assert(BDT_RAM_SIZE >= LENGTHOF(endpoints)*4*sizeof(struct bdt));
+	assert(NULL == bdts);
 
 	// power on
 	U1PWRCbits.USBPWR = 1;
@@ -769,14 +767,15 @@ void	usb_initialize(void)
 	// enable int
 #ifdef _USE_USB_IRQ_
 #if defined(__PIC32MX2XX__)
-    /// TODO: Plib replacement function should go here
-	IEC1bits.USBIE = 1;
-    IPC7bits.USBIP = 6;
     IPC7bits.USBIS = 0;
-#else
+    IPC7bits.USBIP = _USB_IPL_IPC;
+	IFS1bits.USBIF = 0;
 	IEC1bits.USBIE = 1;
-	IPC11bits.USBIP = 6;
+#else
 	IPC11bits.USBIS = 0;
+	IPC11bits.USBIP = _USB_IPL_IPC;
+	IFS1bits.USBIF = 0;
+	IEC1bits.USBIE = 1;
 #endif
 #endif
 
