@@ -128,7 +128,7 @@ static struct bdt
 {
 	int flags;
 	byte *buffer;
-} __attribute__((packed)) *bdts;  // 512 byte aligned in buffer
+} __attribute__((packed)) volatile * volatile bdts;  // 512 byte aligned in buffer
 
 // N.B. only bdt endpoint 0 is used for host mode!
 
@@ -750,7 +750,7 @@ void	usb_uninitialize(void)
 //************************************************************************
 void	usb_initialize(void)
 {
-	static __attribute__ ((aligned(512))) byte bdt_ram[BDT_RAM_SIZE];
+	static __attribute__ ((aligned(512))) byte volatile bdt_ram[BDT_RAM_SIZE];
 
 #ifdef _USE_USB_IRQ_
     setIntVector(_USB_1_VECTOR, IntUSB1Handler);
