@@ -459,12 +459,12 @@ SECTIONS
   {
     _text_begin = . ;
 
-    *(.text .stub .text.* .gnu.linkonce.t.*)
+    *(.stub .gnu.linkonce.t.*)
     KEEP (*(.text.*personality*))
     /* .gnu.warning sections are handled specially by elf32.em.  */
-    *(.gnu.warning)
     *(.mips16.fn.*)
     *(.mips16.call.*)
+    *(.gnu.warning)
     . = ALIGN(4) ;
   } >kseg0_program_mem =0
 
@@ -578,7 +578,7 @@ SECTIONS
 
   .rodata  ALIGN(4) :
   {
-    *(.rodata .rodata.* .gnu.linkonce.r.*)
+    *(.gnu.linkonce.r.*)
     *(.rodata1)
     . = ALIGN(4) ;
   } >kseg0_program_mem
@@ -616,7 +616,7 @@ SECTIONS
     . += 8 ;
   } >kseg1_data_mem
 
-  /* Persistent data */
+  /* Persistent data - Use the new C 'persistent' attribute instead. */
   .persist ALIGN(4) (NOLOAD) :
   {
     _persist_begin = .;
@@ -630,15 +630,25 @@ SECTIONS
   /* If this is a bootloader, than skip around the protected memory and don't place anything there */
   _protected_end = ((_IMAGE_TYPE & (_imageSplitFlashBootloader | _imageProgramFlashBootloader | _imageBootFlashBootloader)) != 0) ? (ORIGIN(kseg1_data_mem) + 0x600) : . ;
 
-  .data  _protected_end :
+  .protected_bootloader ORIGIN(kseg1_data_mem) (NOLOAD) :
+  {
+    . += (((_IMAGE_TYPE & (_imageSplitFlashBootloader | _imageProgramFlashBootloader | _imageBootFlashBootloader)) != 0) ? (ORIGIN(kseg1_data_mem) + 0x600) : 0x0);
+  }
+
+  /*
+   *  Note that input sections named .data* are not mapped here.
+   *  The best-fit allocator locates them, so that they may flow
+   *  around absolute sections as needed.
+   */
+  .data :
   {
     _data_begin = . ;
-    *(.data .data.* .gnu.linkonce.d.*)
+    *( .gnu.linkonce.d.*)
     KEEP (*(.gnu.linkonce.d.*personality*))
 
     *(.data1)
     . = ALIGN(4) ;
-  } >kseg1_data_mem AT>kseg0_program_mem
+  } >kseg1_data_mem
 
   _data_image_begin = LOADADDR(.data) ;
   . = .;
@@ -647,7 +657,7 @@ SECTIONS
   .got ALIGN(4)   :
   {
      *(.got.plt) *(.got)
-  } >kseg1_data_mem AT>kseg0_program_mem
+  } >kseg1_data_mem
   /*
    * We want the small data sections together, so single-instruction offsets
    * can access them all, and initialized data all before uninitialized, so
@@ -659,18 +669,18 @@ SECTIONS
     *(.gnu.linkonce.s.*)
     . = ALIGN(4) ;
     _sdata_end = . ;
-  } >kseg1_data_mem AT>kseg0_program_mem
+  } >kseg1_data_mem
 
   .lit8           :
   {
     *(.lit8)
     . = ALIGN(4) ;
-  } >kseg1_data_mem AT>kseg0_program_mem
+  } >kseg1_data_mem
 
   .lit4           :
   {
     *(.lit4)
-  } >kseg1_data_mem AT>kseg0_program_mem
+  } >kseg1_data_mem 
 
   . = ALIGN (4) ;
   _data_end = . ;
@@ -689,7 +699,7 @@ SECTIONS
   .bss   :
   {
     *(.dynbss)
-    *(.bss .bss.* .gnu.linkonce.b.*)
+    *(.gnu.linkonce.b.*)
     *(COMMON)
     /*
      * Align here to ensure that the .bss section occupies space up to
@@ -703,58 +713,32 @@ SECTIONS
   _end = . ;
   _bss_end = . ;
 
-  /* Heap allocating takes a chunk of memory following BSS */
-  .heap ALIGN(8) :
-  {
-    _heap = . ;
-    . += _min_heap_size ;
-    . = ALIGN(8);
-  } >kseg1_data_mem
-
-  /* Stack allocation follows the heap */
-  .stack ALIGN(8) :
-  {
-    _splim = . ;
-    _SPLIM = . ;
-    . += _min_stack_size ;
-    . = ALIGN(8);
-  } >kseg1_data_mem
-
+  /*
+   *  The heap and stack are best-fit allocated by the linker after other
+   *  data and bss sections have been allocated.
+   */
   /*
    * RAM functions go at the end of our stack and heap allocation.
    * Alignment of 2K required by the boundary register (BMXDKPBA).
+   *
+   * RAM functions are now allocated by the linker. The linker generates
+   * _ramfunc_begin and _bmxdkpba_address symbols depending on the
+   * location of RAM functions.
    */
-  .ramfunc ALIGN(2K) :
-  {
-    _ramfunc_begin = . ;
-    *(.ramfunc  .ramfunc.*)
-    . = ALIGN(4) ;
-    _ramfunc_end = . ;
-  } >kseg1_data_mem AT>kseg0_program_mem
-
-  _ramfunc_image_begin = LOADADDR(.ramfunc) ;
-  _ramfunc_length = SIZEOF(.ramfunc) ;
-  _bmxdkpba_address = _ramfunc_begin - ORIGIN(kseg1_data_mem) ;
   _bmxdudba_address = LENGTH(kseg1_data_mem) ;
   _bmxdupba_address = LENGTH(kseg1_data_mem) ;
-  /*
-   * The actual top of stack should include the gap between the stack
-   * section and the beginning of the .ramfunc section caused by the
-   * alignment of the .ramfunc section minus 1 word.  If RAM functions
-   * do not exist, then the top of the stack should point to the end of
-   * the data memory.
-   */
-  _stack = (_ramfunc_length > 0)
-         ? _ramfunc_begin - 4
-         : ORIGIN(kseg1_data_mem) + LENGTH(kseg1_data_mem) ;
-  ASSERT((_min_stack_size + _min_heap_size) <= (_stack - _heap),
-    "Not enough space to allocate both stack and heap.  Reduce heap and/or stack size.")
+
     /* The .pdr section belongs in the absolute section */
+    
     /DISCARD/ : { *(.pdr) }
     /* We don't load .reginfo onto the target, so don't locate it
      * in real memory
      */
     /DISCARD/ : { *(.reginfo) }
+
+  .gcc_compiled_long32 : { KEEP(*(.gcc_compiled_long32)) }
+  .gcc_compiled_long64 : { KEEP(*(.gcc_compiled_long64)) }
+
   /* Stabs debugging sections.  */
   .stab          0 : { *(.stab) }
   .stabstr       0 : { *(.stabstr) }
@@ -801,5 +785,7 @@ SECTIONS
   .mdebug.eabi32 : { KEEP(*(.mdebug.eabi32)) }
   .mdebug.eabi64 : { KEEP(*(.mdebug.eabi64)) }
   /DISCARD/ : { *(.rel.dyn) }
-  /DISCARD/ : { *(.note.GNU-stack) *(.gnu_debuglink) *(.gnu.lto_*) }
+  .gnu.attributes 0 : { KEEP (*(.gnu.attributes)) }
+  /DISCARD/ : { *(.note.GNU-stack) }
+  /DISCARD/ : { *(.note.GNU-stack) *(.gnu_debuglink) *(.gnu.lto_*) *(.discard) }
 }
