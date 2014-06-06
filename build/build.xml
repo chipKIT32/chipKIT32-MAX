@@ -269,7 +269,7 @@
       <arg value="macosx/dist/tools-universal.zip" />
     </exec>
      
-<get src="https://chipkit.s3.amazonaws.com/compilers/mz/pic32-tools-chipKIT-cxx-master-arm-linux-image.zip"
+<get src="https://s3.amazonaws.com/chipkit/compilers/pic32-tools-Darwin-image-20140530.zip"
          dest="macosx/dist"
          verbose="false"
          usetimestamp="true"/>
