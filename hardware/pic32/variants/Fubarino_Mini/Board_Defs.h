@@ -139,11 +139,11 @@
 /*					Interrupt Pin Declarations					*/
 /* ------------------------------------------------------------ */
 
-#define	PIN_INT0	4
-#define	PIN_INT1	0
-#define PIN_INT2	1
-#define	PIN_INT3	2
-#define	PIN_INT4	3
+#define	PIN_INT0	24		// B7   non-PPS
+#define	PIN_INT1	3		// B14  INT1R = RPB14 = 1
+#define PIN_INT2	0		// B13  INT2R = RPB13 = 3
+#define	PIN_INT3	6		// A1   INT3R = RPA1 = 0
+#define	PIN_INT4	4		// B15  INT4R = RPB15 = 3
 
 /* ------------------------------------------------------------ */
 /*					SPI Pin Declarations						*/
@@ -293,10 +293,10 @@ extern const uint8_t	external_int_to_digital_pin_PGM[];
 #define	_SER0_IPL_ISR	_UART1_IPL_ISR
 #define	_SER0_IPL		_UART1_IPL_IPC
 #define	_SER0_SPL		_UART1_SPL_IPC
-#define	_SER0_TX_OUT	PPS_OUT_U1TX
-#define	_SER0_TX_PIN	17
-#define	_SER0_RX_IN		PPS_IN_U1RX
-#define	_SER0_RX_PIN	18
+#define	_SER0_TX_OUT	PPS_OUT_U1TX		// RPB4R = U1TX = 1
+#define	_SER0_TX_PIN	17					// RB4
+#define	_SER0_RX_IN		PPS_IN_U1RX			// U1RXR = RPA4 = 2
+#define	_SER0_RX_PIN	18					// RA4
 
 /* Serial port 1 uses UART2
 */
@@ -306,10 +306,10 @@ extern const uint8_t	external_int_to_digital_pin_PGM[];
 #define	_SER1_IPL_ISR	_UART2_IPL_ISR
 #define	_SER1_IPL		_UART2_IPL_IPC
 #define	_SER1_SPL		_UART2_SPL_IPC
-#define	_SER1_TX_OUT	PPS_OUT_U2TX
-#define	_SER1_TX_PIN	26
-#define	_SER1_RX_IN		PPS_IN_U2RX
-#define	_SER1_RX_PIN	25
+#define	_SER1_TX_OUT	PPS_OUT_U2TX		// RPB9R = U2TX = 2
+#define	_SER1_TX_PIN	26					// RB9
+#define	_SER1_RX_IN		PPS_IN_U2RX			// U2RXR = RPB8 = 4
+#define	_SER1_RX_PIN	25					// RB8
 
 /* ------------------------------------------------------------ */
 /*					SPI Port Declarations						*/
