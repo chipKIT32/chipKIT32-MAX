@@ -178,10 +178,10 @@ const uint8_t digital_pin_to_port_PGM[] = {
 
     // surplus pins
     _IOPORT_PB,	    //	60  RB12    AN12/ERXD0/AECRS/PMA11/RB12     (Power Supply Monitor)
-    _IOPORT_PB,	    //	61  RB13    AN13/ERXD1/AECOL/PMA10/RB13     (5V Power Enable)4
+    _IOPORT_PB,	    //	61  RB13    AN13/ERXD1/AECOL/PMA10/RB13     (POT)
     _IOPORT_PA,	    //	62  RA04    TDI/RA4                         (SDA pullup)
     _IOPORT_PA,	    //	63  RA05    TDO/RA5                         (SCL pullup)
-    _IOPORT_PD,	    //	64  RD13    ETXD3/PMD13/CN19/RD13           (CBUS4)
+    _IOPORT_PD,	    //	64  RD13    ETXD3/PMD13/CN19/RD13           (Power Supply Enable)
     _IOPORT_PA,	    //	65  RA06    TRCLK/RA6                       (BTN1)
     _IOPORT_PA,	    //	66  RA07    TRD3/RA7                        (BTN1)
 
@@ -270,10 +270,10 @@ const uint16_t digital_pin_to_bit_mask_PGM[] =
 
     // surplus pins
     _BV( 12 ),		//	60  RB12    AN12/ERXD0/AECRS/PMA11/RB12     (Power Supply Monitor)
-    _BV( 13),		//	61  RB13    AN13/ERXD1/AECOL/PMA10/RB13     (5V Power Enable)
+    _BV( 13),		//	61  RB13    AN13/ERXD1/AECOL/PMA10/RB13     (POT)
     _BV( 4 ),		//	62  RA04    TDI/RA4                         (SDA pullup)
     _BV( 5 ),		//	63  RA05    TDO/RA5                         (SCL pullup)
-    _BV( 13 ),		//	64  RD13    ETXD3/PMD13/CN19/RD13           (CBUS4)
+    _BV( 13 ),		//	64  RD13    ETXD3/PMD13/CN19/RD13           (Power Supply Enable)
     _BV( 6 ),		//	65  RA06    TRCLK/RA6                       (BTN1)
     _BV( 7 ),		//	66  RA07    TRD3/RA7                        (BTN1)
 
@@ -364,10 +364,10 @@ const uint16_t digital_pin_to_timer_PGM[] =
 
     // surplus pins
     NOT_ON_TIMER,           //	60  RB12    AN12/ERXD0/AECRS/PMA11/RB12     (Power Supply Monitor)
-    NOT_ON_TIMER,			//	61  RB13    AN13/ERXD1/AECOL/PMA10/RB13     (5V Power Enable)
+    NOT_ON_TIMER,			//	61  RB13    AN13/ERXD1/AECOL/PMA10/RB13     (POT)
     NOT_ON_TIMER,			//	62  RA04    TDI/RA4                         (SDA pullup)
     NOT_ON_TIMER,			//	63  RA05    TDO/RA5                         (SCL pullup)
-    NOT_ON_TIMER,			//	64  RD13    ETXD3/PMD13/CN19/RD13           (CBUS4)
+    NOT_ON_TIMER,			//	64  RD13    ETXD3/PMD13/CN19/RD13           (Power Supply Enable)
     NOT_ON_TIMER,			//	65  RA06    TRCLK/RA6                       (BTN1)
     NOT_ON_TIMER,			//	66  RA07    TRD3/RA7                        (BTN1)
 
@@ -380,6 +380,95 @@ const uint16_t digital_pin_to_timer_PGM[] =
     _TIMER_IC3,			    //	72  RD10    SCK1/IC3/PMCS2/PMA15/RD10       (shared with digital pin 8)
     _TIMER_IC5,			    //	73  RD12    ETXD2/IC5/PMD12/RD12            (shared with digital pin 10) 
 };
+
+const uint8_t digital_pin_to_analog_PGM[] = {
+	NOT_ANALOG_PIN,	        //	0   RF02    SDA3/SDI3/U1RX/RF2		
+	NOT_ANALOG_PIN,			//	1   RF08    SCL3/SDO3/U1TX/RF8
+	NOT_ANALOG_PIN,		    //	2   RE08    AERXD0/INT1/RE8
+	NOT_ANALOG_PIN,			//	3   RD00    SDO1/OC1/INT0/RD0
+	NOT_ANALOG_PIN,			//	4   RF01    ETXD0/PMD10/RF1
+	NOT_ANALOG_PIN,			//	5   RD01    OC2/RD1
+	NOT_ANALOG_PIN,			//	6   RD02    OC3/RD2    
+	NOT_ANALOG_PIN,			//	7   RE09    AERXD1/INT2/RE9   
+	NOT_ANALOG_PIN,			//	8   RA14    AETXCLK/SCL1/INT3/RA14 
+	NOT_ANALOG_PIN,			//	9   RD03    OC4/RD3   
+	NOT_ANALOG_PIN,	        //	10  RD04    OC5/PMWR/CN13/RD4  
+	NOT_ANALOG_PIN,			//	11  RG08    ERXDV/AERXDV/ECRSDV/AECRSDV/SCL4/SDO2/U3TX/PMA3/CN10/RG8
+	NOT_ANALOG_PIN,			//	12  RG07    ECRS/SDA4/SDI2/U3RX/PMA4/CN9/RG7
+	NOT_ANALOG_PIN,			//	13  RG06    ECOL/SCK2/U6TX/U3RTS/PMA5/CN8/RG6 (SPI_SCK, User LED)
+	_BOARD_AN0,			    //	14  RB02    AN2/C2IN-/CN4/RB2
+	_BOARD_AN1,			    //	15  RB04    AN4/C1IN-/CN6/RB4
+	_BOARD_AN2,			    //	16  RB08    AN8/C1OUT/RB8
+	_BOARD_AN3,			    //	17  RB00    PGED1/AN0/CN2/RB0
+	_BOARD_AN4,			    //	18  RB10    AN10/CVrefout/PMA13/RB10
+	_BOARD_AN5,			    //	19  RB11    AN11/ERXERR/AETXERR/PMA12/RB11   
+	_BOARD_AN6,			    //	20  RB03    AN3/C2IN+/CN5/RB3
+	_BOARD_AN7,			    //	21  RB05    AN5/C1IN+/VBUSON/CN7/RB5
+	_BOARD_AN8,			    //	22  RB09    AN9/C2OUT/RB9
+	_BOARD_AN9,			    //	23  RB01    PGEC1/AN1/CN3/RB1
+	_BOARD_AN10,			//	24  RB14    AN14/ERXD2/AETXD3/PMALH/PMA1/RB14  
+	_BOARD_AN11,			//	25  RB15    AN15/ERXD3/AETXD2/OCFB/PMALL/PMA0/CN12/RB15
+	NOT_ANALOG_PIN,			//	26  RE00    PMD0/RE0
+	NOT_ANALOG_PIN,			//	27  RE01    PMD1/RE1  
+	NOT_ANALOG_PIN,			//	28  RE02    PMD2/RE2
+	NOT_ANALOG_PIN,			//	29  RE03    PMD3/RE3   
+	NOT_ANALOG_PIN,			//	30  RE04    PMD4/RE4  
+	NOT_ANALOG_PIN,			//	31  RE05    PMD5/RE5
+	NOT_ANALOG_PIN,			//	32  RE06    PMD6/RE6
+	NOT_ANALOG_PIN,			//	33  RE07    PMD7/RE7 
+	NOT_ANALOG_PIN,			//	34  RD05    PMRD/CN14/RD5
+	NOT_ANALOG_PIN,			//	35  RD11    EMDC/AEMDC/IC4/PMCS1/PMA14/RD11
+	NOT_ANALOG_PIN,			//	36  RD06    ETXEN/PMD14/CN15/RD6
+	NOT_ANALOG_PIN,			//	37  RD07    ETXCLK/PMD15/CN16/RD7
+	NOT_ANALOG_PIN,			//	38  RC04    T5CK/SDI1/RC4
+	NOT_ANALOG_PIN,			//	39  RD14    AETXD0/SS3/U4RX/U1CTS/CN20/RD14
+	NOT_ANALOG_PIN,			//	40  RD15    AETXD1/SCK3/U4TX/U1RTS/CN21/RD15
+	NOT_ANALOG_PIN,			//	41  RA09    Vref-/CVref-/AERXD2/PMA7/RA9
+	NOT_ANALOG_PIN,			//	42  RA10    Vref+/CVref+/AERXD3/PMA6/RA10   (Pin A; VREF+)	
+
+    // these are above the highest pin on the board
+    NOT_ANALOG_PIN,			//	43  RF00    ETXD1/PMD11/RF0                 (User LED)
+    NOT_ANALOG_PIN,			//	44  RG09    ERXCLK/AERXCLK/EREFCLK/AEREFCLK/SS2/U6RX/U3CTS/PMA2/CN11/RG9 (SPI_SS (JPR to digital pin 10 position))
+    NOT_ANALOG_PIN,			//	45  RA02    SCL2/RA2                        (I2C, wire (jumper to A5) shared with pin 19)                       
+    NOT_ANALOG_PIN,			//	46  RA03    SDA2/RA3                        (I2C, wire (jumper to A4) shared with pin 18)
+    NOT_ANALOG_PIN,			//	47  RA00    TMS/RA0                         (User LED)
+    NOT_ANALOG_PIN,			//	48  RA01    TCK/RA1                         (User LED)
+
+    // SD Card
+    NOT_ANALOG_PIN,			//	49  RG15    AERXERR/RG15                    (SD Card)
+    NOT_ANALOG_PIN,			//	50  RG14    TRD2/RG14                       (SD Card)
+    NOT_ANALOG_PIN,			//	51  RG12    TRD1/RG12                       (SD Card)
+    NOT_ANALOG_PIN,			//	52  RG13    TRD0/RG13                       (SD Card)
+
+    // MRF24-G WiFi Module
+    NOT_ANALOG_PIN,         //	53  RF13    SCK4/U5TX/U2RTS/RF13            (MRF24 SPI)
+    NOT_ANALOG_PIN,			//	54  RF12    SS4/U5RX/U2CTS/RF12             (MRF24 SPI)
+    NOT_ANALOG_PIN,			//	55  RF04    SDA5/SDI4/U2RX/PMA9/CN17/RF4    (MRF24 SPI)   
+    NOT_ANALOG_PIN,			//	56  RF05    SCL5/SDO4/U2TX/PMA8/CN18/RF5    (MRF24 SPI)  
+    NOT_ANALOG_PIN,			//	57  RA15    AETXEN/SDA1/INT4/RA15           (MRF24 INT)
+    NOT_ANALOG_PIN,			//	58  RG01    ETXERR/PMD9/RG1                 (MRF24 HIBERNATE)
+    NOT_ANALOG_PIN,			//	59  RG00    PMD8/RG0                        (MRF24 RESET)
+
+    // surplus pins
+    _BOARD_AN12,            //	60  RB12    AN12/ERXD0/AECRS/PMA11/RB12     (Power Supply Monitor)
+    _BOARD_AN13,			//	61  RB13    AN13/ERXD1/AECOL/PMA10/RB13     (POT)
+    NOT_ANALOG_PIN,			//	62  RA04    TDI/RA4                         (SDA pullup)
+    NOT_ANALOG_PIN,			//	63  RA05    TDO/RA5                         (SCL pullup)
+    NOT_ANALOG_PIN,			//	64  RD13    ETXD3/PMD13/CN19/RD13           (Power Supply Enable)
+    NOT_ANALOG_PIN,			//	65  RA06    TRCLK/RA6                       (BTN1)
+    NOT_ANALOG_PIN,			//	66  RA07    TRD3/RA7                        (BTN1)
+
+    // shared pins
+    NOT_ANALOG_PIN,         //	67  RC01    T2CK/RC1                        (shared with digital pin 34)
+    NOT_ANALOG_PIN,			//	68  RC02    T3CK/RC2                        (shared with digital pin 35)
+    NOT_ANALOG_PIN,			//	69  RC03    T4CK/RC3                        (shared with digital pin 36)
+    NOT_ANALOG_PIN,			//	70  RD08    RTCC/EMDIO/AEMDIO/IC1/RD8       (shared with digital pin 2)
+    NOT_ANALOG_PIN,			//	71  RD09    SS1/IC2/RD9                     (shared with digital pin 7)
+    NOT_ANALOG_PIN,			//	72  RD10    SCK1/IC3/PMCS2/PMA15/RD10       (shared with digital pin 8)
+    NOT_ANALOG_PIN,			//	73  RD12    ETXD2/IC5/PMD12/RD12            (shared with digital pin 10) 
+};
+
+
 
 /* ------------------------------------------------------------ */
 /* This table is used to map from the analog pin number to the
@@ -400,7 +489,8 @@ const uint8_t analog_pin_to_channel_PGM[] =
 	1,		//*	A9						AN1
 	14,		//*	A10						AN14
 	15,		//*	A11						AN15
-
+	12,		//*	A12						AN12
+	13,		//*	A13						AN13
 };
 
 /* ------------------------------------------------------------ */
