@@ -415,14 +415,12 @@ const uint8_t output_compare_to_digital_pin_PGM[] = {
 ** pin for that interrupt.
 */
 
-/// TODO: UPdate
-
 const uint8_t external_int_to_digital_pin_PGM[] = {
 	NOT_PPS_PIN,			// INT0 is not mappable
-	10,					// INT1, JB-03
-	15,					// INT2, JB-10
-	22,					// INT3, JC-09
-	12					// INT4, JB-07
+	PIN_INT1,				// INT1
+	PIN_INT2,				// INT2
+	PIN_INT3,				// INT3
+	PIN_INT4				// INT4
 };
 
 /* ------------------------------------------------------------ */
