@@ -28,16 +28,25 @@ Digital I/O:
 		}
 
 	Results:
-		D0 	works
-		D1 	works
-		D2 	works (J10 set for D2)
-		D3 	works
-		D8 	works (JP13 set for D8)
-		D9 	works (JP12 set for D9)
-		D10 works (JP14 set for SS)
-		D11 works
-		D12 works (JP8 set to MISO)
-		D13 works
+		D0  (RA4)  works
+		D1  (RB4)  works
+		D2  (RB5)  works (J10 set for D2)
+		D3  (RB13) works
+		D4  (RB1)  works (test center pin of JP1)
+		D5  (RB0)  works (test center pin of JP4)
+		D6  (RA2)  (not available)
+		D7  (RA3)  (not available)
+		D8  (RB10) works (JP13 set for D8)
+		D9  (RB11) works (JP12 set for D9)
+		D10 (RB7)  works (JP14 set for SS)
+		D11 (RA1)  works
+		D12 (RB8)  works (JP8 set to MISO)
+		D13 (RB14) works
+		D14 (RA0)  works (test at center pin of JP15)
+		D15 (RB15) works (test at center pin of JP11)
+		D16 (RB2)  works (test at A4/SDA which is JA3 pin 4 and 3)
+		D17 (RB3)  works (test at A5/SCL whicih is JA3 pin 2 and 1)
+		D18 (RB9)  (test at center pin of JP6)
 
 Analog Input:
 	Purpose:
@@ -264,10 +273,11 @@ Interrupts:
 		To see LED1 blink on each interrupt make sure to have jumper JP15 set to LED1.
 	
 		As you move the wire from the stimulus pin (12) to the five external
-		interrupt pins, all 5 external interrupts (on pins 11, 8, 3, 2, and 1 
+		interrupt pins, all 5 external interrupts (on pins 10, 8, 3, 2, and 1 
 		for INT0 through INT4 respectively) cause the proper messages to
 		be printed.
 		
+		For Pin 10, make sure jumper JP14 is set to SS.
 		For pin 2, make sure jumper JP10 is set to D2.
 		For pin 8, make sure jumper JP13 is set to D8.
 
