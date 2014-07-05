@@ -274,7 +274,7 @@
          verbose="false"
          usetimestamp="true"/>
 
-<unzip dest="macosx/work/mpide.app/Contents/Resources/Java/hardware/pic32/compiler" src="macosx/dist/pic32-tools-Darwin-image-20140530" overwrite="false"/>
+<unzip dest="macosx/work/mpide.app/Contents/Resources/Java/hardware/pic32/compiler" src="macosx/dist/pic32-tools-Darwin-image-20140530.zip" overwrite="false"/>
 <chmod perm="+x" maxparallel="300">
       <fileset dir="macosx/work/mpide.app/Contents/Resources/Java/hardware/pic32/compiler" includes="**/*" />
 </chmod>
