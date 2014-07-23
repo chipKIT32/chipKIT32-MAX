@@ -174,6 +174,56 @@ DSPI::init(uint8_t irqErr, uint8_t irqRx, uint8_t irqTx, isrFunc isrHandler) {
     isr = isrHandler;
 }
 
+#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
+
+/* ------------------------------------------------------------ */
+/***	DSPI::begin
+**
+**	Parameters:
+**		uint8_t miso - MISO pin PPS mapping
+**      uint8_t mosi - MOSI pin PPS mapping
+**
+**	Return Value:
+**		none
+**
+**	Errors:
+**		none
+**
+**	Description:
+**		Initialize the SPI port with new PPS mappings.
+*/
+
+void DSPI::begin(uint8_t miso, uint8_t mosi) {
+    pinMISO = miso;
+    pinMOSI = mosi;
+    begin(pinSS);
+}
+
+/* ------------------------------------------------------------ */
+/***	DSPI::begin
+**
+**	Parameters:
+**		uint8_t miso - MISO pin PPS mapping
+**      uint8_t mosi - MOSI pin PPS mapping
+**      uint8_t ss   - Slace Select pin
+**
+**	Return Value:
+**		none
+**
+**	Errors:
+**		none
+**
+**	Description:
+**		Initialize the SPI port with new PPS mappings.
+*/
+void DSPI::begin(uint8_t miso, uint8_t mosi, uint8_t ss) {
+    pinMISO = miso;
+    pinMOSI = mosi;
+    pinSS = ss;
+    begin(pinSS);
+}
+#endif
+
 /* ------------------------------------------------------------ */
 /***	DSPI::begin
 **
