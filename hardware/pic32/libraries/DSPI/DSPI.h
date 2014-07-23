@@ -132,6 +132,10 @@ public:
 */
 void		begin();
 void		begin(uint8_t pin);
+#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
+void        begin(uint8_t miso, uint8_t mosi);
+void        begin(uint8_t miso, uint8_t mosi, uint8_t pin);
+#endif
 void		end();
 void		setSpeed(uint32_t spd);
 void		setMode(uint16_t  mod);
