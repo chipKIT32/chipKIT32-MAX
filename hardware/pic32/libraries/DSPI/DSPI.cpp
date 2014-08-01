@@ -125,7 +125,7 @@ DSPI::DSPI()
 	pspi = 0;
 	cbCur = 0;
 
-#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
+#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__) || defined(__PIC32MZXX__)
 	pinMISO = (uint8_t)pinMI;
 	pinMOSI = (uint8_t)pinMO;
 	ppsMISO = ppsMI;
@@ -174,7 +174,7 @@ DSPI::init(uint8_t irqErr, uint8_t irqRx, uint8_t irqTx, isrFunc isrHandler) {
     isr = isrHandler;
 }
 
-#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
+#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__) || defined(__PIC32MZXX__)
 
 /* ------------------------------------------------------------ */
 /***	DSPI::begin
@@ -1030,7 +1030,7 @@ DSPI::doDspiInterrupt() {
 **		Constructor.
 */
 
-#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
+#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__) || defined(__PIC32MZXX__)
 DSPI0::DSPI0() : DSPI(_DSPI0_MISO_PIN, _DSPI0_MOSI_PIN, _DSPI0_MISO_IN, _DSPI0_MOSI_OUT)
 #else
 DSPI0::DSPI0() 

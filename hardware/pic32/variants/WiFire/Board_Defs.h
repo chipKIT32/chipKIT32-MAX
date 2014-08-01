@@ -365,10 +365,10 @@ extern const uint8_t	digital_pin_to_pps_in_PGM[];
 /* The standard SPI port uses SPI2.
 */
 #define	_SPI_BASE		_SPI2_BASE_ADDRESS
-#define _SPI_ERR_IRQ	_SPI2_ERR_IRQ
-#define	_SPI_RX_IRQ		_SPI2_RX_IRQ
-#define	_SPI_TX_IRQ		_SPI2_TX_IRQ
-#define	_SPI_VECTOR		_SPI_2_VECTOR
+#define _SPI_ERR_IRQ	_SPI2_FAULT_VECTOR
+#define	_SPI_RX_IRQ		_SPI2_RX_VECTOR
+#define	_SPI_TX_IRQ		_SPI2_TX_VECTOR
+#define	_SPI_VECTOR		_SPI2_FAULT_VECTOR
 #define _SPI_IPL_ISR	_SPI2_IPL_ISR
 #define	_SPI_IPL		_SPI2_IPL_IPC
 #define	_SPI_SPL		_SPI2_SPL_IPC
@@ -386,10 +386,10 @@ extern const uint8_t	digital_pin_to_pps_in_PGM[];
 
 // same as the default SPI port
 #define	_DSPI0_BASE			_SPI2_BASE_ADDRESS
-#define	_DSPI0_ERR_IRQ		_SPI2_ERR_IRQ
-#define	_DSPI0_RX_IRQ		_SPI2_RX_IRQ
-#define	_DSPI0_TX_IRQ		_SPI2_TX_IRQ
-#define	_DSPI0_VECTOR		_SPI_2_VECTOR
+#define	_DSPI0_ERR_IRQ		_SPI2_FAULT_VECTOR
+#define	_DSPI0_RX_IRQ		_SPI2_RX_VECTOR
+#define	_DSPI0_TX_IRQ		_SPI2_TX_VECTOR
+#define	_DSPI0_VECTOR		_SPI2_FAULT_VECTOR
 #define _DSPI0_IPL_ISR		_SPI2_IPL_ISR
 #define	_DSPI0_IPL			_SPI2_IPL_IPC
 #define	_DSPI0_SPL			_SPI2_SPL_IPC
@@ -402,10 +402,10 @@ extern const uint8_t	digital_pin_to_pps_in_PGM[];
 
 // 2nd SPI
 #define	_DSPI1_BASE			_SPI1_BASE_ADDRESS
-#define	_DSPI1_ERR_IRQ		_SPI1_ERR_IRQ
-#define	_DSPI1_RX_IRQ		_SPI1_RX_IRQ
-#define	_DSPI1_TX_IRQ		_SPI1_TX_IRQ
-#define	_DSPI1_VECTOR		_SPI_1_VECTOR
+#define	_DSPI1_ERR_IRQ		_SPI1_FAULT_VECTOR
+#define	_DSPI1_RX_IRQ		_SPI1_RX_VECTOR
+#define	_DSPI1_TX_IRQ		_SPI1_TX_VECTOR
+#define	_DSPI1_VECTOR		_SPI1_FAULT_VECTOR
 #define _DSPI1_IPL_ISR		_SPI1_IPL_ISR
 #define	_DSPI1_IPL			_SPI1_IPL_IPC
 #define	_DSPI1_SPL			_SPI1_SPL_IPC
@@ -417,10 +417,10 @@ extern const uint8_t	digital_pin_to_pps_in_PGM[];
 
 // SD Card
 #define	_DSPI2_BASE			_SPI3_BASE_ADDRESS
-#define	_DSPI2_ERR_IRQ		_SPI3_ERR_IRQ
-#define	_DSPI2_RX_IRQ		_SPI3_RX_IRQ
-#define	_DSPI2_TX_IRQ		_SPI3_TX_IRQ
-#define	_DSPI2_VECTOR		_SPI_3_VECTOR
+#define	_DSPI2_ERR_IRQ		_SPI3_FAULT_VECTOR
+#define	_DSPI2_RX_IRQ		_SPI3_RX_VECTOR
+#define	_DSPI2_TX_IRQ		_SPI3_TX_VECTOR
+#define	_DSPI2_VECTOR		_SPI3_FAULT_VECTOR
 #define _DSPI2_IPL_ISR		_SPI3_IPL_ISR
 #define	_DSPI2_IPL			_SPI3_IPL_IPC
 #define	_DSPI2_SPL			_SPI3_SPL_IPC
@@ -432,10 +432,10 @@ extern const uint8_t	digital_pin_to_pps_in_PGM[];
 
 // this is the MRF24
 #define	_DSPI3_BASE			_SPI4_BASE_ADDRESS
-#define	_DSPI3_ERR_IRQ		_SPI4_ERR_IRQ
-#define	_DSPI3_RX_IRQ		_SPI4_RX_IRQ
-#define	_DSPI3_TX_IRQ		_SPI4_TX_IRQ
-#define	_DSPI3_VECTOR		_SPI_4_VECTOR
+#define	_DSPI3_ERR_IRQ		_SPI4_FAULT_VECTOR
+#define	_DSPI3_RX_IRQ		_SPI4_RX_VECTOR
+#define	_DSPI3_TX_IRQ		_SPI4_TX_VECTOR
+#define	_DSPI3_VECTOR		_SPI4_FAULT_VECTOR
 #define _DSPI3_IPL_ISR		_SPI4_IPL_ISR
 #define	_DSPI3_IPL			_SPI4_IPL_IPC
 #define	_DSPI3_SPL			_SPI4_SPL_IPC
