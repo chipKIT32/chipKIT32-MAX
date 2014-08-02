@@ -98,7 +98,7 @@ private:
 	static int			vec;
 
 // Code for PPS support
-#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
+#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__) || defined(__PIC32MZXX__)
 	static uint8_t			pinMISO;		//digital pin number for MISO
 	static uint8_t			pinMOSI;		//digital pin number for MOSI
 	static ppsFunctionType	ppsMISO;		//PPS select for SPI MISO
@@ -107,7 +107,7 @@ private:
 	
 public:
 // Code for PPS support
-#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
+#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__) || defined(__PIC32MZXX__)
 	SPIClass(p32_spi * spiP, int irgP, int vecP, int pinMI, int pinMO, ppsFunctionType ppsMI, ppsFunctionType ppsMO);
 #else
 	SPIClass(p32_spi * spiP, int irqP, int vecP);

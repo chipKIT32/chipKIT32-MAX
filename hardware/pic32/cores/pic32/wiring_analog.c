@@ -109,7 +109,7 @@ int _board_analogReference(uint8_t mode);
 //*********************************************************************
 int analogRead(uint8_t pin)
 {
-	int analogValue;
+	int analogValue = 0;
 	uint8_t	channelNumber;
 	uint8_t ain;
 
@@ -209,92 +209,98 @@ int	tmp;
 #endif		// defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
 
 #if defined(__PIC32MZXX__)
-
-#define cPiplineWaste       12
-#define cBitsOversample     5
-#define cSumOversample      (1 << cBitsOversample)
-#define cOversampleLoop     (cPiplineWaste + cSumOversample)
-
-    int i = 0;
+    int i,k = 0;
     uint8_t vcn = channelNumber;
 
+    #define KVA_2_PA(v)             (((uint32_t) (v)) & 0x1fffffff)
+    static uint16_t __attribute__((coherent)) ovsampValue;
+
     // set the channel trigger for GSWTRG source triggering
-    if(channelNumber < 12)                              // class 1 & 2 ADC
-    {
-        ((uint8_t *) (&AD1TRG1))[channelNumber] = 1;
-    }
-    else if(channelNumber < 32)                         // class 3 ADC
-    {
-        AD1CSS1 |= (1 << channelNumber);
-        AD1CON1bits.STRGSRC = 1;
-    }
-    else if(channelNumber < 43)                         // the rest of class 3 ADC
-    {
-        AD1CSS2 |= (1 << (channelNumber - 32));
-        AD1CON1bits.STRGSRC = 1;
-    }
-    else if(channelNumber < 45)                         // these are not convertable inputs
+    if(channelNumber == 43 || channelNumber == 44 || channelNumber >= 50)
     {
         return(0);
     }
-    else if(channelNumber < 50)                         // alternate inputs
+    else if(channelNumber >= 45 )
     {
         vcn = channelNumber - 45;
         AD1IMOD |= 1 << ((vcn * 2) + 16);               // say use the alt; set SHxALT
-        ((uint8_t *) (&AD1TRG1))[vcn] = 1;
-    }
-    else                                                // beyond the limit
-    {
-        return(0);
     }
 
-    // flush the pipeline and collect data
-    analogValue = 0;
-    for(i = 0; i < cOversampleLoop; i++)
-    {
-        // wait until the conversion is done
-        if(vcn >= 32)
-        {
-            AD1DSTAT2 &= ~(1 << (vcn-32));
-            AD1CON3bits.GSWTRG = 1;     // trigger the conversion
-            while(AD1DSTAT2 & (1 << (vcn-32)) == 0);
-        }
-        else
-        {
-            AD1DSTAT1 &= ~(1 << vcn);
-            AD1CON3bits.GSWTRG = 1;     // trigger the conversion
-            while(AD1DSTAT1 & (1 << vcn) == 0);
-        }
+    AD1CON3bits.ADINSEL = vcn;                      // manually trigger the conversion
+    AD1CON1bits.FILTRDLY = AD1CON2bits.SAMC + 5;    // strictly not needed, but set the timing anyway
 
-        // get the result
-        if(i >= cPiplineWaste)
-        {
-            analogValue += (0x0000FFFF & ((uint32_t *) (&AD1DATA0))[vcn]);
-        }
-    }
+    // set up for 16x oversample
+    AD1FLTR6            = 0;        // clear oversampling
+    AD1FLTR6bits.OVRSAM = 1;        // say 16x oversampling
+    AD1FLTR6bits.CHNLID = vcn;      // the ANx channel
 
-    // shift out the error
-    analogValue >>= cBitsOversample;
+    // setup DMA
+    IEC4bits.DMA7IE = 0;    // disable DMA channel 4 interrupts
+    IFS4bits.DMA7IF = 0;    // clear existing DMA channel 4 interrupt flag
 
-    // reset the trigger to no trigger
-    if(channelNumber < 12)                          // class 1 & 2 ADC
+    // setup DMA channel x
+    DMACONbits.ON       = 1;                        // make sure the DMA is ON
+    DCH7CON             = 0;                        // clear DMA channel CON
+    DCH7ECON            = 0;                        // clear DMA ECON
+    DCH7ECONbits.CABORT = 1;                        // reset the DMA channel
+    while(DCH7CONbits.CHEN == 1);                   // make sure DMA is not enabled
+    while(DCH7CONbits.CHBUSY == 1);                 // make sure DMA is not busy
+    DCH7CONbits.CHPRI   = 3;                        // use highest priority
+    DCH7ECONbits.CHSIRQ = _ADC1_DF6_VECTOR;         // say the ADC filter complete triggers the DMA
+    DCH7ECONbits.SIRQEN = 1;                        // enable the IRQ event for triggering
+    DCH7SSA             = KVA_2_PA(&AD1FLTR6);      // address of the source
+    DCH7SSIZ            = 2;                        // source size is 2 bytes
+    DCH7CSIZ            = 2;                        // cell size transfer
+    DCH7DSA             = KVA_2_PA(&ovsampValue);   // destination address
+    DCH7DSIZ            = sizeof(ovsampValue);      // destination size
+
+    // must throw out first 16 samples
+    // keep the 17th. We can not access any ADC registers
+    // however we can look at the DMA to see when things complete
+    for(i=0; i<17; i++)
     {
-        ((uint8_t *) (&AD1TRG1))[channelNumber] = 0;
+        do {
+
+            DCH7ECONbits.CABORT = 1;                    // reset the DMA channel
+            AD1FLTR6bits.AFEN   = 0;                    // make sure oversampling is OFF
+            while(DCH7CONbits.CHEN == 1);               // wait for DMA to stop
+            while(DCH7CONbits.CHBUSY == 1);             // wait for DMA not to be busy
+            DCH7INT             = 0;                    // clear all interrupts
+            DCH7CONbits.CHEN    = 1;                    // enable the DMA channel
+            AD1FLTR6bits.AFEN   = 1;                    // enable oversampling
+
+            AD1CON3bits.RQCONVRT = 1;                   // start conversion
+
+            // we have noticed problems that the DMA channel is not always
+            // triggered, so after a time out value, just try again.
+            // fundamentally the problem is that AD1FLTR6bits.AFEN must
+            // be reset for each oversample conversion, disable and reenabled.
+
+            // we know a conversion is going to take 8000ns * 16, or 128 us
+            // we don't want to check too often so DMA and ADC can work
+            // but we don't want to wait too long and hold things up
+
+            for(k=0; k<20; k++)                         // this is more than enough time for the conversion, 
+            {                                           // really 8 should be good enough
+                delayMicroseconds(16);                  // this will cause us to check about 8 times
+                if(DCH7INTbits.CHBCIF == 1)
+                {
+                    break;                              // DMA completed and copied the oversampled result
+                }
+            }
+        } while(DCH7INTbits.CHBCIF == 0);               // if the conversion did not finish, try again
     }
-    else if (channelNumber < 32)    // class 3 ADC
-    {
-        AD1CSS1 &= ~(1 << channelNumber);
-        AD1CON1bits.STRGSRC = 0;
-    }
-    else if(channelNumber < 43)                 // the rest of class 3 ADC
-    {
-        AD1CSS2 &= ~(1 << (channelNumber - 32));
-        AD1CON1bits.STRGSRC = 0;
-    }
-    else                                        // alternate inputs
+    analogValue = ovsampValue >> 2;                     // 16 oversample gets you 2 extra bits
+
+    // we are done, clean up the DMA, oversampling filter, and ADC
+    DCH7CON             = 0;
+    while(DCH7CONbits.CHBUSY == 1);
+    AD1CON3bits.ADINSEL = 0;
+    AD1FLTR6            = 0;
+
+    if(channelNumber >= 45 )
     {
         AD1IMOD &= ~(0b11 << ((vcn * 2) + 16));               // don't use alt
-        ((uint8_t *) (&AD1TRG1))[vcn] = 0;
     }
 
 #else

@@ -652,13 +652,14 @@ void __attribute__ ((nomips16)) _configSystem(uint32_t clk)
     /* Configure AD1CON2 */
     AD1CON2 = 0;                // Boost, Low-power mode off, SAMC set to min, set up the ADC Clock
     AD1CON2bits.ADCSEL  = 1;    // 1 = SYSCLK, 2 REFCLK03, 3 FRC
-//    AD1CON2bits.ADCDIV  = 4;    // DIV_8 TQ = 1/200 MHz; Tad = 4 * (TQ * 2) = 40 ns; 25 MHz ADC clock
-    AD1CON2bits.ADCDIV  = 10;   // DIV_20 TQ = 1/200 MHz; Tad = 10 * (TQ * 2) = 40 ns; 10 MHz ADC clock; the sweet spot
-    AD1CON2bits.SAMC    = 3;    // settling time is 4 TADs
+    AD1CON2bits.ADCDIV  = 10;   // DIV_20 TQ = 1/200 MHz; Tad = 10 * (TQ * 2) = 100 ns; 10 MHz ADC clock; the sweet spot
+    AD1CON2bits.SAMC    = 75;    // settling time is 76 TADs  ((samc +1) + 4) * TAD <= 8000    (125Kbps is max, time 1/125000 = 8000 ns) => ((75  + 1) + 4) * 100 ns = 8000
 
     /* Configure AD1CON3 */
     AD1CON3 = 0;                // ADINSEL is not configured for this example. VREFSEL of ?0?
                                 // selects AVDD and AVSS as the voltage reference.
+
+    // AD1CON3bits.VREFSEL = 0b011; // set external VRef+/-
 
     /* Configure AD1GIRGENx */
     AD1GIRQEN1 = 0; // No global interrupts are used.
@@ -690,11 +691,18 @@ void __attribute__ ((nomips16)) _configSystem(uint32_t clk)
     AD1TRG3 = 0;
 
     /* Set up the CAL registers */
-    AD1CAL1 = DEVADC1;          // Copy the configuration data to the
-    AD1CAL2 = DEVADC2;          // AD1CALx special function registers.
-    AD1CAL3 = DEVADC3;
-    AD1CAL4 = DEVADC4;
-    AD1CAL5 = DEVADC5;
+    // AD1CAL1 = DEVADC1;          // Copy the configuration data to the
+    // AD1CAL2 = DEVADC2;          // AD1CALx special function registers.
+    // AD1CAL3 = DEVADC3;
+    // AD1CAL4 = DEVADC4;
+    // AD1CAL5 = DEVADC5;
+
+    // comply to the errata
+    AD1CAL1 = 0xF8894530;
+    AD1CAL2 = 0x01E4AF69;
+    AD1CAL3 = 0x0FBBBBB8;
+    AD1CAL4 = 0x000004AC;
+    AD1CAL5 = 0x02000002;
 
     /* Turn the ADC on, start calibration */
     AD1IMODbits.SH0MOD =  2;            // put in differiential mode for self calibration

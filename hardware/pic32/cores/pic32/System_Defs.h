@@ -114,6 +114,13 @@
     #define _UART5_BASE_ADDRESS ((uint32_t) &U5MODE)
     #define _UART6_BASE_ADDRESS ((uint32_t) &U6MODE)
 
+    #define _SPI1_BASE_ADDRESS ((uint32_t) &SPI1CON)
+    #define _SPI2_BASE_ADDRESS ((uint32_t) &SPI2CON)
+    #define _SPI3_BASE_ADDRESS ((uint32_t) &SPI3CON)
+    #define _SPI4_BASE_ADDRESS ((uint32_t) &SPI4CON)
+    #define _SPI5_BASE_ADDRESS ((uint32_t) &SPI5CON)
+    #define _SPI6_BASE_ADDRESS ((uint32_t) &SPI6CON)
+
     #define  _OCMP1_BASE_ADDRESS ((uint32_t) &OC1CON)
     #define  _TIMER_1_IRQ _TIMER_1_VECTOR
 
