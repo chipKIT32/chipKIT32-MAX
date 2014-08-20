@@ -1,0 +1,33 @@
+############################################################
+Fubarino_SDZ.name=Fuarbino SDZ
+Fubarino_SDZ.group=Fubarino
+
+
+# new items
+Fubarino_SDZ.platform=pic32
+Fubarino_SDZ.board=_BOARD_FUBARINO_SDZ_
+Fubarino_SDZ.board.define=
+Fubarino_SDZ.ccflags=ffff
+Fubarino_SDZ.ldscript=MZ-application-32MZ2048ECX.ld
+# end of new items
+
+Fubarino_SDZ.upload.protocol=stk500v2
+Fubarino_SDZ.upload.maximum_size=2093056
+Fubarino_SDZ.upload.speed=115200
+
+Fubarino_SDZ.bootloader.low_fuses=0xff
+Fubarino_SDZ.bootloader.high_fuses=0xdd
+Fubarino_SDZ.bootloader.extended_fuses=0x00
+Fubarino_SDZ.bootloader.path=not-supported
+Fubarino_SDZ.bootloader.file=not-supported
+Fubarino_SDZ.bootloader.unlock_bits=0x3F
+Fubarino_SDZ.bootloader.lock_bits=0x0F
+
+Fubarino_SDZ.build.mcu=32MZ2048ECH064
+Fubarino_SDZ.build.f_cpu=200000000UL
+Fubarino_SDZ.build.core=pic32
+Fubarino_SDZ.ldcommon=chipKIT-application-COMMON-MZ.ld
+Fubarino_SDZ.build.variant=Fubarino_SDZ
+#Fubarino_SDZ.upload.using=avrdude1
+
+############################################################
