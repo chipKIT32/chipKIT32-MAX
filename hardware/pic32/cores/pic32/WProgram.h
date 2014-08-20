@@ -20,6 +20,14 @@
 	#include "HardwareSerial.h"
 #endif
 
+//Compatability changes
+#if defined(__PIC32MX__)
+  #if defined F
+    #undef F
+  #endif
+  #define F(X) (X)
+#endif
+
 uint16_t makeWord(uint16_t w);
 uint16_t makeWord(byte h, byte l);
 
