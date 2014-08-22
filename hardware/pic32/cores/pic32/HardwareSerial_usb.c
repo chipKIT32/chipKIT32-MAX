@@ -774,7 +774,7 @@ void	usb_initialize(void)
 
 	// enable int
 #ifdef _USE_USB_IRQ_
-#if defined(__PIC32MX2XX__)
+#if defined(__PIC32MX2XX__) || defined(__PIC32MX47X__)
     IPC7bits.USBIS = 0;
     IPC7bits.USBIP = _USB_IPL_IPC;
 	IFS1bits.USBIF = 0;
