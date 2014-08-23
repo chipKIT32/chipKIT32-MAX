@@ -90,6 +90,6 @@
 
 #endif
 
-#include <MRF24Gadaptor.h>
+#include <MRF24GAdaptor.h>
 
 #endif // PMODWIFI_NETWORK_PROFILE_X

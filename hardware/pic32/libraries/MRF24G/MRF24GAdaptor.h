@@ -58,7 +58,7 @@
 extern "C" {
 #endif
 
-#include "../DEIPck/utility/deIP.h"
+#include "../DEIPcK/utility/deIP.h"
 #include "./utility/ud_inc/shared/wf_universal_driver.h"
 
 // there are a lot of MRF24 Universal driver errors, here are some of the error masks
