@@ -1,10 +1,7 @@
 #ifndef __PGMSPACE_H_
 #define __PGMSPACE_H_ 1
 
-#error ******** This sketch or library uses AVR-specific code that may not work \
-with the chipKIT platform. See this forum for more information on porting code \
-to chipKIT [www.chipkit.org/forum/viewforum.php?f=7] ********
-
+//Program stub for creating compatibltiy with PROGMEM apps from Arduino
 // neither PROGMEM or PSTR are needed for PIC32, just define them as null
 #define PROGMEM
 #define PSTR(s) (s)
