@@ -118,7 +118,7 @@ class HardwareSerial : public Stream
 		virtual int		read(void);
 		virtual void	flush(void);
 		virtual void	purge(void);
-		virtual	void	write(uint8_t);
+		virtual	size_t	write(uint8_t);
 		using	Print::write; // pull in write(str) and write(buf, size) from Print
 };
 
@@ -138,9 +138,9 @@ class USBSerial : public Stream
 		virtual int		peek();
 		virtual int		read(void);
 		virtual void	flush(void);
-		virtual	void	write(uint8_t);
-		virtual void	write(const char *str);
-		virtual void	write(const uint8_t *buffer, size_t size);
+		virtual	size_t	write(uint8_t);
+		virtual size_t	write(const char *str);
+		virtual size_t	write(const uint8_t *buffer, size_t size);
         operator        int();
 
 		using	Print::write; // pull in write(str) and write(buf, size) from Print

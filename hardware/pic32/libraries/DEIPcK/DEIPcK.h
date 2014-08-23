@@ -129,9 +129,9 @@ private:
     // also, if you pass TCPSocket to a method taking Print
     // that method will see all of the write() methods off of Print
     using Print::write;
-    void write(uint8_t bData);
-    void write(const char *str);
-    void write(const uint8_t *buffer, size_t size);
+    size_t write(uint8_t bData);
+    size_t write(const char *str);
+    size_t write(const uint8_t *buffer, size_t size);
 
 public:
     TCPSocket();
