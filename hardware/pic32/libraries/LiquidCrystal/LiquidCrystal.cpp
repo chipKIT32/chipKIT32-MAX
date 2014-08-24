@@ -331,9 +331,10 @@ inline void LiquidCrystal::command(uint8_t value)
 }
 
 //************************************************************************
-inline void LiquidCrystal::write(uint8_t value)
+inline size_t LiquidCrystal::write(uint8_t value)
 {
 	send(value, HIGH);
+    return 1;
 }
 
 /************ low level data pushing commands **********/

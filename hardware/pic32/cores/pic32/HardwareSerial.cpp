@@ -442,7 +442,7 @@ void HardwareSerial::purge()
 **		specified character.
 */
 
-void HardwareSerial::write(uint8_t theChar)
+size_t HardwareSerial::write(uint8_t theChar)
 {
 
 	while ((uart->uxSta.reg & (1 << _UARTSTA_UTXBF)) != 0)	//check the UTXBF bit
@@ -451,6 +451,7 @@ void HardwareSerial::write(uint8_t theChar)
 	}
 
 	uart->uxTx.reg = theChar;
+    return 1;
 }
 
 /* ------------------------------------------------------------ */
@@ -688,20 +689,21 @@ void USBSerial::flush()
 }
 
 //*******************************************************************************************
-void USBSerial::write(uint8_t theChar)
+size_t USBSerial::write(uint8_t theChar)
 {
 unsigned char	usbBuf[4];
 
 	usbBuf[0]	=	theChar;
 	
 	cdcacm_print(usbBuf, 1);
+    return 1;
 }
 
 //*	testing showed 63 gave better speed results than 64
 
 #define	kMaxUSBxmitPkt	63
 //*******************************************************************************************
-void USBSerial::write(const uint8_t *buffer, size_t size)
+size_t USBSerial::write(const uint8_t *buffer, size_t size)
 {
 
 	if (size < kMaxUSBxmitPkt)
@@ -731,15 +733,17 @@ void USBSerial::write(const uint8_t *buffer, size_t size)
 			cdcacm_print(usbBuffer, packetSize);
 		}
 	}
+    return size;
 }
 
 //*******************************************************************************************
-void USBSerial::write(const char *str)
+size_t USBSerial::write(const char *str)
 {
 size_t size;
 
 	size	=	strlen(str);
 	write((const uint8_t *)str, size);
+    return size;
 }
 
 
