@@ -402,7 +402,7 @@ extern const uint32_t _IMAGE_HEADER_ADDR;                       // a pointer to 
 	extern unsigned int	__PIC32_pbClk;
 #endif
 
-#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__) || defined(__PIC32MZ__) 
+#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__) || defined(__PIC32MZ__)  || defined(__PIC32MX47X__)
 
 // PPS Support for PIC32MX1 and PIC32MX2 parts
 // Locks all PPS functions so that calls to mapPpsInput() or mapPpsOutput() always fail.
@@ -425,7 +425,7 @@ void unlockPps();
 // in a <pin> that can't be assigned to <func>, this function will return 'false'.
 boolean mapPps(uint8_t pin, ppsFunctionType func);
 
-#endif  // defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
+#endif  // defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__) || defined(__PIC32MX47X__)
 
 #ifdef __cplusplus
 } // extern "C"

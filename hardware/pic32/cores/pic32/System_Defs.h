@@ -84,6 +84,12 @@
 	#define NUM_EXTERNAL_INTERRUPTS	5
 #endif
 
+#if defined(__PIC32MX47X__)
+    #define NUM_INT_VECTOR 45
+    #define NUM_INT_REQUEST 75
+    #define NUM_EXTERNAL_INTERRUPTS 5
+#endif
+
 #if defined(__PIC32MX5XX__)
 	#define	NUM_INT_VECTOR	52
 	#define	NUM_INT_REQUEST	76
@@ -383,7 +389,7 @@
 #define	_SPI1_IPL_IPC	3		//interrupt priority for the IPC register
 #define	_SPI1_SPL_IPC	0		//interrupt subpriority for the IPC register
 
-#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__) || defined(__PIC32MX3XX__) || defined(__PIC32MX4XX__) || defined(__PIC32MZXX__)
+#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__) || defined(__PIC32MX3XX__) || defined(__PIC32MX4XX__) || defined(__PIC32MZXX__) || defined(__PIC32MX47X__)
 #define	_SPI2_IPL_ISR	ipl3    //interrupt priority for the ISR
 #define	_SPI2_IPL_IPC	3       //interrupt priority for the IPC register
 #define	_SPI2_SPL_IPC	0       //interrupt subpriority for the IPC register
