@@ -310,7 +310,7 @@ int	tmp;
 	/* Set up for manual sampling
 	*/
 	AD1CSSL	=	0;
-	AD1CON3	=	0x0002;	//Tad = internal 6 Tpb
+	AD1CON3	=	0x000B;	//Tad = internal 22 Tpb
 	AD1CON2	=	analog_reference;
 
 	/* Turn on ADC
