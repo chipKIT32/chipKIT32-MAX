@@ -170,13 +170,13 @@ public:
 	String substring( unsigned int beginIndex, unsigned int endIndex ) const;
 
 	// modification
-	void replace(char find, char replace);
-	void replace(const String& find, const String& replace);
-	void remove(unsigned int index);
-	void remove(unsigned int index, unsigned int count);
-	void toLowerCase(void);
-	void toUpperCase(void);
-	void trim(void);
+	String & replace(char find, char replace);
+	String & replace(const String& find, const String& replace);
+	String & remove(unsigned int index);
+	String & remove(unsigned int index, unsigned int count);
+	String & toLowerCase(void);
+	String & toUpperCase(void);
+	String & trim(void);
 
 	// parsing/conversion
 	long toInt(void) const;
