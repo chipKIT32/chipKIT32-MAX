@@ -112,27 +112,27 @@ const uint32_t	port_to_tris_PGM[] = {
 ** containing that pin. The default mapping is to assign pin numbers
 ** for every possible port bit in order from PORTA to PORTG.
 */
-const uint8_t	digital_pin_to_port_PGM[] = {
+const uint8_t digital_pin_to_port_PGM[] = {
     // Pins 0 through 18
-    _IOPORT_PA, //  0   RA4  	SOSCO/RPA4/T1CK/CTED9/PMA1/RA4
+    _IOPORT_PA, //  0   RA4     SOSCO/RPA4/T1CK/CTED9/PMA1/RA4
     _IOPORT_PB, //  1   RB4     SOSCI/RPB4/RB4
     _IOPORT_PB, //  2   RB5     TMS/RPB5/USBID/RB5
     _IOPORT_PB, //  3   RB13    AN11/RPB13/CTPLS/PMRD/RB13 
-	_IOPORT_PB, //  4   RB1    	PGEC1/AN3/C1INC/C2INA/RPB1/CTED12/PMD1/RB1 (does not come out on Arduino header)
-	_IOPORT_PB, //  5   RB0    	PGED1/AN2/C1IND/C2INB/C3IND/RPB0/PMD0/RB0 (does not come out on Arduino header)
-	_IOPORT_PA, //  6   RA2    	OSC1/CLKI/RPA2/RA2 (does not come out on Arduino header)
-	_IOPORT_PA, //  7   RA3    	OSC2/CLKO/RPA3/PMA0/RA3 (does not come out on Arduino header)
-	_IOPORT_PB, //  8   RB10	PGED2/RPB10/D+/CTED11/RB10
+    _IOPORT_PB, //  4   RB1     PGEC1/AN3/C1INC/C2INA/RPB1/CTED12/PMD1/RB1 (does not come out on Arduino header)
+    _IOPORT_PB, //  5   RB0     PGED1/AN2/C1IND/C2INB/C3IND/RPB0/PMD0/RB0 (does not come out on Arduino header)
+    _IOPORT_PA, //  6   RA2     OSC1/CLKI/RPA2/RA2 (does not come out on Arduino header)
+    _IOPORT_PA, //  7   RA3     OSC2/CLKO/RPA3/PMA0/RA3 (does not come out on Arduino header)
+    _IOPORT_PB, //  8   RB10    PGED2/RPB10/D+/CTED11/RB10
     _IOPORT_PB, //  9   RB11    PGEC2/RPB11/D-/RB11 
-	_IOPORT_PB, // 10   RB7     TDI/RPB7/CTED3/PMD5/INT0/RB7
-	_IOPORT_PA, // 11   RA1     PGEC3/VREF-/CVREF-/AN1/RPA1/CTED2/PMD6/RA1
-	_IOPORT_PB, // 12   RB8     TCK/RPB8/SCL1/CTED10/PMD4/RB8
-	_IOPORT_PB, // 13   RB14    CVREF/AN10/C3INB/RPB14/VBUSON/SCK1/CTED5/RB14 
-	_IOPORT_PA, // 14   RA0    	PGED3/VREF+/CVREF+/AN0/C3INC/RPA0/CTED1/PMD7/RA0 (Jumper to either Arduino Analog 1 or LED1)
-	_IOPORT_PB, // 15   RB15    AN9/C3INA/RPB15/SCK2/CTED6/PMCS1/RB15 (Jumper to either Arduino Analog 1 or LED2)
-	_IOPORT_PB, // 16   RB2    	AN4/C1INB/C2IND/RPB2/SDA2/CTED13/PMD2/RB2 (Arduino A4 / SDA)
-	_IOPORT_PB, // 17   RB3		AN5/C1INA/C2INC/RTCC/RPB3/SCL2/PMWR/RB3 (Arduino A5 / SCL)
-	_IOPORT_PB,	// 18	RB9		TDO/RPB9/SDA1/CTED4/PMD3/RB9 (does not come out on Arduino header - used for Bootloader Enable switch)
+    _IOPORT_PB, // 10   RB7     TDI/RPB7/CTED3/PMD5/INT0/RB7
+    _IOPORT_PA, // 11   RA1     PGEC3/VREF-/CVREF-/AN1/RPA1/CTED2/PMD6/RA1
+    _IOPORT_PB, // 12   RB8     TCK/RPB8/SCL1/CTED10/PMD4/RB8
+    _IOPORT_PB, // 13   RB14    CVREF/AN10/C3INB/RPB14/VBUSON/SCK1/CTED5/RB14 
+    _IOPORT_PA, // 14   RA0     PGED3/VREF+/CVREF+/AN0/C3INC/RPA0/CTED1/PMD7/RA0 (Jumper to either Arduino Analog 1 or LED1)
+    _IOPORT_PB, // 15   RB15    AN9/C3INA/RPB15/SCK2/CTED6/PMCS1/RB15 (Jumper to either Arduino Analog 1 or LED2)
+    _IOPORT_PB, // 16   RB2     AN4/C1INB/C2IND/RPB2/SDA2/CTED13/PMD2/RB2 (Arduino A4 / SDA)
+    _IOPORT_PB, // 17   RB3     AN5/C1INA/C2INC/RTCC/RPB3/SCL2/PMWR/RB3 (Arduino A5 / SCL)
+    _IOPORT_PB, // 18   RB9     TDO/RPB9/SDA1/CTED4/PMD3/RB9 (does not come out on Arduino header - used for Bootloader Enable switch)
 };
 
 /* ------------------------------------------------------------ */

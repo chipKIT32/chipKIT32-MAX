@@ -125,7 +125,7 @@ DSPI::DSPI()
 	pspi = 0;
 	cbCur = 0;
 
-#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
+#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__) || defined(__PIC32MZXX__)
 	pinMISO = (uint8_t)pinMI;
 	pinMOSI = (uint8_t)pinMO;
 	ppsMISO = ppsMI;
@@ -173,6 +173,56 @@ DSPI::init(uint8_t irqErr, uint8_t irqRx, uint8_t irqTx, isrFunc isrHandler) {
 
     isr = isrHandler;
 }
+
+#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__) || defined(__PIC32MZXX__)
+
+/* ------------------------------------------------------------ */
+/***	DSPI::begin
+**
+**	Parameters:
+**		uint8_t miso - MISO pin PPS mapping
+**      uint8_t mosi - MOSI pin PPS mapping
+**
+**	Return Value:
+**		none
+**
+**	Errors:
+**		none
+**
+**	Description:
+**		Initialize the SPI port with new PPS mappings.
+*/
+
+void DSPI::begin(uint8_t miso, uint8_t mosi) {
+    pinMISO = miso;
+    pinMOSI = mosi;
+    begin(pinSS);
+}
+
+/* ------------------------------------------------------------ */
+/***	DSPI::begin
+**
+**	Parameters:
+**		uint8_t miso - MISO pin PPS mapping
+**      uint8_t mosi - MOSI pin PPS mapping
+**      uint8_t ss   - Slace Select pin
+**
+**	Return Value:
+**		none
+**
+**	Errors:
+**		none
+**
+**	Description:
+**		Initialize the SPI port with new PPS mappings.
+*/
+void DSPI::begin(uint8_t miso, uint8_t mosi, uint8_t ss) {
+    pinMISO = miso;
+    pinMOSI = mosi;
+    pinSS = ss;
+    begin(pinSS);
+}
+#endif
 
 /* ------------------------------------------------------------ */
 /***	DSPI::begin
@@ -536,11 +586,38 @@ DSPI::transfer(uint32_t bVal) {
 
 void
 DSPI::transfer(uint16_t cbReq, uint8_t * pbSnd, uint8_t * pbRcv) {
-	
-	for (cbCur = cbReq; cbCur > 0; cbCur--) {
-		*pbRcv++ = transfer(*pbSnd++);
-	}
 
+// If we have one ENHBUF we have all ENHBUF, and all the registers
+// are the same.  We'll just use SPI1A's macros for all the ports
+// as it makes no difference.
+
+#ifdef _SPI1ACON_ENHBUF_POSITION
+    pspi->sxCon.set = 1<<_SPI1ACON_ENHBUF_POSITION;
+    uint16_t toWrite = cbReq;
+    uint16_t toRead = cbReq;
+    uint16_t rPos = 0;
+    uint16_t wPos = 0;
+
+    while (toWrite > 0 || toRead > 0) {
+        if (toWrite > 0) {
+            if ((pspi->sxStat.reg & (1<<_SPI1ASTAT_SPITBF_POSITION)) == 0) {
+                pspi->sxBuf.reg = pbSnd[wPos++];
+                toWrite--;
+            }
+        }
+        if (toRead > 0) {
+            if ((pspi->sxStat.reg & (1<<_SPI1ASTAT_SPIRBE_POSITION)) == 0) {
+                pbRcv[rPos++] = pspi->sxBuf.reg;
+                toRead--;
+            }
+        }
+    }
+    pspi->sxCon.clr = 1<<_SPI1ACON_ENHBUF_POSITION;
+#else
+    for (cbCur = cbReq; cbCur > 0; cbCur--) {
+        *pbRcv++ = transfer(*pbSnd++);
+    }
+#endif
 }
 
 /* ------------------------------------------------------------ */
@@ -564,11 +641,33 @@ DSPI::transfer(uint16_t cbReq, uint8_t * pbSnd, uint8_t * pbRcv) {
 
 void
 DSPI::transfer(uint16_t cbReq, uint8_t * pbSnd) {
+#ifdef _SPI1ACON_ENHBUF_POSITION
+    pspi->sxCon.set = 1<<_SPI1ACON_ENHBUF_POSITION;
+    uint16_t toWrite = cbReq;
+    uint16_t toRead = cbReq;
+    uint16_t wPos = 0;
 
-	for (cbCur = cbReq; cbCur > 0; cbCur--) {
-		transfer(*pbSnd++);
-	}
+    while (toWrite > 0 || toRead > 0) {
+        if (toWrite > 0) {
+            if ((pspi->sxStat.reg & (1<<_SPI1ASTAT_SPITBF_POSITION)) == 0) {
+                pspi->sxBuf.reg = pbSnd[wPos++];
+                toWrite--;
+            }
+        }
+        if (toRead > 0) {
+            if ((pspi->sxStat.reg & (1<<_SPI1ASTAT_SPIRBE_POSITION)) == 0) {
+                (void) pspi->sxBuf.reg;
+                toRead--;
+            }
+        }
+    }
+    pspi->sxCon.clr = 1<<_SPI1ACON_ENHBUF_POSITION;
+#else
 
+    for (cbCur = cbReq; cbCur > 0; cbCur--) {
+        transfer(*pbSnd++);
+    }
+#endif
 }
 
 /* ------------------------------------------------------------ */
@@ -593,12 +692,37 @@ DSPI::transfer(uint16_t cbReq, uint8_t * pbSnd) {
 
 void
 DSPI::transfer(uint16_t cbReq, uint8_t bPad, uint8_t * pbRcv) {
+#ifdef _SPI1ACON_ENHBUF_POSITION
+    pspi->sxCon.set = 1<<_SPI1ACON_ENHBUF_POSITION;
+    uint16_t toWrite = cbReq;
+    uint16_t toRead = cbReq;
+    uint16_t rPos = 0;
 
-	for (cbCur = cbReq; cbCur > 0; cbCur--) {
-		*pbRcv++ = transfer(bPad);
-	}
+    pspi->sxCon.clr = 1<<_SPI1ACON_MODE32_POSITION | 1<<_SPI1ACON_MODE16_POSITION;
 
+    while (toWrite > 0 || toRead > 0) {
+        if (toWrite > 0) {
+            if ((pspi->sxStat.reg & (1<<_SPI1ASTAT_SPITBF_POSITION)) == 0) {
+                pspi->sxBuf.reg = bPad;
+                toWrite--;
+            }
+        }
+        if (toRead > 0) {
+            if ((pspi->sxStat.reg & (1<<_SPI1ASTAT_SPIRBE_POSITION)) == 0) {
+                pbRcv[rPos++] = pspi->sxBuf.reg;
+                toRead--;
+            }
+        }
+    }
+    pspi->sxCon.clr = 1<<_SPI1ACON_ENHBUF_POSITION;
+#else
+
+    for (cbCur = cbReq; cbCur > 0; cbCur--) {
+        *pbRcv++ = transfer(bPad);
+    }
+#endif
 }
+
 
 /* ------------------------------------------------------------ */
 /*					Interrupt Control Functions					*/
@@ -906,7 +1030,7 @@ DSPI::doDspiInterrupt() {
 **		Constructor.
 */
 
-#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
+#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__) || defined(__PIC32MZXX__)
 DSPI0::DSPI0() : DSPI(_DSPI0_MISO_PIN, _DSPI0_MOSI_PIN, _DSPI0_MISO_IN, _DSPI0_MOSI_OUT)
 #else
 DSPI0::DSPI0() 

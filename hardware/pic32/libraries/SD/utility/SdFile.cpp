@@ -1220,9 +1220,9 @@ size_t SdFile::write(const void* buf, uint16_t nbyte) {
  *
  * Use SdFile::writeError to check for errors.
  */
-void SdFile::write(uint8_t b) {
-  //return 
-  write(&b, 1);
+size_t SdFile::write(uint8_t b) {
+    write(&b, 1);
+    return 1;
 }
 //------------------------------------------------------------------------------
 /**
@@ -1230,9 +1230,10 @@ void SdFile::write(uint8_t b) {
  *
  * Use SdFile::writeError to check for errors.
  */
-void SdFile::write(const char* str) {
-  //return 
-  write(str, strlen(str));
+size_t SdFile::write(const char* str) {
+    size_t size = strlen(str);
+    write(str, size);
+    return size;
 }
 //------------------------------------------------------------------------------
 /**
@@ -1240,8 +1241,8 @@ void SdFile::write(const char* str) {
  *
  * Use SdFile::writeError to check for errors.
  */
-void SdFile::write_P(char* str) {
-  print(str);
+size_t SdFile::write_P(char* str) {
+    return write(str);
 }
 //------------------------------------------------------------------------------
 /**
@@ -1249,7 +1250,8 @@ void SdFile::write_P(char* str) {
  *
  * Use SdFile::writeError to check for errors.
  */
-void SdFile::writeln_P(char* str) {
-  write_P(str);
-  println();
+size_t SdFile::writeln_P(char* str) {
+    size_t c = write_P(str);
+    println();
+    return c + 1;
 }

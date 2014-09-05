@@ -89,7 +89,7 @@ class HardwareSerial : public Stream
 		uint8_t			vec;		//interrupt vector for the UART
 		uint8_t			ipl;		//interrupt priority level
 		uint8_t			spl;		//interrupt sub-priority level
-#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__) || defined(__PIC32MZXX__)
+#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__) || defined(__PIC32MZXX__) || defined(__PIC32MX47X__)
 		uint8_t			pinTx;		//digital pin number of TX
 		uint8_t			pinRx;		//digital pin number for RX
 		ppsFunctionType	ppsTx;		//PPS select for UART TX
@@ -103,7 +103,7 @@ class HardwareSerial : public Stream
 		ring_buffer		rx_buffer;	//queue used for UART rx data
 
 	public:
-#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__) || defined(__PIC32MZXX__)
+#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__) || defined(__PIC32MZXX__) || defined(__PIC32MX47X__)
 		HardwareSerial(p32_uart * uartP, int irq, int vec, int ipl, int spl, isrFunc isrHandler, int pinT, int pinR, ppsFunctionType ppsT, ppsFunctionType ppsR);
 #else
 		HardwareSerial(p32_uart * uartP, int irq, int vec, int ipl, int spl, isrFunc isrHandler);
@@ -118,7 +118,7 @@ class HardwareSerial : public Stream
 		virtual int		read(void);
 		virtual void	flush(void);
 		virtual void	purge(void);
-		virtual	void	write(uint8_t);
+		virtual	size_t	write(uint8_t);
 		using	Print::write; // pull in write(str) and write(buf, size) from Print
 };
 
@@ -138,9 +138,9 @@ class USBSerial : public Stream
 		virtual int		peek();
 		virtual int		read(void);
 		virtual void	flush(void);
-		virtual	void	write(uint8_t);
-		virtual void	write(const char *str);
-		virtual void	write(const uint8_t *buffer, size_t size);
+		virtual	size_t	write(uint8_t);
+		virtual size_t	write(const char *str);
+		virtual size_t	write(const uint8_t *buffer, size_t size);
         operator        int();
 
 		using	Print::write; // pull in write(str) and write(buf, size) from Print

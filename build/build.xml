@@ -274,7 +274,7 @@
          verbose="false"
          usetimestamp="true"/>
 
-<unzip dest="macosx/work/mpide.app/Contents/Resources/Java/hardware/pic32/compiler" src="macosx/dist/pic32-tools-Darwin-image-20140530" overwrite="false"/>
+<unzip dest="macosx/work/mpide.app/Contents/Resources/Java/hardware/pic32/compiler" src="macosx/dist/pic32-tools-Darwin-image-20140530.zip" overwrite="false"/>
 <chmod perm="+x" maxparallel="300">
       <fileset dir="macosx/work/mpide.app/Contents/Resources/Java/hardware/pic32/compiler" includes="**/*" />
 </chmod>
@@ -310,12 +310,14 @@
 	  <!--
 	  <gunzip src="macosx/template.dmg.gz" dest="macosx/working.dmg" />
 		-->
-	  <mkdir dir="macosx/working_dir" />
+    <mkdir dir="macosx/working_dir" />
+    <!--
 	  <copy todir="macosx/working_dir">
 		  <fileset dir="macosx/work">
 			  <exclude name="**/mpideTestSuite/**" />
 		  </fileset>
-	  </copy>
+    </copy>
+    -->
 	  <copy file="macosx/dist/FTDIUSBSerialDriver_v2_2_18.dmg" todir="macosx/working_dir" />
 	
 

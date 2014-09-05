@@ -60,7 +60,7 @@
 
 /* Define the peripherals available on the board.
 */
-#define	NUM_DIGITAL_PINS	18
+#define	NUM_DIGITAL_PINS	19
 #define	NUM_ANALOG_PINS		10
 #define NUM_OC_PINS			5
 #define	NUM_IC_PINS			5
@@ -89,7 +89,7 @@
 NOTE: The ChipKIT Pi has two user LEDs
 */
 #define	PIN_LED1	14      // 11  RA0
-#define	PIN_LED2	15       // 14  RB15
+#define	PIN_LED2	15      // 14  RB15
 
 /* ------------------------------------------------------------ */
 /*					Button Declarations							*/
@@ -143,7 +143,7 @@ NOTE: The ChipKIT Pi has two user LEDs
 /*					Interrupt Pin Declarations					*/
 /* ------------------------------------------------------------ */
 
-#define	PIN_INT0	11      // RB7 non-PPS
+#define	PIN_INT0	10      // RB7 non-PPS
 #define	PIN_INT1	 8      // B10 INT1R = RPB10 = 3
 #define PIN_INT2	 3      // B13 INT2R = RPB13 = 3
 #define	PIN_INT3	 2      // B5  INT3R = RPB5 = 1
@@ -156,7 +156,7 @@ NOTE: The ChipKIT Pi has two user LEDs
 ** SPI library and the original pins_arduino.h. 
 */
 const static uint8_t SS   = 10;
-const static uint8_t MISO =	12;
+const static uint8_t MISO = 12;
 const static uint8_t MOSI = 11;
 const static uint8_t SCK  = 13;
 
@@ -183,25 +183,25 @@ const static uint8_t SCK  = 13;
 /* These define the pin numbers for the various change notice
 ** pins.
 */
-#define	PIN_CN0	     0  //  0   J4-1    RB5     TMS/RPB5/USBID/RB5
-#define	PIN_CN1	     1  //  1   J4-2    RB7     TDI/RPB7/CTED3/PMD5/INT0/RB7   
-#define	PIN_CN2	     2  //  2   J4-3    RB8     TCK/RPB8/SCL1/CTED10/PMD4/RB8
-#define	PIN_CN3	     3  //  3   J4-4    RB9     TDO/RPB9/SDA1/CTED4/PMD3/RB9
-#define	PIN_CN4      4  //  4   J4-5    RB10    PGED2/RPB10/D+/CTED11/RB10
-#define	PIN_CN5      5  //  5   J4-6    RB11    PGEC2/RPB11/D-/RB11
-#define	PIN_CN6      6  //  6   J4-7    RB13    AN11/RPB13/CTPLS/PMRD/RB13
-#define	PIN_CN7      7  //  7   J4-8    RB14    CVREF/AN10/C3INB/RPB14/VBUSON/SCK1/CTED5/RB14
-#define	PIN_CN8      8  //  8   J4-9    RB15    AN9/C3INA/RPB15/SCK2/CTED6/PMCS1/RB15
-#define	PIN_CN9	     9  //  9   J3-1    RA0     PGED3/VREF+/CVREF+/AN0/C3INC/RPA0/CTED1/PMD7/RA0
-#define	PIN_CN10    10  // 10   J3-2    RA1     PGEC3/VREF-/CVREF-/AN1/RPA1/CTED2/PMD6/RA1  
-#define	PIN_CN11    11  // 11   J3-3    RB0     PGED1/AN2/C1IND/C2INB/C3IND/RPB0/PMD0/RB0  
-#define	PIN_CN12    12  // 12   J3-4    RB1     PGEC1/AN3/C1INC/C2INA/RPB1/CTED12/PMD1/RB1  
-#define	PIN_CN13    13  // 13   J3-5    RB2     AN4/C1INB/C2IND/RPB2/SDA2/CTED13/PMD2/RB2  
-#define	PIN_CN14    14  // 14   J3-6    RB3     AN5/C1INA/C2INC/RTCC/RPB3/SCL2/PMWR/RB3
-#define	PIN_CN15    15  // 15   J3-7    RA2     OSC1/CLKI/RPA2/RA2     
-#define	PIN_CN16    16  // 16   J3-8    RA3     OSC2/CLKO/RPA3/PMA0/RA3 
-#define	PIN_CN17    17  // 17   J3-9    RB4     SOSCI/RPB4/RB4 
-#define	PIN_CN18    18  // 18   J3-10   RA4     SOSCO/RPA4/T1CK/CTED9/PMA1/RA4 
+#define	PIN_CN0	     0 //  0   RA4     SOSCO/RPA4/T1CK/CTED9/PMA1/RA4
+#define	PIN_CN1	     1 //  1   RB4     SOSCI/RPB4/RB4
+#define	PIN_CN2	     2 //  2   RB5     TMS/RPB5/USBID/RB5
+#define	PIN_CN3	     3 //  3   RB13    AN11/RPB13/CTPLS/PMRD/RB13 
+#define	PIN_CN4      4 //  4   RB1     PGEC1/AN3/C1INC/C2INA/RPB1/CTED12/PMD1/RB1 (does not come out on Arduino header)
+#define	PIN_CN5      5 //  5   RB0     PGED1/AN2/C1IND/C2INB/C3IND/RPB0/PMD0/RB0 (does not come out on Arduino header)
+#define	PIN_CN6      6 //  6   RA2     OSC1/CLKI/RPA2/RA2 (does not come out on Arduino header)
+#define	PIN_CN7      7 //  7   RA3     OSC2/CLKO/RPA3/PMA0/RA3 (does not come out on Arduino header)
+#define	PIN_CN8      8 //  8   RB10    PGED2/RPB10/D+/CTED11/RB10
+#define	PIN_CN9	     9 //  9   RB11    PGEC2/RPB11/D-/RB11 
+#define	PIN_CN10    10 // 10   RB7     TDI/RPB7/CTED3/PMD5/INT0/RB7
+#define	PIN_CN11    11 // 11   RA1     PGEC3/VREF-/CVREF-/AN1/RPA1/CTED2/PMD6/RA1
+#define	PIN_CN12    12 // 12   RB8     TCK/RPB8/SCL1/CTED10/PMD4/RB8
+#define	PIN_CN13    13 // 13   RB14    CVREF/AN10/C3INB/RPB14/VBUSON/SCK1/CTED5/RB14 
+#define	PIN_CN14    14 // 14   RA0     PGED3/VREF+/CVREF+/AN0/C3INC/RPA0/CTED1/PMD7/RA0 (Jumper to either Arduino Analog 1 or LED1)
+#define	PIN_CN15    15 // 15   RB15    AN9/C3INA/RPB15/SCK2/CTED6/PMCS1/RB15 (Jumper to either Arduino Analog 1 or LED2)
+#define	PIN_CN16    16 // 16   RB2     AN4/C1INB/C2IND/RPB2/SDA2/CTED13/PMD2/RB2 (Arduino A4 / SDA)
+#define	PIN_CN17    17 // 17   RB3     AN5/C1INA/C2INC/RTCC/RPB3/SCL2/PMWR/RB3 (Arduino A5 / SCL)
+#define	PIN_CN18    18 // 18   RB9     TDO/RPB9/SDA1/CTED4/PMD3/RB9 (does not come out on Arduino header - used for Bootloader Enable switch)
 
 /* ------------------------------------------------------------ */
 /*					Pin Mapping Macros							*/

@@ -58,7 +58,7 @@
 /* Define the Microcontroller peripherals available on the board.
 */
 #define	NUM_DIGITAL_PINS	74
-#define	NUM_ANALOG_PINS		12
+#define	NUM_ANALOG_PINS		14
 #define NUM_OC_PINS			5
 #define	NUM_IC_PINS			5
 #define	NUM_TCK_PINS		4
@@ -196,6 +196,8 @@ const static uint8_t SCK  = 13;		// PIC32 SCK2
 #define A9		23      // AN1
 #define A10		24      // AN14
 #define A11		25      // AN15
+#define A12		60      // AN12
+#define A13		61      // AN13
 
 /* ------------------------------------------------------------ */
 /*					Change Notice Pins							*/
@@ -231,7 +233,7 @@ const static uint8_t SCK  = 13;		// PIC32 SCK2
 */
 
 #undef digitalPinToAnalog
-#define	digitalPinToAnalog(P) ( (P) < 12 ? (P) : ((P) >= 14) && ((P) < 26) ? (P)-14 : NOT_ANALOG_PIN )
+#define digitalPinToAnalog(P) (((P) < NUM_ANALOG_PINS) ? (P) : (digital_pin_to_analog_PGM[P]))
 
 #undef analogInPinToChannel
 #define analogInPinToChannel(P) ( analog_pin_to_channel_PGM[P]  )
@@ -251,6 +253,7 @@ extern const uint8_t	digital_pin_to_port_PGM[];
 extern const uint16_t	digital_pin_to_bit_mask_PGM[];
 extern const uint16_t	digital_pin_to_timer_PGM[];
 extern const uint8_t	analog_pin_to_channel_PGM[];
+extern const uint8_t 	digital_pin_to_analog_PGM[];
 
 #endif
 
