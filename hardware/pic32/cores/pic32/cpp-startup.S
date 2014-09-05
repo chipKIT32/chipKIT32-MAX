@@ -1,16 +1,4 @@
 /*********************************************************************
- *
- *                  C Runtime Startup
- *
- *********************************************************************
- * Filename:        crt0.S
- *
- * Processor:       PIC32
- *
- * Compiler:        MPLAB XC32
- *                  MPLAB X IDE
- * Company:         Microchip Technology Inc.
- *
  * Software License Agreement
  *
  * This software is developed by Microchip Technology Inc. and its
