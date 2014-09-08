@@ -31,10 +31,11 @@
 #include <stddef.h>
 #include <sys/kmem.h>
 
-#include	"HardwareSerial_usb.h"
-#include	"HardwareSerial_cdcacm.h"
+#include "HardwareSerial_usb.h"
+#include "HardwareSerial_cdcacm.h"
+#include "System_Defs.h"
 
-void __attribute__((interrupt(),nomips16)) IntUSB1Handler(void);
+void __attribute__((vector(_USB_1_VECTOR), interrupt(_USB_IPL_ISR), nomips16)) IntUSB1Handler(void);
 
 // XXX -- move to relocated compat.h
 #define MCF_USB_OTG_CTL  U1CON
@@ -87,6 +88,7 @@ void __attribute__((interrupt(),nomips16)) IntUSB1Handler(void);
 #define PA_TO_KVA0(pa)  ((pa) | 0x80000000)  // cachable
 #define PA_TO_KVA1(pa)  ((pa) | 0xa0000000)
 */
+#define LENGTHOF(x)  ( sizeof(x)/sizeof(x[0]) )
 
 #define HWRETRIES  1
 #define SWRETRIES  3
@@ -126,7 +128,7 @@ static struct bdt
 {
 	int flags;
 	byte *buffer;
-} __attribute__((packed)) *bdts;  // 512 byte aligned in buffer
+} __attribute__((packed)) volatile * volatile bdts;  // 512 byte aligned in buffer
 
 // N.B. only bdt endpoint 0 is used for host mode!
 
@@ -328,12 +330,16 @@ static byte next_address;	// set after successful status
 // called by usb on device attach
 //************************************************************************
 #ifdef _USE_USB_IRQ_
-	void __attribute__((interrupt(),nomips16)) IntUSB1Handler(void)
+	void __attribute__((vector(_USB_1_VECTOR), interrupt(_USB_IPL_ISR),nomips16)) IntUSB1Handler(void)
 #else
 	void	usb_isr(void)
 #endif
 {
 	int rv __attribute__((aligned));
+
+#ifdef _USE_USB_IRQ_
+	IFS1bits.USBIF = 0;
+#endif
 
 	if (! bdts)
 	{
@@ -342,16 +348,7 @@ static byte next_address;	// set after successful status
 	
 	assert(! usb_in_isr);
 	assert((usb_in_isr	=	true) ? true : true);
-    assert((usb_in_ticks = ticks) ? true : true);
 	
-#ifdef _USE_USB_IRQ_
-#if defined(__PIC32MX2XX__)
-    /// TODO: Plib replacement function should go here
-    IFS1CLR	=	0x00000008; // USBIF
-#else
-	IFS1CLR	=	0x02000000; // USBIF
-#endif
-#endif	
 	// *** device ***
 	
 	// if we just transferred a token...
@@ -753,7 +750,7 @@ void	usb_uninitialize(void)
 //************************************************************************
 void	usb_initialize(void)
 {
-	static __attribute__ ((aligned(512))) byte bdt_ram[BDT_RAM_SIZE];
+	static __attribute__ ((aligned(512))) byte volatile bdt_ram[BDT_RAM_SIZE];
 
 #ifdef _USE_USB_IRQ_
     setIntVector(_USB_1_VECTOR, IntUSB1Handler);
@@ -762,23 +759,10 @@ void	usb_initialize(void)
 	bdts = (struct bdt *)bdt_ram;
 
 	assert(BDT_RAM_SIZE >= LENGTHOF(endpoints)*4*sizeof(struct bdt));
+	assert(NULL == bdts);
 
 	// power on
 	U1PWRCbits.USBPWR = 1;
-
-	// enable int
-#ifdef _USE_USB_IRQ_
-#if defined(__PIC32MX2XX__)
-    /// TODO: Plib replacement function should go here
-	IEC1bits.USBIE = 1;
-    IPC7bits.USBIP = 6;
-    IPC7bits.USBIS = 0;
-#else
-	IEC1bits.USBIE = 1;
-	IPC11bits.USBIP = 6;
-	IPC11bits.USBIS = 0;
-#endif
-#endif
 
 	MCF_USB_OTG_SOF_THLD = 74;
 
@@ -787,6 +771,21 @@ void	usb_initialize(void)
 	MCF_USB_OTG_BDT_PAGE_01 = (uint8)(KVA_TO_PA((unsigned int)bdts) >> 8);
 	MCF_USB_OTG_BDT_PAGE_02 = (uint8)(KVA_TO_PA((unsigned int)bdts) >> 16);
 	MCF_USB_OTG_BDT_PAGE_03 = (uint8)(KVA_TO_PA((unsigned int)bdts) >> 24);
+
+	// enable int
+#ifdef _USE_USB_IRQ_
+#if defined(__PIC32MX2XX__) || defined(__PIC32MX47X__)
+    IPC7bits.USBIS = 0;
+    IPC7bits.USBIP = _USB_IPL_IPC;
+	IFS1bits.USBIF = 0;
+	IEC1bits.USBIE = 1;
+#else
+	IPC11bits.USBIS = 0;
+	IPC11bits.USBIP = _USB_IPL_IPC;
+	IFS1bits.USBIF = 0;
+	IEC1bits.USBIE = 1;
+#endif
+#endif
 
 	// enable usb to interrupt on reset
 	usb_device_wait();

@@ -8,7 +8,7 @@
 /************************************************************************/
 /*  File Description:													*/
 /*																		*/
-/* This file contains the board specific declartions and data structure	*/
+/* This file contains the board specific declarations and data structure*/
 /* to customize the chipKIT MPIDE for use with a generic board using a	*/
 /* PIC32 part in a 64-pin package.										*/
 /*																		*/
@@ -51,7 +51,7 @@
 /*				Public Board Declarations						*/
 /* ------------------------------------------------------------ */
 /* The following define symbols that can be used in a sketch to
-** refer to periperhals on the board generically.
+** refer to peripherals on the board generically.
 */
 
 #define	_BOARD_NAME_	"Fubarino Mini"
@@ -118,10 +118,10 @@
 /* ------------------------------------------------------------ */
 
 #define PIN_OC1		4
-#define	PIN_OC2		7
-#define	PIN_OC3		8
+#define	PIN_OC3		7
+#define	PIN_OC2		8
 #define	PIN_OC4		9
-#define	PIN_OC5		10
+#define	PIN_OC5		0
 
 #define PIN_IC1		0
 #define PIN_IC2		1
@@ -139,11 +139,11 @@
 /*					Interrupt Pin Declarations					*/
 /* ------------------------------------------------------------ */
 
-#define	PIN_INT0	4
-#define	PIN_INT1	0
-#define PIN_INT2	1
-#define	PIN_INT3	2
-#define	PIN_INT4	3
+#define	PIN_INT0	24		// B7   non-PPS
+#define	PIN_INT1	3		// B14  INT1R = RPB14 = 1
+#define PIN_INT2	0		// B13  INT2R = RPB13 = 3
+#define	PIN_INT3	6		// A1   INT3R = RPA1 = 0
+#define	PIN_INT4	4		// B15  INT4R = RPB15 = 3
 
 /* ------------------------------------------------------------ */
 /*					SPI Pin Declarations						*/
@@ -153,14 +153,15 @@
 ** the default SPI port as it's pin numbers stay constant on all
 ** devices.
 */
-const static uint8_t SS   = 27;		// PIC32 SS2
-const static uint8_t MOSI =	26;		// PIC32 SDO2
-const static uint8_t MISO = 25;		// PIC32 SDI2
-const static uint8_t SCK  = 24;		// PIC32 SCK2
+const static uint8_t SS   = 30;		// PIC32 SS2
+const static uint8_t MOSI = 29;		// PIC32 SDO2
+const static uint8_t MISO = 27;		// PIC32 SDI2
+const static uint8_t SCK  = 4;		// PIC32 SCK2
 
 /* The Digilent DSPI library uses these ports.
 */
-#define	PIN_DSPI0_SS	27
+#define	PIN_DSPI0_SS	17
+#define	PIN_DSPI1_SS	30
 
 /* ------------------------------------------------------------ */
 /*					Analog Pins									*/
@@ -292,10 +293,10 @@ extern const uint8_t	external_int_to_digital_pin_PGM[];
 #define	_SER0_IPL_ISR	_UART1_IPL_ISR
 #define	_SER0_IPL		_UART1_IPL_IPC
 #define	_SER0_SPL		_UART1_SPL_IPC
-#define	_SER0_TX_OUT	PPS_OUT_U1TX
-#define	_SER0_TX_PIN	17
-#define	_SER0_RX_IN		PPS_IN_U1RX
-#define	_SER0_RX_PIN	18
+#define	_SER0_TX_OUT	PPS_OUT_U1TX		// RPB4R = U1TX = 1
+#define	_SER0_TX_PIN	17					// RB4
+#define	_SER0_RX_IN		PPS_IN_U1RX			// U1RXR = RPA4 = 2
+#define	_SER0_RX_PIN	18					// RA4
 
 /* Serial port 1 uses UART2
 */
@@ -305,10 +306,10 @@ extern const uint8_t	external_int_to_digital_pin_PGM[];
 #define	_SER1_IPL_ISR	_UART2_IPL_ISR
 #define	_SER1_IPL		_UART2_IPL_IPC
 #define	_SER1_SPL		_UART2_SPL_IPC
-#define	_SER1_TX_OUT	PPS_OUT_U2TX
-#define	_SER1_TX_PIN	26
-#define	_SER1_RX_IN		PPS_IN_U2RX
-#define	_SER1_RX_PIN	25
+#define	_SER1_TX_OUT	PPS_OUT_U2TX		// RPB9R = U2TX = 2
+#define	_SER1_TX_PIN	26					// RB9
+#define	_SER1_RX_IN		PPS_IN_U2RX			// U2RXR = RPB8 = 4
+#define	_SER1_RX_PIN	25					// RB8
 
 /* ------------------------------------------------------------ */
 /*					SPI Port Declarations						*/
@@ -327,42 +328,54 @@ extern const uint8_t	external_int_to_digital_pin_PGM[];
 #define	_SPI_IPL		_SPI2_IPL_IPC
 #define	_SPI_SPL		_SPI2_SPL_IPC
 
-/* The Digilent DSPI library uses the same port.
+/* SPI pin declarations
 */
-#define	_DSPI0_BASE			_SPI2_BASE_ADDRESS
-#define	_DSPI0_ERR_IRQ		_SPI2_ERR_IRQ
-#define	_DSPI0_RX_IRQ		_SPI2_RX_IRQ
-#define	_DSPI0_TX_IRQ		_SPI2_TX_IRQ
-#define	_DSPI0_VECTOR		_SPI_2_VECTOR
-#define	_DSPI0_IPL_ISR		_SPI2_IPL_ISR
-#define	_DSPI0_IPL			_SPI2_IPL_IPC
-#define	_DSPI0_SPL			_SPI2_SPL_IPC
+#define _SPI_MISO_IN	PPS_IN_SDI2
+#define	_SPI_MISO_PIN	MISO
+#define _SPI_MOSI_OUT	PPS_OUT_SDO2
+#define	_SPI_MOSI_PIN	MOSI
 
-#define _DSPI0_MISO_IN      PPS_IN_SDI2
-#define _DSPI0_MISO_PIN     0
-#define _DSPI0_MOSI_OUT     PPS_OUT_SDO2
-#define _DSPI0_MOSI_PIN     6
+/* SPI1
+ * Note SCK1 only comes out B14, which is Arduino pin 3
+ */
+#define	_DSPI0_BASE			_SPI1_BASE_ADDRESS
+#define	_DSPI0_ERR_IRQ		_SPI1_ERR_IRQ
+#define	_DSPI0_RX_IRQ		_SPI1_RX_IRQ
+#define	_DSPI0_TX_IRQ		_SPI1_TX_IRQ
+#define	_DSPI0_VECTOR		_SPI_1_VECTOR
+#define	_DSPI0_IPL_ISR		_SPI1_IPL_ISR
+#define	_DSPI0_IPL			_SPI1_IPL_IPC
+#define	_DSPI0_SPL			_SPI1_SPL_IPC
 
-// Disabled until I work out the best pins to use - Majenko
-#if 0
-#define	_DSPI1_BASE			_SPI1_BASE_ADDRESS
-#define	_DSPI1_ERR_IRQ		_SPI1_ERR_IRQ
-#define	_DSPI1_RX_IRQ		_SPI1_RX_IRQ
-#define	_DSPI1_TX_IRQ		_SPI1_TX_IRQ
-#define	_DSPI1_VECTOR		_SPI_1_VECTOR
-#define	_DSPI1_IPL_ISR		_SPI1_IPL_ISR
-#define	_DSPI1_IPL			_SPI1_IPL_IPC
-#define	_DSPI1_SPL			_SPI1_SPL_IPC
-#endif
+#define _DSPI0_MISO_IN		PPS_IN_SDI1
+#define _DSPI0_MISO_PIN		19
+#define _DSPI0_MOSI_OUT		PPS_OUT_SDO1
+#define _DSPI0_MOSI_PIN		18
+
+/* SPI2
+ * Note SCK2 only comes out B15, which is Arduino pin 4
+ */
+#define	_DSPI1_BASE			_SPI2_BASE_ADDRESS
+#define	_DSPI1_ERR_IRQ		_SPI2_ERR_IRQ
+#define	_DSPI1_RX_IRQ		_SPI2_RX_IRQ
+#define	_DSPI1_TX_IRQ		_SPI2_TX_IRQ
+#define	_DSPI1_VECTOR		_SPI_2_VECTOR
+#define	_DSPI1_IPL_ISR		_SPI2_IPL_ISR
+#define	_DSPI1_IPL			_SPI2_IPL_IPC
+#define	_DSPI1_SPL			_SPI2_SPL_IPC
+
+#define _DSPI1_MISO_IN      PPS_IN_SDI2
+#define _DSPI1_MISO_PIN     MISO
+#define _DSPI1_MOSI_OUT     PPS_OUT_SDO2
+#define _DSPI1_MOSI_PIN     MOSI
 
 /* ------------------------------------------------------------ */
 /*					I2C Port Declarations						*/
 /* ------------------------------------------------------------ */
 
-/* The standard I2C port uses I2C1 (SCL1/SDA1). These come to pins
-** A4/A5 on the analog connector. It is necessary to have jumpers
-** JP6/JP8 set appropriately (RG2/RG3 position) to access the I2C
-** signals.
+/* The standard I2C port uses I2C1 (SCL1/SDA1). On the Fubarino 
+** Mini, these come out to pins RB8 (SCL1) and RB9 (SDA1) 
+** (Arduino pins 25 and 26 respectively).
 */
 #define	_TWI_BASE		_I2C1_BASE_ADDRESS
 #define	_TWI_BUS_IRQ	_I2C1_BUS_IRQ
@@ -374,8 +387,8 @@ extern const uint8_t	external_int_to_digital_pin_PGM[];
 #define	_TWI_SPL		_I2C1_SPL_IPC
 
 /* Declarations for Digilent DTWI library.
-**		DTWI0 is on A4/A5 (see above comment).
-**		DTWI1 is on digital pins 38 & 39.
+**		DTWI0 is on Arduino pins 25 (SCL1) and 26 (SDA1).
+**		DTWI1 is on Arduino pins 10 (SCL2) and  9 (SDA2).
 */
 #define	_DTWI0_BASE		_I2C1_BASE_ADDRESS
 #define	_DTWI0_BUS_IRQ	_I2C1_BUS_IRQ

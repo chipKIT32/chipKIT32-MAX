@@ -8,7 +8,7 @@
 /************************************************************************/
 /*  File Description:													*/
 /*																		*/
-/* This file contains the board specific declartions and data structure	*/
+/* This file contains the board specific declarations and data structure*/
 /* to customize the chipKIT MPIDE for use with a CmodCK1 board using a	*/
 /* PIC32 part in a 44-pin package.										*/
 /*																		*/
@@ -54,7 +54,7 @@
 /*				Public Board Declarations						*/
 /* ------------------------------------------------------------ */
 /* The following define symbols that can be used in a sketch to
-** refer to periperhals on the board generically.
+** refer to peripherals on the board generically.
 */
 
 #define	_BOARD_NAME_	"chipKIT DP32"

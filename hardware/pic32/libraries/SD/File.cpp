@@ -58,12 +58,12 @@ boolean File::isDirectory(void) {
 }
 
 
-void File::write(uint8_t val) {
-  //return 
-  write(&val, 1);
+size_t File::write(uint8_t val) {
+    write(&val, 1);
+    return 1;
 }
 
-void File::write(const uint8_t *buf, size_t size) {
+size_t File::write(const uint8_t *buf, size_t size) {
   size_t t;
   //if (!_file) {
   //  setWriteError();
@@ -75,7 +75,7 @@ void File::write(const uint8_t *buf, size_t size) {
   //  setWriteError();
   //  return 0;
   //}
-  //return t;
+  return t;
 }
 
 int File::peek() {

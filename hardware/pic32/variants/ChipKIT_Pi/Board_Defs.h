@@ -8,7 +8,7 @@
 /************************************************************************/
 /*  File Description:													*/
 /*																		*/
-/* This file contains the board specific declartions and data structure	*/
+/* This file contains the board specific declarations and data structure*/
 /* to customize the chipKIT MPIDE for use with a ChipKIT PI board using */
 /*																		*/
 /* This code is based on earlier work:									*/
@@ -25,7 +25,8 @@
 /*  01/23/2013(KeithV): Modified for CK1 board                          */
 /*  03/26/2013(KeithV): Modified for DP32 board                         */
 /*  06/14/2013(BrianS): Modified for ChipKIT Pi board					*/
-/*																		*/
+/*	02/23/2014(BrianS): Updated so chipKIT PI PWMs work                 */
+/*                                                                      */
 /************************************************************************/
 //*	This library is free software; you can redistribute it and/or
 //*	modify it under the terms of the GNU Lesser General Public
@@ -59,7 +60,7 @@
 
 /* Define the peripherals available on the board.
 */
-#define	NUM_DIGITAL_PINS	18
+#define	NUM_DIGITAL_PINS	19
 #define	NUM_ANALOG_PINS		10
 #define NUM_OC_PINS			5
 #define	NUM_IC_PINS			5
@@ -88,7 +89,7 @@
 NOTE: The ChipKIT Pi has two user LEDs
 */
 #define	PIN_LED1	14      // 11  RA0
-#define	PIN_LED2	11      // 14  RA1
+#define	PIN_LED2	15      // 14  RB15
 
 /* ------------------------------------------------------------ */
 /*					Button Declarations							*/
@@ -98,9 +99,9 @@ NOTE: The ChipKIT Pi has two user LEDs
 */
 
 /* Also define the virtual program button for soft reset */
-//#define USE_VIRTUAL_PROGRAM_BUTTON      1
-//#define VIRTUAL_PROGRAM_BUTTON_TRIS     TRISBbits.TRISB4
-//#define VIRTUAL_PROGRAM_BUTTON          LATBbits.LATB4
+#define USE_VIRTUAL_PROGRAM_BUTTON      1
+#define VIRTUAL_PROGRAM_BUTTON_TRIS     TRISBbits.TRISB9
+#define VIRTUAL_PROGRAM_BUTTON          LATBbits.LATB9
 
 /* ------------------------------------------------------------ */
 /*					Switch Declarations							*/
@@ -120,11 +121,11 @@ NOTE: The ChipKIT Pi has two user LEDs
 /*					Timer Pin Declarations						*/
 /* ------------------------------------------------------------ */
 
-#define PIN_OC1		 8      // B15   RPB15R  = 5  
-#define	PIN_OC2		 2      // B8    RPB8R   = 5
-#define	PIN_OC3		 3      // B9    RPB9R   = 5
-#define	PIN_OC4		13      // B2    RPB2R   = 5
-#define	PIN_OC5		 6      // B13   RPB13R  = 6
+#define PIN_OC1		10      // B7    RPB7R   = 5  
+#define	PIN_OC2		 9      // B11   RPB11R  = 5
+#define	PIN_OC3		 8      // B10   RPB10R  = 5
+#define	PIN_OC4		 3      // B13   RPB13R  = 5
+#define	PIN_OC5		 0      // A4    RPA4R   = 6
 
 #define PIN_IC1		 6      // RB13 IC1R = RPB13 = 3
 #define PIN_IC2		11      // B0   IC2R = RPB0  = 2
@@ -142,11 +143,11 @@ NOTE: The ChipKIT Pi has two user LEDs
 /*					Interrupt Pin Declarations					*/
 /* ------------------------------------------------------------ */
 
-#define	PIN_INT0	 1      // RB7 non-PPS
-#define	PIN_INT1	 3      // B9  INT1R = RPB9 = 4
-#define PIN_INT2	13      // B2  INT2R = RPB2 = 4
-#define	PIN_INT3	 2      // B8  INT3R = RPB8 = 4
-#define	PIN_INT4	17      // B4  INT4R = RPB4 = 2
+#define	PIN_INT0	10      // RB7 non-PPS
+#define	PIN_INT1	 8      // B10 INT1R = RPB10 = 3
+#define PIN_INT2	 3      // B13 INT2R = RPB13 = 3
+#define	PIN_INT3	 2      // B5  INT3R = RPB5 = 1
+#define	PIN_INT4	 1      // B4  INT4R = RPB4 = 2
 
 /* ------------------------------------------------------------ */
 /*					SPI Pin Declarations						*/
@@ -154,15 +155,15 @@ NOTE: The ChipKIT Pi has two user LEDs
 /* These symbols are defined for compatibility with the original
 ** SPI library and the original pins_arduino.h. 
 */
-const static uint8_t SS   = 9;		// RA0  CS1     PGED3/VREF+/CVREF+/AN0/C3INC/RPA0/CTED1/PMD7/RA0 
-const static uint8_t MISO =	10;		// RA1  SDI1    SDI1R = RPA1 = 0 
-const static uint8_t MOSI = 18;		// RA4  SDO1    RPA4R = SDO1 = 3    
-const static uint8_t SCK  = 13;		// RB14 SCK1    CVREF/AN10/C3INB/RPB14/VBUSON/SCK1/CTED5/RB14
+const static uint8_t SS   = 10;
+const static uint8_t MISO = 12;
+const static uint8_t MOSI = 11;
+const static uint8_t SCK  = 13;
 
 /* The Digilent DSPI library uses these ports.
 */
-#define	PIN_DSPI0_SS	9           // 9    RA0  PGED3/VREF+/CVREF+/AN0/C3INC/RPA0/CTED1/PMD7/RA0          
-#define	PIN_DSPI1_SS	33          // 33   RC4  RPC4/PMA4/RC4
+#define	PIN_DSPI0_SS	10
+#define	PIN_DSPI1_SS	8
 
 /* ------------------------------------------------------------ */
 /*					Analog Pins									*/
@@ -171,9 +172,9 @@ const static uint8_t SCK  = 13;		// RB14 SCK1    CVREF/AN10/C3INB/RPB14/VBUSON/S
 ** used to map an analog pin number to the corresponding digital
 ** pin number.
 */
-#define	A0		14  // RA0		
+#define	A0		14  // RA0
 #define	A1		15  // RB15
-#define	A4		16  // RB2		
+#define	A4		16  // RB2
 #define	A5		17  // RB3
 
 /* ------------------------------------------------------------ */
@@ -182,32 +183,32 @@ const static uint8_t SCK  = 13;		// RB14 SCK1    CVREF/AN10/C3INB/RPB14/VBUSON/S
 /* These define the pin numbers for the various change notice
 ** pins.
 */
-#define	PIN_CN0	     0  //  0   J4-1    RB5     TMS/RPB5/USBID/RB5
-#define	PIN_CN1	     1  //  1   J4-2    RB7     TDI/RPB7/CTED3/PMD5/INT0/RB7   
-#define	PIN_CN2	     2  //  2   J4-3    RB8     TCK/RPB8/SCL1/CTED10/PMD4/RB8
-#define	PIN_CN3	     3  //  3   J4-4    RB9     TDO/RPB9/SDA1/CTED4/PMD3/RB9
-#define	PIN_CN4      4  //  4   J4-5    RB10    PGED2/RPB10/D+/CTED11/RB10
-#define	PIN_CN5      5  //  5   J4-6    RB11    PGEC2/RPB11/D-/RB11
-#define	PIN_CN6      6  //  6   J4-7    RB13    AN11/RPB13/CTPLS/PMRD/RB13
-#define	PIN_CN7      7  //  7   J4-8    RB14    CVREF/AN10/C3INB/RPB14/VBUSON/SCK1/CTED5/RB14
-#define	PIN_CN8      8  //  8   J4-9    RB15    AN9/C3INA/RPB15/SCK2/CTED6/PMCS1/RB15
-#define	PIN_CN9	     9  //  9   J3-1    RA0     PGED3/VREF+/CVREF+/AN0/C3INC/RPA0/CTED1/PMD7/RA0
-#define	PIN_CN10    10  // 10   J3-2    RA1     PGEC3/VREF-/CVREF-/AN1/RPA1/CTED2/PMD6/RA1  
-#define	PIN_CN11    11  // 11   J3-3    RB0     PGED1/AN2/C1IND/C2INB/C3IND/RPB0/PMD0/RB0  
-#define	PIN_CN12    12  // 12   J3-4    RB1     PGEC1/AN3/C1INC/C2INA/RPB1/CTED12/PMD1/RB1  
-#define	PIN_CN13    13  // 13   J3-5    RB2     AN4/C1INB/C2IND/RPB2/SDA2/CTED13/PMD2/RB2  
-#define	PIN_CN14    14  // 14   J3-6    RB3     AN5/C1INA/C2INC/RTCC/RPB3/SCL2/PMWR/RB3
-#define	PIN_CN15    15  // 15   J3-7    RA2     OSC1/CLKI/RPA2/RA2     
-#define	PIN_CN16    16  // 16   J3-8    RA3     OSC2/CLKO/RPA3/PMA0/RA3 
-#define	PIN_CN17    17  // 17   J3-9    RB4     SOSCI/RPB4/RB4 
-#define	PIN_CN18    18  // 18   J3-10   RA4     SOSCO/RPA4/T1CK/CTED9/PMA1/RA4 
+#define	PIN_CN0	     0 //  0   RA4     SOSCO/RPA4/T1CK/CTED9/PMA1/RA4
+#define	PIN_CN1	     1 //  1   RB4     SOSCI/RPB4/RB4
+#define	PIN_CN2	     2 //  2   RB5     TMS/RPB5/USBID/RB5
+#define	PIN_CN3	     3 //  3   RB13    AN11/RPB13/CTPLS/PMRD/RB13 
+#define	PIN_CN4      4 //  4   RB1     PGEC1/AN3/C1INC/C2INA/RPB1/CTED12/PMD1/RB1 (does not come out on Arduino header)
+#define	PIN_CN5      5 //  5   RB0     PGED1/AN2/C1IND/C2INB/C3IND/RPB0/PMD0/RB0 (does not come out on Arduino header)
+#define	PIN_CN6      6 //  6   RA2     OSC1/CLKI/RPA2/RA2 (does not come out on Arduino header)
+#define	PIN_CN7      7 //  7   RA3     OSC2/CLKO/RPA3/PMA0/RA3 (does not come out on Arduino header)
+#define	PIN_CN8      8 //  8   RB10    PGED2/RPB10/D+/CTED11/RB10
+#define	PIN_CN9	     9 //  9   RB11    PGEC2/RPB11/D-/RB11 
+#define	PIN_CN10    10 // 10   RB7     TDI/RPB7/CTED3/PMD5/INT0/RB7
+#define	PIN_CN11    11 // 11   RA1     PGEC3/VREF-/CVREF-/AN1/RPA1/CTED2/PMD6/RA1
+#define	PIN_CN12    12 // 12   RB8     TCK/RPB8/SCL1/CTED10/PMD4/RB8
+#define	PIN_CN13    13 // 13   RB14    CVREF/AN10/C3INB/RPB14/VBUSON/SCK1/CTED5/RB14 
+#define	PIN_CN14    14 // 14   RA0     PGED3/VREF+/CVREF+/AN0/C3INC/RPA0/CTED1/PMD7/RA0 (Jumper to either Arduino Analog 1 or LED1)
+#define	PIN_CN15    15 // 15   RB15    AN9/C3INA/RPB15/SCK2/CTED6/PMCS1/RB15 (Jumper to either Arduino Analog 1 or LED2)
+#define	PIN_CN16    16 // 16   RB2     AN4/C1INB/C2IND/RPB2/SDA2/CTED13/PMD2/RB2 (Arduino A4 / SDA)
+#define	PIN_CN17    17 // 17   RB3     AN5/C1INA/C2INC/RTCC/RPB3/SCL2/PMWR/RB3 (Arduino A5 / SCL)
+#define	PIN_CN18    18 // 18   RB9     TDO/RPB9/SDA1/CTED4/PMD3/RB9 (does not come out on Arduino header - used for Bootloader Enable switch)
 
 /* ------------------------------------------------------------ */
 /*					Pin Mapping Macros							*/
 /* ------------------------------------------------------------ */
 /* Macros used to access the port and pin mapping tables.
 ** These are mostly generic, but some of them may be board specific.
-** These perform slightly better as macros compared to inline functions
+** These perform slightly better as macros compared to in-line functions
 */
 #undef digitalPinToAnalog
 #define	digitalPinToAnalog(P) ( digital_pin_to_analog_PGM[P] )
@@ -318,13 +319,16 @@ extern const uint8_t	external_int_to_digital_pin_PGM[];
 #define	_SPI_IPL		_SPI1_IPL_IPC
 #define	_SPI_SPL		_SPI1_SPL_IPC
 
+/* SPI pin declarations
+*/
+#define _SPI_MISO_IN	PPS_IN_SDI1
+#define	_SPI_MISO_PIN	MISO
+#define _SPI_MOSI_OUT	PPS_OUT_SDO1
+#define	_SPI_MOSI_PIN	MOSI
+
 /* SPI1 
 */
-// RA0  CS1     PGED3/VREF+/CVREF+/AN0/C3INC/RPA0/CTED1/PMD7/RA0 
-// RA4  SDO1    RPA4R = SDO1 = 3    
-// RA1  SDI1    SDI1R = RPA1 = 0 
-// RB14 SCK1    CVREF/AN10/C3INB/RPB14/VBUSON/SCK1/CTED5/RB14
-#define	_DSPI0_BASE			_SPI1_BASE_ADDRESS0 anss
+#define	_DSPI0_BASE			_SPI1_BASE_ADDRESS
 #define	_DSPI0_ERR_IRQ		_SPI1_ERR_IRQ
 #define	_DSPI0_RX_IRQ		_SPI1_RX_IRQ
 #define	_DSPI0_TX_IRQ		_SPI1_TX_IRQ
@@ -333,12 +337,13 @@ extern const uint8_t	external_int_to_digital_pin_PGM[];
 #define	_DSPI0_IPL			_SPI1_IPL_IPC
 #define	_DSPI0_SPL			_SPI1_SPL_IPC
 
+#define _DSPI0_MISO_IN		PPS_IN_SDI1
+#define _DSPI0_MISO_PIN		MISO
+#define _DSPI0_MOSI_OUT		PPS_OUT_SDO1
+#define _DSPI0_MOSI_PIN		MOSI
+
 /* SPI2 
 */
-// RB4  CS2     SOSCI/RPB4/RB4
-// RB8  SDO2    RPB8R = SDO2 = 4    
-// RB2  SDI2    SDI2R = RPB2 = 4 
-// RB15 SCK2    AN9/C3INA/RPB15/SCK2/CTED6/PMCS1/RB15
 #define	_DSPI1_BASE			_SPI2_BASE_ADDRESS
 #define	_DSPI1_ERR_IRQ		_SPI2_ERR_IRQ
 #define	_DSPI1_RX_IRQ		_SPI2_RX_IRQ
@@ -348,45 +353,55 @@ extern const uint8_t	external_int_to_digital_pin_PGM[];
 #define	_DSPI1_IPL			_SPI2_IPL_IPC
 #define	_DSPI1_SPL			_SPI2_SPL_IPC
 
+#define _DSPI0_MISO_IN		PPS_IN_SDI1
+#define _DSPI0_MISO_PIN		MISO			// These are wrong - need to figure them out
+#define _DSPI0_MOSI_OUT		PPS_OUT_SDO1
+#define _DSPI0_MOSI_PIN		MOSI			// These are wrong - need to figure them out
+
 /* ------------------------------------------------------------ */
 /*					I2C Port Declarations						*/
 /* ------------------------------------------------------------ */
 
-/* The standard I2C1 port uses I2C1 (SCL1/SDA1). 
-** RB8/RB9 pins 38/4
+/* The standard I2C port uses PIC32 peripheral I2C2
+** SCL is on RB3 which is Arduino analog pin A5
+** SDA is on RB2 which is Arduino analog pin A4
 */
-#define	_TWI_BASE		_I2C1_BASE_ADDRESS
-#define	_TWI_BUS_IRQ	_I2C1_BUS_IRQ
-#define	_TWI_SLV_IRQ	_I2C1_SLAVE_IRQ
-#define	_TWI_MST_IRQ	_I2C1_MASTER_IRQ
-#define	_TWI_VECTOR		_I2C_1_VECTOR
-#define	_TWI_IPL_ISR	_I2C1_IPL_ISR
-#define _TWI_IPL		_I2C1_IPL_IPC
-#define	_TWI_SPL		_I2C1_SPL_IPC
+#define	_TWI_BASE		_I2C2_BASE_ADDRESS
+#define	_TWI_BUS_IRQ	_I2C2_BUS_IRQ
+#define	_TWI_SLV_IRQ	_I2C2_SLAVE_IRQ
+#define	_TWI_MST_IRQ	_I2C2_MASTER_IRQ
+#define	_TWI_VECTOR		_I2C_2_VECTOR
+#define	_TWI_IPL_ISR	_I2C2_IPL_ISR
+#define _TWI_IPL		_I2C2_IPL_IPC
+#define	_TWI_SPL		_I2C2_SPL_IPC
 
 /* Declarations for Digilent DTWI library.
-**		DTWI0 is on RB8/RB9 pins 38/4 
+** DTWI0 is on PIC32 peripheral I2C2
+** SCL is on RB3 which is Arduino analog pin A5
+** SDA is on RB2 which is Arduino analog pin A4
 */
-#define	_DTWI0_BASE		_I2C1_BASE_ADDRESS
-#define	_DTWI0_BUS_IRQ	_I2C1_BUS_IRQ
-#define	_DTWI0_SLV_IRQ	_I2C1_SLAVE_IRQ
-#define	_DTWI0_MST_IRQ	_I2C1_MASTER_IRQ
-#define	_DTWI0_VECTOR	_I2C_1_VECTOR
-#define	_DTWI0_IPL_ISR	_I2C1_IPL_ISR
-#define	_DTWI0_IPL		_I2C1_IPL_IPC
-#define	_DTWI0_SPL		_I2C1_SPL_IPC
+#define	_DTWI0_BASE		_I2C2_BASE_ADDRESS
+#define	_DTWI0_BUS_IRQ	_I2C2_BUS_IRQ
+#define	_DTWI0_SLV_IRQ	_I2C2_SLAVE_IRQ
+#define	_DTWI0_MST_IRQ	_I2C2_MASTER_IRQ
+#define	_DTWI0_VECTOR	_I2C_2_VECTOR
+#define	_DTWI0_IPL_ISR	_I2C2_IPL_ISR
+#define	_DTWI0_IPL		_I2C2_IPL_IPC
+#define	_DTWI0_SPL		_I2C2_SPL_IPC
 
 /* Declarations for Digilent DTWI library.
-**		DTWI0 is on RB8/RB9 pins 38/4 
+** DTWI0 is on PIC32 peripheral I2C1
+** SCL is on RB8 which is Arduino digital pin 12
+** SDA is on RB9 which is TDO/BLEN
 */
-#define	_DTWI1_BASE		_I2C2_BASE_ADDRESS
-#define	_DTWI1_BUS_IRQ	_I2C2_BUS_IRQ
-#define	_DTWI1_SLV_IRQ	_I2C2_SLAVE_IRQ
-#define	_DTWI1_MST_IRQ	_I2C2_MASTER_IRQ
-#define	_DTWI1_VECTOR	_I2C_2_VECTOR
-#define	_DTWI1_IPL_ISR	_I2C2_IPL_ISR
-#define	_DTWI1_IPL		_I2C2_IPL_IPC
-#define	_DTWI1_SPL		_I2C2_SPL_IPC
+#define	_DTWI1_BASE		_I2C1_BASE_ADDRESS
+#define	_DTWI1_BUS_IRQ	_I2C1_BUS_IRQ
+#define	_DTWI1_SLV_IRQ	_I2C1_SLAVE_IRQ
+#define	_DTWI1_MST_IRQ	_I2C1_MASTER_IRQ
+#define	_DTWI1_VECTOR	_I2C_1_VECTOR
+#define	_DTWI1_IPL_ISR	_I2C1_IPL_ISR
+#define	_DTWI1_IPL		_I2C1_IPL_IPC
+#define	_DTWI1_SPL		_I2C1_SPL_IPC
 
 /* ------------------------------------------------------------ */
 /*					A/D Converter Declarations					*/

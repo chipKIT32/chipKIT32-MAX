@@ -33,8 +33,8 @@ public:
   File(SdFile f, const char *name);     // wraps an underlying SdFile
   File(void);      // 'empty' constructor
   ~File(void);     // destructor
-  virtual void write(uint8_t);
-  virtual void write(const uint8_t *buf, size_t size);
+  virtual size_t write(uint8_t);
+  virtual size_t write(const uint8_t *buf, size_t size);
   virtual int read();
   virtual int peek();
   virtual int available();
@@ -73,6 +73,11 @@ public:
   // write, etc). Returns a File object for interacting with the file.
   // Note that currently only one file can be open at a time.
   File open(const char *filename, uint8_t mode = FILE_READ);
+
+  // This will close the root so it is safe
+  // to call begin again. To work without corrupting the FAT
+  // all open files should be closed before calling end
+  void end(void) {if(root.isOpen()) root.close();}
 
   // Methods to determine if the requested file path exists.
   boolean exists(char *filepath);

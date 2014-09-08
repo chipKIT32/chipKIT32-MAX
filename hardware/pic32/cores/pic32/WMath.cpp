@@ -33,6 +33,30 @@ extern "C" {
   #include <math.h>
 }
 
+// Enable (if not enabled) the PRNG and obtain a fresh number from it.
+#if defined(__PIC32MZ__)
+#include <p32xxxx.h>
+unsigned int prngmz() {
+    static unsigned int lastPRNGValue = 0;
+
+    if (RNGCONbits.PRNGEN == 0) {
+        // The TRNG doesn't work yet, but when it does it can be used
+        // to seed the PRNG.  Even better, we may just use the TRNG.
+        //RNGCONbits.TRNGEN = 1;
+        //RNGCONbits.LOAD = 1;
+        RNGPOLY1 = 0x00C00003;
+        RNGPOLY2 = 0x00000000;
+        RNGNUMGEN1 = 0x090a0b0c;
+        RNGNUMGEN2 = 0x0d0e0f10;
+        RNGCONbits.PLEN = 42;
+        RNGCONbits.CONT = 0;
+        RNGCONbits.PRNGEN = 1;
+    }
+
+    return RNGNUMGEN1;
+}
+#endif
+
 //************************************************************************
 void randomSeed(unsigned int seed)
 {
@@ -40,7 +64,12 @@ void randomSeed(unsigned int seed)
 	{
 	#if defined(__PIC32MX__)
 		srand(seed);
-	#else
+	#elif defined(__PIC32MZ__)
+        RNGCONbits.PRNGEN = 0;
+        RNGSEED1 = seed;
+        RNGSEED2 = 0;
+        RNGCONbits.PRNGEN = 1;
+    #else
 		srandom(seed);
 	#endif
 	}
@@ -55,6 +84,8 @@ long random(long howbig)
 	}
 #if defined(__PIC32MX__)
 	return rand() % howbig;
+#elif defined(__PIC32MZ__)
+    return prngmz() % howbig;
 #else
 	return random() % howbig;
 #endif

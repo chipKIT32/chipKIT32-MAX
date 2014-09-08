@@ -8,7 +8,7 @@
 /************************************************************************/
 /*  File Description:													*/
 /*																		*/
-/* This file contains the board specific declartions and data structure	*/
+/* This file contains the board specific declarations and data structure*/
 /* to customize the chipKIT MPIDE for use with a generic board using a	*/
 /* PIC32 part in a 64-pin package.										*/
 /*																		*/
@@ -51,7 +51,7 @@
 /*				Public Board Declarations						*/
 /* ------------------------------------------------------------ */
 /* The following define symbols that can be used in a sketch to
-** refer to periperhals on the board generically.
+** refer to peripherals on the board generically.
 */
 
 #define	_BOARD_NAME_	"FubarinoSD"
@@ -65,7 +65,7 @@
 #define	NUM_TCK_PINS		5
 #define	NUM_INT_PINS		5
 
-#define	NUM_SERIAL_PORTS	2
+#define	NUM_SERIAL_PORTS	6
 #define	NUM_SPI_PORTS		1
 #define	NUM_I2C_PORTS		1
 
@@ -94,7 +94,7 @@
 /* One button (PRG) for this board
 */
 #define	PIN_BTN1	23
-/* Also define the virutal program button for soft reset */
+/* Also define the virtual program button for soft reset */
 #define USE_VIRTUAL_PROGRAM_BUTTON      1
 #define VIRTUAL_PROGRAM_BUTTON_TRIS     TRISEbits.TRISE7
 #define VIRTUAL_PROGRAM_BUTTON          LATEbits.LATE7
@@ -314,10 +314,8 @@ extern const uint8_t	analog_pin_to_channel_PGM[];
 #define	_SER0_IPL_ISR	_UART1_IPL_ISR
 #define	_SER0_IPL		_UART1_IPL_IPC
 #define	_SER0_SPL		_UART1_SPL_IPC
-//#define>_SER0_RX_PIN    8$
-//#define>_SER0_TX_PIN    9$
-
-
+//UART1 TX = PIC pin 51, RD3, Arduino pin 9
+//UART1 RX = PIC pin 50, RD2, Arduino pin 8
 
 /* Serial port 1 uses UART2
 */
@@ -327,10 +325,60 @@ extern const uint8_t	analog_pin_to_channel_PGM[];
 #define	_SER1_IPL_ISR	_UART2_IPL_ISR
 #define	_SER1_IPL		_UART2_IPL_IPC
 #define	_SER1_SPL		_UART2_SPL_IPC
-//#define>_SER0_RX_PIN    28$
-//#define>_SER0_TX_PIN    29$
+//UART2 TX = PIC pin 32, RF5, Arduino pin 29
+//UART2 RX = PIC pin 31, RF4, Arduino pin 28
 
+#if defined(_UART3_BASE_ADDRESS)
+/* Serial port 2 uses UART3
+*/
+#define	_SER2_BASE		_UART3_BASE_ADDRESS
+#define	_SER2_IRQ		_UART3_ERR_IRQ
+#define	_SER2_VECTOR	_UART_3_VECTOR
+#define	_SER2_IPL_ISR	_UART3_IPL_ISR
+#define	_SER2_IPL		_UART3_IPL_IPC
+#define	_SER2_SPL		_UART3_SPL_IPC
+//UART3 TX = PIC pin 6, RG8, Arduino pin 26/SDO (in use by SPI on Fubarino SD)
+//UART3 RX = PIC pin 5, RG7, Arduino pin 25/SDI (in use by SPI on Fubarino SD)
+#endif
 
+#if defined(_UART4_BASE_ADDRESS)
+/* Serial port 3 uses UART4
+*/
+#define	_SER3_BASE		_UART4_BASE_ADDRESS
+#define	_SER3_IRQ		_UART4_ERR_IRQ
+#define	_SER3_VECTOR	_UART_4_VECTOR
+#define	_SER3_IPL_ISR	_UART4_IPL_ISR
+#define	_SER3_IPL		_UART4_IPL_IPC
+#define	_SER3_SPL		_UART4_SPL_IPC
+//UART4 TX = PIC pin 49, RD1, Arduino pin 7 
+//UART4 RX = PIC pin 43, RD9, Arduino pin 1
+#endif
+
+#if defined(_UART5_BASE_ADDRESS)
+/* Serial port 4 uses UART5
+*/
+#define	_SER4_BASE		_UART5_BASE_ADDRESS
+#define	_SER4_IRQ		_UART5_ERR_IRQ
+#define	_SER4_VECTOR	_UART_5_VECTOR
+#define	_SER4_IPL_ISR	_UART5_IPL_ISR
+#define	_SER4_IPL		_UART5_IPL_IPC
+#define	_SER4_SPL		_UART5_SPL_IPC
+//UART5 TX = PIC pin 29, RB14, Arduino pin 43/A1 
+//UART5 RX = PIC pin 21, RB8, Arduino pin 37/A7
+#endif
+
+#if defined(_UART6_BASE_ADDRESS)
+/* Serial port 5 uses UART6
+*/
+#define	_SER5_BASE		_UART6_BASE_ADDRESS
+#define	_SER5_IRQ		_UART6_ERR_IRQ
+#define	_SER5_VECTOR	_UART_6_VECTOR
+#define	_SER5_IPL_ISR	_UART6_IPL_ISR
+#define	_SER5_IPL		_UART6_IPL_IPC
+#define	_SER5_SPL		_UART6_SPL_IPC
+//UART6 TX = PIC pin 4, RG6, Arduino pin 24/SCK (in use by Fubarino SD SPI)
+//UART6 RX = PIC pin 8, RG9, Arduino pin 27/SS (in use by Fubarino SD SPI)
+#endif
 
 /* ------------------------------------------------------------ */
 /*					SPI Port Declarations						*/

@@ -269,8 +269,13 @@
       <arg value="macosx/dist/tools-universal.zip" />
     </exec>
      
-<unzip dest="macosx/work/mpide.app/Contents/Resources/Java/hardware/pic32/compiler" src="macosx/dist/pic32-tools-chipKIT-cxx-master-Darwin-image-20130228.zip" overwrite="false"/>
-<chmod perm="+x" maxparallel="0">
+<get src="https://s3.amazonaws.com/chipkit/compilers/pic32-tools-Darwin-image-20140530.zip"
+         dest="macosx/dist"
+         verbose="false"
+         usetimestamp="true"/>
+
+<unzip dest="macosx/work/mpide.app/Contents/Resources/Java/hardware/pic32/compiler" src="macosx/dist/pic32-tools-Darwin-image-20140530.zip" overwrite="false"/>
+<chmod perm="+x" maxparallel="300">
       <fileset dir="macosx/work/mpide.app/Contents/Resources/Java/hardware/pic32/compiler" includes="**/*" />
 </chmod>
 
@@ -296,6 +301,86 @@
 
 
   <target name="macosx-dist" if="macosx" depends="macosx-build" description="Create a .dmg of the Mac OS X version">
+	  <property name="extension" value="dmg"/>
+	  <propertyfile file="upload.properties">
+		  <entry  key="extension" value="${extension}"/>
+	  </propertyfile>
+
+	  <!-- now build the dmg -->
+	  <!--
+	  <gunzip src="macosx/template.dmg.gz" dest="macosx/working.dmg" />
+		-->
+    <mkdir dir="macosx/working_dir" />
+    <!--
+	  <copy todir="macosx/working_dir">
+		  <fileset dir="macosx/work">
+			  <exclude name="**/mpideTestSuite/**" />
+		  </fileset>
+    </copy>
+    -->
+	  <copy file="macosx/dist/FTDIUSBSerialDriver_v2_2_18.dmg" todir="macosx/working_dir" />
+	
+
+	  <!-- The ant copy command does not preserve permissions. -->
+	  <chmod file="macosx/working_dir/mpide.app/Contents/MacOS/JavaApplicationStub" perm="+x" />
+	  <chmod perm="+x" parallel="false"  maxparallel="300">
+		  <fileset dir="macosx/working_dir/mpide.app/Contents/Resources/Java/hardware/pic32/compiler" includes="**/*" />
+	  </chmod>
+	  <chmod perm="+x">
+		  <fileset dir="macosx/working_dir/mpide.app/Contents/Resources/Java/hardware/tools/avr/bin" includes="**/*" />
+		  <fileset dir="macosx/working_dir/mpide.app/Contents/Resources/Java/hardware/tools/avr/avr/bin" includes="**/*" />
+		  <fileset dir="macosx/working_dir/mpide.app/Contents/Resources/Java/hardware/tools/avr/avr-3/bin" includes="**/*" />
+		  <fileset dir="macosx/working_dir/mpide.app/Contents/Resources/Java/hardware/tools/avr/avr-4/bin" includes="**/*" />
+		  <fileset dir="macosx/working_dir/mpide.app/Contents/Resources/Java/hardware/tools/avr/libexec/gcc/avr/3.4.6/" includes="**/cc1*" />
+		  <fileset dir="macosx/working_dir/mpide.app/Contents/Resources/Java/hardware/tools/avr/libexec/gcc/avr/4.3.2/" includes="**/cc1*" />
+	  </chmod>
+
+	  <!-- Pause briefly for the OS to catch up with the DMG changes. 
+	  This prevents "hdiutil: couldn't eject "disk3" - Resource busy"
+	          errors when ejecting the disk in the next step.
+	           You may need to set this value higher for your system. -->
+	  <!-- <sleep seconds="3" /> -->
+
+	  <exec executable="mkisofs">
+		  <arg value="-J" />
+		  <arg value="-R" />
+		  <arg value="-apple" />
+		  <arg value="-v"/>
+		  <arg value="-part"/>
+		  <arg value="-z"/>
+		  <arg value="-V"/>
+		  <arg value="mpide"/>
+		  <arg value="-o" />
+		  <arg value="macosx/dist/mpide-${version}.dmg" />
+		  <arg value="macosx/working_dir/" />
+	  </exec>
+
+	  <zip destfile="macosx/dist/mpide-${version}.dmg.zip" >
+		  <fileset dir="macosx/dist">
+       <include name="mpide-${version}.dmg" />
+     </fileset>
+	  </zip>
+
+	  <!-- Clean up the interim files. -->
+	  <delete file="macosx/dist/mpide-${version}.dmg" />
+	  <delete file="macosx/working.dmg" />
+	  <delete dir="macosx/working_dir" />
+
+	  <echo>
+		  =======================================================
+		  mpide for Mac OS X was built. Grab the image from
+
+		  macosx/mpide-${version}.dmg.zip
+		  =======================================================
+	  </echo>
+	  <propertyfile file="upload.properties">
+		  <entry  key="uploadversion" value="${version}"/>
+	  </propertyfile>
+
+  </target>
+
+
+  <target name="macosx-old" if="macosx" depends="macosx-build" description="Create a .dmg of the Mac OS X version">
    	<property name="extension" value="dmg"/>  
 	<propertyfile file="upload.properties">
       		<entry  key="extension" value="${extension}"/>
@@ -416,9 +501,21 @@
 
     <copy todir="linux/work" file="linux/dist/mpide" />
     <chmod perm="755" file="linux/work/mpide" />
-    <unzip dest="linux/work/hardware/pic32/compiler" src="linux/dist/pic32-tools-chipKIT-cxx-master-Linux32-image-20130228.zip" overwrite="false"/>
+ 
+  <get src="https://chipkit.s3.amazonaws.com/compilers/pic32-tools-Linux32-image-20140530.zip"
+         dest="linux/dist"
+         verbose="false"
+         usetimestamp="true"/>
+
+    <unzip dest="linux/work/hardware/pic32/compiler" src="linux/dist/pic32-tools-Linux32-image-20140530.zip" overwrite="false"/>
     <chmod perm="+x">
-      <fileset dir="linux/work/hardware/pic32/compiler" includes="**/*" />
+      <fileset dir="linux/work/hardware/pic32/compiler/pic32-tools/bin" includes="**/*" />
+    </chmod>
+    <chmod perm="+x">
+      <fileset dir="linux/work/hardware/pic32/compiler/pic32-tools/lib" includes="**/*" />
+    </chmod>
+    <chmod perm="+x">
+      <fileset dir="linux/work/hardware/pic32/compiler/pic32-tools/pic32mx" includes="**/*" />
     </chmod>
 
   </target>
@@ -443,7 +540,7 @@
       <param name="target.path" value="raspberrypi/work" />
     </antcall>
 
-    <get src="http://chipkit.s3.amazonaws.com/compilers/pic32-tools-chipKIT-cxx-master-arm-linux-image.zip"
+    <get src="https://chipkit.s3.amazonaws.com/compilers/pic32-tools-arm-linux-image-20140530.zip"
          dest="raspberrypi/dist"
          verbose="false"
          usetimestamp="true"/>
@@ -461,7 +558,7 @@
          raspberrypi/dist folder instead. -->
     <copy todir="raspberrypi/work" file="linux/dist/mpide" />
     <chmod perm="755" file="raspberrypi/work/mpide" />
-    <unzip dest="raspberrypi/work/hardware/pic32/compiler" src="raspberrypi/dist/pic32-tools-chipKIT-cxx-master-arm-linux-image.zip" overwrite="false"/>
+    <unzip dest="raspberrypi/work/hardware/pic32/compiler" src="raspberrypi/dist/pic32-tools-arm-linux-image-20140530.zip" overwrite="false"/>
     <chmod perm="+x">
       <fileset dir="raspberrypi/work/hardware/pic32/compiler" includes="**/*" />
     </chmod>
@@ -493,7 +590,7 @@
 
 
   </target>
-  
+
   <target name="linux-run" depends="linux-build" 
 	  description="Run Linux (32-bit) version">
     <exec executable="./linux/work/mpide" spawn="false"/>
@@ -503,6 +600,13 @@
 	  description="Run Linux (64-bit) version">
     <exec executable="./linux/work/mpide" spawn="false"/>
   </target>
+
+  
+  <target name="raspberrypi-run" depends="raspberrypi-build" 
+	  description="Run Linux (64-bit) version">
+    <exec executable="./raspberrypi/work/mpide" spawn="false"/>
+  </target>
+
 
   <target name="raspberrypi-dist" depends="raspberrypi-build" 
 	  description="Build .tar.gz of raspberry pi linux version">
@@ -747,7 +851,12 @@ Description: chipKIT MPIDE Development environment
     <!-- Unzip AVR tools -->
     <unzip dest="windows/work/hardware" src="windows/avr_tools.zip" overwrite="false"/>
     <!-- pic32 compiler -->
-   <unzip dest="windows/work/hardware/pic32/compiler" src="windows/dist/pic32-tools-chipKIT-cxx-master-win32-image-20130228.zip" overwrite="false"/>
+     <get src="https://chipkit.s3.amazonaws.com/compilers/pic32-tools-win32-image-20140530.zip "
+         dest="windows/dist"
+         verbose="false"
+         usetimestamp="true"/>
+
+   <unzip dest="windows/work/hardware/pic32/compiler" src="windows/dist/pic32-tools-win32-image-20140530.zip" overwrite="false"/>
     <chmod perm="+x">
       <fileset dir="windows/work/hardware/pic32/compiler" includes="**/*" />
     </chmod>

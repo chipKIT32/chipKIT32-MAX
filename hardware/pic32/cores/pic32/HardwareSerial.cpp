@@ -127,7 +127,7 @@ void __attribute__((interrupt(),nomips16)) IntSer7Handler(void);
 **		any global variables used by the object.
 */
 
-#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
+#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__) || defined(__PIC32MZXX__) || defined(__PIC32MX47X__)
 HardwareSerial::HardwareSerial(p32_uart * uartT, int irqT, int vecT, int iplT, int splT, isrFunc isrHandler, int pinT, int pinR, ppsFunctionType ppsT, ppsFunctionType ppsR)
 #else
 HardwareSerial::HardwareSerial(p32_uart * uartT, int irqT, int vecT, int iplT, int splT, isrFunc isrHandler)
@@ -142,7 +142,7 @@ HardwareSerial::HardwareSerial(p32_uart * uartT, int irqT, int vecT, int iplT, i
 	spl  = (uint8_t)splT;
     isr  = isrHandler;
 
-#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
+#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__) || defined(__PIC32MZXX__) || defined(__PIC32MX47X__)
 	pinTx = (uint8_t)pinT;
 	pinRx = (uint8_t)pinR;
 	ppsTx = ppsT;
@@ -190,14 +190,11 @@ HardwareSerial::HardwareSerial(p32_uart * uartT, int irqT, int vecT, int iplT, i
 
 void HardwareSerial::begin(unsigned long baudRate)
 {
-//	p32_regset *	ipc;	//interrupt priority control register set
-//	int				irq_shift;
-
 	/* Initialize the receive buffer.
 	*/
 	purge();
 
-#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
+#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__) || defined(__PIC32MZXX__) || defined(__PIC32MX47X__)
 	/* Map the UART TX to the appropriate pin.
 	*/
     mapPps(pinTx, ppsTx);
@@ -207,11 +204,27 @@ void HardwareSerial::begin(unsigned long baudRate)
     mapPps(pinRx, ppsRx);
 #endif
 
-    setIntVector(vec, isr);
+        setIntVector(vec, isr);
 
 	/* Set the interrupt privilege level and sub-privilege level
 	*/
 	setIntPriority(vec, ipl, spl);
+
+        // MZ has 2 more vectors to worry about
+#if defined(__PIC32MZXX__)
+
+        static uint32_t * const pISROffset = ((uint32_t *) &OFF000);
+
+        // the MZ part works off of offset tables
+        // we must fill in the tx and rx VECs to point
+        // to the ERR VEC so all 3 VECs use the same ISR
+        pISROffset[vec+1] = pISROffset[vec];
+        pISROffset[vec+2] = pISROffset[vec];
+
+        // and set the priorities for the other 2 vectors.
+        setIntPriority(vec+1, ipl, spl);
+        setIntPriority(vec+2, ipl, spl);
+#endif
 
 	/* Clear the interrupt flags, and set the interrupt enables for the
 	** interrupts used by this UART.
@@ -429,7 +442,7 @@ void HardwareSerial::purge()
 **		specified character.
 */
 
-void HardwareSerial::write(uint8_t theChar)
+size_t HardwareSerial::write(uint8_t theChar)
 {
 
 	while ((uart->uxSta.reg & (1 << _UARTSTA_UTXBF)) != 0)	//check the UTXBF bit
@@ -438,6 +451,7 @@ void HardwareSerial::write(uint8_t theChar)
 	}
 
 	uart->uxTx.reg = theChar;
+    return 1;
 }
 
 /* ------------------------------------------------------------ */
@@ -507,9 +521,6 @@ void HardwareSerial::doSerialInt(void)
 
 //*******************************************************************************************
 
-// #pragma mark -
-// #pragma mark -----------------USB support
-
 #if defined(_USB) && defined(_USE_USB_FOR_SERIAL_)
 
 #include	"HardwareSerial_cdcacm.h"
@@ -554,7 +565,7 @@ void	USBresetRoutine(void)
 // Need to return FALSE if we need USB to hold off for awhile
 boolean	USBstoreDataRoutine(const byte *buffer, int length)
 {
-    int	i;
+    unsigned int	i;
 
     // Put each byte into the serial recieve buffer
     for (i=0; i<length; i++)
@@ -678,20 +689,21 @@ void USBSerial::flush()
 }
 
 //*******************************************************************************************
-void USBSerial::write(uint8_t theChar)
+size_t USBSerial::write(uint8_t theChar)
 {
 unsigned char	usbBuf[4];
 
 	usbBuf[0]	=	theChar;
 	
 	cdcacm_print(usbBuf, 1);
+    return 1;
 }
 
 //*	testing showed 63 gave better speed results than 64
 
 #define	kMaxUSBxmitPkt	63
 //*******************************************************************************************
-void USBSerial::write(const uint8_t *buffer, size_t size)
+size_t USBSerial::write(const uint8_t *buffer, size_t size)
 {
 
 	if (size < kMaxUSBxmitPkt)
@@ -721,15 +733,17 @@ void USBSerial::write(const uint8_t *buffer, size_t size)
 			cdcacm_print(usbBuffer, packetSize);
 		}
 	}
+    return size;
 }
 
 //*******************************************************************************************
-void USBSerial::write(const char *str)
+size_t USBSerial::write(const char *str)
 {
 size_t size;
 
 	size	=	strlen(str);
 	write((const uint8_t *)str, size);
+    return size;
 }
 
 
@@ -764,7 +778,11 @@ extern "C" {
 */
 #if defined(_SER0_VECTOR)
 
+#if defined(__PIC32MZXX__)
+void __attribute__((nomips16,vector(_SER0_VECTOR),interrupt(_SER0_IPL_ISR))) IntSer0Handler(void)
+#else
 void __attribute__((interrupt(), nomips16)) IntSer0Handler(void)
+#endif
 {
 #if defined(_USB) && defined(_USE_USB_FOR_SERIAL_)
 	Serial0.doSerialInt();
@@ -792,7 +810,11 @@ void __attribute__((interrupt(), nomips16)) IntSer0Handler(void)
 */
 #if defined(_SER1_VECTOR)
 
+#if defined(__PIC32MZXX__)
+void __attribute__((nomips16,vector(_SER1_VECTOR),interrupt(_SER1_IPL_ISR))) IntSer1Handler(void)
+#else
 void __attribute__((interrupt(), nomips16)) IntSer1Handler(void)
+#endif
 {
 	Serial1.doSerialInt();
 }
@@ -816,7 +838,11 @@ void __attribute__((interrupt(), nomips16)) IntSer1Handler(void)
 */
 #if defined(_SER2_VECTOR)
 
+#if defined(__PIC32MZXX__)
+void __attribute__((nomips16,vector(_SER2_VECTOR),interrupt(_SER2_IPL_ISR))) IntSer2Handler(void)
+#else
 void __attribute__((interrupt(), nomips16)) IntSer2Handler(void)
+#endif
 {
 	Serial2.doSerialInt();
 }
@@ -840,7 +866,11 @@ void __attribute__((interrupt(), nomips16)) IntSer2Handler(void)
 */
 #if defined(_SER3_VECTOR)
 
+#if defined(__PIC32MZXX__)
+void __attribute__((nomips16,vector(_SER3_VECTOR),interrupt(_SER3_IPL_ISR))) IntSer3Handler(void)
+#else
 void __attribute__((interrupt(), nomips16)) IntSer3Handler(void)
+#endif
 {
 	Serial3.doSerialInt();
 }
@@ -864,7 +894,11 @@ void __attribute__((interrupt(), nomips16)) IntSer3Handler(void)
 */
 #if defined(_SER4_VECTOR)
 
+#if defined(__PIC32MZXX__)
+void __attribute__((nomips16,vector(_SER4_VECTOR),interrupt(_SER4_IPL_ISR))) IntSer4Handler(void)
+#else
 void __attribute__((interrupt(), nomips16)) IntSer4Handler(void)
+#endif
 {
 	Serial4.doSerialInt();
 }
@@ -888,7 +922,11 @@ void __attribute__((interrupt(), nomips16)) IntSer4Handler(void)
 */
 #if defined(_SER5_VECTOR)
 
-void __attribute__((interrupt(), nomips16)) IntSer5Handler(void)
+#if defined(__PIC32MZXX__)
+void __attribute__((nomips16,vector(_SER5_VECTOR),interrupt(_SER5_IPL_ISR))) IntSer5Handler(void)
+#else
+ void __attribute__((interrupt(), nomips16)) IntSer5Handler(void)
+#endif
 {
 	Serial5.doSerialInt();
 }
@@ -912,7 +950,11 @@ void __attribute__((interrupt(), nomips16)) IntSer5Handler(void)
 */
 #if defined(_SER6_VECTOR)
 
+#if defined(__PIC32MZXX__)
+void __attribute__((nomips16,vector(_SER6_VECTOR),interrupt(_SER6_IPL_ISR))) IntSer6Handler(void)
+#else
 void __attribute__((interrupt(), nomips16)) IntSer6Handler(void)
+#endif
 {
 	Serial6.doSerialInt();
 }
@@ -936,7 +978,11 @@ void __attribute__((interrupt(), nomips16)) IntSer6Handler(void)
 */
 #if defined(_SER7_VECTOR)
 
+#if defined(__PIC32MZXX__)
+void __attribute__((nomips16,vector(_SER7_VECTOR),interrupt(_SER7_IPL_ISR))) IntSer7Handler(void)
+#else
 void __attribute__((interrupt(), nomips16)) IntSer7Handler(void)
+#endif
 {
 	Serial7.doSerialInt();
 }
@@ -955,7 +1001,7 @@ void __attribute__((interrupt(), nomips16)) IntSer7Handler(void)
 */
 USBSerial		Serial(&rx_bufferUSB);
 #if defined(_SER0_BASE)
-#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
+#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__) || defined(__PIC32MZXX__) || defined(__PIC32MX47X__)
 HardwareSerial Serial0((p32_uart *)_SER0_BASE, _SER0_IRQ, _SER0_VECTOR, _SER0_IPL, _SER0_SPL, IntSer0Handler, _SER0_TX_PIN, _SER0_RX_PIN, _SER0_TX_OUT, _SER0_RX_IN);
 #else
 HardwareSerial Serial0((p32_uart *)_SER0_BASE, _SER0_IRQ, _SER0_VECTOR, _SER0_IPL, _SER0_SPL, IntSer0Handler);
@@ -967,9 +1013,10 @@ HardwareSerial Serial0((p32_uart *)_SER0_BASE, _SER0_IRQ, _SER0_VECTOR, _SER0_IP
 ** gets instantiated as Serial.
 ** NOTE: PIC32MX1xx/2xx devices only have 2 UARTS, so we're not defining more variant
 ** object instances for those devices.
+** however MZ have 6
 */
 #if defined(_SER0_BASE)
-#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
+#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__) || defined(__PIC32MZXX__) || defined(__PIC32MX47X__)
 HardwareSerial Serial((p32_uart *)_SER0_BASE, _SER0_IRQ, _SER0_VECTOR, _SER0_IPL, _SER0_SPL, IntSer0Handler, _SER0_TX_PIN, _SER0_RX_PIN, _SER0_TX_OUT, _SER0_RX_IN);
 #else
 HardwareSerial Serial((p32_uart *)_SER0_BASE, _SER0_IRQ, _SER0_VECTOR, _SER0_IPL, _SER0_SPL, IntSer0Handler);
@@ -979,7 +1026,7 @@ HardwareSerial Serial((p32_uart *)_SER0_BASE, _SER0_IRQ, _SER0_VECTOR, _SER0_IPL
 #endif	//defined(_USB) && defined(_USE_USB_FOR_SERIAL_)
 
 #if defined(_SER1_BASE)
-#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
+#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__) || defined(__PIC32MZXX__) || defined(__PIC32MX47X__)
 HardwareSerial Serial1((p32_uart *)_SER1_BASE, _SER1_IRQ, _SER1_VECTOR, _SER1_IPL, _SER1_SPL, IntSer1Handler, _SER1_TX_PIN, _SER1_RX_PIN, _SER1_TX_OUT, _SER1_RX_IN);
 #else
 HardwareSerial Serial1((p32_uart *)_SER1_BASE, _SER1_IRQ, _SER1_VECTOR, _SER1_IPL, _SER1_SPL, IntSer1Handler);
@@ -987,27 +1034,51 @@ HardwareSerial Serial1((p32_uart *)_SER1_BASE, _SER1_IRQ, _SER1_VECTOR, _SER1_IP
 #endif
 
 #if defined(_SER2_BASE)
+#if defined(__PIC32MZXX__)
+HardwareSerial Serial2((p32_uart *)_SER2_BASE, _SER2_IRQ, _SER2_VECTOR, _SER2_IPL, _SER2_SPL, IntSer2Handler, _SER2_TX_PIN, _SER2_RX_PIN, _SER2_TX_OUT, _SER2_RX_IN);
+#else
 HardwareSerial Serial2((p32_uart *)_SER2_BASE, _SER2_IRQ, _SER2_VECTOR, _SER2_IPL, _SER2_SPL, IntSer2Handler);
+#endif
 #endif
 
 #if defined(_SER3_BASE)
+#if defined(__PIC32MZXX__)
+HardwareSerial Serial3((p32_uart *)_SER3_BASE, _SER3_IRQ, _SER3_VECTOR, _SER3_IPL, _SER3_SPL, IntSer3Handler, _SER3_TX_PIN, _SER3_RX_PIN, _SER3_TX_OUT, _SER3_RX_IN);
+#else
 HardwareSerial Serial3((p32_uart *)_SER3_BASE, _SER3_IRQ, _SER3_VECTOR, _SER3_IPL, _SER3_SPL, IntSer3Handler);
+#endif
 #endif
 
 #if defined(_SER4_BASE)
+#if defined(__PIC32MZXX__)
+HardwareSerial Serial4((p32_uart *)_SER4_BASE, _SER4_IRQ, _SER4_VECTOR, _SER4_IPL, _SER4_SPL, IntSer4Handler, _SER4_TX_PIN, _SER4_RX_PIN, _SER4_TX_OUT, _SER4_RX_IN);
+#else
 HardwareSerial Serial4((p32_uart *)_SER4_BASE, _SER4_IRQ, _SER4_VECTOR, _SER4_IPL, _SER4_SPL, IntSer4Handler);
+#endif
 #endif
 
 #if defined(_SER5_BASE)
+#if defined(__PIC32MZXX__)
+HardwareSerial Serial5((p32_uart *)_SER5_BASE, _SER5_IRQ, _SER5_VECTOR, _SER5_IPL, _SER5_SPL, IntSer5Handler, _SER5_TX_PIN, _SER5_RX_PIN, _SER5_TX_OUT, _SER5_RX_IN);
+#else
 HardwareSerial Serial5((p32_uart *)_SER5_BASE, _SER5_IRQ, _SER5_VECTOR, _SER5_IPL, _SER5_SPL, IntSer5Handler);
+#endif
 #endif
 
 #if defined(_SER6_BASE)
+#if defined(__PIC32MZXX__)
+HardwareSerial Serial6((p32_uart *)_SER6_BASE, _SER6_IRQ, _SER6_VECTOR, _SER6_IPL, _SER6_SPL, IntSer6Handler, _SER6_TX_PIN, _SER6_RX_PIN, _SER6_TX_OUT, _SER6_RX_IN);
+#else
 HardwareSerial Serial6((p32_uart *)_SER6_BASE, _SER6_IRQ, _SER6_VECTOR, _SER6_IPL, _SER6_SPL, IntSer6Handler);
+#endif
 #endif
 
 #if defined(_SER7_BASE)
+#if defined(__PIC32MZXX__)
+HardwareSerial Serial7((p32_uart *)_SER7_BASE, _SER7_IRQ, _SER7_VECTOR, _SER7_IPL, _SER7_SPL, IntSer7Handler, _SER7_TX_PIN, _SER7_RX_PIN, _SER7_TX_OUT, _SER7_RX_IN);
+#else
 HardwareSerial Serial7((p32_uart *)_SER7_BASE, _SER7_IRQ, _SER7_VECTOR, _SER7_IPL, _SER7_SPL, IntSer7Handler);
+#endif
 #endif
 
 /* ------------------------------------------------------------ */

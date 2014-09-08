@@ -37,6 +37,43 @@ uno_pic32.build.variant=Uno32
 #uno_pic32.upload.using=
 
 ############################################################
+uno_pic32_dbg.name=chipKIT UNO32 - MPLAB Debug
+
+# new items
+uno_pic32_dbg.group=chipKIT
+uno_pic32_dbg.platform=pic32
+uno_pic32_dbg.board=_BOARD_UNO_
+uno_pic32_dbg.board.define=
+uno_pic32_dbg.compiler.define=
+uno_pic32_dbg.ccflags=ffff
+uno_pic32_dbg.ldscript=chipKIT-application-32MX320F128-nobootloader.ld
+# end of new items
+
+# Use a high -Gnum for devices that have less than 64K of data memory
+# For -G1024, objects 1024 bytes or smaller will be accessed by
+# gp-relative addressing
+uno_pic32_dbg.compiler.c.flags=-O0::-c::-mno-smart-io::-w::-ffunction-sections::-fdata-sections::-G1024::-g::-mdebugger::-Wcast-align::-fno-short-double
+uno_pic32_dbg.compiler.cpp.flags=-O0::-c::-mno-smart-io::-w::-fno-exceptions::-ffunction-sections::-fdata-sections::-G1024::-g::-mdebugger::-Wcast-align::-fno-short-double
+
+uno_pic32_dbg.upload.protocol=stk500v2
+uno_pic32_dbg.upload.maximum_size=126976
+uno_pic32_dbg.upload.speed=115200
+
+uno_pic32_dbg.bootloader.low_fuses=0xff
+uno_pic32_dbg.bootloader.high_fuses=0xdd
+uno_pic32_dbg.bootloader.extended_fuses=0x00
+uno_pic32_dbg.bootloader.path=not-supported
+uno_pic32_dbg.bootloader.file=not-supported
+uno_pic32_dbg.bootloader.unlock_bits=0x3F
+uno_pic32_dbg.bootloader.lock_bits=0x0F
+
+uno_pic32_dbg.build.mcu=32MX320F128H
+uno_pic32_dbg.build.f_cpu=80000000L
+uno_pic32_dbg.build.core=pic32
+uno_pic32_dbg.build.variant=Uno32
+#uno_pic32_dbg.upload.using=
+
+############################################################
 mega_pic32.name=chipKIT MAX32
 mega_pic32.group=chipKIT
 
@@ -789,7 +826,7 @@ CUI32stem.build.variant=CUI32stem
 
 
 ############################################################
-fubarino_sd_seeed.name=Fubarino SD (Seeed)
+fubarino_sd_seeed.name=Fubarino SD (Seeed/1.4)
 fubarino_sd_seeed.group=Fubarino
 
 fubarino_sd_seeed.platform=pic32
@@ -816,7 +853,7 @@ fubarino_sd_seeed.build.core=pic32
 fubarino_sd_seeed.build.variant=Fubarino_SD
 
 ############################################################
-fubarino_sd.name=Fubarino SD
+fubarino_sd.name=Fubarino SD (1.5)
 fubarino_sd.group=Fubarino
 
 fubarino_sd.platform=pic32

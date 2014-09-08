@@ -19,6 +19,7 @@ PROVIDE(_min_heap_size = 0x800) ;
  * Processor-specific object file.  Contains SFR definitions.
  *************************************************************************/
 INPUT("processor.o")
+OPTIONAL("libmchp_peripheral_32MX440F128H.a") 
 
 /*************************************************************************
  * Memory Regions

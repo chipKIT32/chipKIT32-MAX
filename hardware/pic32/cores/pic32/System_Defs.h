@@ -18,6 +18,7 @@
 /*	12/20/2011(GeneApperson): Added task manager declarations			*/
 /*	07/26/2012(GeneApperson): Added PPS support for PIC32MX1xx/MX2xx	*/
 /*		devices															*/
+//*	Feb 17, 2014	<KeithV> Added PPS support for MZ devices
 /*  03/24/2014(BrianSchmalz): Added support for MX1/MX2 EEPROM emulation*/
 /*																		*/
 /************************************************************************/
@@ -83,6 +84,12 @@
 	#define NUM_EXTERNAL_INTERRUPTS	5
 #endif
 
+#if defined(__PIC32MX47X__)
+    #define NUM_INT_VECTOR 45
+    #define NUM_INT_REQUEST 75
+    #define NUM_EXTERNAL_INTERRUPTS 5
+#endif
+
 #if defined(__PIC32MX5XX__)
 	#define	NUM_INT_VECTOR	52
 	#define	NUM_INT_REQUEST	76
@@ -99,6 +106,30 @@
 	#define	NUM_INT_VECTOR	52
 	#define	NUM_INT_REQUEST	76
 	#define NUM_EXTERNAL_INTERRUPTS	5
+#endif
+
+#if defined(__PIC32MZXX__)
+    #define	NUM_INT_VECTOR	191
+    #define	NUM_INT_REQUEST	191
+    #define NUM_EXTERNAL_INTERRUPTS	5
+
+    #define _UART1_BASE_ADDRESS ((uint32_t) &U1MODE)
+    #define _UART2_BASE_ADDRESS ((uint32_t) &U2MODE)
+    #define _UART3_BASE_ADDRESS ((uint32_t) &U3MODE)
+    #define _UART4_BASE_ADDRESS ((uint32_t) &U4MODE)
+    #define _UART5_BASE_ADDRESS ((uint32_t) &U5MODE)
+    #define _UART6_BASE_ADDRESS ((uint32_t) &U6MODE)
+
+    #define _SPI1_BASE_ADDRESS ((uint32_t) &SPI1CON)
+    #define _SPI2_BASE_ADDRESS ((uint32_t) &SPI2CON)
+    #define _SPI3_BASE_ADDRESS ((uint32_t) &SPI3CON)
+    #define _SPI4_BASE_ADDRESS ((uint32_t) &SPI4CON)
+    #define _SPI5_BASE_ADDRESS ((uint32_t) &SPI5CON)
+    #define _SPI6_BASE_ADDRESS ((uint32_t) &SPI6CON)
+
+    #define  _OCMP1_BASE_ADDRESS ((uint32_t) &OC1CON)
+    #define  _TIMER_1_IRQ _TIMER_1_VECTOR
+
 #endif
 
 /* Symbols for referring to the external interrupts
@@ -186,6 +217,22 @@
 #define	_T5_IPL_IPC	4
 #define	_T5_SPL_IPC	0
 
+#define	_T6_IPL_ISR	ipl4
+#define	_T6_IPL_IPC	4
+#define	_T6_SPL_IPC	0
+
+#define	_T7_IPL_ISR	ipl4
+#define	_T7_IPL_IPC	4
+#define	_T7_SPL_IPC	0
+
+#define	_T8_IPL_ISR	ipl4
+#define	_T8_IPL_IPC	4
+#define	_T8_SPL_IPC	0
+
+#define	_T9_IPL_ISR	ipl4
+#define	_T9_IPL_IPC	4
+#define	_T9_SPL_IPC	0
+
 /* Input Capture Interrupts
 */
 #define	_IC1_IPL_ISR	ipl2
@@ -207,6 +254,22 @@
 #define	_IC5_IPL_ISR	ipl2
 #define	_IC5_IPL_IPC	2
 #define	_IC5_SPL_IPC	0
+
+#define	_IC6_IPL_ISR	ipl2
+#define	_IC6_IPL_IPC	2
+#define	_IC6_SPL_IPC	0
+
+#define	_IC7_IPL_ISR	ipl2
+#define	_IC7_IPL_IPC	2
+#define	_IC7_SPL_IPC	0
+
+#define	_IC8_IPL_ISR	ipl2
+#define	_IC8_IPL_IPC	2
+#define	_IC8_SPL_IPC	0
+
+#define	_IC9_IPL_ISR	ipl2
+#define	_IC9_IPL_IPC	2
+#define	_IC9_SPL_IPC	0
 
 /* Input Capture Error Interrupts
 */
@@ -230,6 +293,22 @@
 #define	_IC5E_IPL_IPC	2
 #define	_IC5E_SPL_IPC	0
 
+#define	_IC6E_IPL_ISR	ipl2
+#define	_IC6E_IPL_IPC	2
+#define	_IC6E_SPL_IPC	0
+
+#define	_IC7E_IPL_ISR	ipl2
+#define	_IC7E_IPL_IPC	2
+#define	_IC7E_SPL_IPC	0
+
+#define	_IC8E_IPL_ISR	ipl2
+#define	_IC8E_IPL_IPC	2
+#define	_IC8E_SPL_IPC	0
+
+#define	_IC9E_IPL_ISR	ipl2
+#define	_IC9E_IPL_IPC	2
+#define	_IC9E_SPL_IPC	0
+
 /* Output Compare Interrupts
 */
 #define	_OC1_IPL_ISR	ipl2
@@ -251,6 +330,22 @@
 #define	_OC5_IPL_ISR	ipl2
 #define	_OC5_IPL_IPC	2
 #define	_OC5_SPL_IPC	0
+
+#define	_OC6_IPL_ISR	ipl2
+#define	_OC6_IPL_IPC	2
+#define	_OC6_SPL_IPC	0
+
+#define	_OC7_IPL_ISR	ipl2
+#define	_OC7_IPL_IPC	2
+#define	_OC7_SPL_IPC	0
+
+#define	_OC8_IPL_ISR	ipl2
+#define	_OC8_IPL_IPC	2
+#define	_OC8_SPL_IPC	0
+
+#define	_OC9_IPL_ISR	ipl2
+#define	_OC9_IPL_IPC	2
+#define	_OC9_SPL_IPC	0
 
 /* Priority level defintions for shared interrupt vectors.
 ** Some serial controllers implement multiple serial interfaces.
@@ -294,10 +389,10 @@
 #define	_SPI1_IPL_IPC	3		//interrupt priority for the IPC register
 #define	_SPI1_SPL_IPC	0		//interrupt subpriority for the IPC register
 
-#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__) || defined(__PIC32MX3XX__) || defined(__PIC32MX4XX__)
-#define	_SPI2_IPL_ISR	ipl3	//interrupt priority for the ISR
-#define	_SPI2_IPL_IPC	3		//interrupt priority for the IPC register
-#define	_SPI2_SPL_IPC	0		//interrupt subpriority for the IPC register
+#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__) || defined(__PIC32MX3XX__) || defined(__PIC32MX4XX__) || defined(__PIC32MZXX__) || defined(__PIC32MX47X__)
+#define	_SPI2_IPL_ISR	ipl3    //interrupt priority for the ISR
+#define	_SPI2_IPL_IPC	3       //interrupt priority for the IPC register
+#define	_SPI2_SPL_IPC	0       //interrupt subpriority for the IPC register
 #endif
 
 #if defined(__PIC32MX5XX__) || defined(__PIC32MX6XX__) || defined(__PIC32MX7XX__)
@@ -312,6 +407,16 @@
 #define	_SPI4_IPL_ISR	_UART2_IPL_ISR	//shared with UART2
 #define	_SPI4_IPL_IPC	_UART2_IPL_IPC
 #define	_SPI4_SPL_IPC	_UART2_SPL_IPC
+#endif
+
+#if  defined(__PIC32MZXX__)
+#define	_SPI3_IPL_ISR	ipl3    //interrupt priority for the ISR
+#define	_SPI3_IPL_IPC	3       //interrupt priority for the IPC register
+#define	_SPI3_SPL_IPC	0       //interrupt subpriority for the IPC register
+
+#define	_SPI4_IPL_ISR	ipl3    //interrupt priority for the ISR
+#define	_SPI4_IPL_IPC	3       //interrupt priority for the IPC register
+#define	_SPI4_SPL_IPC	0       //interrupt subpriority for the IPC register
 #endif
 
 /* I2C Controllers
@@ -336,6 +441,16 @@
 #define	_I2C5_IPL_ISR	_UART2_IPL_ISR	//shared with UART2
 #define	_I2C5_IPL_IPC	_UART2_IPL_IPC
 #define	_I2C5_SPL_IPC	_UART2_SPL_IPC
+#endif
+
+#if  defined(__PIC32MZXX__)
+#define	_I2C3_IPL_ISR	ipl3	//interrupt priority for ISR
+#define	_I2C3_IPL_IPC	3		//interrupt priority for IPC register
+#define	_I2C3_SPL_IPC	0		//interrupt subpriority for IPC register
+
+#define	_I2C4_IPL_ISR	ipl3	//interrupt priority for ISR
+#define	_I2C4_IPL_IPC	3		//interrupt priority for IPC register
+#define	_I2C4_SPL_IPC	0		//interrupt subpriority for IPC register
 #endif
 
 /* Input Change Interrupt
@@ -426,8 +541,8 @@
 
 /* USB Interrupt
 */
-#define	_USB_IPL_ISR	ipl2
-#define	_USB_IPL_IPC	2
+#define	_USB_IPL_ISR	ipl6
+#define	_USB_IPL_IPC	6
 #define	_USB_SPL_IPC	0
 
 /* CAN Interrupts

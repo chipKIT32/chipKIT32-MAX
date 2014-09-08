@@ -22,134 +22,161 @@
 #ifndef Sd2PinMap_h
 #define Sd2PinMap_h
 
+#define BIT_0       0x0001
+#define BIT_1       0x0002
+#define BIT_2       0x0004
+#define BIT_3       0x0008
+#define BIT_4       0x0010
+#define BIT_5       0x0020
+#define BIT_6       0x0040
+#define BIT_7       0x0080
+#define BIT_8       0x0100
+#define BIT_9       0x0200
+#define BIT_10      0x0400
+#define BIT_11      0x0800
+#define BIT_12      0x1000
+#define BIT_13      0x2000
+#define BIT_14      0x4000
+#define BIT_15      0x8000
+
+#define IOPORT_A    A
+#define IOPORT_B    B
+#define IOPORT_C    C
+#define IOPORT_D    D
+#define IOPORT_E    E
+#define IOPORT_F    F
+#define IOPORT_G    G
+#define IOPORT_H    H
+#define IOPORT_J    J
+#define IOPORT_K    K
+
+#define PORTSetBitsX(PORTx, BITS) LAT##PORTx##SET = BITS
+#define PORTSetBits(PORTx, BITS) PORTSetBitsX(PORTx, BITS)
+
+#define PORTClearBitsX(PORTx, BITS) LAT##PORTx##CLR = BITS
+#define PORTClearBits(PORTx, BITS) PORTClearBitsX(PORTx, BITS)
+
+#define PORTReadBitsX(PORTx, BITS) (PORT##PORTx & BITS)
+#define PORTReadBits(PORTx, BITS) PORTReadBitsX(PORTx, BITS)
+
+#define PORTSetPinsDigitalOutX(PORTx, BITS) TRIS##PORTx##CLR = BITS
+#define PORTSetPinsDigitalOut(PORTx, BITS) PORTSetPinsDigitalOutX(PORTx, BITS)
+
+#define PORTSetPinsDigitalInX(PORTx, BITS) TRIS##PORTx##SET = BITS
+#define PORTSetPinsDigitalIn(PORTx, BITS) PORTSetPinsDigitalInX(PORTx, BITS)
+
+#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__) || defined(__PIC32MZXX__)
+    #define PORTSetAsDigitalPinX(PORTx, BITS) ANSEL##PORTx##CLR = BITS
+    #define PORTSetAsDigitalPin(PORTx, BITS) PORTSetAsDigitalPinX(PORTx, BITS)
+#endif
+
 #if defined(_BOARD_MEGA_) || defined(_BOARD_UNO_) || defined(_BOARD_UC32_)
 
 	//Pin 11
 	#define prtSDO				IOPORT_G
-	#define	trisSDO				TRISG
-	#define	latSDO				LATG
 	#define	bnSDO				BIT_8
 
 	//Pin 12
 	#define prtSDI				IOPORT_G
-	#define trisSDI				TRISG
-	#define	latSDI				LATG
 	#define bnSDI				BIT_7
 
 	//Pin 13
 	#define prtSCK				IOPORT_G
-	#define trisSCK				TRISG
-	#define latSCK				LATG
 	#define bnSCK				BIT_6
 
 #elif defined(_BOARD_WF32_)
         //uc Pin 52
         #define prtSDO				IOPORT_G
-        #define	trisSDO				TRISG
-        #define	latSDO				LATG
         #define	bnSDO				BIT_13
 
         //uc Pin 49
         #define prtSDI				IOPORT_G
-        #define trisSDI				TRISG
-        #define	latSDI				LATG
         #define bnSDI				BIT_15
 
         //uc Pin 50
         #define prtSCK				IOPORT_G
-        #define trisSCK				TRISG
-        #define latSCK				LATG
         #define bnSCK				BIT_14
 
+#elif defined(_BOARD_WIFIRE_)
+        //uc Pin 54
+        #define prtSDO				IOPORT_C
+        #define	bnSDO				BIT_4
+        #define SD_SDO_PPS()                    RPC4R   = 0b0000    // Bit Banging SPI, set as GPIO
+
+        //uc Pin 53
+        #define prtSDI				IOPORT_B
+        #define bnSDI				BIT_10
+        #define SD_SDI_PPS()                                        // Bit Banging SPI, leave as nothing
+
+        //uc Pin 51
+        #define prtSCK				IOPORT_B
+        #define bnSCK				BIT_14
+        #define SD_SCK_PPS()                    RPB14R  = 0b0000    // Bit Banging SPI, set as GPIO
+
+
 #elif defined(_BOARD_PONTECH_QUICK240_USB_)
+
         //uc Pin 72
         #define prtSDO				IOPORT_D
-        #define	trisSDO				TRISD
-        #define	latSDO				LATD
         #define	bnSDO				BIT_0
 
         //uc Pin 9
         #define prtSDI				IOPORT_C
-        #define trisSDI				TRISC
-        #define	latSDI				LATC
         #define bnSDI				BIT_4
 
         //uc Pin 70
         #define prtSCK				IOPORT_D
-        #define trisSCK				TRISD
-        #define latSCK				LATD
         #define bnSCK				BIT_10
 
 #elif defined(_BOARD_CEREBOT_MX3CK_)
 
 	#define	prtSDO				IOPORT_F	//JC
-	#define	trisSDO				TRISF
-	#define	latSDO				LATF
 	#define	bnSDO				BIT_5
 
 	#define	prtSDI				IOPORT_F
-	#define	trisSDI				TRISF
-	#define	latSDI				LATF
 	#define	bnSDI				BIT_4
 
 	#define	prtSCK				IOPORT_B
-	#define	trisSCK				TRISB
-	#define	latSCK				LATB
 	#define	bnSCK				BIT_14
 
 #elif defined(_BOARD_CEREBOT_MX4CK_)
 
 	#define	prtSDO				IOPORT_B	//JK
-	#define	trisSDO				TRISB
-	#define	latSDO				LATB
 	#define	bnSDO				BIT_11
 
 	#define	prtSDI				IOPORT_B
-	#define	trisSDI				TRISB
-	#define	latSDI				LATB
 	#define	bnSDI				BIT_12
 
 	#define	prtSCK				IOPORT_B
-	#define	trisSCK				TRISB
-	#define	latSCK				LATB
 	#define	bnSCK				BIT_13
 
 #elif defined(_BOARD_CEREBOT_MX7CK_)
 
 	#define	prtSDO				IOPORT_F	//JF
-	#define	trisSDO				TRISF
-	#define	latSDO				LATF
 	#define	bnSDO				BIT_5
 
 	#define	prtSDI				IOPORT_F
-	#define	trisSDI				TRISF
-	#define	latSDI				LATF
 	#define	bnSDI				BIT_4
 
 	#define	prtSCK				IOPORT_F
-	#define	trisSCK				TRISF
-	#define	latSCK				LATF
 	#define	bnSCK				BIT_13
+
+#elif defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__) || defined(__PIC32MZXX__)
+    #error Boards with PPS must be specifically defined
 
 #else
 //*	Dec 14, 2011	<MLS>	Issue #160 this is the same, but we have to have a default, this still needs work
 
 	//Pin 11
 	#define prtSDO				IOPORT_G
-	#define	trisSDO				TRISG
-	#define	latSDO				LATG
 	#define	bnSDO				BIT_8
 
 	//Pin 12
 	#define prtSDI				IOPORT_G
-	#define trisSDI				TRISG
-	#define	latSDI				LATG
 	#define bnSDI				BIT_7
 
 	//Pin 13
 	#define prtSCK				IOPORT_G
-	#define trisSCK				TRISG
-	#define latSCK				LATG
 	#define bnSCK				BIT_6
 
 #endif

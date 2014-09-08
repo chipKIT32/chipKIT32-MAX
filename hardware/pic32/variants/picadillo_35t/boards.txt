@@ -1,0 +1,20 @@
+picadillo_35t.name=PICadillo 35T
+picadillo_35t.group=4D Systems
+picadillo_35t.platform=pic32
+picadillo_35t.board=_BOARD_PICADILLO_35T_
+picadillo_35t.board.define=
+picadillo_35t.ldscript=chipKIT-application-32MX795F512.ld
+
+picadillo_35t.variant=picadillo_35t
+picadillo_35t.description=PICadillo-35T
+picadillo_35t.bootloader=bootloader.hex
+picadillo_35t.ccflags=ffff
+picadillo_35t.upload.protocol=stk500v2
+picadillo_35t.upload.maximum_size=520192
+picadillo_35t.upload.speed=115200
+picadillo_35t.build.mcu=32MX795F512L
+picadillo_35t.build.f_cpu=80000000L
+picadillo_35t.build.core=pic32
+picadillo_35t.build.variant=picadillo_35t
+
+

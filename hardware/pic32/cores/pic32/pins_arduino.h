@@ -32,6 +32,7 @@
 //*	May  5,	2011	<MLS> added analog_pin_to_channel_PGM
 //* Nov 12, 2011	<GeneApperson> Rewrite for board variant support
 //*	Jul 26, 2012	<GeneApperson> Added PPS support for PIC32MX1xx/MX2xx devices
+//*	Feb 17, 2012	<KeithV> Added PPS support for MZ devices
 //************************************************************************
 
 #if !defined(PINS_ARDUINO_H)
@@ -80,6 +81,9 @@
 #define _IOPORT_PE	5
 #define _IOPORT_PF	6
 #define _IOPORT_PG	7
+#define _IOPORT_PH	8
+#define _IOPORT_PJ	9
+#define _IOPORT_PK	10
 
 		
 /* Symbols used for timer related peripherals. These are used in
@@ -90,18 +94,30 @@
 #define	_TIMER_OC3		(3 << _BN_TIMER_OC)
 #define	_TIMER_OC4		(4 << _BN_TIMER_OC)
 #define	_TIMER_OC5		(5 << _BN_TIMER_OC)
+#define	_TIMER_OC6		(6 << _BN_TIMER_OC)
+#define	_TIMER_OC7		(7 << _BN_TIMER_OC)
+#define	_TIMER_OC8		(8 << _BN_TIMER_OC)
+#define	_TIMER_OC9		(9 << _BN_TIMER_OC)
 
 #define	_TIMER_IC1		(1 << _BN_TIMER_IC)
 #define	_TIMER_IC2		(2 << _BN_TIMER_IC)
 #define	_TIMER_IC3		(3 << _BN_TIMER_IC)
 #define	_TIMER_IC4		(4 << _BN_TIMER_IC)
 #define	_TIMER_IC5		(5 << _BN_TIMER_IC)
+#define	_TIMER_IC6		(6 << _BN_TIMER_IC)
+#define	_TIMER_IC7		(7 << _BN_TIMER_IC)
+#define	_TIMER_IC8		(8 << _BN_TIMER_IC)
+#define	_TIMER_IC9		(9 << _BN_TIMER_IC)
 
 #define	_TIMER_TCK1		(1 << _BN_TIMER_TCK)
 #define	_TIMER_TCK2		(2 << _BN_TIMER_TCK)
 #define	_TIMER_TCK3		(3 << _BN_TIMER_TCK)
 #define	_TIMER_TCK4		(4 << _BN_TIMER_TCK)
 #define	_TIMER_TCK5		(5 << _BN_TIMER_TCK)
+#define	_TIMER_TCK6		(6 << _BN_TIMER_TCK)
+#define	_TIMER_TCK7		(7 << _BN_TIMER_TCK)
+#define	_TIMER_TCK8		(8 << _BN_TIMER_TCK)
+#define	_TIMER_TCK9		(9 << _BN_TIMER_TCK)
 
 /* Analog pin definition symbols. Used in the digital pin
 ** to analog pin mapping table.
@@ -131,7 +147,21 @@
 /* The following macros are used in building the data tables
 ** used by the hardware abstraction layer.
 */
-#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
+#if defined(__PIC32MX47XH__)
+
+#define _RPOBASE    RPB0R       //base address of PPS output select registers
+#define _RPIBASE    INT1R       //base address of PPS input select registers
+#define _PPS_OUT(P) (P)
+#define _PPS_IN(P) (uint8_t)(((P) & 0x0F) | ((P) >> 4))
+
+#elif defined(__PIC32MX47XL__)
+
+#define _RPOBASE    RPA14R      //base address of PPS output select registers
+#define _RPIBASE    INT1R       //base address of PPS input select registers
+#define _PPS_OUT(P) (P)
+#define _PPS_IN(P) (uint8_t)(((P) & 0x0F) | ((P) >> 4))
+
+#elif defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
 /* The following are used to build tables used to map pin numbers for
 ** PPS input and output selection.
 */
@@ -140,7 +170,17 @@
 #define	_PPS_OUT(P) (P)
 #define _PPS_IN(P) (uint8_t)(((P) & 0x0F) | ((P) >> 4))
 
-#endif	// defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
+#elif defined(__PIC32MZXX__)
+
+/* The following are used to build tables used to map pin numbers for
+** PPS input and output selection.
+*/
+#define	_RPOBASE	RPA14R		//base address of PPS output select registers
+#define	_RPIBASE	INT1R		//base address of PPS input select registers
+#define	_PPS_OUT(P) (P)
+#define _PPS_IN(P) (uint8_t)(((P) & 0x0F) | ((P) >> 4))
+
+#endif	// defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__) || defined(__PIC32MZXX__) || defined(__PIC32MX47X__)
 
 /* ------------------------------------------------------------ */
 /*					Pin Mapping Macros							*/
@@ -160,7 +200,7 @@
 #define	digitalPinToTimer(P)	digitalPinToTimerOC(P)
 #define digitalPinToCN(P) (NOT_CN_PIN)
 
-#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
+#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__) || defined(__PIC32MZXX__) || defined(__PIC32MX47X__)
 // This macro returns a pointer to a p32_ioport structure as defined in p32_defs.h
 // For MX1xx and MX2xx devices, the port register map starts with the ANSELx register.
 #define portRegisters(P) ((p32_ioport *)(port_to_tris_PGM[P] - 0x0010))
@@ -179,13 +219,13 @@
 #define ppsInputRegister(F) ((uint32_t *)(4*(ppsInputFromFunc(F)) + (uint32_t)&_RPIBASE))
 
 
-#define	timerOCtoDigitalPin(P) (uint8_t)(output_compare_to_digital_pin_PGM[P])
+// #define	timerOCtoDigitalPin(P) (uint8_t)(output_compare_to_digital_pin_PGM[P])
 #define	timerOCtoOutputSelect(P) (uint8_t)(output_compare_to_pps_sel_PGM[P])
 #define	externalIntToDigitalPin(P) (uint8_t)(external_int_to_digital_pin_PGM[P])
 #define	externalIntToInputSelect(P) (uint8_t)(ext_int_to_pps_sel_PGM[P])
 #else
 // This macro returns a pointer to a p32_ioport structure as defined in p32_defs.h
-// For MX3xx-MX7xx devices, the port registger map starts with the TRISx register
+// For MX3xx-MX7xx devices, the port register map starts with the TRISx register
 #define portRegisters(P) ((p32_ioport *)(port_to_tris_PGM[P]))
 #endif
 
@@ -222,7 +262,7 @@
 /* Data tables for PPS pin mapping support defined in pins_arduino.h
 */
 
-#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
+#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__) || defined(__PIC32MZXX__) || defined(__PIC32MX47X__)
 #if !defined(OPT_BOARD_DATA)
 
 extern const uint8_t output_compare_to_pps_sel_PGM[];

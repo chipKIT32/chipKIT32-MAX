@@ -50,7 +50,7 @@ uint32_t				bit;
 uint8_t					port;
 volatile p32_ioport *	iop;
 uint8_t		            timer;
-#if !defined(__PIC32MX1XX__) && !defined(__PIC32MX2XX__)
+#if !defined(__PIC32MX1XX__) && !defined(__PIC32MX2XX__) && !defined(__PIC32MZXX__) && !defined(__PIC32MX47X__)
 uint32_t                cn;
 #endif
 
@@ -84,7 +84,7 @@ int	_board_pinMode(uint8_t pin, uint8_t mode)
 	//* Obtain bit mask for the specific bit for this pin.
 	bit = digitalPinToBitMask(pin);
 
-#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
+#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__) || defined(__PIC32MZXX__) || defined(__PIC32MX47X__)
 	volatile uint32_t *	pps;
 
 	// The MX1xx/MX2xx support peripheral pin select (PPS). It is necessary
@@ -115,7 +115,7 @@ int	_board_pinMode(uint8_t pin, uint8_t mode)
 		AD1PCFGSET = bit;
 
 	}
-#endif	// defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
+#endif	// defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__) || defined(__PIC32MX47X__)
 
 	// Set the pin to the requested mode.
     switch (mode) {
@@ -123,7 +123,7 @@ int	_board_pinMode(uint8_t pin, uint8_t mode)
         case INPUT_PULLUP:
         case INPUT_PULLDOWN:
         case INPUT_PULLUPDOWN:
-#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
+#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__) || defined(__PIC32MZXX__) || defined(__PIC32MX47X__)
             if (mode == INPUT_PULLUP) {
                 iop->cnpu.set = bit;
                 iop->cnpd.clr = bit;
@@ -173,7 +173,7 @@ int	_board_pinMode(uint8_t pin, uint8_t mode)
             // The behavior inherited from Arduino is that if INPUT wasn't
             // specified you get OUTPUT. That behavior is preserved rather
             // than error checking the input value.
-#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
+#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__) || defined(__PIC32MZXX__) || defined(__PIC32MX47X__)
             iop->cnpu.clr = bit;
             iop->cnpd.clr = bit;
 #else
@@ -261,7 +261,7 @@ volatile p32_ioport *	iop;
 uint8_t					port;
 uint16_t				bit;
 uint8_t					timer;
-#if !defined(__PIC32MX1XX__) && !defined(__PIC32MX2XX__)
+#if !defined(__PIC32MX1XX__) && !defined(__PIC32MX2XX__) && !defined(__PIC32MZXX__) && !defined(__PIC32MX47X__)
 uint32_t                cn;
 #endif
 
@@ -300,7 +300,7 @@ int	_board_digitalWrite(uint8_t pin, uint8_t val);
     //* resistor.  Only works for pins that have an associated
     //* change notification pin.
     if (iop->tris.reg & bit) {
-#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
+#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__) || defined(__PIC32MZXX__) || defined(__PIC32MX47X__)
         if (val == LOW) {
             iop->cnpu.clr = bit;
             iop->cnpd.clr = bit;
@@ -380,7 +380,7 @@ uint8_t	tmp;
 	//* Obtain bit mask for the specific bit for this pin.
 	bit = digitalPinToBitMask(pin);
 
-#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
+#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__) || defined(__PIC32MZXX__) || defined(__PIC32MX47X__)
 	// The MX1xx-MX2xx devices have an ANSELx register associated with
 	// each io port that is used to control analog/digital mode of the
 	// analog input capable pins.
@@ -400,7 +400,7 @@ uint8_t	tmp;
 		AD1PCFGSET = bit;
 
 	}
-#endif	// defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
+#endif	// defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__) || defined(__PIC32MX47X__)
 
 	//* Get the pin state.
 	if ((iop->port.reg & bit) != 0) 

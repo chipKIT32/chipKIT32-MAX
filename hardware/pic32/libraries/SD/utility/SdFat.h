@@ -282,11 +282,11 @@ class SdFile : public Print {
   }
   /** \return SdVolume that contains this file. */
   SdVolume* volume(void) const {return vol_;}
-  void write(uint8_t b);
+  size_t write(uint8_t b);
   size_t write(const void* buf, uint16_t nbyte);
-  void write(const char* str);
-  void write_P(char* str);
-  void writeln_P(char* str);
+  size_t write(const char* str);
+  size_t write_P(char* str);
+  size_t writeln_P(char* str);
 //------------------------------------------------------------------------------
 #if ALLOW_DEPRECATED_FUNCTIONS
 // Deprecated functions  - suppress cpplint warnings with NOLINT comment

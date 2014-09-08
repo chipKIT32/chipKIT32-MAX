@@ -44,6 +44,7 @@
 //                  Also added countdown debug mask to stop the core timer when debugging.
 //* Jun  1, 2012    <BPS> Added SoftReset() for software bootload
 //	Feb  6, 2013	<GeneApperson> Removed dependencies on the Microchip plib library
+//*	Feb 17, 2012	<KeithV> Added PPS support for MZ devices
 //************************************************************************
 
 #include <p32xxxx.h>
@@ -58,8 +59,14 @@
 
 #undef _ENABLE_PIC_RTC_
 
+// for the MZ parts, IRQ and VECTORS are the same
+#ifndef _CORE_TIMER_IRQ
+#define _CORE_TIMER_IRQ _CORE_TIMER_VECTOR
+#endif
+
 //************************************************************************
 //*	This sets the MPIDE version number in the image header as defined in the linker script
+extern const uint32_t _verMPIDE_Stub;
 const uint32_t __attribute__((section(".mpide_version"))) _verMPIDE_Stub = MPIDEVER;    // assigns the build number in the header section in the image
 
 // core timer ISR
@@ -69,35 +76,22 @@ void __attribute__((interrupt(),nomips16)) CoreTimerHandler(void);
 //*	globals
 //************************************************************************
 
-unsigned int	__PIC32_pbClk;
-
-// the prescaler is set so that timer0 ticks every 64 clock cycles, and the
-// the overflow handler is called every 256 ticks.
-#define MICROSECONDS_PER_TIMER0_OVERFLOW (clockCyclesToMicroseconds(64 * 256))
-
-// the whole number of milliseconds per timer0 overflow
-#define MILLIS_INC (MICROSECONDS_PER_TIMER0_OVERFLOW / 1000)
-
-// the fractional number of milliseconds per timer0 overflow. we shift right
-// by three to fit these numbers into a byte. (for the clock speeds we care
-// about - 8 and 16 MHz - this doesn't lose precision.)
-#define FRACT_INC ((MICROSECONDS_PER_TIMER0_OVERFLOW % 1000) >> 3)
-#define FRACT_MAX (1000 >> 3)
-
 // Number of CoreTimer ticks per microsecond, for micros() function
 #define CORETIMER_TICKS_PER_MICROSECOND		(F_CPU / 2 / 1000000UL)
 
+unsigned int	__PIC32_pbClk;
 
 //*	the "g" prefix means global variable
 // Stores the current millisecond count (from power on)
-volatile unsigned long gTimer0_millis	=	0;
+volatile unsigned long gTimer0_millis = 0;
 
 // Variable used to track the microsecond count (from power on)
 volatile unsigned long gCore_timer_last_val		=	0;
 volatile unsigned long gCore_timer_micros		=	0;
 volatile unsigned long gMicros_overflows		=	0;
-volatile unsigned long gCore_timer_first_val	=	0;
+volatile unsigned long gCore_timer_first_val            =	0;
 volatile unsigned long gMicros_calculating		=	0;
+
 
 // SoftPWM library update function pointer
 uint32_t (*gSoftPWMServoUpdate)(void) = NULL;
@@ -126,19 +120,16 @@ unsigned long micros()
 {
 	uint32_t	st;
 	unsigned int cur_timer_val	=	0;
-//	unsigned int micros_delta	=	0;
-
 	unsigned int result;
 	
 	st = disableInterrupts();
 	result = gTimer0_millis * 1000;
-	cur_timer_val = ReadCoreTimer();
+	cur_timer_val = readCoreTimer();
 	cur_timer_val -= gCore_timer_last_val;
 	cur_timer_val += CORETIMER_TICKS_PER_MICROSECOND/2;  // rounding
 	cur_timer_val /= CORETIMER_TICKS_PER_MICROSECOND;  // convert to microseconds
 	restoreInterrupts(st);
 	return (result + cur_timer_val);
-
 }
 
 //************************************************************************
@@ -148,7 +139,8 @@ void delay(unsigned long ms)
 unsigned long	startMillis;
 
 	startMillis	=	gTimer0_millis;
-	while ((gTimer0_millis - startMillis) < ms)
+
+        while ((gTimer0_millis - startMillis) < ms)
 	{
 		_scheduleTask();
 	}
@@ -191,9 +183,9 @@ void init()
 	_enableMultiVectorInterrupts();
 
 	// Initialize the core timer for use to maintain the system timer tick.
-	_initCoreTimer(CORE_TICK_RATE);
+        _initCoreTimer(CORE_TICK_RATE);
 
-    initIntVector();
+        initIntVector();
 
 	setIntPriority(_CORE_TIMER_VECTOR, _CT_IPL_IPC, _CT_SPL_IPC);
 	setIntVector(_CORE_TIMER_VECTOR, CoreTimerHandler);
@@ -222,14 +214,13 @@ void init()
 
 	//*	as per Al.Rodriguez@microchip.com, Jan 7, 2011
 	//*	Disable the JTAG interface.
-#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
+#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__) || defined(__PIC32MZXX__)
 	CFGCONbits.JTAGEN = 0;
 	//CFGCONbits.TDOEN = 0;
 	//OSCCONbits.SOSCEN = 0;
 #else
 	DDPCONbits.JTAGEN	=	0;
 #endif
-
 
 #if (OPT_BOARD_INIT != 0)
 void	_board_init(void);
@@ -253,7 +244,7 @@ void	_board_init(void);
 //*
 /* Currently, PPS is only available in PIC32MX1xx/PIC32MX2xx devices.
 */
-#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
+#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__) || defined(__PIC32MZ__)
 
 // Locks all PPS functions so that calls to mapPpsInput() or mapPpsOutput() always fail.
 // You would use this function if you set up all of your PPS settings at the beginning
@@ -281,7 +272,7 @@ void unlockPps()
 // that can be mapped ro each <func>.
 boolean mapPps(uint8_t pin, ppsFunctionType func)
 {
-	volatile p32_ppsin *		pps;
+	p32_ppsin *		pps;
 
     // if the pps system is locked, then don't do anything
     if (ppsGlobalLock)
@@ -342,16 +333,15 @@ boolean mapPps(uint8_t pin, ppsFunctionType func)
 //*	Deal with the 'virtual' program button and SoftReset(). This allows
 //* a sketch to cause the board to reboot, and either force entry into
 //* the bootloader, or not.
-//* Will return FALSE if ENTER_BOOTLOADER_ON_BOOT is not suppored.
+//* Will return FALSE if ENTER_BOOTLOADER_ON_BOOT is not supported.
 //* On return of FALSE, no registers or latches will have been disturbed.
 //* RUN_SKETCH_ON_BOOT is always supported.
 //************************************************************************
 
 unsigned int executeSoftReset(uint32_t options)
 {
-
     // We will use the LAT bit of the program button (if the board has one)
-    // as the 'virutal' program button. The bootloader will read this bit
+    // as the 'virtual' program button. The bootloader will read this bit
     // upon boot (only after a software reset) to see if it should go into
     // bootload mode or just run the sketch.
 
@@ -390,7 +380,7 @@ unsigned int executeSoftReset(uint32_t options)
 #endif  // end virtual program button
  
     // At this point either we have a virtual program buttons and we can support ENTER_BOOTLOADER_ON_BOOT
-    // or we just want to soft reset. A RUN_SKETCH_ON_BOOT soft reset requires no special funcitonality in the bootloader.
+    // or we just want to soft reset. A RUN_SKETCH_ON_BOOT soft reset requires no special functionality in the bootloader.
     // so we can always do a RUN_SKETCH_ON_BOOT.
 
     // Always clear the EXTR bit to make sure we don't read the real program 
@@ -423,21 +413,21 @@ uint32_t millisecondCoreTimerService(uint32_t curTime);
 
     The rules:
 
-    1.	You do NOT set “compare”!
+    1.	You do NOT set "compare"!
     2.  Do not do anything that could cause CoreTimerHandler to be called recursively. For example, do not enable interrupts as the CT flag is still set
         and will immeditely cause the system to call CoreTimerHandler.
     3.	The value of the count register is passed to you, however this could be several ticks old. Usually this is not a problem. It is allowed 
         for you to read the count register directly, however you must return a compare value that is greater in time (so it can be a uint32 wrapped value) 
         than the count value passed to you. 
     4.	You will NOT be called before your compare value has been hit; however you may be called late should interrupts get disabled.
-    5.	Unfortunately, because of things like the EEProm writes, you can be called late and you must “catch-up” however best you can and return 
-        the next requested “compare” time on your next call.
+    5.	Unfortunately, because of things like the EEProm writes, you can be called late and you must "catch-up" however best you can and return 
+        the next requested "compare" time on your next call.
     6.	There are limits to how far in the future you can set your next "compare" time. Right now this is limited to 90 seconds. If you need a longer delay you
         should be using something other than a CoreTimer Services to do this. You probably should really limit your next "compare" time to less than few seconds.
-    7.	Your next requested “compare” time MUST be equal to or after (in time) the “current” time as passed in to you. You may add up to 90 seconds to the 
+    7.	Your next requested "compare" time MUST be equal to or after (in time) the "current" time as passed in to you. You may add up to 90 seconds to the 
         current time, even if this causes uint32 wrap; but do not subtract from the current time and return that. There is a region known to CoreTimerHandler 
         that is before the current time, but that uint32 "value" is after the current time + 90 seconds.
-     8.	CoreTimerHandler will keep looping until count is less than whatever the next compare is “after” CT was cleared to insure that CT is not missed. 
+     8.	CoreTimerHandler will keep looping until count is less than whatever the next compare is "after" CT was cleared to insure that CT is not missed. 
         It is possible that you could be called a second time before exiting the CoreTimerHandler ISR if you request a new compare time that is very close to 
         the current time.
     9.	After attaching, your service will be called on the next schedule call to CoreTimerHandler. Since there is always a ms service that gets triggered, 
@@ -670,7 +660,7 @@ unsigned int callCoreTimerServiceNow(uint32_t (* service)(uint32_t))
 */
 uint32_t millisecondCoreTimerService(uint32_t curTime)
 {
-    static int nextInt = 0;
+    static uint32_t nextInt = 0;
     uint32_t relWait = 0;
     uint32_t relTime = curTime - nextInt;
     uint32_t millisLocal = gTimer0_millis;  // defeat volatility
@@ -718,7 +708,11 @@ uint32_t millisecondCoreTimerService(uint32_t curTime)
 **      the real compare value to be interrupted to notify the Serivces when count hits that value.
 **
 */
+#if defined(__PIC32MZXX__)
+void __attribute__((nomips16, vector(_CORE_TIMER_VECTOR),interrupt(_CT_IPL_ISR))) CoreTimerHandler(void)
+#else
 void __attribute__((interrupt(),nomips16)) CoreTimerHandler(void)
+#endif
 {
     uint32_t curTime;
     uint32_t compare;
