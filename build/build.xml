@@ -44,6 +44,7 @@
     <include name="app/lib/ant-launcher.jar" />
     <include name="app/lib/log4j-1.2.16.jar" />
     <include name="app/lib/log4j.properties" />
+    <include name="app/lib/gson-2.3.jar" />
   </fileset>
 
   <target name="build" description="Build mpide.">

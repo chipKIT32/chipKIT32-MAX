@@ -17,5 +17,6 @@
 	<classpathentry kind="lib" path="lib/jna.jar"/>
 	<classpathentry kind="output" path="bin"/>
 	<classpathentry kind="lib" path="lib/log4j-1.2.16.jar"/>
-	<classpathentry kind="lib" path="lib/log4j.properties"/>
+  <classpathentry kind="lib" path="lib/log4j.properties"/>
+  <classpathentry kind="lib" path="lib/gson-2.3.jar" />
 </classpath>
