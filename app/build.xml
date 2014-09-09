@@ -48,8 +48,8 @@
 	   classpath="../core/core.jar; ${env.JAVA_HOME}/lib/tools.jar; lib/ant.jar; lib/ant-launcher.jar; lib/apple.jar; lib/ecj.jar; lib/jna.jar; lib/RXTXcomm.jar; lib/log4j-1.2.16.jar; lib/log4j.properties" />
   </target>
   -->
-  <javac target="1.7"
-	   source="1.7"
+  <javac target="1.5"
+	   source="1.5"
 	   srcdir="src"
 	   destdir="bin"
 	   excludes="**/tools/format/**"
