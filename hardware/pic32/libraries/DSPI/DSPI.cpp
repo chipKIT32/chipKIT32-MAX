@@ -115,7 +115,7 @@ static DSPI *	pdspi3 = 0;
 **		can be instantiated.
 */
 
-#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__) || defined(__PIC32MZXX__)
+#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__) || defined(__PIC32MZXX__) || defined(__PIC32MX47X__)
 DSPI::DSPI(int pinMI, int pinMO, ppsFunctionType ppsMI, ppsFunctionType ppsMO)
 #else
 DSPI::DSPI()
@@ -125,7 +125,7 @@ DSPI::DSPI()
 	pspi = 0;
 	cbCur = 0;
 
-#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__) || defined(__PIC32MZXX__)
+#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__) || defined(__PIC32MZXX__) || defined(__PIC32MX47X__)
 	pinMISO = (uint8_t)pinMI;
 	pinMOSI = (uint8_t)pinMO;
 	ppsMISO = ppsMI;
@@ -174,7 +174,7 @@ DSPI::init(uint8_t irqErr, uint8_t irqRx, uint8_t irqTx, isrFunc isrHandler) {
     isr = isrHandler;
 }
 
-#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__) || defined(__PIC32MZXX__)
+#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__) || defined(__PIC32MZXX__) || defined(__PIC32MX47X__)
 
 /* ------------------------------------------------------------ */
 /***	DSPI::begin
@@ -275,13 +275,17 @@ DSPI::begin(uint8_t pinT) {
 	uint8_t			bTmp;
 	uint16_t		brg;
 
-#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__) || defined(__PIC32MZXX__)
-	/* Map the SPI MISO to the appropriate pin.
+#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__) || defined(__PIC32MZXX__) || defined(__PIC32MX47X__)
+	/* Map the SPI MISO to the appropriate pin.  Some chips need the
+       pins to be set to the right mode, either for the IO functionality
+       or to disable any analog on the pin.
 	*/
+    pinMode(pinMISO, INPUT);
     mapPps(pinMISO, ppsMISO);
 
 	/* Map the SPI MOSI to the appropriate pin.
 	*/
+    pinMode(pinMOSI, OUTPUT);
     mapPps(pinMOSI, ppsMOSI);
 #endif
 
@@ -1030,7 +1034,7 @@ DSPI::doDspiInterrupt() {
 **		Constructor.
 */
 
-#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__) || defined(__PIC32MZXX__)
+#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__) || defined(__PIC32MZXX__) || defined(__PIC32MX47X__)
 DSPI0::DSPI0() : DSPI(_DSPI0_MISO_PIN, _DSPI0_MOSI_PIN, _DSPI0_MISO_IN, _DSPI0_MOSI_OUT)
 #else
 DSPI0::DSPI0() 
@@ -1115,7 +1119,7 @@ DSPI0::disableInterruptTransfer() {
 **		Constructor.
 */
 
-#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__) || defined(__PIC32MZXX__)
+#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__) || defined(__PIC32MZXX__) || defined(__PIC32MX47X__)
 DSPI1::DSPI1() : DSPI(_DSPI1_MISO_PIN, _DSPI1_MOSI_PIN, _DSPI1_MISO_IN, _DSPI1_MOSI_OUT)
 #else
 DSPI1::DSPI1()
@@ -1201,7 +1205,7 @@ DSPI1::disableInterruptTransfer() {
 **		Constructor.
 */
 
-#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__) || defined(__PIC32MZXX__)
+#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__) || defined(__PIC32MZXX__) || defined(__PIC32MX47X__)
 DSPI2::DSPI2() : DSPI(_DSPI2_MISO_PIN, _DSPI2_MOSI_PIN, _DSPI2_MISO_IN, _DSPI2_MOSI_OUT)
 #else
 DSPI2::DSPI2()
@@ -1286,7 +1290,7 @@ DSPI2::disableInterruptTransfer() {
 **		Constructor.
 */
 
-#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__) || defined(__PIC32MZXX__)
+#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__) || defined(__PIC32MZXX__) || defined(__PIC32MX47X__)
 DSPI3::DSPI3() : DSPI(_DSPI3_MISO_PIN, _DSPI3_MOSI_PIN, _DSPI3_MISO_IN, _DSPI3_MOSI_OUT)
 #else
 DSPI3::DSPI3()
