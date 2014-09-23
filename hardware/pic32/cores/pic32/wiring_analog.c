@@ -150,7 +150,7 @@ int	tmp;
 	/* Ensure that the pin associated with the analog channel is in analog
 	** input mode, and select the channel in the input mux.
 	*/
-#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__) || defined(__PIC32MZXX__)
+#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__) || defined(__PIC32MZXX__) || defined(__PIC32MX47X__)
 	p32_ioport *	iop;
 	uint16_t		bit;
 
@@ -206,7 +206,7 @@ int	tmp;
 	**  bit in AD1PCFG.
 	*/
 	AD1PCFGCLR = (1 << channelNumber);
-#endif		// defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
+#endif		// defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__) || defined(__PIC32MX47X__)
 
 #if defined(__PIC32MZXX__)
     int i,k = 0;
@@ -310,7 +310,7 @@ int	tmp;
 	/* Set up for manual sampling
 	*/
 	AD1CSSL	=	0;
-	AD1CON3	=	0x0002;	//Tad = internal 6 Tpb
+	AD1CON3	=	0x000B;	//Tad = internal 22 Tpb
 	AD1CON2	=	analog_reference;
 
 	/* Turn on ADC
@@ -441,7 +441,7 @@ int	_board_analogWrite(uint8_t pin, int val);
             if ((pwm_active & pwm_mask) == 0)
             {
 
-#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__) || defined(__PIC32MZXX__)
+#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__) || defined(__PIC32MZXX__) || defined(__PIC32MX47X__)
                 volatile uint32_t *	pps;
 
                 /* On devices with peripheral pin select, it is necessary to connect

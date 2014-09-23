@@ -44,6 +44,7 @@
     <include name="app/lib/ant-launcher.jar" />
     <include name="app/lib/log4j-1.2.16.jar" />
     <include name="app/lib/log4j.properties" />
+    <include name="app/lib/gson-2.3.jar" />
   </fileset>
 
   <target name="build" description="Build mpide.">
@@ -310,12 +311,14 @@
 	  <!--
 	  <gunzip src="macosx/template.dmg.gz" dest="macosx/working.dmg" />
 		-->
-	  <mkdir dir="macosx/working_dir" />
+    <mkdir dir="macosx/working_dir" />
+    <!--
 	  <copy todir="macosx/working_dir">
 		  <fileset dir="macosx/work">
 			  <exclude name="**/mpideTestSuite/**" />
 		  </fileset>
-	  </copy>
+    </copy>
+    -->
 	  <copy file="macosx/dist/FTDIUSBSerialDriver_v2_2_18.dmg" todir="macosx/working_dir" />
 	
 

@@ -81,7 +81,7 @@ typedef struct {
 
 /* This structure describes the register layout of an I/O port.
 */
-#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__) || defined(__PIC32MZXX__)
+#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__) || defined(__PIC32MZXX__) || defined(__PIC32MX47X__)
 typedef struct {
 	volatile p32_regset ansel;
 	volatile p32_regset	tris;
@@ -410,9 +410,239 @@ typedef struct {
 /*			Peripheral Pin Select Output Declarations			*/
 /* ------------------------------------------------------------ */
 
-/* Currently, PPS is only supported in PIC32MX1xx/PIC32MX2xx devices.
+/* Currently, PPS is only supported in PIC32MX1xx/PIC32MX2xx/PIC32MX47X devices.
 */
-#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
+#if defined(__PIC32MX47X__)
+
+#define _PPS_SET_A  0x0100
+#define _PPS_SET_B  0x0200
+#define _PPS_SET_C  0x0400
+#define _PPS_SET_D  0x0800
+
+typedef uint32_t p32_ppsout;
+
+#define _PPS_INPUT_BIT  (1 << 15)
+#define PPS_OUT_MASK    0x000F
+#define PPS_IN_MASK     0x00FF
+#define NUM_PPS_IN      51          // This must be set to the highest PPS_IN_xxx value
+#define NUM_PPS_OUT     0b1111      // This must be set to the highest PPS_OUT_xxx value
+
+typedef enum {
+    PPS_OUT_GPIO    = (0 + (_PPS_SET_A|_PPS_SET_B|_PPS_SET_C|_PPS_SET_D)),
+
+    PPS_OUT_U3TX    = (0b0001 + _PPS_SET_A),
+    PPS_OUT_U4RTS   = (0b0010 + _PPS_SET_A),
+    PPS_OUT_SDO2    = (0b0110 + (_PPS_SET_A | _PPS_SET_B)),
+    PPS_OUT_OC3     = (0b1011 + _PPS_SET_A),
+    PPS_OUT_C2OUT   = (0b1101 + _PPS_SET_A),
+
+    PPS_OUT_U2TX    = (0b0001 + _PPS_SET_B),
+    PPS_OUT_U1TX    = (0b0011 + _PPS_SET_B),
+    PPS_OUT_U5RTS   = (0b0100 + _PPS_SET_B),
+    PPS_OUT_SDO1    = (0b1000 + (_PPS_SET_B | _PPS_SET_C | _PPS_SET_D)),
+    PPS_OUT_OC4     = (0b1011 + _PPS_SET_B),
+
+    PPS_OUT_U3RTS   = (0b0001 + _PPS_SET_C),
+    PPS_OUT_U4TX    = (0b0010 + _PPS_SET_C),
+    PPS_OUT_REFCLKO = (0b0011 + _PPS_SET_C),
+    PPS_OUT_U5TX    = (0b0100 + (_PPS_SET_C | _PPS_SET_D)),
+    PPS_OUT_SS1     = (0b0111 + _PPS_SET_C),
+    PPS_OUT_OC5     = (0b1011 + _PPS_SET_C),
+    PPS_OUT_C1OUT   = (0b1101 + _PPS_SET_C),
+
+    PPS_OUT_U2RTS   = (0b0001 + _PPS_SET_D),
+    PPS_OUT_U1RTS   = (0b0011 + _PPS_SET_D),
+    PPS_OUT_SS2     = (0b0110 + _PPS_SET_D),
+    PPS_OUT_OC2     = (0b1011 + _PPS_SET_D),
+    PPS_OUT_OC1     = (0b1100 + _PPS_SET_D),
+
+    PPS_IN_INT1 = (0 + _PPS_SET_D + _PPS_INPUT_BIT),
+    PPS_IN_INT2 = (1 + _PPS_SET_C + _PPS_INPUT_BIT),
+    PPS_IN_INT3 = (2 + _PPS_SET_A + _PPS_INPUT_BIT),
+    PPS_IN_INT4 = (3 + _PPS_SET_B + _PPS_INPUT_BIT),
+    PPS_IN_T2CK = (5 + _PPS_SET_A + _PPS_INPUT_BIT),
+    PPS_IN_T3CK = (6 + _PPS_SET_D + _PPS_INPUT_BIT),
+    PPS_IN_T4CK = (7 + _PPS_SET_C + _PPS_INPUT_BIT),
+    PPS_IN_T5CK = (8 + _PPS_SET_B + _PPS_INPUT_BIT),
+    PPS_IN_IC1 = (9 + _PPS_SET_D + _PPS_INPUT_BIT),
+    PPS_IN_IC2 = (10 + _PPS_SET_C + _PPS_INPUT_BIT),
+    PPS_IN_IC3 = (11 + _PPS_SET_A + _PPS_INPUT_BIT),
+    PPS_IN_IC4 = (12 + _PPS_SET_B + _PPS_INPUT_BIT),
+    PPS_IN_IC5 = (13 + _PPS_SET_C + _PPS_INPUT_BIT),
+    PPS_IN_OCFA = (17 + _PPS_SET_D + _PPS_INPUT_BIT),
+    PPS_IN_U1RX = (19 + _PPS_SET_A + _PPS_INPUT_BIT),
+    PPS_IN_U1CTS = (20 + _PPS_SET_C + _PPS_INPUT_BIT),
+    PPS_IN_U2RX = (21 + _PPS_SET_A + _PPS_INPUT_BIT),
+    PPS_IN_U2CTS = (22 + _PPS_SET_C + _PPS_INPUT_BIT),
+    PPS_IN_U3RX = (23 + _PPS_SET_B + _PPS_INPUT_BIT),
+    PPS_IN_U3CTS = (24 + _PPS_SET_D + _PPS_INPUT_BIT),
+    PPS_IN_U4RX = (25 + _PPS_SET_D + _PPS_INPUT_BIT),
+    PPS_IN_U4CTS = (26 + _PPS_SET_B + _PPS_INPUT_BIT),
+    PPS_IN_U5RX = (27 + _PPS_SET_D + _PPS_INPUT_BIT),
+    PPS_IN_U5CTS = (28 + _PPS_SET_A + _PPS_INPUT_BIT),
+    PPS_IN_SDI1 = (32 + _PPS_SET_B + _PPS_INPUT_BIT),
+    PPS_IN_SS1 = (33 + _PPS_SET_C + _PPS_INPUT_BIT),
+    PPS_IN_SDI2 = (35 + _PPS_SET_B + _PPS_INPUT_BIT),
+    PPS_IN_SS2 = (36 + _PPS_SET_D + _PPS_INPUT_BIT),
+    PPS_IN_REFCLKI = (51 + _PPS_SET_A + _PPS_INPUT_BIT),
+
+} ppsFunctionType;
+
+typedef uint32_t p32_ppsin;
+
+#define _PPS_RPD2       ( 0 + _PPS_SET_A)
+#define _PPS_RPG8       ( 1 + _PPS_SET_A)
+#define _PPS_RPF4       ( 2 + _PPS_SET_A)
+#define _PPS_RPD10      ( 3 + _PPS_SET_A)
+#define _PPS_RPF1       ( 4 + _PPS_SET_A)
+#define _PPS_RPB9       ( 5 + _PPS_SET_A)
+#define _PPS_RPB10      ( 6 + _PPS_SET_A)
+#define _PPS_RPC14      ( 7 + _PPS_SET_A)
+#define _PPS_RPB5       ( 8 + _PPS_SET_A)
+#define _PPS_RPC1       (10 + _PPS_SET_A)
+#define _PPS_RPD14      (11 + _PPS_SET_A)
+#define _PPS_RPG1       (12 + _PPS_SET_A)
+#define _PPS_RPA14      (13 + _PPS_SET_A)
+#define _PPS_RPF2       (15 + _PPS_SET_A)
+
+#define _PPS_RPD3       ( 0 + _PPS_SET_B)
+#define _PPS_RPG7       ( 1 + _PPS_SET_B)
+#define _PPS_RPF5       ( 2 + _PPS_SET_B)
+#define _PPS_RPD11      ( 3 + _PPS_SET_B)
+#define _PPS_RPF0       ( 4 + _PPS_SET_B)
+#define _PPS_RPB1       ( 5 + _PPS_SET_B)
+#define _PPS_RPE5       ( 6 + _PPS_SET_B)
+#define _PPS_RPC13      ( 7 + _PPS_SET_B)
+#define _PPS_RPB3       ( 8 + _PPS_SET_B)
+#define _PPS_RPC4       (10 + _PPS_SET_B)
+#define _PPS_RPD15      (11 + _PPS_SET_B)
+#define _PPS_RPG0       (12 + _PPS_SET_B)
+#define _PPS_RPA15      (13 + _PPS_SET_B)
+#define _PPS_RPF2       (14 + _PPS_SET_B)
+#define _PPS_RPF7       (15 + _PPS_SET_B)
+
+#define _PPS_RPD9       ( 0 + _PPS_SET_C)
+#define _PPS_RPG6       ( 1 + _PPS_SET_C)
+#define _PPS_RPB8       ( 2 + _PPS_SET_C)
+#define _PPS_RPB15      ( 3 + _PPS_SET_C)
+#define _PPS_RPD4       ( 4 + _PPS_SET_C)
+#define _PPS_RPB0       ( 5 + _PPS_SET_C)
+#define _PPS_RPE3       ( 6 + _PPS_SET_C)
+#define _PPS_RPB7       ( 7 + _PPS_SET_C)
+#define _PPS_RPF12      ( 9 + _PPS_SET_C)
+#define _PPS_RPD12      (10 + _PPS_SET_C)
+#define _PPS_RPF8       (11 + _PPS_SET_C)
+#define _PPS_RPC3       (12 + _PPS_SET_C)
+#define _PPS_RPE9       (13 + _PPS_SET_C)
+#define _PPS_RPB2       (15 + _PPS_SET_C)
+
+#define _PPS_RPD1       ( 0 + _PPS_SET_D)
+#define _PPS_RPG9       ( 1 + _PPS_SET_D)
+#define _PPS_RPB14      ( 2 + _PPS_SET_D)
+#define _PPS_RPD0       ( 3 + _PPS_SET_D)
+#define _PPS_RPD8       ( 4 + _PPS_SET_D)
+#define _PPS_RPB6       ( 5 + _PPS_SET_D)
+#define _PPS_RPD5       ( 6 + _PPS_SET_D)
+#define _PPS_RPB2       ( 7 + _PPS_SET_D)
+#define _PPS_RPF3       ( 8 + _PPS_SET_D)
+#define _PPS_RPF13      ( 9 + _PPS_SET_D)
+#define _PPS_RPF2       (11 + _PPS_SET_D)
+#define _PPS_RPC2       (12 + _PPS_SET_D)
+#define _PPS_RPE8       (13 + _PPS_SET_D)
+
+#if defined(__PIC32MX47XL__)
+#define _PPS_RPA14R    0
+#define _PPS_RPA15R    1
+#define _PPS_RPB0R    2
+#define _PPS_RPB1R    3
+#define _PPS_RPB2R    4
+#define _PPS_RPB3R    5
+#define _PPS_RPB5R    7
+#define _PPS_RPB6R    8
+#define _PPS_RPB7R    9
+#define _PPS_RPB8R    10
+#define _PPS_RPB9R    11
+#define _PPS_RPB10R    12
+#define _PPS_RPB14R    16
+#define _PPS_RPB15R    17
+#define _PPS_RPC1R    19
+#define _PPS_RPC2R    20
+#define _PPS_RPC3R    21
+#define _PPS_RPC4R    22
+#define _PPS_RPC13R    31
+#define _PPS_RPC14R    32
+#define _PPS_RPD0R    34
+#define _PPS_RPD1R    35
+#define _PPS_RPD2R    36
+#define _PPS_RPD3R    37
+#define _PPS_RPD4R    38
+#define _PPS_RPD5R    39
+#define _PPS_RPD8R    42
+#define _PPS_RPD9R    43
+#define _PPS_RPD10R    44
+#define _PPS_RPD11R    45
+#define _PPS_RPD12R    46
+#define _PPS_RPD14R    48
+#define _PPS_RPD15R    49
+#define _PPS_RPE3R    53
+#define _PPS_RPE5R    55
+#define _PPS_RPE8R    58
+#define _PPS_RPE9R    59
+#define _PPS_RPF0R    66
+#define _PPS_RPF1R    67
+#define _PPS_RPF2R    68
+#define _PPS_RPF3R    69
+#define _PPS_RPF4R    70
+#define _PPS_RPF5R    71
+#define _PPS_RPF6R    72
+#define _PPS_RPF8R    74
+#define _PPS_RPF12R    78
+#define _PPS_RPF13R    79
+#define _PPS_RPG0R    82
+#define _PPS_RPG1R    83
+#define _PPS_RPG6R    88
+#define _PPS_RPG7R    89
+#define _PPS_RPG8R    90
+#define _PPS_RPG9R    91
+#else
+#define _PPS_RPB0R    0
+#define _PPS_RPB1R    1
+#define _PPS_RPB2R    2
+#define _PPS_RPB3R    3
+#define _PPS_RPB5R    5
+#define _PPS_RPB6R    6
+#define _PPS_RPB7R    7
+#define _PPS_RPB8R    8
+#define _PPS_RPB9R    9 
+#define _PPS_RPB10R    10
+#define _PPS_RPB14R    14
+#define _PPS_RPB15R    15
+#define _PPS_RPC13R    29
+#define _PPS_RPC14R    30
+#define _PPS_RPD0R    32
+#define _PPS_RPD1R    33
+#define _PPS_RPD2R    34
+#define _PPS_RPD3R    35
+#define _PPS_RPD4R    36
+#define _PPS_RPD5R    37
+#define _PPS_RPD8R    40
+#define _PPS_RPD9R    41
+#define _PPS_RPD10R    42
+#define _PPS_RPD11R    43
+#define _PPS_RPE3R    51
+#define _PPS_RPE5R    53
+#define _PPS_RPF0R    64
+#define _PPS_RPF1R    65
+#define _PPS_RPF4R    68
+#define _PPS_RPF5R    69
+#define _PPS_RPG6R    86
+#define _PPS_RPG7R    87
+#define _PPS_RPG8R    88
+#define _PPS_RPG9R    89
+#endif
+
+
+#elif defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
 
 /* The PPS pins and peripheral functions are divided up into four sets.
 ** In some cases, the sets are disjoint, and in other cases there is

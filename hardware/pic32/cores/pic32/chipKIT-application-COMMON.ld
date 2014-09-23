@@ -43,6 +43,13 @@ OPTIONAL("libmchp_peripheral.a")
 /*************************************************************************
  * Start the layout of memory, the sections...
  *************************************************************************/
+
+SECTIONS
+{
+  /* Don't allow config-fuse sections in an application sketch */
+  /DISCARD/ : { *(.config_*) }
+}
+
 SECTIONS
 {
   .eeprom_pic32 _EEPROM_ADDR (NOLOAD):

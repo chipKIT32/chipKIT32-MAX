@@ -612,17 +612,18 @@ String String::substring(unsigned int left, unsigned int right) const
 /*  Modification                             */
 /*********************************************/
 
-void String::replace(char find, char replace)
+String & String::replace(char find, char replace)
 {
-	if (!buffer) return;
+	if (!buffer) return *this;
 	for (char *p = buffer; *p; p++) {
 		if (*p == find) *p = replace;
 	}
+    return *this;
 }
 
-void String::replace(const String& find, const String& replace)
+String & String::replace(const String& find, const String& replace)
 {
-	if (len == 0 || find.len == 0) return;
+	if (len == 0 || find.len == 0) return *this;
 	int diff = replace.len - find.len;
 	char *readFrom = buffer;
 	char *foundAt;
@@ -649,8 +650,8 @@ void String::replace(const String& find, const String& replace)
 			readFrom = foundAt + find.len;
 			size += diff;
 		}
-		if (size == len) return;
-		if (size > capacity && !changeBuffer(size)) return; // XXX: tell user!
+		if (size == len) return *this;
+		if (size > capacity && !changeBuffer(size)) return *this; // XXX: tell user!
 		int index = len - 1;
 		while (index >= 0 && (index = lastIndexOf(find, index)) >= 0) {
 			readFrom = buffer + index + find.len;
@@ -661,43 +662,48 @@ void String::replace(const String& find, const String& replace)
 			index--;
 		}
 	}
+    return *this;
 }
 
-void String::remove(unsigned int index){
-	if (index >= len) { return; }
+String & String::remove(unsigned int index){
+	if (index >= len) { return *this; }
 	int count = len - index;
 	remove(index, count);
+    return *this;
 }
 
-void String::remove(unsigned int index, unsigned int count){
-	if (index >= len) { return; }
-	if (count <= 0) { return; }
+String & String::remove(unsigned int index, unsigned int count){
+	if (index >= len) { return *this; }
+	if (count <= 0) { return *this; }
 	if (index + count > len) { count = len - index; }
 	char *writeTo = buffer + index;
 	len = len - count;
 	strncpy(writeTo, buffer + index + count,len - index);
 	buffer[len] = 0;
+    return *this;
 }
 
-void String::toLowerCase(void)
+String & String::toLowerCase(void)
 {
-	if (!buffer) return;
+	if (!buffer) return *this;
 	for (char *p = buffer; *p; p++) {
 		*p = tolower(*p);
 	}
+    return *this;
 }
 
-void String::toUpperCase(void)
+String & String::toUpperCase(void)
 {
-	if (!buffer) return;
+	if (!buffer) return *this;
 	for (char *p = buffer; *p; p++) {
 		*p = toupper(*p);
 	}
+    return *this;
 }
 
-void String::trim(void)
+String & String::trim(void)
 {
-	if (!buffer || len == 0) return;
+	if (!buffer || len == 0) return *this;
 	char *begin = buffer;
 	while (isspace(*begin)) begin++;
 	char *end = buffer + len - 1;
@@ -705,6 +711,7 @@ void String::trim(void)
 	len = end + 1 - begin;
 	if (begin > buffer) memcpy(buffer, begin, len);
 	buffer[len] = 0;
+    return *this;
 }
 
 /*********************************************/

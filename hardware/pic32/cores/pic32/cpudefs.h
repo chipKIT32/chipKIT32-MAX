@@ -518,6 +518,20 @@
 		#define	RAMEND		((32 * 1024L) - 1)
 		#define	__PIC32MX4XX__
 
+    #elif defined(__32MX470F512H__)
+        #define _CPU_NAME_  "32MX470F512H"
+		#define	FLASHEND	(((512 - 4) * 1024L) - 1)
+		#define	RAMEND		((128 * 1024L) - 1)
+		#define	__PIC32MX47X__
+        #define __PIC32MX47XH__
+    
+    #elif defined(__32MX470F512L__)
+        #define _CPU_NAME_  "32MX470F512L"
+		#define	FLASHEND	(((512 - 4) * 1024L) - 1)
+		#define	RAMEND		((128 * 1024L) - 1)
+		#define	__PIC32MX47X__
+        #define __PIC32MX47XL__
+
 	//************************************************************************
 	//*	500 series
 

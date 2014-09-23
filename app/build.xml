@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <project name="Arduino PDE" default="build">
-  
+
   <target name="clean" description="Clean the build directories">
     <delete dir="bin" />
     <delete file="pde.jar" />
@@ -15,8 +15,8 @@
     <mkdir dir="bin" />
 
     <!-- ant seems to nuke ${java.home} for some reason, pointing at the JRE
-	 subfolder instead of the actual JDK found at JAVA_HOME. 
-	 To avoid this, we grab the actual JAVA_HOME environment variable 
+	 subfolder instead of the actual JDK found at JAVA_HOME.
+	 To avoid this, we grab the actual JAVA_HOME environment variable
 	 and use that to specify the location of tools.jar. -->
 
     <!-- if someone is better with ant please help clean this up -->
@@ -24,11 +24,11 @@
     <property name="java_home" value="${env.JAVA_HOME}" />
 
     <condition property="linux"><os family="unix" /></condition>
-    <fail if="linux" unless="java_home" 
+    <fail if="linux" unless="java_home"
 	  message="The JAVA_HOME variable must be set to the location of a full JDK. For instance, on Ubuntu Linux, this might be /usr/lib/jvm/java-6-sun." />
 
     <condition property="windows"><os family="windows" /></condition>
-    <fail if="windows" unless="java_home" 
+    <fail if="windows" unless="java_home"
 	  message="The JAVA_HOME variable must be set to the location of a full JDK. For instance, on Windows, this might be c:\jdk1.6.0_18." />
 
 <!--
@@ -38,33 +38,33 @@
     <fail />
 -->
 <!--
-    <javac target="1.5" 
-	   srcdir="src" 
-	   destdir="bin" 
-	   excludes="**/tools/format/**" 
+    <javac target="1.5"
+	   srcdir="src"
+	   destdir="bin"
+	   excludes="**/tools/format/**"
 	   encoding="UTF-8"
 	   includeAntRuntime="false"
 	   debug="true"
 	   classpath="../core/core.jar; ${env.JAVA_HOME}/lib/tools.jar; lib/ant.jar; lib/ant-launcher.jar; lib/apple.jar; lib/ecj.jar; lib/jna.jar; lib/RXTXcomm.jar; lib/log4j-1.2.16.jar; lib/log4j.properties" />
   </target>
   -->
-  <javac target="1.6"
-	   source="1.6" 
-	   srcdir="src" 
-	   destdir="bin" 
-	   excludes="**/tools/format/**" 
+  <javac target="1.5"
+	   source="1.5"
+	   srcdir="src"
+	   destdir="bin"
+	   excludes="**/tools/format/**"
 	   encoding="UTF-8"
 	   includeAntRuntime="false"
 	   debug="true"
-	   classpath="../core/core.jar; ${env.JAVA_HOME}/lib/tools.jar; lib/ant.jar; lib/ant-launcher.jar; lib/apple.jar; lib/ecj.jar; lib/jna.jar; lib/RXTXcomm.jar; lib/log4j-1.2.16.jar; lib/log4j.properties" />
+	   classpath="../core/core.jar; ${env.JAVA_HOME}/lib/tools.jar; lib/gson-2.3.jar; lib/ant.jar; lib/ant-launcher.jar; lib/apple.jar; lib/ecj.jar; lib/jna.jar; lib/RXTXcomm.jar; lib/log4j-1.2.16.jar; lib/log4j.properties" />
    </target>
 
 <target name="build" depends="compile" description="Build PDE">
 	  <jar basedir="bin" destfile="pde.jar" >
 		  <manifest>
-                <attribute name="Built-By" value="Rick Anderson"/>  
-                <attribute name="Main-Class" value="processing.app.Base"/>  
-                <attribute name="Class-Path" value="RXTXcomm.jar core.jar ecj.jar jna.jar log4j-1.2.16.jar pde.jar"/>  
+                <attribute name="Built-By" value="Rick Anderson"/>
+                <attribute name="Main-Class" value="processing.app.Base"/>
+                <attribute name="Class-Path" value="RXTXcomm.jar core.jar ecj.jar jna.jar gson-2.3.jar log4j-1.2.16.jar pde.jar"/>
 		  </manifest>
 	  </jar>
   </target>
