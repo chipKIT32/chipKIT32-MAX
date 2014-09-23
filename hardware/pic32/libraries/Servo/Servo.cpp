@@ -93,7 +93,7 @@ uint8_t ServoCount	=	0;								// the total number of attached servos
 void handle_interrupts(int timer, volatile unsigned int *TMRn, volatile unsigned int *PRn)
 {
     static uint32_t AccumulatedTicks[3] = {0,0,0};      // Store the number of ticks since the first rising edge for this timer
-    
+
     // Test for invalid timer number
     if (timer >= 3)
     {
@@ -149,15 +149,15 @@ static void finISR(int timer)
 	//disable use of the given timer
 	if (timer == TIMER3)
 	{
-		IEC0CLR = 0x1000;		// disable T4 interrupt 
+		IEC0bits.T3IE = 0;		// disable T3 interrupt 
 	}
 	if (timer == TIMER4)
 	{
-		IEC0CLR = 0x10000;		// disable T4 interrupt 
+		IEC0bits.T4IE = 0;		// disable T4 interrupt 
 	}
 	if (timer == TIMER5)
 	{
-		IEC0CLR = 0x100000;		// disable T5 interrupt 
+		IEC0bits.T5IE = 0;		// disable T5 interrupt 
 	}
 }
 

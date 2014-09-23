@@ -54,7 +54,7 @@ void __attribute__((interrupt(),nomips16)) T3_IntHandler (void)
 #endif
 {
  	handle_interrupts(TIMER3, &TMR3, &PR3); 
-	IFS0CLR = 0x1000; // Clear timer interrupt status flag
+	IFS0bits.T3IF = 0; // Clear timer interrupt status flag
 }
 
 
@@ -65,7 +65,7 @@ void __attribute__((interrupt(),nomips16)) T4_IntHandler (void)
 #endif
 {
  	handle_interrupts(TIMER4, &TMR4, &PR4); 
-	IFS0CLR = 0x10000; // Clear timer interrupt status flag
+	IFS0bits.T4IF = 0; // Clear timer interrupt status flag
 }
 
 #if defined(__PIC32MZXX__)
@@ -75,31 +75,32 @@ void __attribute__((interrupt(),nomips16)) T5_IntHandler (void)
 #endif
 {
  	handle_interrupts(TIMER5, &TMR5, &PR5); 
-	IFS0CLR = 0x100000; // Clear timer interrupt status flag
+	IFS0bits.T5IF = 0; // Clear timer interrupt status flag
 }
 
-
 void initISR(int timer)
-{  
-    
+{
     if(timer == TIMER3)
     {
-
         // set the vector up
         setIntVector(_TIMER_3_VECTOR, T3_IntHandler);
 
-         //timer 3 set clock period 20ms 
-        T3CON = 0x0060; // set prescalar 1:64
+         //timer 3 set clock period 20ms
+#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
+        T3CONbits.TCKPS = 0b101; // set prescalar 1:32
+#else
+        T3CONbits.TCKPS = 0b110; // set prescalar 1:64
+#endif
         TMR3 = 0;
         PR3 = 0x61A8;        
            
-	    IFS0CLR = 0x1000;// Clear the T3 interrupt flag 
-	    IEC0SET = 0x1000;// Enable T3 interrupt 
+	    IFS0bits.T3IF = 0;// Clear the T3 interrupt flag 
+	    IEC0bits.T3IE = 1;// Enable T3 interrupt 
      
 		IPC3CLR = 0x0000001F;
 	    IPC3SET = (_T3_IPL_IPC << 2) | _T3_SPL_IPC;
        
-	    T3CONSET = 0x8000;// Enable Timer3
+	    T3CONbits.ON = 1;// Enable Timer3
     }
     if(timer == TIMER4)
     {
@@ -107,17 +108,21 @@ void initISR(int timer)
         setIntVector(_TIMER_4_VECTOR, T4_IntHandler);
  
         //timer 4 set clock period 20ms 
-        T4CON = 0x0060; // set prescalar 1:64
+#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
+        T4CONbits.TCKPS = 0b101; // set prescalar 1:32
+#else
+        T4CONbits.TCKPS = 0b110; // set prescalar 1:64
+#endif
         TMR4 = 0;
         PR4 = 0x61A8;        
            
-	    IFS0CLR = 0x10000;// Clear the T4 interrupt flag 
-	    IEC0SET = 0x10000;// Enable T4 interrupt 
+	    IFS0bits.T4IF = 0;// Clear the T4 interrupt flag 
+	    IEC0bits.T4IE = 1;// Enable T4 interrupt 
      
 		IPC4CLR = 0x0000001F;
 	    IPC4SET = (_T4_IPL_IPC << 2) | _T4_SPL_IPC;   
        
-	    T4CONSET = 0x8000;// Enable Timer4	 
+	    T4CONbits.ON = 1;// Enable Timer4	 
     }
     if(timer == TIMER5)
     {
@@ -125,17 +130,21 @@ void initISR(int timer)
         setIntVector(_TIMER_5_VECTOR, T5_IntHandler);
 
         //timer 5 set clock period 20ms 
-        T5CON = 0x0060; // set prescalar 1:64
+#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
+        T5CONbits.TCKPS = 0b101; // set prescalar 1:32
+#else
+        T5CONbits.TCKPS = 0b110; // set prescalar 1:64
+#endif
         TMR5 = 0;
         PR5 = 0x61A8;        
            
-	    IFS0CLR = 0x100000;// Clear the T5 interrupt flag 
-	    IEC0SET = 0x100000;// Enable T5 interrupt 
+	    IFS0bits.T5IF = 0;// Clear the T5 interrupt flag 
+	    IEC0bits.T5IE = 1;// Enable T5 interrupt 
      
 		IPC5CLR = 0x0000001F;
 	    IPC5SET = (_T5_IPL_IPC << 2) | _T5_SPL_IPC;
        
-	    T5CONSET = 0x8000;// Enable Timer5
+	    T5CONbits.ON = 1;// Enable Timer5
     }
     
 } 
