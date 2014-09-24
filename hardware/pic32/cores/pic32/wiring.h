@@ -254,7 +254,6 @@ void loop(void);
 	#define	strcat_P		strcat
 
 	#define	prog_void		const void
-	#define	prog_char		const char
 	#define	prog_uchar		const unsigned char
 	#define	prog_int8_t		const int8_t
 	#define	prog_uint8_t	const uint8_t
