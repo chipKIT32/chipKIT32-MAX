@@ -34,7 +34,8 @@ import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 import org.apache.log4j.Level;
 
-
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import processing.app.debug.Compiler;
 import processing.app.debug.Target;
@@ -48,18 +49,18 @@ import processing.core.*;
  * files and images, etc) that comes from that.
  */
 public class Base {
-	
+
   //private static Logger logger = Logger.getLogger(Base.class.getName());
   static Logger logger = Logger.getLogger(Base.class.getName());
 
-	
+
   public static final int REVISION = 23;
   /** This might be replaced by main() if there's a lib/version.txt file. */
   static String VERSION_NAME = "0023";
   /** Set true if this a proper release rather than a numbered revision. */
   static public boolean RELEASE = false;
-  
-  
+
+
   static HashMap<Integer, String> platformNames = new HashMap<Integer, String>();
   static {
     platformNames.put(PConstants.WINDOWS, "windows");
@@ -93,7 +94,7 @@ public class Base {
   static private File hardwareFolder;
 
   static HashSet<File> libraries;
-  
+
   // maps imported packages to their library folder
   static HashMap<String, File> importToLibraryTable;
 
@@ -101,7 +102,7 @@ public class Base {
   // (both those in the p5/libs folder and those with lib subfolders
   // found in the sketchbook)
   static public String librariesClassPath;
-  
+
   static public HashMap<String, Target> targetsTable;
 
   // Location for untitled items
@@ -181,7 +182,7 @@ public class Base {
     untitledFolder.deleteOnExit();
 
     new Base(args);
-    
+
   }
 
 
@@ -263,16 +264,16 @@ public class Base {
         defaultFolder.mkdirs();
       }
     }
-    
+
     targetsTable = new HashMap<String, Target>();
     loadHardware(getHardwareFolder());
 //    loadHardware(getSketchbookHardwareFolder());
 
    //Issue: 104 Need to support loading examples, and libraries based on platform
     String platformname =  getBoardPreferences().get("platform");
-    logger.debug("!!!Base: Platform Name: " + platformname);    
+    logger.debug("!!!Base: Platform Name: " + platformname);
     String libraryPath = getPlatformPreferences(platformname).get("library.path");
-    logger.debug("!!!Base: Library Path: " + libraryPath);        
+    logger.debug("!!!Base: Library Path: " + libraryPath);
     librariesFolder = getContentFile(libraryPath);
     logger.debug("Base: librariesFolder: " + librariesFolder);
 
@@ -916,8 +917,8 @@ public class Base {
     } catch (IOException e) {
       e.printStackTrace();
     }
-        
-    
+
+
     //System.out.println("rebuilding examples menu");
     // Add each of the subfolders of examples directly to the menu
     try {
@@ -926,7 +927,7 @@ public class Base {
       found = addSketches(menu, getSketchbookLibrariesFolder(), true);
       if (found) menu.addSeparator();
       addSketches(menu, librariesFolder, true);
-      logger.debug("Base: addsketches librariesFolder: true: " + librariesFolder); 
+      logger.debug("Base: addsketches librariesFolder: true: " + librariesFolder);
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -947,7 +948,7 @@ public class Base {
 
   public void rebuildImportMenu(JMenu importMenu) {
     logger.debug("Base: DEBUG:start: rebuilding import menu");
-    
+
     importMenu.removeAll();
 
     // reset the set of libraries
@@ -958,7 +959,7 @@ public class Base {
 
     // Add from the "libraries" subfolder in the Processing directory
     //Choose which library to add by chip platform
-    
+
     try {
 			//Find the current target. Get the platform, and then select the correct name and core path.
 	    	String platformname = this.getBoardPreferences().get("platform");
@@ -972,7 +973,7 @@ public class Base {
 	    	importMenu.add(platformItem);
 		importMenu.addSeparator();
 	    	addLibraries(importMenu, getCoreLibraries(libraryPath));
-    	
+
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -994,15 +995,15 @@ public class Base {
 
 
   public void rebuildExamplesMenu(JMenu menu) {
-        logger.debug("Base: rebuildExamplesMenu: DEBUG: Enter: rebuildExamplesMenu"); 
+        logger.debug("Base: rebuildExamplesMenu: DEBUG: Enter: rebuildExamplesMenu");
     try {
 	//Find the current target. Get the platform, and then select the correct name and core path.
     	String platformname = this.getBoardPreferences().get("platform");
-        logger.debug("Base: rebuildExamplesMenu: Platform Name: " + platformname);    
-        
+        logger.debug("Base: rebuildExamplesMenu: Platform Name: " + platformname);
+
     	String targetname = this.getPlatformPreferences(platformname).get("name");
-        logger.debug("Base: rebuildExamplesMenu: Target Name: " + targetname);    
-        
+        logger.debug("Base: rebuildExamplesMenu: Target Name: " + targetname);
+
         String libraryPath = this.getPlatformPreferences(platformname).get("library.path");
 
         menu.removeAll();
@@ -1022,18 +1023,18 @@ public class Base {
       e.printStackTrace();
     }
   }
-  
+
   public void onBoardOrPortChange() {
     for (Editor editor : editors) {
       editor.onBoardOrPortChange();
     }
   }
- 
- 
+
+
     public void rebuildBoardsMenu(JMenu menu) {
         logger.debug("Base: rebuildBoardsMenu: DEBUG: start: rebuilding boards menu.");
-  
-    menu.removeAll();      
+
+    menu.removeAll();
     ButtonGroup group = new ButtonGroup();
     HashMap<String, JMenu> groupings;
     groupings = new HashMap<String, JMenu>();
@@ -1071,19 +1072,19 @@ public class Base {
             }
         }
     }
-  
+
     logger.debug("Base: rebuildBoardsMenu: DEBUG: end: rebuilding boards menu.");
 
   }
-  
+
  //? ROA: Trying a quick rename
  // public void rebuildBurnBootloaderMenu(JMenu menu) {
     public void rebuildProgrammerMenu(JMenu menu) {
     //System.out.println("rebuilding burn bootloader menu");
-    menu.removeAll();      
+    menu.removeAll();
     for (Target target : targetsTable.values()) {
       for (String programmer : target.getProgrammers().keySet()) {
-        AbstractAction action = 
+        AbstractAction action =
           new AbstractAction(
             "w/ " + target.getProgrammers().get(programmer).get("name")) {
             public void actionPerformed(ActionEvent actionevent) {
@@ -1103,11 +1104,11 @@ public class Base {
 /*
   public void rebuildProgrammerMenu(JMenu menu) {
     //System.out.println("rebuilding programmer menu");
-    menu.removeAll();      
+    menu.removeAll();
     ButtonGroup group = new ButtonGroup();
     for (Target target : targetsTable.values()) {
       for (String programmer : target.getProgrammers().keySet()) {
-        AbstractAction action = 
+        AbstractAction action =
           new AbstractAction(
             target.getProgrammers().get(programmer).get("name")) {
             public void actionPerformed(ActionEvent actionevent) {
@@ -1295,7 +1296,7 @@ public class Base {
 		/*
 		* Debug right here is where a default core libraries needs to be checked for.
 		*/
-		
+
         libraries.add(subfolder);
         //Debug subfolder
         logger.debug("Base: addLibraries: Base.subfolder: " + subfolder);
@@ -1325,11 +1326,11 @@ public class Base {
     }
     return ifound;
   }
-  
-  
+
+
   protected void loadHardware(File folder) {
     if (!folder.isDirectory()) return;
-    
+
     String list[] = folder.list(new FilenameFilter() {
       public boolean accept(File dir, String name) {
         // skip .DS_Store files, .svn folders, etc
@@ -1344,7 +1345,7 @@ public class Base {
     // alphabetize list, since it's not always alpha order
     // replaced hella slow bubble sort with this feller for 0093
     Arrays.sort(list, String.CASE_INSENSITIVE_ORDER);
-    
+
     for (String target : list) {
       File subfolder = new File(folder, target);
       File pf = new File(subfolder, "platforms.txt");
@@ -1617,27 +1618,27 @@ public class Base {
     // before the other folders / paths get cached).
     return getContentFile("hardware");
   }
-  
+
   //Get the core libraries
   static public File getCoreLibraries(String path) {
-  	return getContentFile(path);	
+  	return getContentFile(path);
   }
-  
+
   static public String getHardwarePath() {
     return getHardwareFolder().getAbsolutePath();
   }
-  
-  
+
+
   static public String getAvrBasePath() {
     if(Base.isLinux()) {
       return ""; // avr tools are installed system-wide and in the path
     } else {
       return getHardwarePath() + File.separator + "tools" +
              File.separator + "avr" + File.separator + "bin" + File.separator;
-    }  
+    }
   }
-  
-  
+
+
   static public Target getTarget() {
       Target target =  Base.targetsTable.get(Preferences.get("target"));
         if (target == null) {
@@ -1646,13 +1647,13 @@ public class Base {
       logger.debug("Base: getTarget() : Target Name: " + target.getName());
     return target;
   }
-  
+
 static public Map<String, String> getSketchPreferences(File folder) {
 	Target target = getTarget();
 	Map map = target.getSketchPreferences(folder);
 	return map;
 }
- 
+
 static public Map<String, String> getPlatformPreferences() {
     Target target = getTarget();
     if (target == null) return new LinkedHashMap();
@@ -1661,7 +1662,7 @@ static public Map<String, String> getPlatformPreferences() {
     if (map == null)
     {
     	System.err.println("Error loading platforms preference from Target");
-    	System.exit(0);	
+    	System.exit(0);
     }
     */
     //if (map == null) return new LinkedHashMap();
@@ -1731,8 +1732,8 @@ static public Map<String, String> getBoardPreferences() {
   static public String getSketchbookLibrariesPath() {
     return getSketchbookLibrariesFolder().getAbsolutePath();
   }
-  
-  
+
+
   static public File getSketchbookHardwareFolder() {
     return new File(getSketchbookFolder(), "hardware");
   }
@@ -1966,7 +1967,7 @@ static public Map<String, String> getBoardPreferences() {
   static public void showFAQ() {
     showReference("FAQ.html");
   }
-  
+
 
   // .................................................................
 
@@ -2222,7 +2223,7 @@ static public Map<String, String> getBoardPreferences() {
 
     File imageLocation = new File(getContentFile("lib"), name);
     image = tk.getImage(imageLocation.getAbsolutePath());
-    logger.debug("Base: getLibImage: DEBUG: Image location: "+ imageLocation.getAbsolutePath()); 
+    logger.debug("Base: getLibImage: DEBUG: Image location: "+ imageLocation.getAbsolutePath());
     MediaTracker tracker = new MediaTracker(who);
     tracker.addImage(image, 0);
     try {
