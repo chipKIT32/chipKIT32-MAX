@@ -1,29 +1,29 @@
 //************************************************************************
 //*	wiring.h
-//*	
+//*
 //*	Arduino core files for PIC32
 //*		Copyright (c) 2010,2011 by Mark Sproul
-//*	
-//*	
+//*
+//*
 //************************************************************************
 //*	this code is based on code Copyright (c) 2005-2006 David A. Mellis
-//*	
+//*
 //*	This library is free software; you can redistribute it and/or
 //*	modify it under the terms of the GNU Lesser General Public
 //*	License as published by the Free Software Foundation; either
 //*	version 2.1 of the License, or (at your option) any later version.
-//*	
+//*
 //*	This library is distributed in the hope that it will be useful,
 //*	but WITHOUT ANY WARRANTY; without even the implied warranty of
 //*	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.//*	See the GNU
 //*	Lesser General Public License for more details.
-//*	
+//*
 //*	You should have received a copy of the GNU Lesser General
 //*	Public License along with this library; if not, write to the
 //*	Free Software Foundation, Inc., 59 Temple Place, Suite 330,
 //*	Boston, MA	02111-1307	USA
-//*	
-//*	
+//*
+//*
 //************************************************************************
 //*	Edit History
 //************************************************************************
@@ -39,7 +39,7 @@
 #include <inttypes.h>
 //#include <peripheral/timer.h>
 #include "binary.h"
-
+#include "avr/pgmspace.h"
 #include <p32xxxx.h>
 #include "p32_defs.h"
 #include "cpudefs.h"	//*		This file is designed to provide some of the cpu specific definitions
@@ -235,7 +235,12 @@ void	_scheduleTask();
 void setup(void);
 void loop(void);
 
-
+/*
+#if !defined(prog_char)
+typedef	prog_char		const char
+#endif
+*/
+/*
 #if !defined(__AVR__)
 	#define _BV(bit) (1ul << (bit))
 
@@ -264,6 +269,8 @@ void loop(void);
 	#define	prog_int64_t	const int64_t
 	#define	prog_uint64_t	const uint64_t
 #endif
+*/
+
 #if defined(__PIC32MX__) || defined(__PIC32MZ__)
 
 //************************************************************************
@@ -272,7 +279,7 @@ void loop(void);
 // If an old bootloader is in use, the bootloader assigned fields will have 0xFFFFs in them.
 
 #if !defined(MPIDEVER)              // usually provided in platforms.txt on the pic32.compiler.define line
-    #define MPIDEVER 0x00000000     // if not, define it as the unspecified value of 0      
+    #define MPIDEVER 0x00000000     // if not, define it as the unspecified value of 0
 #endif
 
 // Bootloader Capability bits
@@ -286,8 +293,8 @@ void loop(void);
 #define blCapUSBInterface                               0x00000002ul        // bootloader talks over the USB for serial
 #define blCapBootLED                                    0x00000010ul        // A boot LED is driven
 #define blCapDownloadLED                                0x00000020ul        // A download LED is driven
-#define blCapAutoResetListening                         0x00000100ul        // There is a short listening delay after reset for avrdude to upload a sketch before automatically loading the in flash sketch              
-#define blCapProgramButton                              0x00000200ul        // A program button is supported  
+#define blCapAutoResetListening                         0x00000100ul        // There is a short listening delay after reset for avrdude to upload a sketch before automatically loading the in flash sketch
+#define blCapProgramButton                              0x00000200ul        // A program button is supported
 #define blCapVirtualProgramButton                       0x00000400ul        // A virtual program button is supported
 #define blCapLkInstrFullFlashEraseLess4KEEProm          0x00010000ul        // The original bootloader method of erasing all of program flash except the last 4K reserved for eeprom
 #define blCapLkInstrJustInTimeFlashErase                0x00020000ul        // Only flash pages written too needed by the sketch is erased
@@ -311,18 +318,18 @@ void loop(void);
 #define imageBootFlashBootloader                        0x00000002ul        // This is a boot flash bootloader
 #define imageProgramFlashBootloader                     0x00000004ul        // This is a program flash bootloader
 #define imageSplitFlashBootloader                       0x00000008ul        // This has bootloader code in both boot and program flash
-#define imageFullFlashEraseLess4KEEProm                 blCapLkInstrFullFlashEraseLess4KEEProm                 
-#define imageJustInTimeFlashErase                       blCapLkInstrJustInTimeFlashErase                       
-#define imageLinkerSpecifiedFlashErase                  blCapLkInstrFlashErase                                 
-#define imageFullFlashErase                             blCapLkInstrFullFlashErase                             
-#define imageExecutionJumpAddress                       blCapLkInstrExecutionJumpAddress                       
-#define imageExecutionJumpToFirstInFlash                blCapLkInstrExecutionJumpToFirstInFlash                
+#define imageFullFlashEraseLess4KEEProm                 blCapLkInstrFullFlashEraseLess4KEEProm
+#define imageJustInTimeFlashErase                       blCapLkInstrJustInTimeFlashErase
+#define imageLinkerSpecifiedFlashErase                  blCapLkInstrFlashErase
+#define imageFullFlashErase                             blCapLkInstrFullFlashErase
+#define imageExecutionJumpAddress                       blCapLkInstrExecutionJumpAddress
+#define imageExecutionJumpToFirstInFlash                blCapLkInstrExecutionJumpToFirstInFlash
 
 typedef void (* FNIMGJMP) (void);
 
 // The RAM Header is filled in by the bootloader, however it is specified by the sketch in the linker script
 // The sketch must place it in the first 1.5K of RAM, as this is the space perserved by the bootloader for the sketch's
-// Debug data, RAM Header, and persistent data. The bootloader will only fill in the RAM Header and will not touch 
+// Debug data, RAM Header, and persistent data. The bootloader will only fill in the RAM Header and will not touch
 // the reset of the perserved data. The bootloader is highly protective to not exceed the number of bytes known by the
 // sketch as the RAM Header so the bootloader will not stray into the sketch's presistent data. Likewise the bootloader
 // will not stray into its own data space, so the bootloader may not write all bytes specified by the sketch if that
@@ -335,12 +342,12 @@ typedef struct {
 } RAM_HEADER_INFO;
 #pragma pack(pop)
 
-// The header is reserved by the sketch's linker script but 
+// The header is reserved by the sketch's linker script but
 // written by both the sketch's linker script and by the bootloader.
 // The sketch's linker script will fill in all values except
 // verBootloader, bootloaderCapabilities, vend, prod, and cbBlPreservedRam, these are
 // all filled in by the bootloader. If an old bootloader is on the board
-// all bootloader supplied values will be 0xFFFFFFFF; as this is the unprogramed value of flash. 
+// all bootloader supplied values will be 0xFFFFFFFF; as this is the unprogramed value of flash.
 // Check the MSB of the capabilities and if it is set, then none of the bootloader supplied values are valid.
 // In all cases, a value of all FFs is reserved as unknown and should be checked before using.
 #pragma pack(push,2)
@@ -377,15 +384,15 @@ extern const IMAGE_HEADER_INFO _image_header_info;      // this is the header in
 // But they exist for the bootloader to find the the ebase address and the image header info
 // Please do not remove this as test sketches verify this information so I can tell the bootloaer will get the right stuff.
 // These add no additional overhead to MPIDE as the data must exist for the bootloader; we are only making them visible to sketches.
-// These are in a very "fixed" location" offset from the begining of the sketch 
+// These are in a very "fixed" location" offset from the begining of the sketch
 // in program flash. In particular the bootloader uses the offset
-// to find the ebase address. Unfortunately, STK500v2 does not give the 
+// to find the ebase address. Unfortunately, STK500v2 does not give the
 // upper 16 bits of the ebase address when programming program flash.
 // So the bootloader must get the "full" ebase address by offsetting into the first
 // page passed to it from avrdude, and then finding the linker written ebase address
 // In the original bootloader, the ebase address was a hard coded value known to the bootloader. (0x9D000000).
 // We can now have alternate ebase addresses and the bootloader will load them properly.
-// Then the bootloader finds the image header structure and 
+// Then the bootloader finds the image header structure and
 // programs some of its own data when writing the header to program flash.
 // The bootloader will add such things as the bootloader version and capabilities
 // vend ID, prod ID etc...
@@ -397,7 +404,7 @@ extern const uint32_t _IMAGE_HEADER_ADDR;                       // a pointer to 
 
 #endif
 
-#if defined(__PIC32MX__) || defined(__PIC32MZ__) 
+#if defined(__PIC32MX__) || defined(__PIC32MZ__)
 	extern unsigned int	__PIC32_pbClk;
 #endif
 
