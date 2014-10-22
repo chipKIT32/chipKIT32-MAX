@@ -44,6 +44,7 @@
 #if !defined(_P32_DEFS_H)
 #define _P32_DEFS_H
 
+#include <p32xxxx.h>
 #include "cpudefs.h"
 #include <inttypes.h>
 
@@ -56,6 +57,30 @@
 /* ------------------------------------------------------------ */
 /*				Register Declarations							*/
 /* ------------------------------------------------------------ */
+
+typedef union {
+  struct {
+    unsigned r0:1;
+    unsigned r1:1;
+    unsigned r2:1;
+    unsigned r3:1;
+    unsigned r4:1;
+    unsigned r5:1;
+    unsigned r6:1;
+    unsigned r7:1;
+    unsigned r8:1;
+    unsigned r9:1;
+    unsigned r10:1;
+    unsigned r11:1;
+    unsigned r12:1;
+    unsigned r13:1;
+    unsigned r14:1;
+    unsigned r15:1;
+  };
+  struct {
+    unsigned w:32;
+  };
+} __REGbits_t;
 
 /* This structure describes the register layout of the primary
 ** register, set, clear, and invert registers associated with
@@ -83,31 +108,151 @@ typedef struct {
 */
 #if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__) || defined(__PIC32MZXX__) || defined(__PIC32MX47X__)
 typedef struct {
-	volatile p32_regset ansel;
-	volatile p32_regset	tris;
-	volatile p32_regset	port;
-	volatile p32_regset	lat;
-	volatile p32_regset	odc;
-	volatile p32_regset cnpu;
-	volatile p32_regset cnpd;
+    union
+    {
+	    volatile p32_regset ansel;
+        struct
+        {
+            volatile __REGbits_t ANSELxbits;
+            volatile __REGbits_t ANSELxCLR;
+            volatile __REGbits_t ANSELxSET;
+            volatile __REGbits_t ANSELxINV;
+        };
+    };
+    union
+    {
+	    volatile p32_regset	tris;
+        struct
+        {
+            volatile __REGbits_t TRISxbits;
+            volatile __REGbits_t TRISxCLR;
+            volatile __REGbits_t TRISxSET;
+            volatile __REGbits_t TRISxINV;
+        };
+    };
+    union
+    {
+	    volatile p32_regset	port;
+        struct
+        {
+            volatile __REGbits_t PORTxbits;
+            volatile __REGbits_t PORTxCLR;
+            volatile __REGbits_t PORTxSET;
+            volatile __REGbits_t PORTxINV;
+        };
+    };
+    union
+    {
+	    volatile p32_regset	lat;
+        struct
+        {
+            volatile __REGbits_t LATxbits;
+            volatile __REGbits_t LATxCLR;
+            volatile __REGbits_t LATxSET;
+            volatile __REGbits_t LATxINV;
+        };
+    };
+    union
+    {
+	    volatile p32_regset	odc;
+        struct
+        {
+            volatile __REGbits_t ODCxbits;
+            volatile __REGbits_t ODCxCLR;
+            volatile __REGbits_t ODCxSET;
+            volatile __REGbits_t ODCxINV;
+        };
+    };
+    union
+    {
+	    volatile p32_regset cnpu;
+        struct
+        {
+            volatile __REGbits_t CNPUxbits;
+            volatile __REGbits_t CNPUxCLR;
+            volatile __REGbits_t CNPUxSET;
+            volatile __REGbits_t CNPUxINV;
+       };
+    };
+
+    union
+    {
+	    volatile p32_regset cnpd;
+        struct
+        {
+            volatile __REGbits_t CNPDxbits;
+            volatile __REGbits_t CNPDxCLR;
+            volatile __REGbits_t CNPDxSET;
+            volatile __REGbits_t CNPDxINV;
+        };
+    };
+
 	volatile p32_regset cncon;
 	volatile p32_regset cnen;
 	volatile p32_regset cnstat;
 } p32_ioport;
 #else
 typedef struct {
-	volatile p32_regset	tris;
-	volatile p32_regset	port;
-	volatile p32_regset	lat;
-	volatile p32_regset	odc;
+    union
+    {
+	    volatile p32_regset	tris;
+        struct
+        {
+            volatile __REGbits_t TRISxbits;
+            volatile __REGbits_t TRISxCLR;
+            volatile __REGbits_t TRISxSET;
+            volatile __REGbits_t TRISxINV;
+        };
+    };
+    union
+    {
+	    volatile p32_regset	port;
+        struct
+        {
+            volatile __REGbits_t PORTxbits;
+            volatile __REGbits_t PORTxCLR;
+            volatile __REGbits_t PORTxSET;
+            volatile __REGbits_t PORTxINV;
+        };
+    };
+    union
+    {
+	    volatile p32_regset	lat;
+        struct
+        {
+            volatile __REGbits_t LATxbits;
+            volatile __REGbits_t LATxCLR;
+            volatile __REGbits_t LATxSET;
+            volatile __REGbits_t LATxINV;
+        };
+    };
+    union
+    {
+	    volatile p32_regset	odc;
+        struct
+        {
+            volatile __REGbits_t ODCxbits;
+            volatile __REGbits_t ODCxCLR;
+            volatile __REGbits_t ODCxSET;
+            volatile __REGbits_t ODCxINV;
+        };
+    };
 } p32_ioport;
 #endif
 
 /* This structure defines the registers for a PIC32 UART.
 */
 typedef struct {
-	volatile p32_regset	uxMode;
-	volatile p32_regset	uxSta;
+    union
+    {
+        volatile __U1MODEbits_t uartMode;
+	    volatile p32_regset	    uxMode;
+    };
+    union
+    {
+	    volatile __U1STAbits_t	uartSta;
+	    volatile p32_regset	    uxSta;
+    };
 	volatile p32_regbuf	uxTx;
 	volatile p32_regbuf	uxRx;
 	volatile p32_regset	uxBrg;
@@ -128,8 +273,16 @@ typedef struct {
 /* Structure for the registers of a PIC32 SPI controller
 */
 typedef struct {
-	volatile p32_regset sxCon;
-	volatile p32_regset sxStat;
+    union
+    {
+        volatile __SPI2CONbits_t    spiCon;
+	    volatile p32_regset         sxCon;
+    };
+    union
+    {
+	    volatile __SPI2STATbits_t   spiStat;
+	    volatile p32_regset         sxStat;
+    };
 	volatile p32_regbuf sxBuf;
 	volatile p32_regset sxBrg;
 } p32_spi;
@@ -153,8 +306,16 @@ typedef struct {
 /* This structure defines the registers for a PIC32 I2C port.
 */
 typedef struct {
-	volatile p32_regset	ixCon;
-	volatile p32_regset ixStat;
+    union
+    {
+        volatile __I2C1CONbits_t    i2cCon;
+	    volatile p32_regset	        ixCon;
+    };
+    union
+    {
+        volatile __I2C1STATbits_t   i2cStat;
+	    volatile p32_regset         ixStat;
+    };
 	volatile p32_regset ixAdd;
 	volatile p32_regset ixMsk;
 	volatile p32_regset ixBrg;
@@ -643,6 +804,7 @@ typedef uint32_t p32_ppsin;
 
 
 #elif defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
+
 
 /* The PPS pins and peripheral functions are divided up into four sets.
 ** In some cases, the sets are disjoint, and in other cases there is

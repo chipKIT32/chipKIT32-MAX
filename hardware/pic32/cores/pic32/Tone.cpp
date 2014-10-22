@@ -171,7 +171,7 @@ extern "C"
 //*	not done yet
 //************************************************************************
 #if defined(__PIC32MZXX__)
-void __attribute__((nomips16,vector(_TIMER_1_VECTOR),interrupt(_T1_IPL_ISR))) Timer1Handler(void)
+void __attribute__((nomips16,vector(_TIMER_1_VECTOR),interrupt(IPL3SRS))) Timer1Handler(void)
 #else
 void __attribute__((interrupt(),nomips16)) Timer1Handler(void)
 #endif

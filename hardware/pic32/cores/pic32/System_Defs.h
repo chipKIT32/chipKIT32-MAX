@@ -18,7 +18,7 @@
 /*	12/20/2011(GeneApperson): Added task manager declarations			*/
 /*	07/26/2012(GeneApperson): Added PPS support for PIC32MX1xx/MX2xx	*/
 /*		devices															*/
-//*	Feb 17, 2014	<KeithV> Added PPS support for MZ devices
+/*	Feb 17, 2014	<KeithV> Added PPS support for MZ devices           */
 /*  03/24/2014(BrianSchmalz): Added support for MX1/MX2 EEPROM emulation*/
 /*																		*/
 /************************************************************************/
@@ -113,23 +113,6 @@
     #define	NUM_INT_REQUEST	191
     #define NUM_EXTERNAL_INTERRUPTS	5
 
-    #define _UART1_BASE_ADDRESS ((uint32_t) &U1MODE)
-    #define _UART2_BASE_ADDRESS ((uint32_t) &U2MODE)
-    #define _UART3_BASE_ADDRESS ((uint32_t) &U3MODE)
-    #define _UART4_BASE_ADDRESS ((uint32_t) &U4MODE)
-    #define _UART5_BASE_ADDRESS ((uint32_t) &U5MODE)
-    #define _UART6_BASE_ADDRESS ((uint32_t) &U6MODE)
-
-    #define _SPI1_BASE_ADDRESS ((uint32_t) &SPI1CON)
-    #define _SPI2_BASE_ADDRESS ((uint32_t) &SPI2CON)
-    #define _SPI3_BASE_ADDRESS ((uint32_t) &SPI3CON)
-    #define _SPI4_BASE_ADDRESS ((uint32_t) &SPI4CON)
-    #define _SPI5_BASE_ADDRESS ((uint32_t) &SPI5CON)
-    #define _SPI6_BASE_ADDRESS ((uint32_t) &SPI6CON)
-
-    #define  _OCMP1_BASE_ADDRESS ((uint32_t) &OC1CON)
-    #define  _TIMER_1_IRQ _TIMER_1_VECTOR
-
 #endif
 
 /* Symbols for referring to the external interrupts
@@ -165,185 +148,185 @@
 
 /* Core Software Interrupts
 */
-#define	_CS0_IPL_ISR	ipl2
+#define	_CS0_IPL_ISR	IPL2SOFT
 #define	_CS0_IPL_IPC	2
 #define	_CS0_SPL_IPC	0
 
-#define	_CS1_IPL_ISR	ipl2
+#define	_CS1_IPL_ISR	IPL2SOFT
 #define	_CS1_IPL_IPC	2
 #define	_CS1_SPL_IPC	0
 
 /* External Interrupts.
 */
-#define	_INT0_IPL_ISR	ipl4
+#define	_INT0_IPL_ISR	IPL4SOFT
 #define	_INT0_IPL_IPC	4
 #define	_INT0_SPL_IPC	0
 
-#define	_INT1_IPL_ISR	ipl4
+#define	_INT1_IPL_ISR	IPL4SOFT
 #define	_INT1_IPL_IPC	4
 #define	_INT1_SPL_IPC	0
 
-#define	_INT2_IPL_ISR	ipl4
+#define	_INT2_IPL_ISR	IPL4SOFT
 #define	_INT2_IPL_IPC	4
 #define	_INT2_SPL_IPC	0
 
-#define	_INT3_IPL_ISR	ipl4
+#define	_INT3_IPL_ISR	IPL4SOFT
 #define	_INT3_IPL_IPC	4
 #define	_INT3_SPL_IPC	0
 
-#define	_INT4_IPL_ISR	ipl4
+#define	_INT4_IPL_ISR	IPL4SOFT
 #define	_INT4_IPL_IPC	4
 #define	_INT4_SPL_IPC	0
 
 /* Timer Interrupts
 */
-#define	_T1_IPL_ISR	ipl3
+#define	_T1_IPL_ISR	IPL3SOFT
 #define	_T1_IPL_IPC	3
 #define	_T1_SPL_IPC	0
 
-#define	_T2_IPL_ISR	ipl2
+#define	_T2_IPL_ISR	IPL2SOFT
 #define	_T2_IPL_IPC	2
 #define	_T2_SPL_IPC	0
 
-#define	_T3_IPL_ISR	ipl4
+#define	_T3_IPL_ISR	IPL4SOFT
 #define	_T3_IPL_IPC	4
 #define	_T3_SPL_IPC	0
 
-#define	_T4_IPL_ISR	ipl4
+#define	_T4_IPL_ISR	IPL4SOFT
 #define	_T4_IPL_IPC	4
 #define	_T4_SPL_IPC	0
 
-#define	_T5_IPL_ISR	ipl4
+#define	_T5_IPL_ISR	IPL4SOFT
 #define	_T5_IPL_IPC	4
 #define	_T5_SPL_IPC	0
 
-#define	_T6_IPL_ISR	ipl4
+#define	_T6_IPL_ISR	IPL4SOFT
 #define	_T6_IPL_IPC	4
 #define	_T6_SPL_IPC	0
 
-#define	_T7_IPL_ISR	ipl4
+#define	_T7_IPL_ISR	IPL4SOFT
 #define	_T7_IPL_IPC	4
 #define	_T7_SPL_IPC	0
 
-#define	_T8_IPL_ISR	ipl4
+#define	_T8_IPL_ISR	IPL4SOFT
 #define	_T8_IPL_IPC	4
 #define	_T8_SPL_IPC	0
 
-#define	_T9_IPL_ISR	ipl4
+#define	_T9_IPL_ISR	IPL4SOFT
 #define	_T9_IPL_IPC	4
 #define	_T9_SPL_IPC	0
 
 /* Input Capture Interrupts
 */
-#define	_IC1_IPL_ISR	ipl2
+#define	_IC1_IPL_ISR	IPL2SOFT
 #define	_IC1_IPL_IPC	2
 #define	_IC1_SPL_IPC	0
 
-#define	_IC2_IPL_ISR	ipl2
+#define	_IC2_IPL_ISR	IPL2SOFT
 #define	_IC2_IPL_IPC	2
 #define	_IC2_SPL_IPC	0
 
-#define	_IC3_IPL_ISR	ipl2
+#define	_IC3_IPL_ISR	IPL2SOFT
 #define	_IC3_IPL_IPC	2
 #define	_IC3_SPL_IPC	0
 
-#define	_IC4_IPL_ISR	ipl2
+#define	_IC4_IPL_ISR	IPL2SOFT
 #define	_IC4_IPL_IPC	2
 #define	_IC4_SPL_IPC	0
 
-#define	_IC5_IPL_ISR	ipl2
+#define	_IC5_IPL_ISR	IPL2SOFT
 #define	_IC5_IPL_IPC	2
 #define	_IC5_SPL_IPC	0
 
-#define	_IC6_IPL_ISR	ipl2
+#define	_IC6_IPL_ISR	IPL2SOFT
 #define	_IC6_IPL_IPC	2
 #define	_IC6_SPL_IPC	0
 
-#define	_IC7_IPL_ISR	ipl2
+#define	_IC7_IPL_ISR	IPL2SOFT
 #define	_IC7_IPL_IPC	2
 #define	_IC7_SPL_IPC	0
 
-#define	_IC8_IPL_ISR	ipl2
+#define	_IC8_IPL_ISR	IPL2SOFT
 #define	_IC8_IPL_IPC	2
 #define	_IC8_SPL_IPC	0
 
-#define	_IC9_IPL_ISR	ipl2
+#define	_IC9_IPL_ISR	IPL2SOFT
 #define	_IC9_IPL_IPC	2
 #define	_IC9_SPL_IPC	0
 
 /* Input Capture Error Interrupts
 */
-#define	_IC1E_IPL_ISR	ipl2
+#define	_IC1E_IPL_ISR	IPL2SOFT
 #define	_IC1E_IPL_IPC	2
 #define	_IC1E_SPL_IPC	0
 
-#define	_IC2E_IPL_ISR	ipl2
+#define	_IC2E_IPL_ISR	IPL2SOFT
 #define	_IC2E_IPL_IPC	2
 #define	_IC2E_SPL_IPC	0
 
-#define	_IC3E_IPL_ISR	ipl2
+#define	_IC3E_IPL_ISR	IPL2SOFT
 #define	_IC3E_IPL_IPC	2
 #define	_IC3E_SPL_IPC	0
 
-#define	_IC4E_IPL_ISR	ipl2
+#define	_IC4E_IPL_ISR	IPL2SOFT
 #define	_IC4E_IPL_IPC	2
 #define	_IC4E_SPL_IPC	0
 
-#define	_IC5E_IPL_ISR	ipl2
+#define	_IC5E_IPL_ISR	IPL2SOFT
 #define	_IC5E_IPL_IPC	2
 #define	_IC5E_SPL_IPC	0
 
-#define	_IC6E_IPL_ISR	ipl2
+#define	_IC6E_IPL_ISR	IPL2SOFT
 #define	_IC6E_IPL_IPC	2
 #define	_IC6E_SPL_IPC	0
 
-#define	_IC7E_IPL_ISR	ipl2
+#define	_IC7E_IPL_ISR	IPL2SOFT
 #define	_IC7E_IPL_IPC	2
 #define	_IC7E_SPL_IPC	0
 
-#define	_IC8E_IPL_ISR	ipl2
+#define	_IC8E_IPL_ISR	IPL2SOFT
 #define	_IC8E_IPL_IPC	2
 #define	_IC8E_SPL_IPC	0
 
-#define	_IC9E_IPL_ISR	ipl2
+#define	_IC9E_IPL_ISR	IPL2SOFT
 #define	_IC9E_IPL_IPC	2
 #define	_IC9E_SPL_IPC	0
 
 /* Output Compare Interrupts
 */
-#define	_OC1_IPL_ISR	ipl2
+#define	_OC1_IPL_ISR	IPL2SOFT
 #define	_OC1_IPL_IPC	2
 #define	_OC1_SPL_IPC	0
 
-#define	_OC2_IPL_ISR	ipl2
+#define	_OC2_IPL_ISR	IPL2SOFT
 #define	_OC2_IPL_IPC	2
 #define	_OC2_SPL_IPC	0
 
-#define	_OC3_IPL_ISR	ipl2
+#define	_OC3_IPL_ISR	IPL2SOFT
 #define	_OC3_IPL_IPC	2
 #define	_OC3_SPL_IPC	0
 
-#define	_OC4_IPL_ISR	ipl2
+#define	_OC4_IPL_ISR	IPL2SOFT
 #define	_OC4_IPL_IPC	2
 #define	_OC4_SPL_IPC	0
 
-#define	_OC5_IPL_ISR	ipl2
+#define	_OC5_IPL_ISR	IPL2SOFT
 #define	_OC5_IPL_IPC	2
 #define	_OC5_SPL_IPC	0
 
-#define	_OC6_IPL_ISR	ipl2
+#define	_OC6_IPL_ISR	IPL2SOFT
 #define	_OC6_IPL_IPC	2
 #define	_OC6_SPL_IPC	0
 
-#define	_OC7_IPL_ISR	ipl2
+#define	_OC7_IPL_ISR	IPL2SOFT
 #define	_OC7_IPL_IPC	2
 #define	_OC7_SPL_IPC	0
 
-#define	_OC8_IPL_ISR	ipl2
+#define	_OC8_IPL_ISR	IPL2SOFT
 #define	_OC8_IPL_IPC	2
 #define	_OC8_SPL_IPC	0
 
-#define	_OC9_IPL_ISR	ipl2
+#define	_OC9_IPL_ISR	IPL2SOFT
 #define	_OC9_IPL_IPC	2
 #define	_OC9_SPL_IPC	0
 
@@ -359,38 +342,38 @@
 
 /* UARTS
 */
-#define	_UART1_IPL_ISR	ipl2	//interrupt priority for ISR
+#define	_UART1_IPL_ISR	IPL2SOFT	//interrupt priority for ISR
 #define	_UART1_IPL_IPC	2		//interrupt priority for IPC register
 #define	_UART1_SPL_IPC	0		//interrupt subpriority for IPC register
 
-#define	_UART2_IPL_ISR	ipl2	//interrupt priority for ISR
+#define	_UART2_IPL_ISR	IPL2SOFT	//interrupt priority for ISR
 #define	_UART2_IPL_IPC	2		//interrupt priority for IPC register
 #define	_UART2_SPL_IPC	0		//interrupt subpriority for IPC register
 
-#define	_UART3_IPL_ISR	ipl2	//interrupt priority for ISR
+#define	_UART3_IPL_ISR	IPL2SOFT	//interrupt priority for ISR
 #define	_UART3_IPL_IPC	2		//interrupt priority for IPC register
 #define	_UART3_SPL_IPC	0		//interrupt subpriority for IPC register
 
-#define	_UART4_IPL_ISR	ipl2	//interrupt priority for ISR
+#define	_UART4_IPL_ISR	IPL2SOFT	//interrupt priority for ISR
 #define	_UART4_IPL_IPC	2		//interrupt priority for IPC register
 #define	_UART4_SPL_IPC	0		//interrupt subpriority for IPC register
 
-#define	_UART5_IPL_ISR	ipl2	//interrupt priority for ISR
+#define	_UART5_IPL_ISR	IPL2SOFT	//interrupt priority for ISR
 #define	_UART5_IPL_IPC	2		//interrupt priority for IPC register
 #define	_UART5_SPL_IPC	0		//interrupt subpriority for IPC register
 
-#define	_UART6_IPL_ISR	ipl2	//interrupt priority for ISR
+#define	_UART6_IPL_ISR	IPL2SOFT	//interrupt priority for ISR
 #define	_UART6_IPL_IPC	2		//interrupt priority for IPC register
 #define	_UART6_SPL_IPC	0		//interrupt subpriority for IPC register
 
 /* SPI Controllers
 */
-#define	_SPI1_IPL_ISR	ipl3	//interrupt priority for the ISR
+#define	_SPI1_IPL_ISR	IPL3SOFT	//interrupt priority for the ISR
 #define	_SPI1_IPL_IPC	3		//interrupt priority for the IPC register
 #define	_SPI1_SPL_IPC	0		//interrupt subpriority for the IPC register
 
 #if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__) || defined(__PIC32MX3XX__) || defined(__PIC32MX4XX__) || defined(__PIC32MZXX__) || defined(__PIC32MX47X__)
-#define	_SPI2_IPL_ISR	ipl3    //interrupt priority for the ISR
+#define	_SPI2_IPL_ISR	IPL3SOFT    //interrupt priority for the ISR
 #define	_SPI2_IPL_IPC	3       //interrupt priority for the IPC register
 #define	_SPI2_SPL_IPC	0       //interrupt subpriority for the IPC register
 #endif
@@ -410,22 +393,22 @@
 #endif
 
 #if  defined(__PIC32MZXX__)
-#define	_SPI3_IPL_ISR	ipl3    //interrupt priority for the ISR
+#define	_SPI3_IPL_ISR	IPL3SRS    //interrupt priority for the ISR
 #define	_SPI3_IPL_IPC	3       //interrupt priority for the IPC register
 #define	_SPI3_SPL_IPC	0       //interrupt subpriority for the IPC register
 
-#define	_SPI4_IPL_ISR	ipl3    //interrupt priority for the ISR
+#define	_SPI4_IPL_ISR	IPL3SRS    //interrupt priority for the ISR
 #define	_SPI4_IPL_IPC	3       //interrupt priority for the IPC register
 #define	_SPI4_SPL_IPC	0       //interrupt subpriority for the IPC register
 #endif
 
 /* I2C Controllers
 */
-#define	_I2C1_IPL_ISR	ipl3	//interrupt priority for ISR
+#define	_I2C1_IPL_ISR	IPL3SOFT	//interrupt priority for ISR
 #define	_I2C1_IPL_IPC	3		//interrupt priority for IPC register
 #define	_I2C1_SPL_IPC	0		//interrupt subpriority for IPC register
 
-#define	_I2C2_IPL_ISR	ipl3	//interrupt priority for ISR
+#define	_I2C2_IPL_ISR	IPL3SOFT	//interrupt priority for ISR
 #define	_I2C2_IPL_IPC	3		//interrupt priority for IPC register
 #define	_I2C2_SPL_IPC	0		//interrupt subpriority for IPC register
 
@@ -444,120 +427,120 @@
 #endif
 
 #if  defined(__PIC32MZXX__)
-#define	_I2C3_IPL_ISR	ipl3	//interrupt priority for ISR
+#define	_I2C3_IPL_ISR	IPL3SRS	//interrupt priority for ISR
 #define	_I2C3_IPL_IPC	3		//interrupt priority for IPC register
 #define	_I2C3_SPL_IPC	0		//interrupt subpriority for IPC register
 
-#define	_I2C4_IPL_ISR	ipl3	//interrupt priority for ISR
+#define	_I2C4_IPL_ISR	IPL3SRS	//interrupt priority for ISR
 #define	_I2C4_IPL_IPC	3		//interrupt priority for IPC register
 #define	_I2C4_SPL_IPC	0		//interrupt subpriority for IPC register
 #endif
 
 /* Input Change Interrupt
 */
-#define	_CN_IPL_ISR		ipl1
+#define	_CN_IPL_ISR		IPL1SOFT
 #define	_CN_IPL_IPC		1
 #define	_CN_SPL_IPC		0
 
 /* Analog to Digital Converter Interrupt
 */
-#define	_ADC_IPL_ISR	ipl2
+#define	_ADC_IPL_ISR	IPL2SOFT
 #define	_ADC_IPL_IPC	2
 #define	_ADC_SPL_IPC	0
 
 /* Parallel Master Port Interrupt
 */
-#define	_PMP_IPL_ISR	ipl2
+#define	_PMP_IPL_ISR	IPL2SOFT
 #define	_PMP_IPL_IPC	2
 #define	_PMP_SPL_IPC	0
 
 /* Parallel Master Port Error Interrupt
 */
-#define	_PMPE_IPL_ISR	ipl2
+#define	_PMPE_IPL_ISR	IPL2SOFT
 #define	_PMPE_IPL_IPC	2
 #define	_PMPE_SPL_IPC	0
 
 /* Analog Comparator Interrupts
 */
-#define	_CMP1_IPL_ISR	ipl2
+#define	_CMP1_IPL_ISR	IPL2SOFT
 #define	_CMP1_IPL_IPC	2
 #define	_CMP1_SPL_IPC	0
 
-#define	_CMP2_IPL_ISR	ipl2
+#define	_CMP2_IPL_ISR	IPL2SOFT
 #define	_CMP2_IPL_IPC	2
 #define	_CMP2_SPL_IPC	0
 
 /* Fail-Safe Clock Monitor (FSCM) Interrupt
 */
-#define	_FSCM_IPL_ISR	ipl2
+#define	_FSCM_IPL_ISR	IPL2SOFT
 #define	_FSCM_IPL_IPC	2
 #define	_FSCM_SPL_IPC	0
 
 /* Real Time Clock/Calendar Interrupt
 */
-#define	_RTCC_IPL_ISR	ipl2
+#define	_RTCC_IPL_ISR	IPL2SOFT
 #define	_RTCC_IPL_IPC	2
 #define	_RTCC_SPL_IPC	0
 
 /* DMA Interrupts
 */
-#define	_DMA0_IPL_ISR	ipl2
+#define	_DMA0_IPL_ISR	IPL2SOFT
 #define	_DMA0_IPL_IPC	2
 #define	_DMA0_SPL_IPC	0
 
-#define	_DMA1_IPL_ISR	ipl2
+#define	_DMA1_IPL_ISR	IPL2SOFT
 #define	_DMA1_IPL_IPC	2
 #define	_DMA1_SPL_IPC	0
 
-#define	_DMA2_IPL_ISR	ipl2
+#define	_DMA2_IPL_ISR	IPL2SOFT
 #define	_DMA2_IPL_IPC	2
 #define	_DMA2_SPL_IPC	0
 
-#define	_DMA3_IPL_ISR	ipl2
+#define	_DMA3_IPL_ISR	IPL2SOFT
 #define	_DMA3_IPL_IPC	2
 #define	_DMA3_SPL_IPC	0
 
-#define	_DMA4_IPL_ISR	ipl2
+#define	_DMA4_IPL_ISR	IPL2SOFT
 #define	_DMA4_IPL_IPC	2
 #define	_DMA4_SPL_IPC	0
 
-#define	_DMA5_IPL_ISR	ipl2
+#define	_DMA5_IPL_ISR	IPL2SOFT
 #define	_DMA5_IPL_IPC	2
 #define	_DMA5_SPL_IPC	0
 
-#define	_DMA6_IPL_ISR	ipl2
+#define	_DMA6_IPL_ISR	IPL2SOFT
 #define	_DMA6_IPL_IPC	2
 #define	_DMA6_SPL_IPC	0
 
-#define	_DMA7_IPL_ISR	ipl2
+#define	_DMA7_IPL_ISR	IPL2SOFT
 #define	_DMA7_IPL_IPC	2
 #define	_DMA7_SPL_IPC	0
 
 /* Flash Control Event Interrupt
 */
-#define	_FCE_IPL_ISR	ipl2
+#define	_FCE_IPL_ISR	IPL2SOFT
 #define	_FCE_IPL_IPC	2
 #define	_FCE_SPL_IPC	0
 
 /* USB Interrupt
 */
-#define	_USB_IPL_ISR	ipl6
+#define	_USB_IPL_ISR	IPL6SOFT
 #define	_USB_IPL_IPC	6
 #define	_USB_SPL_IPC	0
 
 /* CAN Interrupts
 */
-#define	_CAN1_IPL_ISR	ipl2
+#define	_CAN1_IPL_ISR	IPL2SOFT
 #define	_CAN1_IPL_IPC	2
 #define	_CAN1_SPL_IPC	0
 
-#define	_CAN2_IPL_ISR	ipl2
+#define	_CAN2_IPL_ISR	IPL2SOFT
 #define	_CAN2_IPL_IPC	2
 #define	_CAN2_SPL_IPC	0
 
 /* Ethernet Interrupt
 */
-#define	_ETH_IPL_ISR	ipl2
+#define	_ETH_IPL_ISR	IPL2SOFT
 #define	_ETH_IPL_IPC	2
 #define	_ETH_SPL_IPC	0
 

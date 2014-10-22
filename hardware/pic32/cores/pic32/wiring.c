@@ -215,11 +215,17 @@ void init()
 	//*	as per Al.Rodriguez@microchip.com, Jan 7, 2011
 	//*	Disable the JTAG interface.
 #if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__) || defined(__PIC32MZXX__)
-	CFGCONbits.JTAGEN = 0;
-	//CFGCONbits.TDOEN = 0;
-	//OSCCONbits.SOSCEN = 0;
+    #if defined(_JTAG) && (_JTAG == 1)
+	    CFGCONbits.JTAGEN = 1;
+    #else
+	    CFGCONbits.JTAGEN = 0;
+    #endif
 #else
-	DDPCONbits.JTAGEN	=	0;
+    #if defined(_JTAG) && (_JTAG == 1)
+	    DDPCONbits.JTAGEN	=	0;
+    #else
+	    DDPCONbits.JTAGEN	=	0;
+    #endif
 #endif
 
 #if (OPT_BOARD_INIT != 0)
@@ -709,7 +715,7 @@ uint32_t millisecondCoreTimerService(uint32_t curTime)
 **
 */
 #if defined(__PIC32MZXX__)
-void __attribute__((nomips16, vector(_CORE_TIMER_VECTOR),interrupt(_CT_IPL_ISR))) CoreTimerHandler(void)
+void __attribute__((nomips16, vector(_CORE_TIMER_VECTOR),interrupt(IPL7SRS))) CoreTimerHandler(void)
 #else
 void __attribute__((interrupt(),nomips16)) CoreTimerHandler(void)
 #endif
