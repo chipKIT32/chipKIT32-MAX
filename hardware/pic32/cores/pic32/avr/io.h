@@ -1,8 +1,14 @@
 #ifndef __IO_H_
 #define __IO_H_ 1
 
-#error ******** This sketch or library uses AVR-specific code that may not work \
-with the chipKIT platform. See this forum for more information on porting code \
-to chipKIT [www.chipkit.org/forum/viewforum.php?f=7] ********
+/* For AVR */
+#if defined(__AVR__)
+    #include <avr/io.h>
+#endif
+
+/* For PIC32 */
+#if defined(__PIC32MX__)
+    #include <p32xxxx.h>    /* this gives all the CPU/hardware definitions */
+#endif
 
 #endif /* __IOE_H_ */
