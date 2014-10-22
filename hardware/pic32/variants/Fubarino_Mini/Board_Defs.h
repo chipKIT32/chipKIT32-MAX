@@ -290,9 +290,9 @@ extern const uint8_t	external_int_to_digital_pin_PGM[];
 #define	_SER0_BASE		_UART1_BASE_ADDRESS
 #define	_SER0_IRQ		_UART1_ERR_IRQ
 #define	_SER0_VECTOR	_UART_1_VECTOR
-#define	_SER0_IPL_ISR	_UART1_IPL_ISR
-#define	_SER0_IPL		_UART1_IPL_IPC
-#define	_SER0_SPL		_UART1_SPL_IPC
+#define	_SER0_IPL_ISR	IPL2SOFT
+#define	_SER0_IPL		2
+#define	_SER0_SPL		0
 #define	_SER0_TX_OUT	PPS_OUT_U1TX		// RPB4R = U1TX = 1
 #define	_SER0_TX_PIN	17					// RB4
 #define	_SER0_RX_IN		PPS_IN_U1RX			// U1RXR = RPA4 = 2
@@ -303,9 +303,9 @@ extern const uint8_t	external_int_to_digital_pin_PGM[];
 #define	_SER1_BASE		_UART2_BASE_ADDRESS
 #define	_SER1_IRQ		_UART2_ERR_IRQ
 #define	_SER1_VECTOR	_UART_2_VECTOR
-#define	_SER1_IPL_ISR	_UART2_IPL_ISR
-#define	_SER1_IPL		_UART2_IPL_IPC
-#define	_SER1_SPL		_UART2_SPL_IPC
+#define	_SER1_IPL_ISR	IPL2SOFT
+#define	_SER1_IPL		2
+#define	_SER1_SPL		0
 #define	_SER1_TX_OUT	PPS_OUT_U2TX		// RPB9R = U2TX = 2
 #define	_SER1_TX_PIN	26					// RB9
 #define	_SER1_RX_IN		PPS_IN_U2RX			// U2RXR = RPB8 = 4
@@ -324,9 +324,9 @@ extern const uint8_t	external_int_to_digital_pin_PGM[];
 #define	_SPI_RX_IRQ		_SPI2_RX_IRQ
 #define	_SPI_TX_IRQ		_SPI2_TX_IRQ
 #define	_SPI_VECTOR		_SPI_2_VECTOR
-#define	_SPI_IPL_ISR	_SPI2_IPL_ISR
-#define	_SPI_IPL		_SPI2_IPL_IPC
-#define	_SPI_SPL		_SPI2_SPL_IPC
+#define	_SPI_IPL_ISR	IPL3SOFT
+#define	_SPI_IPL		3
+#define	_SPI_SPL		0
 
 /* SPI pin declarations
 */
@@ -343,9 +343,9 @@ extern const uint8_t	external_int_to_digital_pin_PGM[];
 #define	_DSPI0_RX_IRQ		_SPI1_RX_IRQ
 #define	_DSPI0_TX_IRQ		_SPI1_TX_IRQ
 #define	_DSPI0_VECTOR		_SPI_1_VECTOR
-#define	_DSPI0_IPL_ISR		_SPI1_IPL_ISR
-#define	_DSPI0_IPL			_SPI1_IPL_IPC
-#define	_DSPI0_SPL			_SPI1_SPL_IPC
+#define	_DSPI0_IPL_ISR		IPL3SOFT
+#define	_DSPI0_IPL			3
+#define	_DSPI0_SPL			0
 
 #define _DSPI0_MISO_IN		PPS_IN_SDI1
 #define _DSPI0_MISO_PIN		19
@@ -360,9 +360,9 @@ extern const uint8_t	external_int_to_digital_pin_PGM[];
 #define	_DSPI1_RX_IRQ		_SPI2_RX_IRQ
 #define	_DSPI1_TX_IRQ		_SPI2_TX_IRQ
 #define	_DSPI1_VECTOR		_SPI_2_VECTOR
-#define	_DSPI1_IPL_ISR		_SPI2_IPL_ISR
-#define	_DSPI1_IPL			_SPI2_IPL_IPC
-#define	_DSPI1_SPL			_SPI2_SPL_IPC
+#define	_DSPI1_IPL_ISR		IPL3SOFT
+#define	_DSPI1_IPL			3
+#define	_DSPI1_SPL			0
 
 #define _DSPI1_MISO_IN      PPS_IN_SDI2
 #define _DSPI1_MISO_PIN     MISO
@@ -382,9 +382,9 @@ extern const uint8_t	external_int_to_digital_pin_PGM[];
 #define	_TWI_SLV_IRQ	_I2C1_SLAVE_IRQ
 #define	_TWI_MST_IRQ	_I2C1_MASTER_IRQ
 #define	_TWI_VECTOR		_I2C_1_VECTOR
-#define	_TWI_IPL_ISR	_I2C1_IPL_ISR
-#define _TWI_IPL		_I2C1_IPL_IPC
-#define	_TWI_SPL		_I2C1_SPL_IPC
+#define	_TWI_IPL_ISR	IPL3SOFT
+#define _TWI_IPL		3
+#define	_TWI_SPL		0
 
 /* Declarations for Digilent DTWI library.
 **		DTWI0 is on Arduino pins 25 (SCL1) and 26 (SDA1).
@@ -392,21 +392,21 @@ extern const uint8_t	external_int_to_digital_pin_PGM[];
 */
 #define	_DTWI0_BASE		_I2C1_BASE_ADDRESS
 #define	_DTWI0_BUS_IRQ	_I2C1_BUS_IRQ
-#define	_DTWI0_SLV_IRQ	_I2C1_SLAVE_IRQ
-#define	_DTWI0_MST_IRQ	_I2C1_MASTER_IRQ
 #define	_DTWI0_VECTOR	_I2C_1_VECTOR
-#define	_DTWI0_IPL_ISR	_I2C1_IPL_ISR
-#define	_DTWI0_IPL		_I2C1_IPL_IPC
-#define	_DTWI0_SPL		_I2C1_SPL_IPC
+#define	_DTWI0_IPL_ISR	IPL3SOFT
+#define	_DTWI0_IPL		3
+#define	_DTWI0_SPL		0
+#define _DTWI0_SCL_PIN  25 
+#define _DTWI0_SDA_PIN  26
 
 #define	_DTWI1_BASE		_I2C2_BASE_ADDRESS
 #define	_DTWI1_BUS_IRQ	_I2C2_BUS_IRQ
-#define	_DTWI1_SLV_IRQ	_I2C2_SLAVE_IRQ
-#define	_DTWI1_MST_IRQ	_I2C2_MASTER_IRQ
 #define	_DTWI1_VECTOR	_I2C_2_VECTOR
-#define	_DTWI1_IPL_ISR	_I2C2_IPL_ISR
-#define	_DTWI1_IPL		_I2C2_IPL_IPC
-#define	_DTWI1_SPL		_I2C2_SPL_IPC
+#define	_DTWI1_IPL_ISR	IPL3SOFT
+#define	_DTWI1_IPL		3
+#define	_DTWI1_SPL		0
+#define _DTWI1_SCL_PIN  10 
+#define _DTWI1_SDA_PIN  9
 
 /* ------------------------------------------------------------ */
 /*					A/D Converter Declarations					*/

@@ -48,7 +48,7 @@
 //	more generic.
 
 #if defined(__PIC32MZXX__)
-void __attribute__((nomips16,vector(_TIMER_3_VECTOR),interrupt(_T3_IPL_ISR))) T3_IntHandler(void)
+void __attribute__((nomips16,vector(_TIMER_3_VECTOR),interrupt(IPL4SRS))) T3_IntHandler(void)
 #else
 void __attribute__((interrupt(),nomips16)) T3_IntHandler (void)
 #endif
@@ -59,7 +59,7 @@ void __attribute__((interrupt(),nomips16)) T3_IntHandler (void)
 
 
 #if defined(__PIC32MZXX__)
-void __attribute__((nomips16,vector(_TIMER_3_VECTOR),interrupt(_T3_IPL_ISR))) T3_IntHandler(void)
+void __attribute__((nomips16,vector(_TIMER_4_VECTOR),interrupt(IPL4SRS))) T4_IntHandler(void)
 #else
 void __attribute__((interrupt(),nomips16)) T4_IntHandler (void)
 #endif
@@ -69,7 +69,7 @@ void __attribute__((interrupt(),nomips16)) T4_IntHandler (void)
 }
 
 #if defined(__PIC32MZXX__)
-void __attribute__((nomips16,vector(_TIMER_3_VECTOR),interrupt(_T3_IPL_ISR))) T3_IntHandler(void)
+void __attribute__((nomips16,vector(_TIMER_5_VECTOR),interrupt(IPL4SRS))) T5_IntHandler(void)
 #else
 void __attribute__((interrupt(),nomips16)) T5_IntHandler (void)
 #endif
@@ -80,19 +80,30 @@ void __attribute__((interrupt(),nomips16)) T5_IntHandler (void)
 
 void initISR(int timer)
 {
+
+#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
+    // 40000000 / 32 / 25000 = 50 => 20ms
+    uint8_t     tckps   = 0b101;    // set prescalar 1:32
+    uint16_t    prx     = 0x61A8;   // 25000
+#elif defined(__PIC32MZXX__)
+    // 200000000 / PB3(usually == 2) / 64 / 31250 = 50 => 20ms
+    uint8_t     tckps   = 0b110;    // set prescalar 1:64
+    uint16_t    prx     = F_CPU / (PB3DIV + 1) / 64 / 50;   
+#else
+    // 80000000 / 64 / 25000 = 50 => 20ms
+    uint8_t     tckps   = 0b110;    // set prescalar 1:64
+    uint16_t    prx     = 0x61A8;   // 25000
+#endif
+
     if(timer == TIMER3)
     {
         // set the vector up
         setIntVector(_TIMER_3_VECTOR, T3_IntHandler);
 
          //timer 3 set clock period 20ms
-#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
-        T3CONbits.TCKPS = 0b101; // set prescalar 1:32
-#else
-        T3CONbits.TCKPS = 0b110; // set prescalar 1:64
-#endif
+        T3CONbits.TCKPS = tckps; 
         TMR3 = 0;
-        PR3 = 0x61A8;        
+        PR3 = prx;        
            
 	    IFS0bits.T3IF = 0;// Clear the T3 interrupt flag 
 	    IEC0bits.T3IE = 1;// Enable T3 interrupt 
@@ -108,13 +119,9 @@ void initISR(int timer)
         setIntVector(_TIMER_4_VECTOR, T4_IntHandler);
  
         //timer 4 set clock period 20ms 
-#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
-        T4CONbits.TCKPS = 0b101; // set prescalar 1:32
-#else
-        T4CONbits.TCKPS = 0b110; // set prescalar 1:64
-#endif
+        T4CONbits.TCKPS = tckps; 
         TMR4 = 0;
-        PR4 = 0x61A8;        
+        PR4 = prx;        
            
 	    IFS0bits.T4IF = 0;// Clear the T4 interrupt flag 
 	    IEC0bits.T4IE = 1;// Enable T4 interrupt 
@@ -130,13 +137,9 @@ void initISR(int timer)
         setIntVector(_TIMER_5_VECTOR, T5_IntHandler);
 
         //timer 5 set clock period 20ms 
-#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
-        T5CONbits.TCKPS = 0b101; // set prescalar 1:32
-#else
-        T5CONbits.TCKPS = 0b110; // set prescalar 1:64
-#endif
+        T5CONbits.TCKPS = tckps; 
         TMR5 = 0;
-        PR5 = 0x61A8;        
+        PR5 = prx;        
            
 	    IFS0bits.T5IF = 0;// Clear the T5 interrupt flag 
 	    IEC0bits.T5IE = 1;// Enable T5 interrupt 

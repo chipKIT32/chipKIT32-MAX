@@ -31,3 +31,36 @@ chipkit_WiFire.build.variant=WiFire
 #chipkit_WiFire.upload.using=avrdude1
 
 ############################################################
+############################################################
+chipkit_WiFire_80MHz.name=chipKIT WiFire 80MHz
+chipkit_WiFire_80MHz.group=chipKIT
+
+
+# new items
+chipkit_WiFire_80MHz.platform=pic32
+chipkit_WiFire_80MHz.board=_BOARD_WIFIRE_
+chipkit_WiFire_80MHz.board.define=
+chipkit_WiFire_80MHz.ccflags=ffff
+chipkit_WiFire_80MHz.ldscript=MZ-application-32MZ2048ECX.ld
+# end of new items
+
+chipkit_WiFire_80MHz.upload.protocol=stk500v2
+chipkit_WiFire_80MHz.upload.maximum_size=520192
+chipkit_WiFire_80MHz.upload.speed=115200
+
+chipkit_WiFire_80MHz.bootloader.low_fuses=0xff
+chipkit_WiFire_80MHz.bootloader.high_fuses=0xdd
+chipkit_WiFire_80MHz.bootloader.extended_fuses=0x00
+chipkit_WiFire_80MHz.bootloader.path=not-supported
+chipkit_WiFire_80MHz.bootloader.file=not-supported
+chipkit_WiFire_80MHz.bootloader.unlock_bits=0x3F
+chipkit_WiFire_80MHz.bootloader.lock_bits=0x0F
+
+chipkit_WiFire_80MHz.build.mcu=32MZ2048ECG100
+chipkit_WiFire_80MHz.build.f_cpu=80000000UL
+chipkit_WiFire_80MHz.build.core=pic32
+chipkit_WiFire_80MHz.ldcommon=chipKIT-application-COMMON-MZ.ld
+chipkit_WiFire_80MHz.build.variant=WiFire
+#chipkit_WiFire_80MHz.upload.using=avrdude1
+
+############################################################
