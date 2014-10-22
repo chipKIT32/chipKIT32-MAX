@@ -298,27 +298,27 @@ extern const uint8_t 	digital_pin_to_analog_PGM[];
 #define	_SER0_BASE		_UART1_BASE_ADDRESS
 #define	_SER0_IRQ		_UART1_ERR_IRQ
 #define	_SER0_VECTOR	_UART_1_VECTOR
-#define	_SER0_IPL_ISR	_UART1_IPL_ISR
-#define	_SER0_IPL		_UART1_IPL_IPC
-#define	_SER0_SPL		_UART1_SPL_IPC
+#define	_SER0_IPL_ISR	IPL2SOFT
+#define	_SER0_IPL		2
+#define	_SER0_SPL		0
 
 /* Serial port 1 uses UART4; this goes to pins 39&40
 */
 #define	_SER1_BASE		_UART4_BASE_ADDRESS
 #define	_SER1_IRQ		_UART4_ERR_IRQ
 #define	_SER1_VECTOR	_UART_4_VECTOR
-#define	_SER1_IPL_ISR	_UART4_IPL_ISR
-#define	_SER1_IPL		_UART4_IPL_IPC
-#define	_SER1_SPL		_UART4_SPL_IPC
+#define	_SER1_IPL_ISR	IPL2SOFT
+#define	_SER1_IPL		2
+#define	_SER1_SPL		0
 
 /* Serial port 2 uses UART3
 */
 #define	_SER2_BASE		_UART3_BASE_ADDRESS
 #define	_SER2_IRQ		_UART3_ERR_IRQ
 #define	_SER2_VECTOR	_UART_3_VECTOR
-#define	_SER2_IPL_ISR	_UART3_IPL_ISR
-#define	_SER2_IPL		_UART3_IPL_IPC
-#define	_SER2_SPL		_UART3_SPL_IPC
+#define	_SER2_IPL_ISR	IPL2SOFT
+#define	_SER2_IPL		2
+#define	_SER2_SPL		0
 
 /* ------------------------------------------------------------ */
 /*					SPI Port Declarations						*/
@@ -331,9 +331,9 @@ extern const uint8_t 	digital_pin_to_analog_PGM[];
 #define	_SPI_RX_IRQ		_SPI2_RX_IRQ
 #define	_SPI_TX_IRQ		_SPI2_TX_IRQ
 #define	_SPI_VECTOR		_SPI_2_VECTOR
-#define _SPI_IPL_ISR	_SPI2_IPL_ISR
-#define	_SPI_IPL		_SPI2_IPL_IPC
-#define	_SPI_SPL		_SPI2_SPL_IPC
+#define _SPI_IPL_ISR	IPL3SOFT
+#define	_SPI_IPL		3
+#define	_SPI_SPL		0
 
 /* The Digilent DSPI library uses these ports.
 */
@@ -342,27 +342,27 @@ extern const uint8_t 	digital_pin_to_analog_PGM[];
 #define	_DSPI0_RX_IRQ		_SPI2_RX_IRQ
 #define	_DSPI0_TX_IRQ		_SPI2_TX_IRQ
 #define	_DSPI0_VECTOR		_SPI_2_VECTOR
-#define _DSPI0_IPL_ISR		_SPI2_IPL_ISR
-#define	_DSPI0_IPL			_SPI2_IPL_IPC
-#define	_DSPI0_SPL			_SPI2_SPL_IPC
+#define _DSPI0_IPL_ISR		IPL3SOFT
+#define	_DSPI0_IPL			3
+#define	_DSPI0_SPL			0
 
 #define	_DSPI1_BASE			_SPI1_BASE_ADDRESS
 #define	_DSPI1_ERR_IRQ		_SPI1_ERR_IRQ
 #define	_DSPI1_RX_IRQ		_SPI1_RX_IRQ
 #define	_DSPI1_TX_IRQ		_SPI1_TX_IRQ
 #define	_DSPI1_VECTOR		_SPI_1_VECTOR
-#define _DSPI1_IPL_ISR		_SPI1_IPL_ISR
-#define	_DSPI1_IPL			_SPI1_IPL_IPC
-#define	_DSPI1_SPL			_SPI1_SPL_IPC
+#define _DSPI1_IPL_ISR		IPL3SOFT
+#define	_DSPI1_IPL			3
+#define	_DSPI1_SPL			0
 
 #define	_DSPI2_BASE			_SPI3_BASE_ADDRESS
 #define	_DSPI2_ERR_IRQ		_SPI3_ERR_IRQ
 #define	_DSPI2_RX_IRQ		_SPI3_RX_IRQ
 #define	_DSPI2_TX_IRQ		_SPI3_TX_IRQ
 #define	_DSPI2_VECTOR		_SPI_3_VECTOR
-#define _DSPI2_IPL_ISR		_SPI3_IPL_ISR
-#define	_DSPI2_IPL			_SPI3_IPL_IPC
-#define	_DSPI2_SPL			_SPI3_SPL_IPC
+#define _DSPI2_IPL_ISR		IPL3SOFT
+#define	_DSPI2_IPL			3
+#define	_DSPI2_SPL			0
 
 // this is the MRF24
 #define	_DSPI3_BASE			_SPI4_BASE_ADDRESS
@@ -370,9 +370,9 @@ extern const uint8_t 	digital_pin_to_analog_PGM[];
 #define	_DSPI3_RX_IRQ		_SPI4_RX_IRQ
 #define	_DSPI3_TX_IRQ		_SPI4_TX_IRQ
 #define	_DSPI3_VECTOR		_SPI_4_VECTOR
-#define _DSPI3_IPL_ISR		_SPI4_IPL_ISR
-#define	_DSPI3_IPL			_SPI4_IPL_IPC
-#define	_DSPI3_SPL			_SPI4_SPL_IPC
+#define _DSPI3_IPL_ISR		IPL3SOFT
+#define	_DSPI3_IPL			3
+#define	_DSPI3_SPL			0
 
 /* ------------------------------------------------------------ */
 /*					I2C Port Declarations						*/
@@ -388,41 +388,41 @@ extern const uint8_t 	digital_pin_to_analog_PGM[];
 #define	_TWI_SLV_IRQ	_I2C2_SLAVE_IRQ
 #define	_TWI_MST_IRQ	_I2C2_MASTER_IRQ
 #define	_TWI_VECTOR		_I2C_2_VECTOR
-#define _TWI_IPL_ISR	_I2C2_IPL_ISR
-#define _TWI_IPL		_I2C2_IPL_IPC
-#define	_TWI_SPL		_I2C2_SPL_IPC
+#define _TWI_IPL_ISR	IPL3SOFT
+#define _TWI_IPL		3
+#define	_TWI_SPL		0
 
 /* Declarations for Digilent DTWI library.
-**		DTWI0 is SDA2/SCL2 on A4/A5 pins 18/19 (see above comment).
+**		DTWI0 is SDA2/SCL2 on A4/A5 pins 18/19 via shared pins 45/46 (see above comment).
 **		DTWI1 is SDA3/SCL3 on on digital pins 0 & 1.
 **		DTWI1 is SDA4/SCL4 on on digital pins 12 & 11.
 */
 #define	_DTWI0_BASE		_I2C2_BASE_ADDRESS
 #define	_DTWI0_BUS_IRQ	_I2C2_BUS_IRQ
-#define	_DTWI0_SLV_IRQ	_I2C2_SLAVE_IRQ
-#define	_DTWI0_MST_IRQ	_I2C2_MASTER_IRQ
 #define	_DTWI0_VECTOR	_I2C_2_VECTOR
-#define	_DTWI0_IPL_ISR	_I2C2_IPL_ISR
-#define	_DTWI0_IPL		_I2C2_IPL_IPC
-#define	_DTWI0_SPL		_I2C2_SPL_IPC
+#define	_DTWI0_IPL_ISR	IPL3SOFT
+#define	_DTWI0_IPL		3
+#define	_DTWI0_SPL		0
+#define _DTWI0_SCL_PIN  45 
+#define _DTWI0_SDA_PIN  46
 
 #define	_DTWI1_BASE		_I2C3_BASE_ADDRESS
 #define	_DTWI1_BUS_IRQ	_I2C3_BUS_IRQ
-#define	_DTWI1_SLV_IRQ	_I2C3_SLAVE_IRQ
-#define	_DTWI1_MST_IRQ	_I2C3_MASTER_IRQ
 #define	_DTWI1_VECTOR	_I2C_3_VECTOR
-#define	_DTWI1_IPL_ISR	_I2C3_IPL_ISR
-#define	_DTWI1_IPL		_I2C3_IPL_IPC
-#define	_DTWI1_SPL		_I2C3_SPL_IPC
+#define	_DTWI1_IPL_ISR	IPL3SOFT
+#define	_DTWI1_IPL		3
+#define	_DTWI1_SPL		0
+#define _DTWI1_SCL_PIN  1 
+#define _DTWI1_SDA_PIN  0
 
 #define	_DTWI2_BASE		_I2C4_BASE_ADDRESS
 #define	_DTWI2_BUS_IRQ	_I2C4_BUS_IRQ
-#define	_DTWI2_SLV_IRQ	_I2C4_SLAVE_IRQ
-#define	_DTWI2_MST_IRQ	_I2C4_MASTER_IRQ
 #define	_DTWI2_VECTOR	_I2C_4_VECTOR
-#define	_DTWI2_IPL_ISR	_I2C4_IPL_ISR
-#define	_DTWI2_IPL		_I2C4_IPL_IPC
-#define	_DTWI2_SPL		_I2C4_SPL_IPC
+#define	_DTWI2_IPL_ISR	IPL3SOFT
+#define	_DTWI2_IPL		3
+#define	_DTWI2_SPL		0
+#define _DTWI2_SCL_PIN  11 
+#define _DTWI2_SDA_PIN  12
 
 /* ------------------------------------------------------------ */
 /*					A/D Converter Declarations					*/

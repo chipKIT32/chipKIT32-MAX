@@ -106,9 +106,10 @@ void initIntVector(void)
 
     for(i=0; i<NUM_INT_VECTOR; i++)
     {
-        // If a compiler installed interrupt handler exits, pre-load it
-        // and don't fool with the priority
-        if(*((uint32_t *) pvOrgIntVec) != 0xFFFFFFFF)
+        // If a compiler installed interrupt handler exits, pre-load it with the original handler
+        // However, if a class construtor has already loaded a value in the table, don't replace it
+        // There is now a default ISR handler so this replacement almost always occurs
+        if(*((uint32_t *) pvOrgIntVec) != 0xFFFFFFFF  && _isr_primary_install[i] == (isrFunc) &_GEN_EXCPT_ADDR)
         {
             _isr_primary_install[i] = (isrFunc) pvOrgIntVec;
         }

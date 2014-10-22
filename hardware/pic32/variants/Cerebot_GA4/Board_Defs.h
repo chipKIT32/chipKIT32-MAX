@@ -284,9 +284,9 @@ extern const uint8_t	external_int_to_digital_pin_PGM[];
 #define	_SER0_BASE		_UART1_BASE_ADDRESS
 #define	_SER0_IRQ		_UART1_ERR_IRQ
 #define	_SER0_VECTOR	_UART_1_VECTOR
-#define	_SER0_IPL_ISR	_UART1_IPL_ISR
-#define	_SER0_IPL		_UART1_IPL_IPC
-#define	_SER0_SPL		_UART1_SPL_IPC
+#define	_SER0_IPL_ISR	IPL2SOFT
+#define	_SER0_IPL		2
+#define	_SER0_SPL		0
 #define	_SER0_TX_OUT	PPS_OUT_U1TX
 #define	_SER0_TX_PIN	8
 #define	_SER0_RX_IN		PPS_IN_U1RX
@@ -297,9 +297,9 @@ extern const uint8_t	external_int_to_digital_pin_PGM[];
 #define	_SER1_BASE		_UART2_BASE_ADDRESS
 #define	_SER1_IRQ		_UART2_ERR_IRQ
 #define	_SER1_VECTOR	_UART_2_VECTOR
-#define	_SER1_IPL_ISR	_UART2_IPL_ISR
-#define	_SER1_IPL		_UART2_IPL_IPC
-#define	_SER1_SPL		_UART2_SPL_IPC
+#define	_SER1_IPL_ISR	IPL2SOFT
+#define	_SER1_IPL		2
+#define	_SER1_SPL		0
 #define	_SER1_TX_OUT	PPS_OUT_U2TX
 #define	_SER1_TX_PIN	2
 #define	_SER1_RX_IN		PPS_IN_U2RX

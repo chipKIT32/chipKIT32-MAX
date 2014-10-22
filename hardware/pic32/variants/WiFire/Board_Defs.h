@@ -23,7 +23,7 @@
 /*	11/28/2011(GeneA): Moved data definitions and configuration			*/
 /*		functions to Board_Data.c										*/
 /*	11/29/2011(GeneA): Moved int priority definitions to System_Defs.h	*/
-//*	Feb 17, 2012	<KeithV> Added PPS support for MZ devices
+/*	Feb 17, 2012	<KeithV> Added PPS support for MZ devices           */
 /*																		*/
 /************************************************************************/
 //*	This library is free software; you can redistribute it and/or
@@ -46,6 +46,11 @@
 #define BOARD_DEFS_H
 
 #include <inttypes.h>
+
+    #define  _OCMP1_BASE_ADDRESS ((uint32_t) &OC1CON)
+    #define  _TIMER_1_IRQ _TIMER_1_VECTOR
+
+
 
 /* ------------------------------------------------------------ */
 /*				Public Board Declarations						*/
@@ -70,7 +75,7 @@
 #define	NUM_I2C_PORTS		1   
 
 #define NUM_DSPI_PORTS		4
-#define	NUM_DTWI_PORTS		1
+#define	NUM_DTWI_PORTS		2
 
 /* Define I/O devices on the board.
 */
@@ -333,12 +338,12 @@ extern const uint8_t	digital_pin_to_pps_in_PGM[];
 
 /* Serial port 0 uses UART1
 */
-#define	_SER0_BASE      _UART4_BASE_ADDRESS
+#define	_SER0_BASE      ((uint32_t) &U4MODE)
 #define	_SER0_IRQ       _UART4_FAULT_VECTOR
 #define	_SER0_VECTOR    _UART4_FAULT_VECTOR
-#define	_SER0_IPL_ISR   _UART4_IPL_ISR
-#define	_SER0_IPL       _UART4_IPL_IPC
-#define	_SER0_SPL       _UART4_SPL_IPC
+#define	_SER0_IPL_ISR   IPL2SRS
+#define	_SER0_IPL       2
+#define	_SER0_SPL       0
 #define _SER0_TX_OUT    PPS_OUT_U4TX     // (RPF8R = 0b0010)   RF8 -> U4TX   
 #define _SER0_TX_PIN    1                // REBIRDY2/RPF8/SCL3/RF8   
 #define _SER0_RX_IN     PPS_IN_U4RX      // (U4RXR = 0b1011)    RPF2 -> U4RX
@@ -346,12 +351,12 @@ extern const uint8_t	digital_pin_to_pps_in_PGM[];
 
 /* Serial port 1 uses UART1; this goes to pins 39&40
 */
-#define	_SER1_BASE		_UART1_BASE_ADDRESS
+#define	_SER1_BASE		((uint32_t) &U1MODE)
 #define	_SER1_IRQ		_UART1_FAULT_VECTOR
 #define	_SER1_VECTOR	_UART1_FAULT_VECTOR
-#define	_SER1_IPL_ISR	_UART1_IPL_ISR
-#define	_SER1_IPL		_UART1_IPL_IPC
-#define	_SER1_SPL		_UART1_SPL_IPC
+#define	_SER1_IPL_ISR	IPL2SRS
+#define	_SER1_IPL		2
+#define	_SER1_SPL		0
 #define _SER1_TX_OUT    PPS_OUT_U1TX     // (RPF8R = 0b0010)   RF8 -> U4TX   
 #define _SER1_TX_PIN    40                // REBIRDY2/RPF8/SCL3/RF8   
 #define _SER1_RX_IN     PPS_IN_U1RX      // (U4RXR = 0b1011)    RPF2 -> U4RX
@@ -364,14 +369,14 @@ extern const uint8_t	digital_pin_to_pps_in_PGM[];
 
 /* The standard SPI port uses SPI2.
 */
-#define	_SPI_BASE		_SPI2_BASE_ADDRESS
+#define	_SPI_BASE		((uint32_t) &SPI2CON)
 #define _SPI_ERR_IRQ	_SPI2_FAULT_VECTOR
 #define	_SPI_RX_IRQ		_SPI2_RX_VECTOR
 #define	_SPI_TX_IRQ		_SPI2_TX_VECTOR
 #define	_SPI_VECTOR		_SPI2_FAULT_VECTOR
-#define _SPI_IPL_ISR	_SPI2_IPL_ISR
-#define	_SPI_IPL		_SPI2_IPL_IPC
-#define	_SPI_SPL		_SPI2_SPL_IPC
+#define _SPI_IPL_ISR	IPL3SRS
+#define	_SPI_IPL		3
+#define	_SPI_SPL		0
 
 /* SPI pin declarations
 */
@@ -385,14 +390,14 @@ extern const uint8_t	digital_pin_to_pps_in_PGM[];
 */
 
 // same as the default SPI port
-#define	_DSPI0_BASE			_SPI2_BASE_ADDRESS
+#define	_DSPI0_BASE			((uint32_t) &SPI2CON)
 #define	_DSPI0_ERR_IRQ		_SPI2_FAULT_VECTOR
 #define	_DSPI0_RX_IRQ		_SPI2_RX_VECTOR
 #define	_DSPI0_TX_IRQ		_SPI2_TX_VECTOR
 #define	_DSPI0_VECTOR		_SPI2_FAULT_VECTOR
-#define _DSPI0_IPL_ISR		_SPI2_IPL_ISR
-#define	_DSPI0_IPL			_SPI2_IPL_IPC
-#define	_DSPI0_SPL			_SPI2_SPL_IPC
+#define _DSPI0_IPL_ISR		IPL3SRS
+#define	_DSPI0_IPL			3
+#define	_DSPI0_SPL			0
 
 #define _DSPI0_MISO_IN		PPS_IN_SDI2
 #define _DSPI0_MISO_PIN		MISO		    // RA1  SDI1    SDI1R = RPA1 = 0 
@@ -401,14 +406,14 @@ extern const uint8_t	digital_pin_to_pps_in_PGM[];
 
 
 // 2nd SPI
-#define	_DSPI1_BASE			_SPI1_BASE_ADDRESS
+#define	_DSPI1_BASE			((uint32_t) &SPI1CON)
 #define	_DSPI1_ERR_IRQ		_SPI1_FAULT_VECTOR
 #define	_DSPI1_RX_IRQ		_SPI1_RX_VECTOR
 #define	_DSPI1_TX_IRQ		_SPI1_TX_VECTOR
 #define	_DSPI1_VECTOR		_SPI1_FAULT_VECTOR
-#define _DSPI1_IPL_ISR		_SPI1_IPL_ISR
-#define	_DSPI1_IPL			_SPI1_IPL_IPC
-#define	_DSPI1_SPL			_SPI1_SPL_IPC
+#define _DSPI1_IPL_ISR		IPL3SRS
+#define	_DSPI1_IPL			3
+#define	_DSPI1_SPL			0
 
 #define _DSPI1_MISO_IN		PPS_IN_SDI1
 #define _DSPI1_MISO_PIN		36		        // RA1  SDI1    SDI1R = RPA1 = 0 
@@ -416,14 +421,14 @@ extern const uint8_t	digital_pin_to_pps_in_PGM[];
 #define _DSPI1_MOSI_PIN		35		        // RA4  SDO1    RPA4R = SDO1 = 3
 
 // SD Card
-#define	_DSPI2_BASE			_SPI3_BASE_ADDRESS
+#define	_DSPI2_BASE			((uint32_t) &SPI3CON)
 #define	_DSPI2_ERR_IRQ		_SPI3_FAULT_VECTOR
 #define	_DSPI2_RX_IRQ		_SPI3_RX_VECTOR
 #define	_DSPI2_TX_IRQ		_SPI3_TX_VECTOR
 #define	_DSPI2_VECTOR		_SPI3_FAULT_VECTOR
-#define _DSPI2_IPL_ISR		_SPI3_IPL_ISR
-#define	_DSPI2_IPL			_SPI3_IPL_IPC
-#define	_DSPI2_SPL			_SPI3_SPL_IPC
+#define _DSPI2_IPL_ISR		IPL3SRS
+#define	_DSPI2_IPL			3
+#define	_DSPI2_SPL			0
 
 #define _DSPI2_MISO_IN		PPS_IN_SDI3
 #define _DSPI2_MISO_PIN		53		    // RA1  SDI1    SDI1R = RPA1 = 0 
@@ -431,14 +436,14 @@ extern const uint8_t	digital_pin_to_pps_in_PGM[];
 #define _DSPI2_MOSI_PIN		54		    // RA4  SDO1    RPA4R = SDO1 = 3
 
 // this is the MRF24
-#define	_DSPI3_BASE			_SPI4_BASE_ADDRESS
+#define	_DSPI3_BASE			((uint32_t) &SPI4CON)
 #define	_DSPI3_ERR_IRQ		_SPI4_FAULT_VECTOR
 #define	_DSPI3_RX_IRQ		_SPI4_RX_VECTOR
 #define	_DSPI3_TX_IRQ		_SPI4_TX_VECTOR
 #define	_DSPI3_VECTOR		_SPI4_FAULT_VECTOR
-#define _DSPI3_IPL_ISR		_SPI4_IPL_ISR
-#define	_DSPI3_IPL			_SPI4_IPL_IPC
-#define	_DSPI3_SPL			_SPI4_SPL_IPC
+#define _DSPI3_IPL_ISR		IPL3SRS
+#define	_DSPI3_IPL			3
+#define	_DSPI3_SPL			0
 
 #define _DSPI3_MISO_IN		PPS_IN_SDI2
 #define _DSPI3_MISO_PIN		57		    // RA1  SDI1    SDI1R = RPA1 = 0 
@@ -450,31 +455,39 @@ extern const uint8_t	digital_pin_to_pps_in_PGM[];
 /*					I2C Port Declarations						*/
 /* ------------------------------------------------------------ */
 
-/* The standard I2C port uses I2C1 (SCL1/SDA1). These come to pins
-** A4/A5 pins 18/19 on the analog connector. It is necessary to have jumpers
-** JP6/JP8 set appropriately (RG2/RG3 position) to access the I2C
-** signals.  
+/* The standard I2C port uses I2C4 (SCL4/SDA4). These come to pins
+** A4/A5 pins 18/19 on the analog connector.
 */
-#define	_TWI_BASE		_I2C4_BASE_ADDRESS
-#define	_TWI_BUS_IRQ	_I2C4_BUS_IRQ
-#define	_TWI_SLV_IRQ	_I2C4_SLAVE_IRQ
-#define	_TWI_MST_IRQ	_I2C4_MASTER_IRQ
-#define	_TWI_VECTOR		_I2C_4_VECTOR
-#define _TWI_IPL_ISR	_I2C4_IPL_ISR
-#define _TWI_IPL		_I2C4_IPL_IPC
-#define	_TWI_SPL		_I2C4_SPL_IPC
+#define	_TWI_BASE		((uint32_t) &I2C4CON)
+#define	_TWI_BUS_IRQ	_I2C4_BUS_VECTOR
+#define	_TWI_SLV_IRQ	_I2C4_SLAVE_VECTOR
+#define	_TWI_MST_IRQ	_I2C4_MASTER_VECTOR
+#define	_TWI_VECTOR		_I2C4_BUS_VECTOR
+#define _TWI_IPL_ISR	IPL3SRS
+#define _TWI_IPL		3
+#define	_TWI_SPL		0
 
 /* Declarations for Digilent DTWI library.
 **		DTWI0 is SDA2/SCL2 on A4/A5 pins 18/19 (see above comment).
 */
-#define	_DTWI0_BASE		_I2C4_BASE_ADDRESS
-#define	_DTWI0_BUS_IRQ	_I2C4_BUS_IRQ
-#define	_DTWI0_SLV_IRQ	_I2C4_SLAVE_IRQ
-#define	_DTWI0_MST_IRQ	_I2C4_MASTER_IRQ
-#define	_DTWI0_VECTOR	_I2C_4_VECTOR
-#define	_DTWI0_IPL_ISR	_I2C4_IPL_ISR
-#define	_DTWI0_IPL		_I2C4_IPL_IPC
-#define	_DTWI0_SPL		_I2C4_SPL_IPC
+
+#define	_DTWI0_BASE		((uint32_t) &I2C4CON)
+#define	_DTWI0_BUS_IRQ	_I2C4_BUS_VECTOR
+#define	_DTWI0_VECTOR	_I2C4_BUS_VECTOR
+#define	_DTWI0_IPL_ISR	IPL3SRS 
+#define	_DTWI0_IPL		3
+#define	_DTWI0_SPL		0
+#define _DTWI0_SCL_PIN  19 
+#define _DTWI0_SDA_PIN  18
+
+#define	_DTWI1_BASE		((uint32_t) &I2C2CON)
+#define	_DTWI1_BUS_IRQ	_I2C2_BUS_VECTOR
+#define	_DTWI1_VECTOR	_I2C2_BUS_VECTOR
+#define	_DTWI1_IPL_ISR	IPL3SRS 
+#define	_DTWI1_IPL		3
+#define	_DTWI1_SPL		0
+#define _DTWI1_SCL_PIN  37 
+#define _DTWI1_SDA_PIN  4
 
 /* ------------------------------------------------------------ */
 /*					A/D Converter Declarations					*/
@@ -491,6 +504,13 @@ extern const uint8_t	digital_pin_to_pps_in_PGM[];
 #define _PORTE
 #define _PORTF
 #define _PORTG
+
+/* ------------------------------------------------------------ */
+/*  JTAG Support, set to 1 if you want JTAG enabled             */
+/*  otherwise JTAG will be disabled                             */
+/* ------------------------------------------------------------ */
+// Wi-FIRE supports JTAG
+#define _JTAG 1
 
 /* ------------------------------------------------------------ */
 

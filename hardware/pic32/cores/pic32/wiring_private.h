@@ -69,7 +69,7 @@
 
 		#if defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__)
 			#define EXTERNAL_NUM_INTERRUPTS 8
-		#elif defined(__PIC32MX__)
+		#elif defined(__PIC32MX__) || defined(__PIC32MZXX__)
 			#define EXTERNAL_NUM_INTERRUPTS 5
 		#else
 			#define EXTERNAL_NUM_INTERRUPTS 2

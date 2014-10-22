@@ -308,9 +308,9 @@ extern const uint8_t	external_int_to_digital_pin_PGM[];
 #define       _SER0_BASE           _UART1_BASE_ADDRESS
 #define       _SER0_IRQ            _UART1_ERR_IRQ
 #define       _SER0_VECTOR         _UART_1_VECTOR
-#define       _SER0_IPL_ISR        _UART1_IPL_ISR
-#define       _SER0_IPL            _UART1_IPL_IPC
-#define       _SER0_SPL            _UART1_SPL_IPC
+#define       _SER0_IPL_ISR        IPL2SOFT
+#define       _SER0_IPL            2
+#define       _SER0_SPL            0
 #define       _SER0_TX_OUT         PPS_OUT_U1TX     // FTDI RxD (RPB3R = 0x1) RPB3 <- U1TX    
 #define       _SER0_TX_PIN         23               // 23  AN5/C1INA/C2INC/RTCC/RPB3/SCL2/RB3      
 #define       _SER0_RX_IN          PPS_IN_U1RX      // FTDI TxD (U1RXR = 0x5) RPC6 -> U1RX  
@@ -322,9 +322,9 @@ extern const uint8_t	external_int_to_digital_pin_PGM[];
 #define       _SER1_BASE           _UART2_BASE_ADDRESS
 #define       _SER1_IRQ            _UART2_ERR_IRQ
 #define       _SER1_VECTOR         _UART_2_VECTOR
-#define       _SER1_IPL_ISR        _UART2_IPL_ISR
-#define       _SER1_IPL            _UART2_IPL_IPC
-#define       _SER1_SPL            _UART2_SPL_IPC
+#define       _SER1_IPL_ISR        IPL2SOFT
+#define       _SER1_IPL            2
+#define       _SER1_SPL            0
 #define       _SER1_TX_OUT         PPS_OUT_U2TX     // J2-2 (RPB0R = 0x2) RPB0 <- U2TX
 #define       _SER1_TX_PIN         20               // 20  RB0  PGED1/AN2/C1IND/C2INB/C3IND/RPB0/RB0
 #define       _SER1_RX_IN          PPS_IN_U2RX      // J2-3 (U2RXR = 0x2) RPB1 -> U2RX
@@ -424,12 +424,12 @@ extern const uint8_t	external_int_to_digital_pin_PGM[];
 */
 #define	_DTWI0_BASE		_I2C1_BASE_ADDRESS
 #define	_DTWI0_BUS_IRQ	_I2C1_BUS_IRQ
-#define	_DTWI0_SLV_IRQ	_I2C1_SLAVE_IRQ
-#define	_DTWI0_MST_IRQ	_I2C1_MASTER_IRQ
 #define	_DTWI0_VECTOR	_I2C_1_VECTOR
 #define	_DTWI0_IPL_ISR	_I2C1_IPL_ISR
 #define	_DTWI0_IPL		_I2C1_IPL_IPC
 #define	_DTWI0_SPL		_I2C1_SPL_IPC
+#define _DTWI0_SCL_PIN  38 
+#define _DTWI0_SDA_PIN  4
 
 /* ------------------------------------------------------------ */
 /*					A/D Converter Declarations					*/
