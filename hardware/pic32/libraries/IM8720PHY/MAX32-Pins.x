@@ -1,8 +1,8 @@
 /************************************************************************/
 /*																		*/
-/*	NetworkProfile.x                                                    */
+/*	ProMX7-Pins.x                                                       */
 /*																		*/
-/*	Network Hardware vector file for the Internal MAC and 8720 PHY      */
+/*	Pins defined for the chipKIT Pro MX7                                */
 /*																		*/
 /************************************************************************/
 /*  Author:     Keith Vogel                                             */
@@ -42,28 +42,25 @@
 /************************************************************************/
 /*  Revision History:													*/
 /*																		*/
-/*	12/6/2012(KeithV): Created											*/
+/*	12/6/2013(KeithV): Created											*/
 /*																		*/
 /************************************************************************/
 
-#ifndef IM8720PHY_PROFILE_X
-#define IM8720PHY_PROFILE_X
+#ifndef CHIPKIT_PROMX7_X
+#define CHIPKIT_PROMX7_X
 
-#define IM8720PHY
+#include <p32xxxx.h>
 
-// board specific stuff
-#if defined(_BOARD_MEGA_)
-
-    #include <MAX32-Pins.x>
-    
-#elif defined(_BOARD_CEREBOT_MX7CK_) || defined(_BOARD_CEREBOT_32MX7_)
-
-    #include <ProMX7-Pins.x>
-    
-#else
-
-    #error IM8720 is not supported by this board.
-
+#ifdef __cplusplus
+extern "C" {
 #endif
 
-#endif // IM8720PHY_PROFILE_X
+#define PHY_TRIS            TRISEbits.TRISE9        // = 0; output
+#define PHY_ENABLE          LATEbits.LATE9          // = 1; to enable
+#define PHY_ADDRESS         0x5                     // something other than 0 or 1 (although 1 is okay)
+
+#ifdef __cplusplus
+}
+#endif  // C++
+
+#endif // CHIPKIT_PROMX7_X
