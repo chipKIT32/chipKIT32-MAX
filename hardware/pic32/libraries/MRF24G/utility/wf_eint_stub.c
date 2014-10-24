@@ -77,10 +77,10 @@ void WF_EintInit(void)
     WIFI_IFSxCLR    = WIFI_INT_MASK;    // clear INT1IF bit (clears any pending interrupt)
 
     // set INT1 interrupt priority and subpriority fields (INT1IP and INT1IS fields)
-//    IPC1CLR    = 0xFF000000;    // first clear priority and subpriority fields
-//    IPC1SET    = 0x0C000000;    // set INT1 priority=3, subpriority=0
-    WIFI_IPC_IP = 3;                    // set priority=3
-    WIFI_IPC_IS = 0;                    // sub priority=0
+//    IPC1CLR    = 0xFF000000;      // first clear priority and subpriority fields
+//    IPC1SET    = 0x0C000000;      // set INT1 priority=3, subpriority=0
+    WIFI_IPC_IP = WF_IPL;           // set priority=3
+    WIFI_IPC_IS = WF_SUB_IPL;       // sub priority=0
 
     // enable the interrupt
     WIFI_IECxSET    = WIFI_INT_MASK;      // enable INT1
@@ -238,7 +238,7 @@ bool WF_isEintPending(void)
   Remarks:
     None
 *****************************************************************************/
-void __attribute((interrupt(ipl3), vector(WF_INT_VEC), nomips16)) _WFInterrupt(void)
+void __attribute((interrupt(WF_IPL_ISR), vector(WF_INT_VEC), nomips16)) _WFInterrupt(void)
 {
     // clear EINT
     WIFI_IFSxCLR = WIFI_INT_MASK;        // clear the interrupt

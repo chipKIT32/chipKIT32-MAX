@@ -503,7 +503,6 @@ void TCPResetSocket(TCPSOCKET *  pSocket)
         return;
     }
 
-
     // if we were listening, go back to listening
     // restore the socket to the listening state
     pSocket->s.portRemote = portListen;
@@ -513,28 +512,31 @@ void TCPResetSocket(TCPSOCKET *  pSocket)
     pSocket->sndISS     = 0;
 
     // initalize the socket info
-    pSocket->sndISS     = TCPGetSeqNumber(pSocket->s.pLLAdp);
-    pSocket->sndNXT     = 0;
-    pSocket->sndUNA     = 0;
-    pSocket->sndEND     = 0;
-    pSocket->sndWND     = 0;
-    pSocket->sndPSH     = 0;
+    pSocket->sndISS         = TCPGetSeqNumber(pSocket->s.pLLAdp);
+    pSocket->sndNXT         = 0;
+    pSocket->sndUNA         = 0;
+    pSocket->sndEND         = 0;
+    pSocket->sndWND         = 0;
+    pSocket->sndPSH         = 0;
 //    pSocket->sndWL2     = 0;
-    pSocket->sndUP      = 0;
+    pSocket->sndUP          = 0;
+    pSocket->sndRTTComplete = 0;
     
-    pSocket->rcvIRS     = 0;
+    pSocket->rcvIRS         = 0;
     // pSocket->rcvUNR     = 0;
-    pSocket->rcvNXT     = 0;
-    pSocket->rcvUP      = 0;
+    pSocket->rcvNXT         = 0;
+    pSocket->rcvUP          = 0;
 //    pSocket->rcvSeqAhead = 0;
 
-    pSocket->fGotFin    = false;
+    pSocket->fGotFin        = false;
+    pSocket->fSocketOpen    = false;
 
     // Jacobson rule
     pSocket->RTTsa      = RTTsaINIT;
     pSocket->RTTsv      = RTTsvINIT;
     pSocket->tRTO_SET   = RTO(pSocket);
     pSocket->tRTOCur    = pSocket->tRTO_SET;
+
 }
 
 // only called for incoming packets

@@ -45,7 +45,6 @@
 /************************************************************************/
 // Required header
 #include    <HTTPServer.h>
-#include    <IOConfig.h>
 
 /************************************************************************/
 /*    Module Variables, exported to other modules                       */

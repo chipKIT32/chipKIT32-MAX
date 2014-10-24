@@ -341,50 +341,6 @@ size_t TCPSocket::readStream(byte *rgbRead, size_t cbReadMax)
     return(0);
 }
 
-/***	size_t TCPSocket::writeStream(uint8_t bData)
-**
-**	Synopsis:   
-**      Write a byte out on the TcpIP connection
-**
-**	Parameters:
-**      bData     the byte to write out.
-**
-**	Return Values:
-**      Number of bytes written
-**
-**	Errors:
-**      None
-**
-**  Notes:
-**
-**      This call is safe to make without checking the connection status.
-**
-**      This is a private call and is provided so that TCPSocket can inherit from the
-**          the Print class, enabling print, println functionality for Arduino users.
-**
-**      This is a very costly call to make as the byte is flushed out on to the wire.
-**      No caching of intermediate written bytes are done because it is impossible to know if
-**      the caller only wants to write 1 byte, or has a sequence to write. If more than 1 byte
-**      is to be put on the wire in one packet, Write should be used.
-**
-*/
-size_t TCPSocket::write(uint8_t bData) {
-    writeByte(bData); 
-    return 1; 
-}
-size_t TCPSocket::write(const char *str) {
-    if(str != NULL) {
-        size_t size = strlen(str);
-        writeStream((const byte *) str, size);
-        return size;
-    } 
-    return 0;
-}
-size_t TCPSocket::write(const uint8_t *buffer, size_t size) {
-    writeStream(buffer, size);
-    return size;
-}
-
 /***	int TCPSocket::writeByte(byte bData)
 **      int TCPSocket::writeByte(byte bData, DEIPcK::STATUS * pStatus)
 **

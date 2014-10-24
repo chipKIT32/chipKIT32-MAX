@@ -611,9 +611,20 @@ static bool TCPCheckForRST(IPSTACK *  pIpStack, TCPSOCKET * pSocket, uint32_t tC
                     }
                 }
 
-                // random reset, just ignore and return
+                // random reset with no ACK, just ignore and return
                 else if(pIpStack->pTCPHdr->fRst)
                 {
+                    
+                    // MAC OS / Safari is very bad, they will
+                    // start a connection and then not ACK my SYN
+                    // the will just send a RST; bad bad Safari, they need
+                    // to send the ACK with it, they started the connection
+                    // if this is the correct seqNbr, remove the socket
+                    if(pIpStack->pTCPHdr->seqNbr == pSocket->rcvNXT)
+                    {
+                        TCPResetSocket(pSocket);
+                    }
+
                     return(true);
                 }
 
@@ -1655,6 +1666,8 @@ IPSTACK * TCPCreateSyn(TCPSOCKET * pSocket, uint32_t * pcbOptions, IPSTATUS * pS
         *((uint16_t *) pOption->rgu8)   = pSocket->cbLocalMSS;
 
         *pcbOptions                     = pOption->length;
+
+//        pSocket->tSndRTTStart           = SYSGetMilliSecond();
 
         return(pIpStack);
     }

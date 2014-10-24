@@ -45,7 +45,6 @@
 /************************************************************************/
 // Required header
 #include    <HTTPServer.h>
-#include    <IOConfig.h>
 
 // when done we will jump to the is page to redraw it
 GCMD::ACTION ComposeHTMLGetIO(CLIENTINFO * pClientInfo);

@@ -55,8 +55,6 @@
 
 #include    <DEIPcK.h>
 
-#include    "BoardDefs.h"
-
 #define OFFSETOF(t,m)        ((uint32_t) (&(((t *) 0)->m)))
 
 #define CNTHTTPCMD          10      // The Max number of unique HTML pages we vector off of. This must be at least 1. 

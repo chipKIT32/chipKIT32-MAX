@@ -59,6 +59,9 @@ extern "C" {
 #define WF_INT              1
 #define WF_SPI              2
 #define WF_SPI_FREQ         10000000
+#define WF_IPL_ISR          IPL3SOFT
+#define WF_IPL              3
+#define WF_SUB_IPL          0
 
 #define WF_INT_TRIS         (TRISDbits.TRISD8)
 #define WF_INT_IO           (PORTDbits.RD8)
