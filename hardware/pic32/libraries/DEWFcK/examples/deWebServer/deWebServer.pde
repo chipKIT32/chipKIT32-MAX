@@ -57,12 +57,29 @@
 /*  valuable to read before proceeding.                                 */
 /*                                                                      */
 /************************************************************************/
+
+//************************************************************************
+//************************************************************************
+//**************************  READ THIS  *********************************
+//************************************************************************
+//***********  !! COPY THIS SKETCH TO YOUR SKETCH DIRECTORY !! ***********
+//************************************************************************
+//************************************************************************
+//************** You will not be able to modify the network **************
+//************** parameters as long as this sketch is in a  **************
+//************* library subdirectory. Even if you modify in **************
+//************* MPIDE it will not take effect when you build  ************
+//************** and you will not be able to connect to ******************
+//************** your router, the connection will timeout ****************
+//************************************************************************
+//************************************************************************
+
 /************************************************************************/
 /*                       Supported hardware:                            */
 /*                                                                      */
-/*  Most / All Uno32 Shield form factor boards with a WiFiShield        */
-/*          For example the Uno32, uC32, WF32                           */
-/*  Max32 with a WiFiShield                                             */
+/*  uC32 with a WiFiShield                                              */
+/*  WF32                                                                */
+/*  WiFIRE                                                              */
 /*  MX7cK with a pmodSD on JPF                                          */
 /*                                                                      */
 /*  NOTE: you can NOT stack a NetworkShield and a WiFiShield on a Max32 */
@@ -123,15 +140,13 @@
 /************************************************************************/
 // You must have an SD card reader somewhere
 // as the HTTP server uses the SD card to hold the HTML pages.
-// this is a required library
+// this is a required library; we must specify this in the .pde for
+// MPIDE to include it.
 #include    <SD.h>
 
 // and this is the HTTPServer library code.
 // this is a required library
 #include    <HTTPServer.h>
-
-// configure the buttons switches and LEDs
-#include    <IOConfig.h>
 
 /************************************************************************/
 /*    HTTP URL Matching Strings                                         */

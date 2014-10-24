@@ -51,6 +51,13 @@
 /*                                                                      */
 /************************************************************************/
 
+/************************************************************************/
+/*                       Supported hardware:                            */
+/*                                                                      */
+/*  MX7cK                                                               */
+/*                                                                      */
+/************************************************************************/
+
 //******************************************************************************************
 //******************************************************************************************
 //***************************** SET YOUR CONFIGURATION *************************************
@@ -183,22 +190,6 @@ void loop() {
   
                 tcpClient.writeStream(rgbWriteStream, cbWriteStream);
  
-                // write() should all fail to compile
-                // while write is inherited from Print, we Hide this in the TcpClient class
-                // as writeStream should be used; and we don't want confusing and competing calls
-                // we just want to inherit the print() and println() methods from Print in TcpClient
-                //tcpClient.write("Printed from tcpClient.write");
-                //tcpClient.write(rgbWrite, cbWrite);
-                //tcpClient.write((uint8_t) 'b');
-
-                // check that print() and println() work
-                tcpClient.print("*Printed from tcpClient.print*\n");
-                tcpClient.println("*Printed from tcpClient.println*");
-
-                // however, tcpClient "is-a" Print, so if I pass it as a Print
-                // interally it should work as-a Print.
-                printWrite(tcpClient);
-
                 Serial.println("Bytes Read Back:");
                 state = READ;
                 tStart = (unsigned) millis();
@@ -216,7 +207,7 @@ void loop() {
  
                 for(int i=0; i < cbRead; i++) 
                 {
-                    Serial.print(rgbRead[i], BYTE);
+                    Serial.print((char) rgbRead[i]);
                 }
             }
 
@@ -242,34 +233,4 @@ void loop() {
 
     // keep the stack alive each pass through the loop()
     DEIPcK::periodicTasks();
-}
-
-/***    void printWrite(Print& print)
- *
- *    Parameters:
- *          print - This is a Print object to check to see if it works
- *              
- *    Return Values:
- *          None
- *
- *    Description: 
- *    
- *      
- *      If we pass a TcpClient into a fuction taking Print, all Print methods should
- *      work as TcpClient "is-a" Print.
- *      
- * ------------------------------------------------------------ */
-void printWrite(Print& print)
-{
-
-    // check the print() and println() methods
-    tcpClient.print("*Printed from print.print*\n");
-    tcpClient.println("*Printed from print.println*");
-
-    // While these are hidden from TcpClient
-    // they should not be hidden from Print
-    // these should all work.
-    print.write((uint8_t) 'b');
-    print.write("\n*Wrote from print.write*\n");
-    print.write(rgbWrite, cbWrite);
 }

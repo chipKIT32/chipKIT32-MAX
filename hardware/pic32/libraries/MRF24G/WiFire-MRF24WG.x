@@ -58,7 +58,10 @@ extern "C" {
 
 #define WF_INT              4
 #define WF_SPI              4
-#define WF_SPI_FREQ         10000000
+#define WF_SPI_FREQ         20000000
+#define WF_IPL_ISR          IPL3SRS
+#define WF_IPL              3
+#define WF_SUB_IPL          0
 
 #define WF_INT_TRIS         (TRISAbits.TRISA15)
 #define WF_INT_IO           (PORTAbits.RA15)

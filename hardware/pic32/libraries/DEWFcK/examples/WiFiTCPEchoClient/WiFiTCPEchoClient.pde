@@ -51,6 +51,15 @@
 /*                                                                      */
 /************************************************************************/
 
+/************************************************************************/
+/*                       Supported hardware:                            */
+/*                                                                      */
+/*  uC32 with a WiFiShield                                              */
+/*  WF32                                                                */
+/*  WiFIRE                                                              */
+/*                                                                      */
+/************************************************************************/
+
 //******************************************************************************************
 //******************************************************************************************
 //***************************** SET YOUR CONFIGURATION *************************************
@@ -249,22 +258,6 @@ void loop() {
                 {     
                 tcpSocket.writeStream(rgbWriteStream, cbWriteStream);
  
-                // write() should all fail to compile
-                // while write is inherited from Print, we Hide this in the TcpClient class
-                // as writeStream should be used; and we don't want confusing and competing calls
-                // we just want to inherit the print() and println() methods from Print in TcpClient
-                //tcpSocket.write("Printed from tcpSocket.write");
-                //tcpSocket.write(rgbWrite, cbWrite);
-                //tcpSocket.write((uint8_t) 'b');
-
-                // check that print() and println() work
-                tcpSocket.print("*Printed from tcpSocket.print*\n");
-                tcpSocket.println("*Printed from tcpSocket.println*");
-
-                // however, tcpSocket "is-a" Print, so if I pass it as a Print
-                // interally it should work as-a Print.
-                printWrite(tcpSocket);
-
                 Serial.println("Bytes Read Back:");
                 state = READ;
                 tStart = (unsigned) millis();
@@ -282,7 +275,7 @@ void loop() {
 
                     for(int i=0; i < cbRead; i++)
                     {
-                        Serial.print(rgbRead[i], BYTE);
+                        Serial.print((char) rgbRead[i]);
                     }
                 }
 
@@ -310,32 +303,3 @@ void loop() {
     DEIPcK::periodicTasks();
 }
 
-/***        void printWrite(Print& print)
- *
- *        Parameters:
- *          print - This is a Print object to check to see if it works
- *              
- *        Return Values:
- *          None
- *
- *        Description: 
- *        
- *      
- *      If we pass a TcpClient into a fuction taking Print, all Print methods should
- *      work as TcpClient "is-a" Print.
- *      
- * ------------------------------------------------------------ */
-void printWrite(Print& print)
-{
-
-    // check the print() and println() methods
-    tcpSocket.print("*Printed from print.print*\n");
-    tcpSocket.println("*Printed from print.println*");
-
-    // While these are hidden from TcpClient
-    // they should not be hidden from Print
-    // these should all work.
-    print.write((uint8_t) 'b');
-    print.write("\n*Wrote from print.write*\n");
-    print.write(rgbWrite, cbWrite);
-}

@@ -44,28 +44,99 @@
 /*    6/18/2014(KeithV): Created                                        */
 /************************************************************************/
 
-#define HTTPCIO     2
-#define HTTPCLED    4
 
-#if defined(_BOARD_UC32_)       // this assumes a BasicIO Shield attached
-    #define HTTPIO1     7    
-    #define HTTPIO2     8
-    #define HTTPLED1    26
-    #define HTTPLED2    27
-    #define HTTPLED3    28
-    #define HTTPLED4    29
-#elif defined (_BOARD_WF32_) || defined (_BOARD_WIFIRE_) || defined(_BOARD_CEREBOT_MX7CK_)
-    #define HTTPIO1     PIN_BTN1    
-    #define HTTPIO2     PIN_BTN2
-    #define HTTPLED1    PIN_LED1
-    #define HTTPLED2    PIN_LED2
-    #define HTTPLED3    PIN_LED3
-    #define HTTPLED4    PIN_LED4
+#if defined(_BOARD_UC32_)       // this assumes a BasicIO Shield is attached
+
+    // define the IOs and LEDs
+    #define HTTPIO1         7       // switch 2    
+    #define HTTPIO2         8       // switch 3
+    #define HTTPLED1        26      // LED 1
+    #define HTTPLED2        27      // LED 2
+    #define HTTPLED3        28      // LED 3
+    #define HTTPLED4        29      // LED 4
+    #define HTTPLED5        30      // LED 5
+    #define HTTPLED6        31      // LED 6
+    #define HTTPLED7        32      // LED 7
+    #define HTTPLED8        33      // LED 8
+
+    // set up the replacement strings
+    #define HTTPCIO         2
+    #define HTTPCLED        3
+    #define REPLINIT {HTTPIO1, HTTPIO2, HTTPLED1, HTTPLED2, HTTPLED3}
+
+    // services for the SD card, status LED and Serial Camera
+    // these are required for the HTTP library and the Camera library
+    #define PIN_SDCS        4
+    #define PIN_LED_SAFE    PIN_LED2
+    #define CAMSERIAL       Serial1
+
+#elif defined (_BOARD_WF32_)
+
+    // define the IOs and LEDs
+    #define HTTPIO1         PIN_BTN1    
+    #define HTTPIO2         PIN_BTN2
+    #define HTTPLED1        PIN_LED1
+    #define HTTPLED2        PIN_LED2
+    #define HTTPLED3        PIN_LED3
+    #define HTTPLED4        PIN_LED4
+
+    // set up the replacement strings
+    #define HTTPCIO         2
+    #define HTTPCLED        3
+    #define REPLINIT {HTTPIO1, HTTPIO2, HTTPLED1, HTTPLED2, HTTPLED3}
+
+    // services for the SD card, status LED and Serial Camera
+    // these are required for the HTTP library and the Camera library
+    #define PIN_SDCS        51
+    #define PIN_LED_SAFE    PIN_LED4
+    #define CAMSERIAL       Serial1
+
+#elif defined (_BOARD_WIFIRE_)
+
+    // define the IOs and LEDs
+    #define HTTPIO1         PIN_BTN1    
+    #define HTTPIO2         PIN_BTN2
+    #define HTTPLED1        PIN_LED1
+    #define HTTPLED2        PIN_LED2
+    #define HTTPLED3        PIN_LED3
+    #define HTTPLED4        PIN_LED4
+
+    // set up the replacement strings
+    #define HTTPCIO         2
+    #define HTTPCLED        3
+    #define REPLINIT {HTTPIO1, HTTPIO2, HTTPLED1, HTTPLED2, HTTPLED3}
+
+    // services for the SD card, status LED and Serial Camera
+    // these are required for the HTTP library and the Camera library
+    #define PIN_SDCS        52
+    #define PIN_LED_SAFE    PIN_LED4
+    #define CAMSERIAL       Serial1
+
+#elif defined(_BOARD_CEREBOT_MX7CK_)
+
+    // define the IOs and LEDs
+    #define HTTPIO1         PIN_BTN1    
+    #define HTTPIO2         PIN_BTN2
+    #define HTTPLED1        PIN_LED1
+    #define HTTPLED2        PIN_LED2
+    #define HTTPLED3        PIN_LED3
+    #define HTTPLED4        PIN_LED4
+
+    // set up the replacement strings
+    #define HTTPCIO         2
+    #define HTTPCLED        3
+    #define REPLINIT {HTTPIO1, HTTPIO2, HTTPLED1, HTTPLED2, HTTPLED3}
+
+    // services for the SD card, status LED and Serial Camera
+    // these are required for the HTTP library and the Camera library
+    #define PIN_SDCS        SS
+    #define PIN_LED_SAFE    PIN_LED4
+    #define CAMSERIAL       Serial1
+
 #else
     #error HTTP Server does not support this board
 #endif
 
 // This must match the order and number of replacement strings in IOPage.htm
 #define cReplacementStrings (HTTPCLED + HTTPCIO)
-#define REPLINIT {HTTPIO1, HTTPIO2, HTTPLED1, HTTPLED2, HTTPLED3, HTTPLED4}
 extern const uint32_t rgReplacePins[];

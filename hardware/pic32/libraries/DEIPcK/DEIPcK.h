@@ -99,7 +99,7 @@ typedef struct FFLL_T
     void *     _this;      // A pointer to myself, so I know who I am when I come off the list
 } FFLL;
 
-class TCPSocket : public Print {
+class TCPSocket {
 private:
 
     FFLL _ffptInfo;
@@ -118,20 +118,6 @@ private:
 
     // private methods
     void clear(bool fConstruct);
-
-    // This is implementing the virtual methods for Print
-    // by making these private we are hiding write() from TCPSocket
-    // while not specifically needed, we do a "using" of Print::write
-    // so that any other default implementations remain visible
-    // in TCPSocket however I have hidden all Print virtual methods
-    // so TCPSocket will not see any write() methods.
-    // print() and println() are visible to TCPSocket
-    // also, if you pass TCPSocket to a method taking Print
-    // that method will see all of the write() methods off of Print
-    using Print::write;
-    size_t write(uint8_t bData);
-    size_t write(const char *str);
-    size_t write(const uint8_t *buffer, size_t size);
 
 public:
     TCPSocket();

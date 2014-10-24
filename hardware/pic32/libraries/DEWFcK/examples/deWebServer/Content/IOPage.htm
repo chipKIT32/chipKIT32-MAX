@@ -1,27 +1,26 @@
-﻿<html>
+﻿<!DOCTYPE html>
+<html>
 <head>
     <title>IO Page</title>
 </head>
 <body>
-	<div align="center">
-		<img alt="" height="112" src="Digilent.png" width="500" />
-	</div>
-    <br />
+		<div style="width:500px; margin:0px auto 20px;" >
+			<img alt="Digilent Logo" height="112" src="Digilent.png" width="500" />
+		</div>
 	<div style="margin-left: 40px">
         Current state of the Button / Switch:<br />
-        <br />
+        <p>
         Input 1:&nbsp;&nbsp;&nbsp; <!--~--><br />
         Input 2:&nbsp;&nbsp;&nbsp; <!--~--><br />
-        <br />
+        </p>
         <form method="post" action="IOPage.htm">
             Current State of the LEDs<br />
             Modify and Submit<br />
-            <br />
+            <p>
             <input id="LED1" type="checkbox" name="LEDS" value="1" <!--~         --> /> LED 1<br />
             <input id="LED2" type="checkbox" name="LEDS" value="2" <!--~         --> /> LED 2<br />
             <input id="LED3" type="checkbox" name="LEDS" value="3" <!--~         --> /> LED 3<br />
-            <input id="LED4" type="checkbox" name="LEDS" value="4" <!--~         --> /> LED 4<br />
-            <br />
+            </p>
             <input id="SubmitLED" type="submit" value="submit" />
         </form>
     </div>
