@@ -201,7 +201,7 @@
       </filterchain>
     </loadfile>
     <!-- <echo message="base revision is ${revision.base}." /> -->
-
+    <echo message="revision.base: ${revision.base} compared to revision ${revision}" />
     <condition property="revision.correct">
       <!-- Using contains because I can't figure out how to get rid of the
 	   LF in revision.base. Please file a bug if you have a fix. -->
