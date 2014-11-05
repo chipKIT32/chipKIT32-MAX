@@ -179,17 +179,19 @@ unsigned int attachCoreTimerService(uint32_t (*)(uint32_t count));
 unsigned int detachCoreTimerService(uint32_t (*)(uint32_t count));
 unsigned int callCoreTimerServiceNow(uint32_t (* service)(uint32_t));
 
-#if defined(__PIC32MZXX__)
-    #define setIntVector(_vec, _func) NULL
-    #define getIntVector(_vec) NULL
-    #define clearIntVector(_vec) NULL
+// if you are going to use setIntVector, then specify the interrupt routine as:
+// void __USER_ISR UserInterrupt(void) {}
+#if defined(__PIC32MZ__)
+#define __USER_ISR __attribute__((nomips16, interrupt(), section(".user_interrupt")))
 #else
-    isrFunc setIntVector(int vec, isrFunc func);
-    isrFunc getIntVector(int vec);
-    isrFunc clearIntVector(int vec);
+#define __USER_ISR __attribute__((nomips16, interrupt()))
 #endif
-    void setIntPriority(int vec, int ipl, int spl);
-    void getIntPriority(int vec, int * pipl, int * pspl);
+
+isrFunc setIntVector(int vec, isrFunc func);
+isrFunc getIntVector(int vec);
+isrFunc clearIntVector(int vec);
+void setIntPriority(int vec, int ipl, int spl);
+void getIntPriority(int vec, int * pipl, int * pspl);
 
 
 /* ------------------------------------------------------------ */
@@ -390,6 +392,7 @@ extern const IMAGE_HEADER_INFO _image_header_info;      // this is the header in
 // programs some of its own data when writing the header to program flash.
 // The bootloader will add such things as the bootloader version and capabilities
 // vend ID, prod ID etc...
+extern const uint32_t _ebase_address;                           // a pointer to the ebase register value
 extern const uint32_t _IMAGE_PTR_TABLE;                         // a pointer to a table of 2 items, ebase and image header
 extern const uint32_t _IMAGE_HEADER_ADDR;                       // a pointer to the image header, the second item given in the table
 #define _IMAGE_EBASE_ADDR _IMAGE_PTR_TABLE                      // Really, the first item in the table is the ebase address.

@@ -58,9 +58,6 @@
 #define read_count(dest) __asm__ __volatile__("mfc0 %0,$9" : "=r" (dest))
 #define CORETIMER_TICKS_PER_MICROSECOND		(F_CPU / 2 / 1000000UL)
 
-// this is used for MZ parts
-#define pISROffset  ((uint32_t *) &OFF000)
-
 /************************************************************************/
 /************************************************************************/
 /*                      CONSTRUCTORS                                    */
@@ -104,8 +101,8 @@ DTWI::DTWI(p32_i2c * ptwiC, uint8_t irqBusC, uint8_t vecC, uint8_t iplC, uint8_t
     // the MZ part works off of offset tables
     // We are given the BUS VEC, and we must fill in the 
     // the SLAVE and MASTER VECs as well
-    pISROffset[vec+1] = pISROffset[vec];
-    pISROffset[vec+2] = pISROffset[vec];
+    setIntVector(vec+1, getIntVector(vec));
+    setIntVector(vec+2, getIntVector(vec));
 
     // and set the priorities for the other 2 vectors.
     setIntPriority(vec+1, ipl, spl);
@@ -1441,7 +1438,7 @@ DTWI0::DTWI0() : DTWI(((p32_i2c *) _DTWI0_BASE), _DTWI0_BUS_IRQ, _DTWI0_VECTOR, 
 
 // the associated interrupt routine.
 #if defined(__PIC32MZXX__)
-void __attribute__((nomips16,vector(_DTWI0_VECTOR),interrupt(_DTWI0_IPL_ISR))) IntDtwi0Handler(void)
+void __attribute__((nomips16,at_vector(_DTWI0_VECTOR),interrupt(_DTWI0_IPL_ISR))) IntDtwi0Handler(void)
 #else
 void __attribute__((interrupt(),nomips16)) IntDtwi0Handler(void)
 #endif
@@ -1466,7 +1463,7 @@ DTWI1::DTWI1() : DTWI(((p32_i2c *) _DTWI1_BASE), _DTWI1_BUS_IRQ, _DTWI1_VECTOR, 
 
 // the associated interrupt routine.
 #if defined(__PIC32MZXX__)
-void __attribute__((nomips16,vector(_DTWI1_VECTOR),interrupt(_DTWI1_IPL_ISR))) IntDtwi1Handler(void)
+void __attribute__((nomips16,at_vector(_DTWI1_VECTOR),interrupt(_DTWI1_IPL_ISR))) IntDtwi1Handler(void)
 #else
 void __attribute__((interrupt(),nomips16)) IntDtwi1Handler(void)
 #endif
@@ -1491,7 +1488,7 @@ DTWI2::DTWI2() : DTWI(((p32_i2c *) _DTWI2_BASE), _DTWI2_BUS_IRQ, _DTWI2_VECTOR, 
 
 // the associated interrupt routine.
 #if defined(__PIC32MZXX__)
-void __attribute__((nomips16,vector(_DTWI2_VECTOR),interrupt(_DTWI2_IPL_ISR))) IntDtwi2Handler(void)
+void __attribute__((nomips16,at_vector(_DTWI2_VECTOR),interrupt(_DTWI2_IPL_ISR))) IntDtwi2Handler(void)
 #else
 void __attribute__((interrupt(),nomips16)) IntDtwi2Handler(void)
 #endif
@@ -1516,7 +1513,7 @@ DTWI3::DTWI3() : DTWI(((p32_i2c *) _DTWI3_BASE), _DTWI3_BUS_IRQ, _DTWI3_VECTOR, 
 
 // the associated interrupt routine.
 #if defined(__PIC32MZXX__)
-void __attribute__((nomips16,vector(_DTWI3_VECTOR),interrupt(_DTWI3_IPL_ISR))) IntDtwi3Handler(void)
+void __attribute__((nomips16,at_vector(_DTWI3_VECTOR),interrupt(_DTWI3_IPL_ISR))) IntDtwi3Handler(void)
 #else
 void __attribute__((interrupt(),nomips16)) IntDtwi3Handler(void)
 #endif
@@ -1541,7 +1538,7 @@ DTWI4::DTWI4() : DTWI(((p32_i2c *) _DTWI4_BASE), _DTWI4_BUS_IRQ, _DTWI4_VECTOR, 
 
 // the associated interrupt routine.
 #if defined(__PIC32MZXX__)
-void __attribute__((nomips16,vector(_DTWI4_VECTOR),interrupt(_DTWI4_IPL_ISR))) IntDtwi4Handler(void)
+void __attribute__((nomips16,at_vector(_DTWI4_VECTOR),interrupt(_DTWI4_IPL_ISR))) IntDtwi4Handler(void)
 #else
 void __attribute__((interrupt(),nomips16)) IntDtwi4Handler(void)
 #endif

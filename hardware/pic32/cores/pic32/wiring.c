@@ -715,7 +715,7 @@ uint32_t millisecondCoreTimerService(uint32_t curTime)
 **
 */
 #if defined(__PIC32MZXX__)
-void __attribute__((nomips16, vector(_CORE_TIMER_VECTOR),interrupt(IPL7SRS))) CoreTimerHandler(void)
+void __attribute__((nomips16, at_vector(_CORE_TIMER_VECTOR),interrupt(IPL7SRS))) CoreTimerHandler(void)
 #else
 void __attribute__((interrupt(),nomips16)) CoreTimerHandler(void)
 #endif

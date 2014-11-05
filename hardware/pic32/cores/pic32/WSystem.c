@@ -79,7 +79,112 @@ void (*volatile _isr_primary_install[NUM_INT_VECTOR]) (void) = {[0 ... NUM_INT_V
 /* ------------------------------------------------------------ */
 /*			Interrupt Vector Management Functions				*/
 /* ------------------------------------------------------------ */
-#if !defined(__PIC32MZXX__)
+#if defined(__PIC32MZXX__)
+
+/***	initIntVector
+**
+**	Parameters:
+**
+**	Return Value:
+**		none
+**
+**	Errors:
+**		none
+**
+**	Description:
+**		Initializes the RAM IntVector table to
+**		all of the compiler generated interrupt vectors
+**		This will provide backwards compatibility should
+**		someone not set their interrupt vector by calling
+**		setIntVector; but by not setting the IntVector
+**      your vector may be maked by a conflicting peripheral
+*/
+void initIntVector(void)
+{
+    return;
+}
+
+/* ------------------------------------------------------------ */
+/***	getIntVector
+**
+**	Parameters:
+**		vec		- interrupt vector number
+**
+**	Return Value:
+**              The current ISR function
+**
+**	Errors:
+**              NULL if vector is out of range
+**
+**	Description:
+**          Returns the currently assigned ISR function without
+**          changeing anything.
+**
+*/
+isrFunc getIntVector(int vec)
+{
+    uint32_t isrAddr = ((uint32_t *) &OFF000)[vec] + &_ebase_address;
+    return((isrFunc) isrAddr);
+}
+
+/***	setIntVector
+**
+**	Parameters:
+**		vec		- interrupt vector number
+**		func	- interrupt service routine to install
+**
+**	Return Value:
+**		Returns pointer to previous interrupt service routine for the vector
+**              This may return the compiler installed routine if the compiler set one.
+**              It will return the address of the general exception handler if no previous ISR was set.
+**              It will return 0/NULL if the vector requested is out of range of the processor
+**
+**	Errors:
+**		None as this is used in begin() methods that have no error returns.
+**
+**	Description:
+**		Dynamically install an interrupt service routine for the specified
+**		interrupt vector; This will blast over exiting ones without an error
+**      because many Arduino begin methods return no errors and just expect this to
+**      work. However, this may overwrite a previeously installed ISR.
+**
+**      This does not change the priority level of the interrupt routine
+*/
+isrFunc setIntVector(int vec, isrFunc func)
+{
+    isrFunc isrAddr = getIntVector(vec);
+ 
+    ((uint32_t *) &OFF000)[vec] = (uint32_t) func - (uint32_t) &_ebase_address;
+
+    return(isrAddr);
+}
+
+/* ------------------------------------------------------------ */
+/***	clearIntVector
+**
+**	Parameters:
+**		vec		- interrupt vector number
+**
+**	Return Value:
+**      Returns the currently set ISR before clearing it
+**
+**	Errors:
+**		Returns NULL if the vector number specified is out of range
+**
+**	Description:
+**		Sets the priority to 0 thus disabling the ISR, and sets the 
+**      pointer to the general exception handler.
+*/
+isrFunc clearIntVector(int vec)
+{
+    isrFunc isrAddr = getIntVector(vec);
+ 
+    ((uint32_t *) &OFF000)[vec] = (uint32_t) &_GEN_EXCPT_ADDR - (uint32_t) &_ebase_address;
+
+    return(isrAddr);
+}
+
+#else
 /***	initIntVector
 **
 **	Parameters:

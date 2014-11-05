@@ -313,7 +313,7 @@ void ProcessServer(void)
                     Serial.print("SSID: ");
                     for(j=0; j<scanInfo.ssidLen; j++)
                     {
-                        Serial.print(scanInfo.ssid[j]);
+                        Serial.print((char) scanInfo.ssid[j]);
                     }
                     Serial.println();
 

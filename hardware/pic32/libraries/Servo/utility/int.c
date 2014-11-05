@@ -48,7 +48,7 @@
 //	more generic.
 
 #if defined(__PIC32MZXX__)
-void __attribute__((nomips16,vector(_TIMER_3_VECTOR),interrupt(IPL4SRS))) T3_IntHandler(void)
+void __attribute__((nomips16,at_vector(_TIMER_3_VECTOR),interrupt(IPL4SRS))) T3_IntHandler(void)
 #else
 void __attribute__((interrupt(),nomips16)) T3_IntHandler (void)
 #endif
@@ -59,7 +59,7 @@ void __attribute__((interrupt(),nomips16)) T3_IntHandler (void)
 
 
 #if defined(__PIC32MZXX__)
-void __attribute__((nomips16,vector(_TIMER_4_VECTOR),interrupt(IPL4SRS))) T4_IntHandler(void)
+void __attribute__((nomips16,at_vector(_TIMER_4_VECTOR),interrupt(IPL4SRS))) T4_IntHandler(void)
 #else
 void __attribute__((interrupt(),nomips16)) T4_IntHandler (void)
 #endif
@@ -69,7 +69,7 @@ void __attribute__((interrupt(),nomips16)) T4_IntHandler (void)
 }
 
 #if defined(__PIC32MZXX__)
-void __attribute__((nomips16,vector(_TIMER_5_VECTOR),interrupt(IPL4SRS))) T5_IntHandler(void)
+void __attribute__((nomips16,at_vector(_TIMER_5_VECTOR),interrupt(IPL4SRS))) T5_IntHandler(void)
 #else
 void __attribute__((interrupt(),nomips16)) T5_IntHandler (void)
 #endif

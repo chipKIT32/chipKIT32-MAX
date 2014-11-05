@@ -258,7 +258,7 @@ void detachInterrupt(uint8_t interruptNum)
 //************************************************************************
 // INT0 ISR
 #if defined(__PIC32MZXX__)
-void __attribute__((nomips16,vector(_EXTERNAL_0_VECTOR),interrupt(IPL4SRS))) ExtInt0Handler(void)
+void __attribute__((nomips16,at_vector(_EXTERNAL_0_VECTOR),interrupt(IPL4SRS))) ExtInt0Handler(void)
 #else
 void __attribute__((interrupt(),nomips16)) ExtInt0Handler(void)
 #endif
@@ -274,7 +274,7 @@ void __attribute__((interrupt(),nomips16)) ExtInt0Handler(void)
 //************************************************************************
 // INT1 ISR
 #if defined(__PIC32MZXX__)
-void __attribute__((nomips16,vector(_EXTERNAL_1_VECTOR),interrupt(IPL4SRS))) ExtInt1Handler(void)
+void __attribute__((nomips16,at_vector(_EXTERNAL_1_VECTOR),interrupt(IPL4SRS))) ExtInt1Handler(void)
 #else
 void __attribute__((interrupt(),nomips16)) ExtInt1Handler(void)
 #endif
@@ -290,7 +290,7 @@ void __attribute__((interrupt(),nomips16)) ExtInt1Handler(void)
 //************************************************************************
 // INT2 ISR
 #if defined(__PIC32MZXX__)
-void __attribute__((nomips16,vector(_EXTERNAL_2_VECTOR),interrupt(IPL4SRS))) ExtInt2Handler(void)
+void __attribute__((nomips16,at_vector(_EXTERNAL_2_VECTOR),interrupt(IPL4SRS))) ExtInt2Handler(void)
 #else
 void __attribute__((interrupt(),nomips16)) ExtInt2Handler(void)
 #endif
@@ -306,7 +306,7 @@ void __attribute__((interrupt(),nomips16)) ExtInt2Handler(void)
 //************************************************************************
 // INT3 ISR
 #if defined(__PIC32MZXX__)
-void __attribute__((nomips16,vector(_EXTERNAL_3_VECTOR),interrupt(IPL4SRS))) ExtInt3Handler(void)
+void __attribute__((nomips16,at_vector(_EXTERNAL_3_VECTOR),interrupt(IPL4SRS))) ExtInt3Handler(void)
 #else
 void __attribute__((interrupt(),nomips16)) ExtInt3Handler(void)
 #endif
@@ -322,7 +322,7 @@ void __attribute__((interrupt(),nomips16)) ExtInt3Handler(void)
 //************************************************************************
 // INT4 ISR
 #if defined(__PIC32MZXX__)
-void __attribute__((nomips16,vector(_EXTERNAL_4_VECTOR),interrupt(IPL4SRS))) ExtInt4Handler(void)
+void __attribute__((nomips16,at_vector(_EXTERNAL_4_VECTOR),interrupt(IPL4SRS))) ExtInt4Handler(void)
 #else
 void __attribute__((interrupt(),nomips16)) ExtInt4Handler(void)
 #endif

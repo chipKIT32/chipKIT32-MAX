@@ -97,8 +97,20 @@ SECTIONS
     KEEP(*(.gen_handler))
   } > kseg0_vector_mem
 
+  /*  The startup code is in the .reset.startup section.
+   *  Keep this here for backwards compatibility with older
+   *  C32 v1.xx releases.
+   */
+
+  /* Boot Sections */
+  .reset _RESET_ADDR :
+  {
+    KEEP(*(.reset))
+    KEEP(*(.reset.startup))
+  } > kseg0_program_mem
+
   /* Interrupt vector table with vector offsets */
-  .vectors _ebase_address + 0x200 :
+  .vectors  :
   {
     _vector_0_addr = . ;
     /*  Symbol __vector_offset_n points to .vector_n if it exists,
@@ -622,18 +634,16 @@ SECTIONS
     /* Default interrupt handler */
     __vector_offset_default = . - _ebase_address;
     KEEP(*(.vector_default))
-  } > kseg0_vector_mem
+  } > kseg0_program_mem
 
-  /*  The startup code is in the .reset.startup section.
-   *  Keep this here for backwards compatibility with older
-   *  C32 v1.xx releases.
-   */
-
-  /* Boot Sections */
-  .reset _RESET_ADDR :
+  /* user interrupt is for user defined interrupts that
+  ** that will be dynamically assigned at runtime
+  ** This will force the code to be placed within 2^^18 of EBASE
+  ** so the function can be put in the OFFxxx register and work
+  */
+  .user_interrupt :
   {
-    KEEP(*(.reset))
-    KEEP(*(.reset.startup))
+    KEEP(*(.user_interrupt))
   } > kseg0_program_mem
 
   .startup :
