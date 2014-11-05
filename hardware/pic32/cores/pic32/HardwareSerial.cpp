@@ -204,7 +204,7 @@ void HardwareSerial::begin(unsigned long baudRate)
     mapPps(pinRx, ppsRx);
 #endif
 
-        setIntVector(vec, isr);
+    setIntVector(vec, isr);
 
 	/* Set the interrupt privilege level and sub-privilege level
 	*/
@@ -218,8 +218,8 @@ void HardwareSerial::begin(unsigned long baudRate)
         // the MZ part works off of offset tables
         // we must fill in the tx and rx VECs to point
         // to the ERR VEC so all 3 VECs use the same ISR
-        pISROffset[vec+1] = pISROffset[vec];
-        pISROffset[vec+2] = pISROffset[vec];
+        setIntVector(vec+1, isr);
+        setIntVector(vec+2, isr);
 
         // and set the priorities for the other 2 vectors.
         setIntPriority(vec+1, ipl, spl);
@@ -779,7 +779,7 @@ extern "C" {
 #if defined(_SER0_VECTOR)
 
 #if defined(__PIC32MZXX__)
-void __attribute__((nomips16,vector(_SER0_VECTOR),interrupt(_SER0_IPL_ISR))) IntSer0Handler(void)
+void __attribute__((nomips16,at_vector(_SER0_VECTOR),interrupt(_SER0_IPL_ISR))) IntSer0Handler(void)
 #else
 void __attribute__((interrupt(), nomips16)) IntSer0Handler(void)
 #endif
@@ -811,7 +811,7 @@ void __attribute__((interrupt(), nomips16)) IntSer0Handler(void)
 #if defined(_SER1_VECTOR)
 
 #if defined(__PIC32MZXX__)
-void __attribute__((nomips16,vector(_SER1_VECTOR),interrupt(_SER1_IPL_ISR))) IntSer1Handler(void)
+void __attribute__((nomips16,at_vector(_SER1_VECTOR),interrupt(_SER1_IPL_ISR))) IntSer1Handler(void)
 #else
 void __attribute__((interrupt(), nomips16)) IntSer1Handler(void)
 #endif
@@ -839,7 +839,7 @@ void __attribute__((interrupt(), nomips16)) IntSer1Handler(void)
 #if defined(_SER2_VECTOR)
 
 #if defined(__PIC32MZXX__)
-void __attribute__((nomips16,vector(_SER2_VECTOR),interrupt(_SER2_IPL_ISR))) IntSer2Handler(void)
+void __attribute__((nomips16,at_vector(_SER2_VECTOR),interrupt(_SER2_IPL_ISR))) IntSer2Handler(void)
 #else
 void __attribute__((interrupt(), nomips16)) IntSer2Handler(void)
 #endif
@@ -867,7 +867,7 @@ void __attribute__((interrupt(), nomips16)) IntSer2Handler(void)
 #if defined(_SER3_VECTOR)
 
 #if defined(__PIC32MZXX__)
-void __attribute__((nomips16,vector(_SER3_VECTOR),interrupt(_SER3_IPL_ISR))) IntSer3Handler(void)
+void __attribute__((nomips16,at_vector(_SER3_VECTOR),interrupt(_SER3_IPL_ISR))) IntSer3Handler(void)
 #else
 void __attribute__((interrupt(), nomips16)) IntSer3Handler(void)
 #endif
@@ -895,7 +895,7 @@ void __attribute__((interrupt(), nomips16)) IntSer3Handler(void)
 #if defined(_SER4_VECTOR)
 
 #if defined(__PIC32MZXX__)
-void __attribute__((nomips16,vector(_SER4_VECTOR),interrupt(_SER4_IPL_ISR))) IntSer4Handler(void)
+void __attribute__((nomips16,at_vector(_SER4_VECTOR),interrupt(_SER4_IPL_ISR))) IntSer4Handler(void)
 #else
 void __attribute__((interrupt(), nomips16)) IntSer4Handler(void)
 #endif
@@ -923,7 +923,7 @@ void __attribute__((interrupt(), nomips16)) IntSer4Handler(void)
 #if defined(_SER5_VECTOR)
 
 #if defined(__PIC32MZXX__)
-void __attribute__((nomips16,vector(_SER5_VECTOR),interrupt(_SER5_IPL_ISR))) IntSer5Handler(void)
+void __attribute__((nomips16,at_vector(_SER5_VECTOR),interrupt(_SER5_IPL_ISR))) IntSer5Handler(void)
 #else
  void __attribute__((interrupt(), nomips16)) IntSer5Handler(void)
 #endif
@@ -951,7 +951,7 @@ void __attribute__((nomips16,vector(_SER5_VECTOR),interrupt(_SER5_IPL_ISR))) Int
 #if defined(_SER6_VECTOR)
 
 #if defined(__PIC32MZXX__)
-void __attribute__((nomips16,vector(_SER6_VECTOR),interrupt(_SER6_IPL_ISR))) IntSer6Handler(void)
+void __attribute__((nomips16,at_vector(_SER6_VECTOR),interrupt(_SER6_IPL_ISR))) IntSer6Handler(void)
 #else
 void __attribute__((interrupt(), nomips16)) IntSer6Handler(void)
 #endif
@@ -979,7 +979,7 @@ void __attribute__((interrupt(), nomips16)) IntSer6Handler(void)
 #if defined(_SER7_VECTOR)
 
 #if defined(__PIC32MZXX__)
-void __attribute__((nomips16,vector(_SER7_VECTOR),interrupt(_SER7_IPL_ISR))) IntSer7Handler(void)
+void __attribute__((nomips16,at_vector(_SER7_VECTOR),interrupt(_SER7_IPL_ISR))) IntSer7Handler(void)
 #else
 void __attribute__((interrupt(), nomips16)) IntSer7Handler(void)
 #endif

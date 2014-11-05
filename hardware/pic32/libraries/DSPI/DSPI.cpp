@@ -1379,7 +1379,7 @@ extern "C" {
 #if defined(_DSPI0_VECTOR)
 
 #if defined(__PIC32MZXX__)
-void __attribute__((nomips16,vector(_DSPI0_VECTOR),interrupt(_DSPI0_IPL_ISR))) IntDspi0Handler(void)
+void __attribute__((nomips16,at_vector(_DSPI0_VECTOR),interrupt(_DSPI0_IPL_ISR))) IntDspi0Handler(void)
 #else
 void __attribute__((interrupt(), nomips16)) IntDspi0Handler(void)
 #endif
@@ -1409,7 +1409,7 @@ void __attribute__((interrupt(), nomips16)) IntDspi0Handler(void)
 #if defined(_DSPI1_VECTOR)
 
 #if defined(__PIC32MZXX__)
-void __attribute__((nomips16,vector(_DSPI1_VECTOR),interrupt(_DSPI1_IPL_ISR))) IntDspi1Handler(void)
+void __attribute__((nomips16,at_vector(_DSPI1_VECTOR),interrupt(_DSPI1_IPL_ISR))) IntDspi1Handler(void)
 #else
 void __attribute__((interrupt(), nomips16)) IntDspi1Handler(void)
 #endif
@@ -1439,7 +1439,7 @@ void __attribute__((interrupt(), nomips16)) IntDspi1Handler(void)
 #if defined(_DSPI2_VECTOR)
 
 #if defined(__PIC32MZXX__)
-void __attribute__((nomips16,vector(_DSPI2_VECTOR),interrupt(_DSPI2_IPL_ISR))) IntDspi2Handler(void)
+void __attribute__((nomips16,at_vector(_DSPI2_VECTOR),interrupt(_DSPI2_IPL_ISR))) IntDspi2Handler(void)
 #else
 void __attribute__((interrupt(), nomips16)) IntDspi2Handler(void)
 #endif
@@ -1469,7 +1469,7 @@ void __attribute__((interrupt(), nomips16)) IntDspi2Handler(void)
 #if defined(_DSPI3_VECTOR)
 
 #if defined(__PIC32MZXX__)
-void __attribute__((nomips16,vector(_DSPI3_VECTOR),interrupt(_DSPI3_IPL_ISR))) IntDspi3Handler(void)
+void __attribute__((nomips16,at_vector(_DSPI3_VECTOR),interrupt(_DSPI3_IPL_ISR))) IntDspi3Handler(void)
 #else
 void __attribute__((interrupt(), nomips16)) IntDspi3Handler(void)
 #endif

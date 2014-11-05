@@ -238,7 +238,11 @@ bool WF_isEintPending(void)
   Remarks:
     None
 *****************************************************************************/
+#if defined(__PIC32MZXX__)
+void __attribute((interrupt(WF_IPL_ISR), at_vector(WF_INT_VEC), nomips16)) _WFInterrupt(void)
+#else
 void __attribute((interrupt(WF_IPL_ISR), vector(WF_INT_VEC), nomips16)) _WFInterrupt(void)
+#endif
 {
     // clear EINT
     WIFI_IFSxCLR = WIFI_INT_MASK;        // clear the interrupt
