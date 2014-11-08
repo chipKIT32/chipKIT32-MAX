@@ -337,7 +337,7 @@ DSPI::begin(uint8_t pinT) {
 
 	/* Set the default baud rate.
 	*/
-	brg = (uint16_t)((F_CPU / (2 * _DSPI_SPD_DEFAULT)) - 1);
+	brg = (uint16_t)((__PIC32_pbClk / (2 * _DSPI_SPD_DEFAULT)) - 1);
 	pspi->sxBrg.reg = brg;
 
 	/* Clear the receive overflow bit and receive overflow error flag
@@ -406,7 +406,7 @@ DSPI::setSpeed(uint32_t spd) {
 
 	/* Compute the baud rate divider for this frequency.
 	*/
-	brg = (uint16_t)((F_CPU / (2 * spd)) - 1);
+	brg = (uint16_t)((__PIC32_pbClk / (2 * spd)) - 1);
 
 	/* That the baud rate value is in the correct range.
 	*/
