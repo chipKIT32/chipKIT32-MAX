@@ -105,7 +105,8 @@ class TwoWire
     int write(int);
     int write(char*);
     uint8_t available(void);
-    uint8_t receive(void);
+    uint8_t __attribute__((deprecated("Use read() instead"))) receive(void);
+    uint8_t read(void);
     void onReceive( void (*)(int) );
     void onRequest( void (*)(void) );
 };
