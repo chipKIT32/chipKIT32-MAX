@@ -141,6 +141,7 @@ HardwareSerial::HardwareSerial(p32_uart * uartT, int irqT, int vecT, int iplT, i
 	ipl  = (uint8_t)iplT;
 	spl  = (uint8_t)splT;
     isr  = isrHandler;
+    rxIntr = NULL;
 
 #if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__) || defined(__PIC32MZXX__) || defined(__PIC32MX47X__)
 	pinTx = (uint8_t)pinT;
@@ -454,6 +455,11 @@ size_t HardwareSerial::write(uint8_t theChar)
     return 1;
 }
 
+// Hardware serial is always connected regardless.
+HardwareSerial::operator int() {
+    return 1;
+}
+
 /* ------------------------------------------------------------ */
 /***	HardwareSerial::doSerialInt
 **
@@ -484,18 +490,26 @@ void HardwareSerial::doSerialInt(void)
 	if ((ifs->reg & bit_rx) != 0)
 	{
 		ch = uart->uxRx.reg;
-		bufIndex	= (rx_buffer.head + 1) % RX_BUFFER_SIZE;
-	
-		/* If we should be storing the received character into the location
-		** just before the tail (meaning that the head would advance to the
-		** current location of the tail), we're about to overflow the buffer
-		** and so we don't write the character or advance the head.
-		*/
-		if (bufIndex != rx_buffer.tail)
-		{
-			rx_buffer.buffer[rx_buffer.head] = ch;
-			rx_buffer.head = bufIndex;
-		}
+        if (rxIntr != NULL) {
+            /* If we have had an interrupt callback routine defined then call
+            ** that instead of adding the character to the queue. Pass the
+            ** received character to the function for processing.
+            */
+            rxIntr(ch);
+        } else {
+            bufIndex	= (rx_buffer.head + 1) % RX_BUFFER_SIZE;
+        
+            /* If we should be storing the received character into the location
+            ** just before the tail (meaning that the head would advance to the
+            ** current location of the tail), we're about to overflow the buffer
+            ** and so we don't write the character or advance the head.
+            */
+            if (bufIndex != rx_buffer.tail)
+            {
+                rx_buffer.buffer[rx_buffer.head] = ch;
+                rx_buffer.head = bufIndex;
+            }
+        }
 
 		/* Clear the interrupt flag.
 		*/
@@ -512,6 +526,16 @@ void HardwareSerial::doSerialInt(void)
 		ifs->clr = bit_tx;
 	}
 
+}
+
+/* Attach the interrupt by storing a function pointer in the rxIntr variable */
+void HardwareSerial::attachInterrupt(void (*callback)(int)) {
+    rxIntr = callback;
+}
+
+/* Detatching the interrupt is as simple as setting the rxIntr to null. */
+void HardwareSerial::detachInterrupt() {
+    rxIntr = NULL;
 }
 
 /* ------------------------------------------------------------ */
@@ -567,6 +591,15 @@ boolean	USBstoreDataRoutine(const byte *buffer, int length)
 {
     unsigned int	i;
 
+    // If we have a receive callback defined then repeatedly
+    // call it with each character.
+    if (Serial.rxIntr != NULL) {
+        for (i = 0; i < length; i++) {
+            Serial.rxIntr(buffer[i]);
+        }
+        return true;
+    }
+
     // Put each byte into the serial recieve buffer
     for (i=0; i<length; i++)
 	{
@@ -591,6 +624,7 @@ USBSerial::USBSerial(ring_buffer	*rx_buffer)
 	_rx_buffer			=	rx_buffer;
 	_rx_buffer->head	=	0;
 	_rx_buffer->tail	=	0;
+    rxIntr = NULL;
 }
 
 USBSerial::operator int() {
@@ -697,6 +731,16 @@ unsigned char	usbBuf[4];
 	
 	cdcacm_print(usbBuf, 1);
     return 1;
+}
+
+/* Attach the interrupt by storing a function pointer in the rxIntr variable */
+void USBSerial::attachInterrupt(void (*callback)(int)) {
+    rxIntr = callback;
+}
+
+/* Detatching the interrupt is as simple as setting the rxIntr to null. */
+void USBSerial::detachInterrupt() {
+    rxIntr = NULL;
 }
 
 //*	testing showed 63 gave better speed results than 64
