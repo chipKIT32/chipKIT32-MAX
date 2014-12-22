@@ -102,6 +102,8 @@ class HardwareSerial : public Stream
 		uint32_t		bit_tx;		//tx interrupt flag bit
 		ring_buffer		rx_buffer;	//queue used for UART rx data
 
+        void            (*rxIntr)(int); // Interrupt callback routine
+
 	public:
 #if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__) || defined(__PIC32MZXX__) || defined(__PIC32MX47X__)
 		HardwareSerial(p32_uart * uartP, int irq, int vec, int ipl, int spl, isrFunc isrHandler, int pinT, int pinR, ppsFunctionType ppsT, ppsFunctionType ppsR);
@@ -110,6 +112,9 @@ class HardwareSerial : public Stream
 #endif
 
 		void			doSerialInt(void);
+
+        void            attachInterrupt(void (*callback)(int));
+        void            detachInterrupt();
 
 		void			begin(unsigned long baudRate);
 		void			end();
@@ -120,6 +125,8 @@ class HardwareSerial : public Stream
 		virtual void	purge(void);
 		virtual	size_t	write(uint8_t);
 		using	Print::write; // pull in write(str) and write(buf, size) from Print
+        operator        int();
+
 };
 
 #if defined(_USB) && defined(_USE_USB_FOR_SERIAL_)
@@ -131,6 +138,11 @@ class USBSerial : public Stream
 		
 	public:
 		USBSerial	(ring_buffer	*rx_buffer);
+
+        void            (*rxIntr)(int); // Interrupt callback routine
+
+        void            attachInterrupt(void (*callback)(int));
+        void            detachInterrupt();
 
 		void			begin(unsigned long baudRate);
 		void			end();

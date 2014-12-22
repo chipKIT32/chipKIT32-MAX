@@ -229,10 +229,14 @@ uint8_t TwoWire::available(void)
   return rxBufferLength - rxBufferIndex;
 }
 
+uint8_t TwoWire::receive(void) {
+	return read();
+}
+
 // must be called in:
 // slave rx event callback
 // or after requestFrom(address, numBytes)
-uint8_t TwoWire::receive(void)
+uint8_t TwoWire::read(void)
 {
   // default to returning null char
   // for people using with char strings
