@@ -41,7 +41,7 @@
 #endif
 
 #ifndef CDCACM_PROD
-#define CDCACM_PROD "stk500v2"
+#define CDCACM_PROD "Stk500v2"
 #endif
 
 #ifndef CDCACM_SER
