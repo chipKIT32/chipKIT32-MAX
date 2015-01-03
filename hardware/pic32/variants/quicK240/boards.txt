@@ -1,0 +1,31 @@
+############################################################
+quick240_usb_pic32.name=PONTECH quicK240
+quick240_usb_pic32.group=PONTECH
+
+# new items
+quick240_usb_pic32.platform=pic32
+quick240_usb_pic32.board=_BOARD_PONTECH_QUICK240_USB_
+quick240_usb_pic32.compiler.define=-D_USE_USB_FOR_SERIAL_
+quick240_usb_pic32.ccflags=ffff
+quick240_usb_pic32.ldscript=chipKIT-application-32MX795F512.ld
+# end of new items
+
+quick240_usb_pic32.upload.protocol=stk500v2
+quick240_usb_pic32.upload.maximum_size=520192
+quick240_usb_pic32.upload.speed=115200
+
+quick240_usb_pic32.bootloader.low_fuses=0xff
+quick240_usb_pic32.bootloader.high_fuses=0xdd
+quick240_usb_pic32.bootloader.extended_fuses=0x00
+quick240_usb_pic32.bootloader.path=not-supported
+quick240_usb_pic32.bootloader.file=not-supported
+quick240_usb_pic32.bootloader.unlock_bits=0x3F
+quick240_usb_pic32.bootloader.lock_bits=0x0F
+
+quick240_usb_pic32.build.mcu=32MX795F512L
+quick240_usb_pic32.build.f_cpu=80000000L
+quick240_usb_pic32.build.core=pic32
+quick240_usb_pic32.build.variant=quicK240
+#mega_usb_pic32.upload.using=
+
+############################################################

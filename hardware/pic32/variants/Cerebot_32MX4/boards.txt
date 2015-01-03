@@ -1,0 +1,31 @@
+############################################################
+cerebot32mx4.name=Cerebot 32MX4
+cerebot32mx4.group=Cerebot
+
+# new items
+cerebot32mx4.platform=pic32
+cerebot32mx4.board=_BOARD_CEREBOT_32MX4_
+cerebot32mx4.board.define=
+cerebot32mx4.ccflags=ffff
+cerebot32mx4.ldscript=chipKIT-application-32MX460F512.ld
+# end of new items
+
+cerebot32mx4.upload.protocol=stk500v2
+cerebot32mx4.upload.maximum_size=520192
+cerebot32mx4.upload.speed=115200
+
+cerebot32mx4.bootloader.low_fuses=0xff
+cerebot32mx4.bootloader.high_fuses=0xdd
+cerebot32mx4.bootloader.extended_fuses=0x00
+cerebot32mx4.bootloader.path=not-supported
+cerebot32mx4.bootloader.file=not-supported
+cerebot32mx4.bootloader.unlock_bits=0x3F
+cerebot32mx4.bootloader.lock_bits=0x0F
+
+cerebot32mx4.build.mcu=32MX460F512L
+cerebot32mx4.build.f_cpu=80000000L
+cerebot32mx4.build.core=pic32
+cerebot32mx4.build.variant=Cerebot_32MX4
+#cerebot32mx4.upload.using=
+
+############################################################

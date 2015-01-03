@@ -43,6 +43,13 @@
 #include <sys/kmem.h>
 #include "flash.h"
 
+#if defined(__PIC32MZ__)
+#define NVMDATA     NVMDATA0
+#define NVMCON_WREN _NVMCON_WREN_MASK
+#define NVMCON_WR   _NVMCON_WR_MASK
+#endif
+
+
 /* ------------------------------------------------------------ */
 /*				Local Type Definitions							*/
 /* ------------------------------------------------------------ */
@@ -127,7 +134,7 @@ uint32_t writeFlashWord(void * adr, uint32_t val)
 	/* Place the data in the NVM data register in preparation
 	** for writing.
 	*/
-	NVMDATA = val;
+    NVMDATA = val;
 
 	/* Perform the write operation.
 	*/

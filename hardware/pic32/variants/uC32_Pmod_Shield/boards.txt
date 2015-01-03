@@ -1,0 +1,37 @@
+############################################################
+uc32_pmod.name=chipKIT uC32 with Pmod Shield
+uc32_pmod.group=chipKIT
+
+# new items
+uc32_pmod.platform=pic32
+uc32_pmod.board=_BOARD_UC32_
+uc32_pmod.board.define=
+uc32_pmod.ccflags=ffff
+uc32_pmod.ldscript=chipKIT-application-32MX340F512.ld
+# end of new items
+
+# Use a high -Gnum for devices that have less than 64K of data memory
+# For -G1024, objects 1024 bytes or smaller will be accessed by
+# gp-relative addressing
+uc32_pmod.compiler.c.flags=-O2::-c::-mno-smart-io::-w::-ffunction-sections::-fdata-sections::-G1024::-g::-mdebugger::-Wcast-align::-fno-short-double
+uc32_pmod.compiler.cpp.flags=-O2::-c::-mno-smart-io::-w::-fno-exceptions::-ffunction-sections::-fdata-sections::-G1024::-g::-mdebugger::-Wcast-align::-fno-short-double
+
+uc32_pmod.upload.protocol=stk500v2
+uc32_pmod.upload.maximum_size=520192
+uc32_pmod.upload.speed=115200
+
+uc32_pmod.bootloader.low_fuses=0xff
+uc32_pmod.bootloader.high_fuses=0xdd
+uc32_pmod.bootloader.extended_fuses=0x00
+uc32_pmod.bootloader.path=not-supported
+uc32_pmod.bootloader.file=not-supported
+uc32_pmod.bootloader.unlock_bits=0x3F
+uc32_pmod.bootloader.lock_bits=0x0F
+
+uc32_pmod.build.mcu=32MX340F512H
+uc32_pmod.build.f_cpu=80000000L
+uc32_pmod.build.core=pic32
+uc32_pmod.build.variant=uC32_Pmod_Shield
+#uc32_pmod.upload.using=
+
+############################################################
