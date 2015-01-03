@@ -1,0 +1,73 @@
+############################################################
+cerebot_mx3ck.name=Cerebot MX3cK
+cerebot_mx3ck.group=Cerebot
+
+# new items
+cerebot_mx3ck.platform=pic32
+cerebot_mx3ck.board=_BOARD_CEREBOT_MX3CK_
+cerebot_mx3ck.board.define=
+cerebot_mx3ck.ccflags=ffff
+cerebot_mx3ck.ldscript=chipKIT-application-32MX320F128.ld
+# end of new items
+
+# Use a high -Gnum for devices that have less than 64K of data memory
+# For -G1024, objects 1024 bytes or smaller will be accessed by
+# gp-relative addressing
+cerebot_mx3ck.compiler.c.flags=-O2::-c::-mno-smart-io::-w::-ffunction-sections::-fdata-sections::-G1024::-g::-mdebugger::-Wcast-align::-fno-short-double
+cerebot_mx3ck.compiler.cpp.flags=-O2::-c::-mno-smart-io::-w::-fno-exceptions::-ffunction-sections::-fdata-sections::-G1024::-g::-mdebugger::-Wcast-align::-fno-short-double
+
+cerebot_mx3ck.upload.protocol=stk500v2
+cerebot_mx3ck.upload.maximum_size=126976
+cerebot_mx3ck.upload.speed=115200
+
+cerebot_mx3ck.bootloader.low_fuses=0xff
+cerebot_mx3ck.bootloader.high_fuses=0xdd
+cerebot_mx3ck.bootloader.extended_fuses=0x00
+cerebot_mx3ck.bootloader.path=not-supported
+cerebot_mx3ck.bootloader.file=not-supported
+cerebot_mx3ck.bootloader.unlock_bits=0x3F
+cerebot_mx3ck.bootloader.lock_bits=0x0F
+
+cerebot_mx3ck.build.mcu=32MX320F128H
+cerebot_mx3ck.build.f_cpu=80000000L
+cerebot_mx3ck.build.core=pic32
+cerebot_mx3ck.build.variant=Cerebot_MX3cK
+#cerebot_mx3ck.upload.using=
+
+############################################################
+chipkit_mx3.name=chipKIT MX3
+chipkit_mx3.group=chipKIT
+
+# new items
+chipkit_mx3.platform=pic32
+chipkit_mx3.board=_BOARD_CEREBOT_MX3CK_
+chipkit_mx3.board.define=
+chipkit_mx3.ccflags=ffff
+chipkit_mx3.ldscript=chipKIT-application-32MX320F128.ld
+# end of new items
+
+# Use a high -Gnum for devices that have less than 64K of data memory
+# For -G1024, objects 1024 bytes or smaller will be accessed by
+# gp-relative addressing
+chipkit_mx3.compiler.c.flags=-O2::-c::-mno-smart-io::-w::-ffunction-sections::-fdata-sections::-G1024::-g::-mdebugger::-Wcast-align::-fno-short-double
+chipkit_mx3.compiler.cpp.flags=-O2::-c::-mno-smart-io::-w::-fno-exceptions::-ffunction-sections::-fdata-sections::-G1024::-g::-mdebugger::-Wcast-align::-fno-short-double
+
+chipkit_mx3.upload.protocol=stk500v2
+chipkit_mx3.upload.maximum_size=126976
+chipkit_mx3.upload.speed=115200
+
+chipkit_mx3.bootloader.low_fuses=0xff
+chipkit_mx3.bootloader.high_fuses=0xdd
+chipkit_mx3.bootloader.extended_fuses=0x00
+chipkit_mx3.bootloader.path=not-supported
+chipkit_mx3.bootloader.file=not-supported
+chipkit_mx3.bootloader.unlock_bits=0x3F
+chipkit_mx3.bootloader.lock_bits=0x0F
+
+chipkit_mx3.build.mcu=32MX320F128H
+chipkit_mx3.build.f_cpu=80000000L
+chipkit_mx3.build.core=pic32
+chipkit_mx3.build.variant=Cerebot_MX3cK
+#chipkit_mx3.upload.using=
+
+############################################################

@@ -1,6 +1,6 @@
 /************************************************************************/
 /*																		*/
-/*	Board_Data.c -- Board Customizationfor chipKIT Uno32 + Pmod Shield	*/
+/*	Board_Data.c -- Board Customization Data for Digilent chipKIT Uno32	*/
 /*																		*/
 /************************************************************************/
 /*	Author: Gene Apperson												*/
@@ -9,8 +9,8 @@
 /*  File Description:													*/
 /*																		*/
 /* This file contains the board specific declartions and data structure	*/
-/* to customize the chipKIT MPIDE for use with the Digilent Cerebot		*/
-/* MX3cK board.															*/
+/* to customize the chipKIT MPIDE for use with the Digilent chipKIT		*/
+/* Uno32 board.															*/
 /*																		*/
 /* This code is based on earlier work:									*/
 /*		Copyright (c) 2010, 2011 by Mark Sproul							*/
@@ -19,7 +19,7 @@
 /************************************************************************/
 /*  Revision History:													*/
 /*																		*/
-/*	04/16/2012(GeneA): Created											*/
+/*	11/28/2011(GeneA): Created by splitting data out of Board_Defs.h	*/
 /*																		*/
 /************************************************************************/
 //*	This library is free software; you can redistribute it and/or
@@ -108,127 +108,113 @@ const uint32_t port_to_tris_PGM[] = {
 /* This table is used to map the digital pin number to the port
 ** containing that pin.
 */
-const uint8_t	digital_pin_to_port_PGM[] = {
-	// Connector JA
-	_IOPORT_PE,		//	0  RE0		PMD0/RE0
-	_IOPORT_PE,		//	1  RE1		PMD1/RE1
-	_IOPORT_PE,		//	2  RE2		PMD2/RE2
-	_IOPORT_PE,		//	3  RE3		PMD3/RE3
-	_IOPORT_PE,		//	4  RE4		PMD4/RE4
-	_IOPORT_PE,		//	5  RE5		PMD5/RE5
-	_IOPORT_PE,		//	6  RE6		PMD6/RE6
-	_IOPORT_PE,		//	7  RE7		PMD7/RE7
-	
-	// Connector JB
-	_IOPORT_PD,		//	8  RD9		IC2/U1CTS/INT2/RD9
-	_IOPORT_PF,		//	9  RF3		U1TX/SDO1/RF3
-	_IOPORT_PF,		//	10 RF2		U1RX/SDI1/RF2
-	_IOPORT_PF,		//	11 RF6		U1RTS/SCK1/INT0/RF6
-	_IOPORT_PD,		//	12 RD6		CN15/RD6
-	_IOPORT_PD,		//	13 RD5		PMRD/CN14/RD5	
-	_IOPORT_PD,		//	14 RD4		PMWR/OC5/IC5/CN13/RD4
-	_IOPORT_PD,		//	15 RD7		CN16/RD7
-	
-	// Connector JC
-	_IOPORT_PG,		//  16 RG9		PMA2/SS2/CN11/RG9
-	_IOPORT_PG,		//	17 RG8		(MOSI) PMA3/SDO2/CN10/RG8
-	_IOPORT_PG,		//	18 RG7		(MISO) PMA4/SDI1/CN9/RG7
-	_IOPORT_PG,		//	19 RG6		SCK2/PMA5/CN8/RG6	(Uno32 LD4)
-	_IOPORT_PD,		//	20 RD8		IC1/RTCC/INT1/RD8
+const uint8_t digital_pin_to_port_PGM[] = {
+	_IOPORT_PF,		//	0 RF2		U1RX/SDI1/RF2
+	_IOPORT_PF,		//	1 RF3		U1TX/SDO1/RF3
+	_IOPORT_PD,		//	2 RD8		IC1/RTCC/INT1/RD8
+	_IOPORT_PD,		//	3 RD0		OC1/RD0
+	_IOPORT_PF,		//	4 RF1		RF1
+	_IOPORT_PD,		//	5 RD1		OC2/RD1
+	_IOPORT_PD,		//	6 RD2		OC3/RD2
+	_IOPORT_PD,		//	7 RD9		IC2/U1CTS/INT2/RD9
+	_IOPORT_PD,		//	8 RD10		IC3/PMCS2/PMA15/INT3/RD10
+	_IOPORT_PD,		//	9 RD3		OC4/RD3
+	_IOPORT_PD,		//	10 RD4		PMWR/OC5/IC5/CN13/RD4
+	_IOPORT_PG,		//	11 RG8		(SDO2/PMA3/CN10/RG8) or (SDI2/PMA5/CN9/RG7)
+	_IOPORT_PG,		//	12 RG7		(SDI2/PMA5/CN9/RG7) or (SDO2/PMA3/CN10/RG8)
+	_IOPORT_PG,		//	13 RG6		SCK2/PMA5/CN8/RG6		LD4
+	_IOPORT_PB,		//	14 RB2		C2IN-/AN2/SS1/CN4/RB2
+	_IOPORT_PB,		//	15 RB4		C1IN-/AN4/CN6/RB4
+	_IOPORT_PB,		//	16 RB8		U2CTS/C1OUT/AN8/RB8
+	_IOPORT_PB,		//	17 RB10		TMS/CVREFOUT/PMA13/AN10/RB10
+	_IOPORT_PB,		//	18 RB12		TCK/PMA11/AN12/RB12
+	_IOPORT_PB,		//	19 RB14		PMALH/PMA1/U2RTS/AN14/RB14
+
+	_IOPORT_PB,		//	20 RB3		C2IN+/AN3/CN5/RB3
 	_IOPORT_PB,		//	21 RB5		C1IN+/AN5/CN7/RB5
-	_IOPORT_PB,		//	22 RB4		C1IN-/AN4/CN6/RB4
-	_IOPORT_PB,		//	23 RB3		C2IN+/AN3/CN5/RB3
+	_IOPORT_PB,		//	22 RB9		PMA7/C2OUT/AN9/RB9
+	_IOPORT_PB,		//	23 RB11		TDO/PMA12/AN11/RB11
+	_IOPORT_PB,		//	24 RB13		TDI/PMA10/AN13/RB13
+	_IOPORT_PB,		//	25 RB15		PMALL/PMA0/AN15/OCFB/CN12/RB15
+
+	_IOPORT_PE,		//	26 RE0		PMD0/RE0
+	_IOPORT_PE,		//	27 RE1		PMD1/RE1
+	_IOPORT_PE,		//	28 RE2		PMD2/RE2
+	_IOPORT_PE,		//	29 RE3		PMD3/RE3
+	_IOPORT_PE,		//	30 RE4		PMD4/RE4
+	_IOPORT_PE,		//	31 RE5		PMD5/RE5
+	_IOPORT_PE,		//	32 RE6		PMD6/RE6
+	_IOPORT_PE,		//	33 RE7		PMD7/RE7
+	_IOPORT_PD,		//	34 RD5		PMRD/CN14/RD5
+	_IOPORT_PD,		//	35 RD11		IC4/PMCS1/PMA14/INT4/RD11
+	_IOPORT_PD,		//	36 RD6		CN15/RD6
+	_IOPORT_PD,		//	37 RD7		CN16/RD7
+	_IOPORT_PF,		//	38 RF6		U1RTS/BCLK1/SCK1/INT0/RF6
+	_IOPORT_PF,		//	39 RF4		PMA9/U2RX/SDA2/CN17/RF4
+	_IOPORT_PF,		//	40 RF5		PMA8/U2TX/SCL2/CN18/RF5
+	_IOPORT_PB,		//	41 RB1		PGC1/AN1/VREF-/CVREF-/CN3/RB1
+	_IOPORT_PB,		//	42 RB0		PGED1/PMA6/AN0/VREF+/CVREF+/CN2/RB0
 	
-	// Connector JD
-	_IOPORT_PB,		//	24 RB8		U2CTS/C1OUT/AN8/RB8
-	_IOPORT_PF,		//	25 RF5		U2TX/PMA8/SCL2/CN18/RF5
-	_IOPORT_PF, 	//	26 RF4		U2RX/PMA9/SDA2/CN17/RF4
-	_IOPORT_PB,		//	27 RB14		PMALH/PMA1/U2RTS/AN14/RB14
-	_IOPORT_PB,		//	28 RB0		PGED1/PMA6/AN0/VREF+/CVREF+/CN2/RB0
-	_IOPORT_PB,		//	29 RB1		AN1/VREF-/CVREF-/CN3/RB1
-	_IOPORT_PD,		//	30 RD0		OC1/RD0		(Shield LD1)
-	_IOPORT_PD,		//	31 RD1		OC2/RD1		(Shield LD2)
-	
-	// Connector JE
-	_IOPORT_PB,		//	32 RB2		C2IN-/AN2/SS1/CN4/RB2
-	_IOPORT_PD,		//	33 RD2		OC3/RD2		(Shield LD3)
-	_IOPORT_PD,		//	34 RD10		IC3/PMCS2/PMA15/INT3/RD10
-	_IOPORT_PB,		//	35 RB9		PMA7/C2OUT/AN9/RB9
-	_IOPORT_PB,		//	36 RB12		TCK/PMA11/AN12/RB12
-	_IOPORT_PD,		//	37 RD3		OC4/RD3		(Shield LD4)
-	_IOPORT_PD,		//	38 RD11		IC4/PMCS1/PMA14/INT4/RD11
-	_IOPORT_PB,		//	39 RB13		TDI/PMA10/AN13/RB13
-	
-	//I2C connector J2
-	_IOPORT_PG,		//	40 RG3		SDA1/RG3
-	_IOPORT_PG,		//	41 RG2		SCL1/RG2
-	
-	//LEDs	
-	_IOPORT_PF,		//	42 RF0		Uno32 LD5
-	
+	_IOPORT_PF,		//	43 RF0		RF0						LD5
+	_IOPORT_PG,		//	44 RG9		SS2/PMA2/CN11/RG9
+	_IOPORT_PG,		//	45 RG3		SDA1/RG3
+	_IOPORT_PG,		//	46 RG2		SCL1/RG2
 };
 
 /* ------------------------------------------------------------ */
 /* This table is used to map from digital pin number to a bit mask
 ** for the corresponding bit within the port.
 */
-const uint16_t digital_pin_to_bit_mask_PGM[] = {
-	//Connector JA
-	_BV( 0 ) ,		//	0  RE0		PMD0/RE0
-	_BV( 1 ) ,		//	1  RE1		PMD1/RE1
-	_BV( 2 ) ,		//	2  RE2		PMD2/RE2
-	_BV( 3 ) ,		//	3  RE3		PMD3/RE3
-	_BV( 4 ) ,		//	4  RE4		PMD4/RE4
-	_BV( 5 ) ,		//	5  RE5		PMD5/RE5
-	_BV( 6 ) ,		//	6  RE6		PMD6/RE6
-	_BV( 7 ) ,		//	7  RE7		PMD7/RE7
+const uint16_t digital_pin_to_bit_mask_PGM[] = 
+{
+	_BV( 2 ),		//	0 RF2		U1RX/SDI1/RF2
+	_BV( 3 ),		//	1 RF3		U1TX/SDO1/RF3
+	_BV( 8 ),		//	2 RD8		IC1/RTCC/INT1/RD8
+	_BV( 0 ),		//	3 RD0		OC1/RD0
+	_BV( 1 ),		//	4 RF1		RF1
+	_BV( 1 ),		//	5 RD1		OC2/RD1
+	_BV( 2 ),		//	6 RD2		OC3/RD2
+	_BV( 9 ),		//	7 RD9		IC2/U1CTS/INT2/RD9
+	_BV( 10 ),		//	8 RD10		IC3/PMCS2/PMA15/INT3/RD10
+	_BV( 3 ),		//	9 RD3		OC4/RD3
+	_BV( 4 ),		//	10 RD4		PMWR/OC5/IC5/CN13/RD4
+	_BV( 8 ),		//	11 RG8		(SDO2/PMA3/CN10/RG8) or (SDI2/PMA5/CN8/RG7)
+	_BV( 7 ),		//	12 RG7		(SDI2/PMA5/CN8/RG7) or (SDO2/PMA3/CN10/RG8)
+	_BV( 6 ),		//	13 RG6		SCK2/PMA5/CN8/RG6		LD4
+	_BV( 2 ),		//	14 RB2		C2IN-/AN2/SS1/CN4/RB2
+	_BV( 4 ),		//	15 RB4		C1IN-/AN4/CN6/RB4
+	_BV( 8 ),		//	16 RB8		U2CTS/C1OUT/AN8/RB8
+	_BV( 10 ),		//	17 RB10		TMS/CVREFOUT/PMA13/AN10/RB10
+	_BV( 12 ),		//	18 RB12		TCK/PMA11/AN12/RB12
+	_BV( 14 ),		//	19 RB14		PMALH/PMA1/U2RTS/AN14/RB14
+	_BV( 3 ),		//	20 RB3		C2IN+/AN3/CN5/RB3
+	_BV( 5 ),		//	21 RB5		C1IN+/AN5/CN7/RB5
+	_BV( 9 ),		//	22 RB9		PMA7/C2OUT/AN9/RB9
+	_BV( 11 ),		//	23 RB11		TDO/PMA12/AN11/RB11
+	_BV( 13 ),		//	24 RB13		TDI/PMA10/AN13/RB13
+	_BV( 15 ),		//	25 RB15		PMALL/PMA0/AN15/OCFB/CN12/RB15
+	_BV( 0 ),		//	26 RE0		PMD0/RE0
+	_BV( 1 ),		//	27 RE1		PMD1/RE1
+	_BV( 2 ),		//	28 RE2		PMD2/RE2
+	_BV( 3 ),		//	29 RE3		PMD3/RE3
+	_BV( 4 ),		//	30 RE4		PMD4/RE4
+	_BV( 5 ),		//	31 RE5		PMD5/RE5
+	_BV( 6 ),		//	32 RE6		PMD6/RE6
+	_BV( 7 ),		//	33 RE7		PMD7/RE7
+	_BV( 5 ),		//	34 RD5		PMRD/CN14/RD5
+	_BV( 11 ),		//	35 RD11		IC4/PMCS1/PMA14/INT4/RD11
+	_BV( 6 ),		//	36 RD6		CN15/RD6
+	_BV( 7 ),		//	37 RD7		CN16/RD7
+	_BV( 6 ),		//	38 RF6		U1RTS/BCLK1/SCK1/INT0/RF6
+	_BV( 4 ),		//	39 RF4		PMA9/U2RX/SDA2/CN17/RF4
+	_BV( 5 ),		//	40 RF5		PMA8/U2TX/SCL2/CN18/RF5
+	_BV( 1 ),		//	41 RB1		PGC1/AN1/VREF-/CVREF-/CN3/RB1
+	_BV( 0 ),		//	42 RB0		PGED1/PMA6/AN0/VREF+/CVREF+/CN2/RB0
 	
-	//Connector JB
-	_BV( 9 ) ,		//	8  RD9		IC2/U1CTS/INT2/RD9
-	_BV( 3 ) ,		//	9  RF3		U1TX/SDO1/RF3
-	_BV( 2 ) ,		//	10 RF2		U1RX/SDI1/RF2
-	_BV( 6 ) ,		//	11 RF6		U1RTS/SCK1/INT0/RF6
-	_BV( 6 ) ,		//	12 RD6		CN15/RD6
-	_BV( 5 ) ,		//	13 RD5		PMRD/CN14/RD5	
-	_BV( 4 ) ,		//	14 RD4		PMWR/OC5/IC5/CN13/RD4
-	_BV( 7 ) ,		//	15 RD7		CN16/RD7
-	
-	//Connector JC
-	_BV( 9 ) ,		//  16 RG9		PMA2/SS2/CN11/RG9
-	_BV( 8 ) ,		//	17 RG8		MOSI/RG8
-	_BV( 7 ) ,		//	18 RG7		MISO/RG7
-	_BV( 6 ) ,		//	19 RG6		SCK2/PMA5/CN8/RG6
-	_BV( 8 ) ,		//	20 RD8		IC1/RTCC/INT1/RD8
-	_BV( 5 ) ,		//	21 RB5		C1IN+/AN5/CN7/RB5
-	_BV( 4 ) ,		//	22 RB4		C1IN-/AN4/CN6/RB4
-	_BV( 3 ) ,		//	23 RB3		C2IN+/AN3/CN5/RB3
-	
-	//Connector JD
-	_BV( 8 ) ,		//	24 RB8		U2CTS/C1OUT/AN8/RB8
-	_BV( 5 ) ,		//	25 RF5		U2TX/PMA8/SCL2/CN18/RF5
-	_BV( 4 ) , 		//	26 RF4		U2RX/PMA9/SDA2/CN17/RF4
-	_BV( 14 ),		//	27 RB14		PMALH/PMA1/U2RTS/AN14/RB14
-	_BV( 0 ) ,		//	28 RB0		PGED1/PMA6/AN0/VREF+/CVREF+/CN2/RB0
-	_BV( 1 ) ,		//	29 RB1		AN1/VREF-/CVREF-/CN3/RB1
-	_BV( 0 ) ,		//	30 RD0		OC1/RD0
-	_BV( 1 ) ,		//	31 RD1		OC2/RD1
-	
-	//Connector JE
-	_BV( 2 ) ,		//	32 RB2		C2IN-/AN2/SS1/CN4/RB2
-	_BV( 2 ) ,		//	33 RD2		OC3/RD2
-	_BV( 10 ) ,		//	34 RD10		IC3/PMCS2/PMA15/INT3/RD10
-	_BV( 9 ) ,		//	35 RB9		PMA7/C2OUT/AN9/RB9
-	_BV( 12 ) ,		//	36 RB12		TCK/PMA11/AN12/RB12
-	_BV( 3 ) ,		//	37 RD3		OC4/RD3
-	_BV( 11 ) ,		//	38 RD11		IC4/PMCS1/PMA14/INT4/RD11
-	_BV( 13 ) ,		//	39 RB13		TDI/PMA10/AN13/RB13
-	
-	//I2C Connector J2
-	_BV( 3 ) ,		//	40 RG3		SDA1/RG3
-	_BV( 2 ) ,		//	41 RG2		SCL1/RG2
-	
-	//LEDs	
-	_BV( 0 ) ,		//	42 RF0		LED4
+	_BV( 0 ),		//	43 RF0		RF0						LD5
+	_BV( 9 ),		//	44 RG9		SS2/PMA2/CN11/RG9
+	_BV( 3 ),		//	45 RG3		SDA1/RG3
+	_BV( 2 ),		//	46 RG2		SCL1/RG2
 
 };
 
@@ -237,126 +223,59 @@ const uint16_t digital_pin_to_bit_mask_PGM[] = {
 ** compare number, input capture number, and timer external clock
 ** input associated with that pin.
 */
-const uint16_t digital_pin_to_timer_PGM[] = {
-	// Connector JA
-	NOT_ON_TIMER,			//	0  RE0		PMD0/RE0
-	NOT_ON_TIMER,			//	1  RE1		PMD1/RE1
-	NOT_ON_TIMER,			//	2  RE2		PMD2/RE2
-	NOT_ON_TIMER,			//	3  RE3		PMD3/RE3
-	NOT_ON_TIMER,			//	4  RE4		PMD4/RE4
-	NOT_ON_TIMER,			//	5  RE5		PMD5/RE5
-	NOT_ON_TIMER,			//	6  RE6		PMD6/RE6
-	NOT_ON_TIMER,			//	7  RE7		PMD7/RE7
-	
-	// Connector JB
-	_TIMER_IC2,				//	8  RD9		IC2/U1CTS/INT2/RD9
-	NOT_ON_TIMER,			//	9  RF3		U1TX/SDO1/RF3
-	NOT_ON_TIMER,			//	10 RF2		U1RX/SDI1/RF2
-	NOT_ON_TIMER,			//	11 RF6		U1RTS/SCK1/INT0/RF6
-	NOT_ON_TIMER,			//	12 RD6		CN15/RD6
-	NOT_ON_TIMER,			//	13 RD5		PMRD/CN14/RD5	
-	_TIMER_OC5|_TIMER_IC5,	//	14 RD4		PMWR/OC5/IC5/CN13/RD4
-	NOT_ON_TIMER,			//	15 RD7		CN16/RD7
-	
-	// Connector JC
-	NOT_ON_TIMER,			//  16 RG9		PMA2/SS2/CN11/RG9
-	NOT_ON_TIMER,			//	17 RG8		MOSI/RG8
-	NOT_ON_TIMER,			//	18 RG7		MISO/RG7
-	NOT_ON_TIMER,			//	19 RG6		SCK2/PMA5/CN8/RG6
-	_TIMER_IC1,				//	20 RD8		IC1/RTCC/INT1/RD8
-	NOT_ON_TIMER,			//	21 RB5		C1IN+/AN5/CN7/RB5
-	NOT_ON_TIMER,			//	22 RB4		C1IN-/AN4/CN6/RB4
-	NOT_ON_TIMER,			//	23 RB3		C2IN+/AN3/CN5/RB3
-	
-	// Connector JD
-	NOT_ON_TIMER,			//	24 RB8		U2CTS/C1OUT/AN8/RB8
-	NOT_ON_TIMER,			//	25 RF5		U2TX/PMA8/SCL2/CN18/RF5
-	NOT_ON_TIMER, 			//	26 RF4		U2RX/PMA9/SDA2/CN17/RF4
-	NOT_ON_TIMER,			//	27 RB14		PMALH/PMA1/U2RTS/AN14/RB14
-	NOT_ON_TIMER,			//	28 RB0		PGED1/PMA6/AN0/VREF+/CVREF+/CN2/RB0
-	NOT_ON_TIMER,			//	29 RB1		AN1/VREF-/CVREF-/CN3/RB1
-	_TIMER_OC1,				//	30 RD0		OC1/RD0
-	_TIMER_OC2,				//	31 RD1		OC2/RD1
-	
-	// Connector JE
-	NOT_ON_TIMER,			//	32 RB2		C2IN-/AN2/SS1/CN4/RB2
-	_TIMER_OC3,				//	33 RD2		OC3/RD2
-	_TIMER_IC3,				//	34 RD10		IC3/PMCS2/PMA15/INT3/RD10
-	NOT_ON_TIMER,			//	35 RB9		PMA7/C2OUT/AN9/RB9
-	NOT_ON_TIMER,			//	36 RB12		TCK/PMA11/AN12/RB12
-	_TIMER_OC4,				//	37 RD3		OC4/RD3
-	_TIMER_IC4,				//	38 RD11		IC4/PMCS1/PMA14/INT4/RD11
-	NOT_ON_TIMER,			//	39 RB13		TDI/PMA10/AN13/RB13
-	
-	// I2C Connector J2
-	NOT_ON_TIMER,			//	40 RG3		SDA1/RG3
-	NOT_ON_TIMER,			//	41 RG2		SCL1/RG2
-	
-	//LEDs	
-	NOT_ON_TIMER,			//	42 RF0		LED4
-};
+const uint16_t digital_pin_to_timer_PGM[] =
+{
+	NOT_ON_TIMER,			//	0 RF2		U1RX/SDI1/RF2
+	NOT_ON_TIMER,			//	1 RF3		U1TX/SDO1/RF3
+	_TIMER_IC1,				//	2 RD8		IC1/RTCC/INT1/RD8
+	_TIMER_OC1,				//	3 RD0		OC1/RD0
+	NOT_ON_TIMER,			//	4 RF1		RF1
+	_TIMER_OC2,				//	5 RD1		OC2/RD1
+	_TIMER_OC3,				//	6 RD2		OC3/RD2
+	_TIMER_IC2,				//	7 RD9		IC2/U1CTS/INT2/RD9
+	_TIMER_IC3,				//	8 RD10		IC3/PMCS2/PMA15/INT3/RD10
+	_TIMER_OC4,				//	9 RD3		OC4/RD3
+	_TIMER_OC5|_TIMER_IC5,	//	10 RD4		PMWR/OC5/IC5/CN13/RD4
+	NOT_ON_TIMER,			//	11 RG8		(SDO2/PMA3/CN10/RG8) or (SDI2/PMA5/CN8/RG7)
+	NOT_ON_TIMER,			//	12 RG7		(SDI2/PMA5/CN8/RG7) or (SDO2/PMA3/CN10/RG8)
+	NOT_ON_TIMER,			//	13 RG6		SCK2/PMA5/CN8/RG6
+	NOT_ON_TIMER,			//	14 RB2		C2IN-/AN2/SS1/CN4/RB2
+	NOT_ON_TIMER,			//	15 RB4		C1IN-/AN4/CN6/RB4
+	NOT_ON_TIMER,			//	16 RB8		U2CTS/C1OUT/AN8/RB8
+	NOT_ON_TIMER,			//	17 RB10		TMS/CVREFOUT/PMA13/AN10/RB10
+	NOT_ON_TIMER,			//	18 RB12		TCK/PMA11/AN12/RB12
+	NOT_ON_TIMER,			//	19 RB14		PMALH/PMA1/U2RTS/AN14/RB14
 
-/* ------------------------------------------------------------ */
-/* This table maps from a digital pin number to the corresponding
-** analog pin number.
-*/
-const uint8_t digital_pin_to_analog_PGM[] = {
-	// Connector JA
-	NOT_ANALOG_PIN,		//	0  RE0		PMD0/RE0
-	NOT_ANALOG_PIN,		//	1  RE1		PMD1/RE1
-	NOT_ANALOG_PIN,		//	2  RE2		PMD2/RE2
-	NOT_ANALOG_PIN,		//	3  RE3		PMD3/RE3
-	NOT_ANALOG_PIN,		//	4  RE4		PMD4/RE4
-	NOT_ANALOG_PIN,		//	5  RE5		PMD5/RE5
-	NOT_ANALOG_PIN,		//	6  RE6		PMD6/RE6
-	NOT_ANALOG_PIN,		//	7  RE7		PMD7/RE7
+	NOT_ON_TIMER,			//	20 RB3		C2IN+/AN3/CN5/RB3
+	NOT_ON_TIMER,			//	21 RB5		C1IN+/AN5/CN7/RB5
+	NOT_ON_TIMER,			//	22 RB9		PMA7/C2OUT/AN9/RB9
+	NOT_ON_TIMER,			//	23 RB11		TDO/PMA12/AN11/RB11
+	NOT_ON_TIMER,			//	24 RB13		TDI/PMA10/AN13/RB13
+	NOT_ON_TIMER,			//	25 RB15		PMALL/PMA0/AN15/OCFB/CN12/RB15
+
+	NOT_ON_TIMER,			//	26 RE0		PMD0/RE0
+	NOT_ON_TIMER,			//	27 RE1		PMD1/RE1
+	NOT_ON_TIMER,			//	28 RE2		PMD2/RE2
+	NOT_ON_TIMER,			//	29 RE3		PMD3/RE3
+	NOT_ON_TIMER,			//	30 RE4		PMD4/RE4
+	NOT_ON_TIMER,			//	31 RE5		PMD5/RE5
+	NOT_ON_TIMER,			//	32 RE6		PMD6/RE6
+	NOT_ON_TIMER,			//	33 RE7		PMD7/RE7
+	NOT_ON_TIMER,			//	34 RD5		PMRD/CN14/RD5
+	_TIMER_IC4,				//	35 RD11		IC4/PMCS1/PMA14/INT4/RD11
+	NOT_ON_TIMER,			//	36 RD6		CN15/RD6
+	NOT_ON_TIMER,			//	37 RD7		CN16/RD7
+	NOT_ON_TIMER,			//	38 RF6		U1RTS/BCLK1/SCK1/INT0/RF6
+	NOT_ON_TIMER,			//	39 RF4		PMA9/U2RX/SDA2/CN17/RF4
+	NOT_ON_TIMER,			//	40 RF5		PMA8/U2TX/SCL2/CN18/RF5
+	NOT_ON_TIMER,			//	41 RB1		PGC1/EMUC1/AN1/VREF-/CVREF-/CN3/RB1
+	NOT_ON_TIMER,			//	42 RB0		PGD1/EMUD1/PMA6/AN0/VREF+/CVREF+/CN2/RB0
 	
-	// Connector JB
-	NOT_ANALOG_PIN,		//	8  RD9		IC2/U1CTS/INT2/RD9
-	NOT_ANALOG_PIN,		//	9  RF3		U1TX/SDO1/RF3
-	NOT_ANALOG_PIN,		//	10 RF2		U1RX/SDI1/RF2
-	NOT_ANALOG_PIN,		//	11 RF6		U1RTS/SCK1/INT0/RF6
-	NOT_ANALOG_PIN,		//	12 RD6		CN15/RD6
-	NOT_ANALOG_PIN,		//	13 RD5		PMRD/CN14/RD5	
-	NOT_ANALOG_PIN,		//	14 RD4		PMWR/OC5/IC5/CN13/RD4
-	NOT_ANALOG_PIN,		//	15 RD7		CN16/RD7
-	
-	// Connector JC
-	NOT_ANALOG_PIN,		//  16 RG9		PMA2/SS2/CN11/RG9
-	NOT_ANALOG_PIN,		//	17 RG8		MOSI/RG8
-	NOT_ANALOG_PIN,		//	18 RG7		MISO/RG7
-	NOT_ANALOG_PIN,		//	19 RG6		SCK2/PMA5/CN8/RG6
-	NOT_ANALOG_PIN,		//	20 RD8		IC1/RTCC/INT1/RD8
-	_BOARD_AN8,			//	21 RB5		C1IN+/AN5/CN7/RB5
-	_BOARD_AN9,			//	22 RB4		C1IN-/AN4/CN6/RB4
-	_BOARD_AN10,		//	23 RB3		C2IN+/AN3/CN5/RB3
-	
-	// Connector JD
-	_BOARD_AN0,			//	24 RB8		U2CTS/C1OUT/AN8/RB8
-	NOT_ANALOG_PIN,		//	25 RF5		U2TX/PMA8/SCL2/CN18/RF5
-	NOT_ANALOG_PIN, 	//	26 RF4		U2RX/PMA9/SDA2/CN17/RF4
-	_BOARD_AN1,			//	27 RB14		PMALH/PMA1/U2RTS/AN14/RB14
-	_BOARD_AN2,			//	28 RB0		PGED1/PMA6/AN0/VREF+/CVREF+/CN2/RB0
-	_BOARD_AN3,			//	29 RB1		AN1/VREF-/CVREF-/CN3/RB1
-	NOT_ANALOG_PIN,		//	30 RD0		OC1/RD0
-	NOT_ANALOG_PIN,		//	31 RD1		OC2/RD1
-	
-	// Connector JE
-	_BOARD_AN4,			//	32 RB2		C2IN-/AN2/SS1/CN4/RB2
-	NOT_ANALOG_PIN,		//	33 RD2		OC3/RD2
-	NOT_ANALOG_PIN,		//	34 RD10		IC3/PMCS2/PMA15/INT3/RD10
-	_BOARD_AN5,			//	35 RB9		PMA7/C2OUT/AN9/RB9
-	_BOARD_AN6,			//	36 RB12		TCK/PMA11/AN12/RB12
-	NOT_ANALOG_PIN,		//	37 RD3		OC4/RD3
-	NOT_ANALOG_PIN,		//	38 RD11		IC4/PMCS1/PMA14/INT4/RD11
-	_BOARD_AN7,			//	39 RB13		TDI/PMA10/AN13/RB13
-	
-	// I2C Connector J2
-	NOT_ANALOG_PIN,		//	40 RG3		SDA1/RG3
-	NOT_ANALOG_PIN,		//	41 RG2		SCL1/RG2
-	
-	//LEDs	
-	NOT_ANALOG_PIN,		//	42 RF0		Uno32 LD4
+	NOT_ON_TIMER,			//	43 RF0		RF0
+	NOT_ON_TIMER,			//	44 RG9		SS2/PMA2/CN11/RG9
+	NOT_ON_TIMER,			//	45 RG3		SDA1/RG3
+	NOT_ON_TIMER,			//	46 RG2		SCL1/RG2
+
 };
 
 /* ------------------------------------------------------------ */
@@ -366,17 +285,67 @@ const uint8_t digital_pin_to_analog_PGM[] = {
 const uint8_t analog_pin_to_channel_PGM[] =
 {
 			//*	chipKIT Pin		PIC32 Analog channel
-	8,		//*	A0						AN8
-	14,		//*	A1						AN14
-	0,		//*	A2						AN0
-	1,		//*	A3						AN1
-	2,		//*	A4						AN2
-	9,		//*	A5						AN9
-	12,		//*	A6						AN12
-	13,		//*	A7						AN5
-	5,		//*	A8						AN13
-	4,		//*	A9						AN5
-	3,		//*	A10						AN4
+	2,		//*	A0						AN2
+	4,		//*	A1						AN4
+	8,		//*	A2						AN8
+	10,		//*	A3						AN10
+	12,		//*	A4						AN12
+	14,		//*	A5						AN14
+	3,		//*	A6						AN3
+	5,		//*	A7						AN5
+	9,		//*	A8						AN9
+	11,		//*	A9						AN11
+	13,		//*	A10						AN13
+	15,		//*	A11						AN15
+
+};
+
+const uint32_t digital_pin_to_cn_PGM[] = 
+{
+    NOT_CN_PIN,
+    NOT_CN_PIN,
+    NOT_CN_PIN,
+    NOT_CN_PIN,
+    NOT_CN_PIN,
+    NOT_CN_PIN,
+    NOT_CN_PIN,
+    NOT_CN_PIN,
+    NOT_CN_PIN,
+    NOT_CN_PIN,
+    _BV(13),
+    _BV(10),
+    _BV(9),
+    _BV(8),
+    _BV(4),
+    _BV(6),
+    NOT_CN_PIN,
+    NOT_CN_PIN,
+    NOT_CN_PIN,
+    NOT_CN_PIN,
+    _BV(5),
+    _BV(7),
+    NOT_CN_PIN,
+    NOT_CN_PIN,
+    NOT_CN_PIN,
+    _BV(12),
+    NOT_CN_PIN,
+    NOT_CN_PIN,
+    NOT_CN_PIN,
+    NOT_CN_PIN,
+    NOT_CN_PIN,
+    NOT_CN_PIN,
+    NOT_CN_PIN,
+    NOT_CN_PIN,
+    _BV(14),
+    NOT_CN_PIN,
+    _BV(15),
+    _BV(16),
+    NOT_CN_PIN,
+    _BV(17),
+    _BV(18),
+    _BV(3),
+    _BV(2),
+    NOT_CN_PIN
 };
 
 /* ------------------------------------------------------------ */
@@ -414,7 +383,7 @@ const uint8_t analog_pin_to_channel_PGM[] =
 #if	(OPT_BOARD_INIT != 0)
 
 void _board_init(void) {
-
+	
 }
 
 #endif
@@ -501,7 +470,8 @@ int	_board_getPinMode(uint8_t pin, uint8_t * mode) {
 **		control will pass through the normal digitalWrite code. If
 **		it returns a non-zero value the normal digitalWrite code isn't
 **		executed.
-*/#if	(OPT_BOARD_DIGITAL_IO != 0)
+*/
+#if	(OPT_BOARD_DIGITAL_IO != 0)
 
 int	_board_digitalWrite(uint8_t pin, uint8_t val) {
 	
