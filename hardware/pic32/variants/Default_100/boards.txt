@@ -1,0 +1,61 @@
+############################################################
+ubw32_mx460.name=Pic32 UBW32-MX460
+ubw32_mx460.group=UBW32
+
+# new items
+ubw32_mx460.platform=pic32
+ubw32_mx460.board=_BOARD_UBW32_MX460_
+ubw32_mx460.board.define=-D_USE_USB_FOR_SERIAL_
+ubw32_mx460.ccflags=ffff
+ubw32_mx460.ldscript=chipKIT-application-32MX460F512.ld
+# end of new items
+
+ubw32_mx460.upload.protocol=stk500v2
+ubw32_mx460.upload.maximum_size=520192
+ubw32_mx460.upload.speed=115200
+
+ubw32_mx460.bootloader.low_fuses=0xff
+ubw32_mx460.bootloader.high_fuses=0xdd
+ubw32_mx460.bootloader.extended_fuses=0x00
+ubw32_mx460.bootloader.path=not-supported
+ubw32_mx460.bootloader.file=not-supported
+ubw32_mx460.bootloader.unlock_bits=0x3F
+ubw32_mx460.bootloader.lock_bits=0x0F
+
+ubw32_mx460.build.mcu=32MX460F512L
+ubw32_mx460.build.f_cpu=80000000L
+ubw32_mx460.build.core=pic32
+ubw32_mx460.build.variant=Default_100
+#ubw32_mx460.upload.using=
+
+############################################################
+ubw32_mx795.name=Pic32 UBW32-MX795
+ubw32_mx795.group=UBW32
+
+# new items
+ubw32_mx795.platform=pic32
+ubw32_mx795.board=_BOARD_UBW32_MX795_
+ubw32_mx795.board.define=-D_USE_USB_FOR_SERIAL_
+ubw32_mx795.ccflags=ffff
+ubw32_mx795.ldscript=chipKIT-application-32MX795F512.ld
+# end of new items
+
+ubw32_mx795.upload.protocol=stk500v2
+ubw32_mx795.upload.maximum_size=520192
+ubw32_mx795.upload.speed=115200
+
+ubw32_mx795.bootloader.low_fuses=0xff
+ubw32_mx795.bootloader.high_fuses=0xdd
+ubw32_mx795.bootloader.extended_fuses=0x00
+ubw32_mx795.bootloader.path=not-supported
+ubw32_mx795.bootloader.file=not-supported
+ubw32_mx795.bootloader.unlock_bits=0x3F
+ubw32_mx795.bootloader.lock_bits=0x0F
+
+ubw32_mx795.build.mcu=32MX795F512L
+ubw32_mx795.build.f_cpu=80000000L
+ubw32_mx795.build.core=pic32
+ubw32_mx795.build.variant=Default_100
+#ubw32_mx795.upload.using=
+
+############################################################

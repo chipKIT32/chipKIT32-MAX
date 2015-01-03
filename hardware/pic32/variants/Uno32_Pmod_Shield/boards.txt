@@ -1,0 +1,39 @@
+############################################################
+uno_pmod.name=chipKIT UNO32 with Pmod Shield
+uno_pmod.group=chipKIT
+
+# new items
+uno_pmod.platform=pic32
+uno_pmod.board=_BOARD_UNO_
+uno_pmod.board.define=
+#uno_pmod.compiler.define=
+uno_pmod.ccflags=ffff
+uno_pmod.ldscript=chipKIT-application-32MX320F128.ld
+# end of new items
+
+# Use a high -Gnum for devices that have less than 64K of data memory
+# For -G1024, objects 1024 bytes or smaller will be accessed by
+# gp-relative addressing
+uno_pmod.compiler.c.flags=-O2::-c::-mno-smart-io::-w::-ffunction-sections::-fdata-sections::-G1024::-g::-mdebugger::-Wcast-align::-fno-short-double
+uno_pmod.compiler.cpp.flags=-O2::-c::-mno-smart-io::-w::-fno-exceptions::-ffunction-sections::-fdata-sections::-G1024::-g::-mdebugger::-Wcast-align::-fno-short-double
+
+#uno_pic32.upload.using=avrdude
+uno_pmod.upload.protocol=stk500v2
+uno_pmod.upload.maximum_size=126976
+uno_pmod.upload.speed=115200
+
+uno_pmod.bootloader.low_fuses=0xff
+uno_pmod.bootloader.high_fuses=0xdd
+uno_pmod.bootloader.extended_fuses=0x00
+uno_pmod.bootloader.path=not-supported
+uno_pmod.bootloader.file=not-supported
+uno_pmod.bootloader.unlock_bits=0x3F
+uno_pmod.bootloader.lock_bits=0x0F
+
+uno_pmod.build.mcu=32MX320F128H
+uno_pmod.build.f_cpu=80000000L
+uno_pmod.build.core=pic32
+uno_pmod.build.variant=Uno32_Pmod_shield
+#uno_pmod..upload.using=
+
+############################################################

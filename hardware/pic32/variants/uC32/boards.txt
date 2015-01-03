@@ -1,0 +1,37 @@
+############################################################
+chipkit_uc32.name=chipKIT uC32
+chipkit_uc32.group=chipKIT
+
+# new items
+chipkit_uc32.platform=pic32
+chipkit_uc32.board=_BOARD_UC32_
+chipkit_uc32.board.define=
+chipkit_uc32.ccflags=ffff
+chipkit_uc32.ldscript=chipKIT-application-32MX340F512.ld
+# end of new items
+
+# Use a high -Gnum for devices that have less than 64K of data memory
+# For -G1024, objects 1024 bytes or smaller will be accessed by
+# gp-relative addressing
+chipkit_uc32.compiler.c.flags=-O2::-c::-mno-smart-io::-w::-ffunction-sections::-fdata-sections::-G1024::-g::-mdebugger::-Wcast-align::-fno-short-double
+chipkit_uc32.compiler.cpp.flags=-O2::-c::-mno-smart-io::-w::-fno-exceptions::-ffunction-sections::-fdata-sections::-G1024::-g::-mdebugger::-Wcast-align::-fno-short-double
+
+chipkit_uc32.upload.protocol=stk500v2
+chipkit_uc32.upload.maximum_size=520192
+chipkit_uc32.upload.speed=115200
+
+chipkit_uc32.bootloader.low_fuses=0xff
+chipkit_uc32.bootloader.high_fuses=0xdd
+chipkit_uc32.bootloader.extended_fuses=0x00
+chipkit_uc32.bootloader.path=not-supported
+chipkit_uc32.bootloader.file=not-supported
+chipkit_uc32.bootloader.unlock_bits=0x3F
+chipkit_uc32.bootloader.lock_bits=0x0F
+
+chipkit_uc32.build.mcu=32MX340F512H
+chipkit_uc32.build.f_cpu=80000000L
+chipkit_uc32.build.core=pic32
+chipkit_uc32.build.variant=uC32
+#chipkit_uc32.upload.using=
+
+############################################################

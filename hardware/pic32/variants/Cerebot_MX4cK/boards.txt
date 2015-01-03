@@ -1,0 +1,61 @@
+############################################################
+cerebot_mx4ck.name=Cerebot MX4cK
+cerebot_mx4ck.group=Cerebot
+
+# new items
+cerebot_mx4ck.platform=pic32
+cerebot_mx4ck.board=_BOARD_CEREBOT_MX4CK_
+cerebot_mx4ck.board.define=
+cerebot_mx4ck.ccflags=ffff
+cerebot_mx4ck.ldscript=chipKIT-application-32MX460F512.ld
+# end of new items
+
+cerebot_mx4ck.upload.protocol=stk500v2
+cerebot_mx4ck.upload.maximum_size=520192
+cerebot_mx4ck.upload.speed=115200
+
+cerebot_mx4ck.bootloader.low_fuses=0xff
+cerebot_mx4ck.bootloader.high_fuses=0xdd
+cerebot_mx4ck.bootloader.extended_fuses=0x00
+cerebot_mx4ck.bootloader.path=not-supported
+cerebot_mx4ck.bootloader.file=not-supported
+cerebot_mx4ck.bootloader.unlock_bits=0x3F
+cerebot_mx4ck.bootloader.lock_bits=0x0F
+
+cerebot_mx4ck.build.mcu=32MX460F512L
+cerebot_mx4ck.build.f_cpu=80000000L
+cerebot_mx4ck.build.core=pic32
+cerebot_mx4ck.build.variant=Cerebot_MX4cK
+#cerebot_mx4ck.upload.using=
+
+############################################################
+chipkit_pro_mx4.name=chipKIT Pro MX4
+chipkit_pro_mx4.group=chipKIT
+
+# new items
+chipkit_pro_mx4.platform=pic32
+chipkit_pro_mx4.board=_BOARD_CEREBOT_MX4CK_
+chipkit_pro_mx4.board.define=
+chipkit_pro_mx4.ccflags=ffff
+chipkit_pro_mx4.ldscript=chipKIT-application-32MX460F512.ld
+# end of new items
+
+chipkit_pro_mx4.upload.protocol=stk500v2
+chipkit_pro_mx4.upload.maximum_size=520192
+chipkit_pro_mx4.upload.speed=115200
+
+chipkit_pro_mx4.bootloader.low_fuses=0xff
+chipkit_pro_mx4.bootloader.high_fuses=0xdd
+chipkit_pro_mx4.bootloader.extended_fuses=0x00
+chipkit_pro_mx4.bootloader.path=not-supported
+chipkit_pro_mx4.bootloader.file=not-supported
+chipkit_pro_mx4.bootloader.unlock_bits=0x3F
+chipkit_pro_mx4.bootloader.lock_bits=0x0F
+
+chipkit_pro_mx4.build.mcu=32MX460F512L
+chipkit_pro_mx4.build.f_cpu=80000000L
+chipkit_pro_mx4.build.core=pic32
+chipkit_pro_mx4.build.variant=Cerebot_MX4cK
+#chipkit_pro_mx4.upload.using=
+
+############################################################

@@ -1,0 +1,37 @@
+############################################################
+cerebot_mx3ck_512.name=Cerebot MX3cK 512
+cerebot_mx3ck_512.group=Cerebot
+
+# new items
+cerebot_mx3ck_512.platform=pic32
+cerebot_mx3ck_512.board=_BOARD_CEREBOT_MX3CK_512_
+cerebot_mx3ck_512.board.define=
+cerebot_mx3ck_512.ccflags=ffff
+cerebot_mx3ck_512.ldscript=chipKIT-application-32MX340F512.ld
+# end of new items
+
+# Use a high -Gnum for devices that have less than 64K of data memory
+# For -G1024, objects 1024 bytes or smaller will be accessed by
+# gp-relative addressing
+cerebot_mx3ck_512.compiler.c.flags=-O2::-c::-mno-smart-io::-w::-ffunction-sections::-fdata-sections::-G1024::-g::-mdebugger::-Wcast-align::-fno-short-double
+cerebot_mx3ck_512.compiler.cpp.flags=-O2::-c::-mno-smart-io::-w::-fno-exceptions::-ffunction-sections::-fdata-sections::-G1024::-g::-mdebugger::-Wcast-align::-fno-short-double
+
+cerebot_mx3ck_512.upload.protocol=stk500v2
+cerebot_mx3ck_512.upload.maximum_size=520192
+cerebot_mx3ck_512.upload.speed=115200
+
+cerebot_mx3ck_512.bootloader.low_fuses=0xff
+cerebot_mx3ck_512.bootloader.high_fuses=0xdd
+cerebot_mx3ck_512.bootloader.extended_fuses=0x00
+cerebot_mx3ck_512.bootloader.path=not-supported
+cerebot_mx3ck_512.bootloader.file=not-supported
+cerebot_mx3ck_512.bootloader.unlock_bits=0x3F
+cerebot_mx3ck_512.bootloader.lock_bits=0x0F
+
+cerebot_mx3ck_512.build.mcu=32MX340F512H
+cerebot_mx3ck_512.build.f_cpu=80000000L
+cerebot_mx3ck_512.build.core=pic32
+cerebot_mx3ck_512.build.variant=Cerebot_MX3cK_512
+#chipkit_uc32.upload.using=
+
+############################################################

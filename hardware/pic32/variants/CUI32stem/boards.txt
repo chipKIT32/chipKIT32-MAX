@@ -1,0 +1,32 @@
+############################################################
+CUI32stem.name=CUI32stem
+CUI32stem.group=CUI32
+
+# new items
+CUI32stem.platform=pic32
+CUI32stem.board=_BOARD_CUI32_
+CUI32stem.board.define=-D_USE_USB_FOR_SERIAL_
+CUI32stem.ccflags=ffff
+CUI32stem.ldscript=chipKIT-application-32MX795F512.ld
+# end of new items
+
+CUI32stem.upload.protocol=stk500v2
+CUI32stem.upload.maximum_size=520192
+CUI32stem.upload.speed=115200
+
+CUI32stem.bootloader.low_fuses=0xff
+CUI32stem.bootloader.high_fuses=0xdd
+CUI32stem.bootloader.extended_fuses=0x00
+CUI32stem.bootloader.path=not-supported
+CUI32stem.bootloader.file=not-supported
+CUI32stem.bootloader.unlock_bits=0x3F
+CUI32stem.bootloader.lock_bits=0x0F
+
+CUI32stem.build.mcu=32MX795F512H
+CUI32stem.build.f_cpu=80000000L
+CUI32stem.build.core=pic32
+CUI32stem.build.variant=CUI32stem
+#CUI32stem.upload.using=
+
+
+############################################################

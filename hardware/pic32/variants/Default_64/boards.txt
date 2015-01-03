@@ -1,0 +1,69 @@
+############################################################
+cui32.name=Pic32 CUI32-Development Stick
+cui32.group=CUI32
+
+# new items
+cui32.platform=pic32
+cui32.board=_BOARD_CUI32_
+cui32.board.define=-D_USE_USB_FOR_SERIAL_
+cui32.ccflags=ffff
+cui32.ldscript=chipKIT-application-32MX440F512.ld
+# end of new items
+
+cui32.upload.protocol=stk500v2
+cui32.upload.maximum_size=520192
+cui32.upload.speed=115200
+
+cui32.bootloader.low_fuses=0xff
+cui32.bootloader.high_fuses=0xdd
+cui32.bootloader.extended_fuses=0x00
+cui32.bootloader.path=not-supported
+cui32.bootloader.file=not-supported
+cui32.bootloader.unlock_bits=0x3F
+cui32.bootloader.lock_bits=0x0F
+
+cui32.build.mcu=32MX440F512H
+cui32.build.f_cpu=80000000L
+cui32.build.core=pic32
+cui32.build.variant=Default_64
+#cui32.upload.using=
+
+############################################################
+usbono_pic32.name=PONTECH UAV100
+usbono_pic32.group=PONTECH
+
+# new items
+usbono_pic32.platform=pic32
+usbono_pic32.board=_BOARD_PONTECH_UAV100_
+usbono_pic32.compiler.define=-D_USE_USB_FOR_SERIAL_::-Danything=1
+usbono_pic32.ccflags=ffff
+usbono_pic32.ldscript=chipKIT-application-32MX440F512.ld
+#chipKIT-UNO32-application-32MX320F128L.ld
+# end of new items
+
+# Use a high -Gnum for devices that have less than 64K of data memory
+# For -G1024, objects 1024 bytes or smaller will be accessed by
+# gp-relative addressing
+#usbono_pic32.compiler.c.flags=-O2::-c::-mno-smart-io::-w::-ffunction-sections::-fdata-sections::-G1024::-g::-mdebugger::-Wcast-align::-fno-short-double
+#usbono_pic32.compiler.cpp.flags=-O2::-c::-mno-smart-io::-w::-fno-exceptions::-ffunction-sections::-fdata-sections::-G1024::-g::-mdebugger::-Wcast-align::-fno-short-double
+
+usbono_pic32.upload.protocol=stk500v2
+usbono_pic32.upload.maximum_size=520192
+usbono_pic32.upload.speed=115200
+
+usbono_pic32.bootloader.low_fuses=0xff
+usbono_pic32.bootloader.high_fuses=0xdd
+usbono_pic32.bootloader.extended_fuses=0x00
+usbono_pic32.bootloader.path=not-supported
+usbono_pic32.bootloader.file=not-supported
+usbono_pic32.bootloader.unlock_bits=0x3F
+usbono_pic32.bootloader.lock_bits=0x0F
+
+usbono_pic32.build.mcu=32MX440F512H
+usbono_pic32.build.f_cpu=80000000L
+usbono_pic32.build.core=pic32
+usbono_pic32.build.variant=Default_64
+#usbono_pic32.build.variant=Uno32
+#usbono_pic32.upload.using=
+
+############################################################
