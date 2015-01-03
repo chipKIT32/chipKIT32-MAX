@@ -1,0 +1,180 @@
+############################################################
+mc_pic32_starterkit.name=Microchip PIC32 Starter kit
+mc_pic32_starterkit.group=Microchip
+
+# new items
+mc_pic32_starterkit.platform=pic32
+mc_pic32_starterkit.board=_BOARD_PIC32_STARTER_KIT_
+mc_pic32_starterkit.board.define=
+mc_pic32_starterkit.ccflags=ffff
+mc_pic32_starterkit.ldscript=chipKIT-application-32MX320F128.ld
+# end of new items
+
+mc_pic32_starterkit.upload.protocol=stk500v2
+mc_pic32_starterkit.upload.maximum_size=520192
+mc_pic32_starterkit.upload.speed=115200
+
+mc_pic32_starterkit.bootloader.low_fuses=0xff
+mc_pic32_starterkit.bootloader.high_fuses=0xdd
+mc_pic32_starterkit.bootloader.extended_fuses=0x00
+mc_pic32_starterkit.bootloader.path=not-supported
+mc_pic32_starterkit.bootloader.file=not-supported
+mc_pic32_starterkit.bootloader.unlock_bits=0x3F
+mc_pic32_starterkit.bootloader.lock_bits=0x0F
+
+mc_pic32_starterkit.build.mcu=32MX360F512L
+mc_pic32_starterkit.build.f_cpu=80000000L
+mc_pic32_starterkit.build.core=pic32
+mc_pic32_starterkit.build.variant=Default_100
+#mc_pic32_starterkit.upload.using=
+
+############################################################
+mc_pic32_ethernet_starterkit.name=Microchip PIC32 Ethernet Starter kit
+mc_pic32_ethernet_starterkit.group=Microchip
+
+# new items
+mc_pic32_ethernet_starterkit.platform=pic32
+mc_pic32_ethernet_starterkit.board=_BOARD_PIC32_ETHERNET_STARTER_KIT_
+mc_pic32_ethernet_starterkit.board.define=-D_USE_USB_FOR_SERIAL_
+mc_pic32_ethernet_starterkit.ccflags=ffff
+mc_pic32_ethernet_starterkit.ldscript=chipKIT-application-32MX795F512.ld
+# end of new items
+
+mc_pic32_ethernet_starterkit.upload.protocol=stk500v2
+mc_pic32_ethernet_starterkit.upload.maximum_size=520192
+mc_pic32_ethernet_starterkit.upload.speed=115200
+
+mc_pic32_ethernet_starterkit.bootloader.low_fuses=0xff
+mc_pic32_ethernet_starterkit.bootloader.high_fuses=0xdd
+mc_pic32_ethernet_starterkit.bootloader.extended_fuses=0x00
+mc_pic32_ethernet_starterkit.bootloader.path=not-supported
+mc_pic32_ethernet_starterkit.bootloader.file=not-supported
+mc_pic32_ethernet_starterkit.bootloader.unlock_bits=0x3F
+mc_pic32_ethernet_starterkit.bootloader.lock_bits=0x0F
+
+mc_pic32_ethernet_starterkit.build.mcu=32MX795F512L
+mc_pic32_ethernet_starterkit.build.f_cpu=80000000L
+mc_pic32_ethernet_starterkit.build.core=pic32
+mc_pic32_ethernet_starterkit.build.variant=Default_100
+#mc_pic32_ethernet_starterkit.upload.using=
+
+############################################################
+mc_pic32_usb_starterkit.name=Microchip PIC32 USB Starter kit II
+mc_pic32_usb_starterkit.group=Microchip
+
+# new items
+mc_pic32_usb_starterkit.platform=pic32
+mc_pic32_usb_starterkit.board=_BOARD_PIC32_USB_STARTER_KIT_
+mc_pic32_usb_starterkit.board.define=-D_USE_USB_FOR_SERIAL_
+mc_pic32_usb_starterkit.ccflags=ffff
+mc_pic32_usb_starterkit.ldscript=chipKIT-application-32MX795F512.ld
+# end of new items
+
+mc_pic32_usb_starterkit.upload.protocol=stk500v2
+mc_pic32_usb_starterkit.upload.maximum_size=520192
+mc_pic32_usb_starterkit.upload.speed=115200
+
+mc_pic32_usb_starterkit.bootloader.low_fuses=0xff
+mc_pic32_usb_starterkit.bootloader.high_fuses=0xdd
+mc_pic32_usb_starterkit.bootloader.extended_fuses=0x00
+mc_pic32_usb_starterkit.bootloader.path=not-supported
+mc_pic32_usb_starterkit.bootloader.file=not-supported
+mc_pic32_usb_starterkit.bootloader.unlock_bits=0x3F
+mc_pic32_usb_starterkit.bootloader.lock_bits=0x0F
+
+mc_pic32_usb_starterkit.build.mcu=32MX795F512L
+mc_pic32_usb_starterkit.build.f_cpu=80000000L
+mc_pic32_usb_starterkit.build.core=pic32
+mc_pic32_usb_starterkit.build.variant=Default_100
+#mc_pic32_usb_starterkit.upload.using=
+
+############################################################
+mc_pic32_explorer16.name=Microchip PIC32 Explorer 16
+mc_pic32_explorer16.group=Microchip
+
+# new items
+mc_pic32_explorer16.platform=pic32
+mc_pic32_explorer16.board=_BOARD_PIC32_EXPLORER16_
+mc_pic32_explorer16.board.define=
+mc_pic32_explorer16.ccflags=ffff
+mc_pic32_explorer16.ldscript=chipKIT-application-32MX320F128.ld
+# end of new items
+
+mc_pic32_explorer16.upload.protocol=stk500v2
+mc_pic32_explorer16.upload.maximum_size=520192
+mc_pic32_explorer16.upload.speed=115200
+
+mc_pic32_explorer16.bootloader.low_fuses=0xff
+mc_pic32_explorer16.bootloader.high_fuses=0xdd
+mc_pic32_explorer16.bootloader.extended_fuses=0x00
+mc_pic32_explorer16.bootloader.path=not-supported
+mc_pic32_explorer16.bootloader.file=not-supported
+mc_pic32_explorer16.bootloader.unlock_bits=0x3F
+mc_pic32_explorer16.bootloader.lock_bits=0x0F
+
+mc_pic32_explorer16.build.mcu=32MX360F512L
+mc_pic32_explorer16.build.f_cpu=80000000L
+mc_pic32_explorer16.build.core=pic32
+mc_pic32_explorer16.build.variant=Default_100
+#mc_pic32_explorer16.upload.using=
+
+############################################################
+mikroe_multimedia.name=MirkoElektronika PIC32 Multimedia Board
+mikroe_multimedia.group=MicroElektronika
+# new items
+mikroe_multimedia.platform=pic32
+mikroe_multimedia.board=_BOARD_MIKROE_MULTIMEDIA_
+mikroe_multimedia.board.define=-D_USE_USB_FOR_SERIAL_
+mikroe_multimedia.ccflags=ffff
+mikroe_multimedia.ldscript=chipKIT-application-32MX460F512.ld
+# end of new items
+
+mikroe_multimedia.upload.protocol=stk500v2
+mikroe_multimedia.upload.maximum_size=520192
+mikroe_multimedia.upload.speed=115200
+
+mikroe_multimedia.bootloader.low_fuses=0xff
+mikroe_multimedia.bootloader.high_fuses=0xdd
+mikroe_multimedia.bootloader.extended_fuses=0x00
+mikroe_multimedia.bootloader.path=not-supported
+mikroe_multimedia.bootloader.file=not-supported
+mikroe_multimedia.bootloader.unlock_bits=0x3F
+mikroe_multimedia.bootloader.lock_bits=0x0F
+
+mikroe_multimedia.build.mcu=32MX460F512L
+mikroe_multimedia.build.f_cpu=80000000L
+mikroe_multimedia.build.core=pic32
+mikroe_multimedia.build.variant=Default_100
+#mikroe_multimedia.upload.using=
+
+############################################################
+mikroe_mikromedia.name=MirkoElektronika PIC32 mikroMedia Board
+mikroe_mikromedia.group=MicroElektronika
+
+# new items
+mikroe_mikromedia.platform=pic32
+mikroe_mikromedia.board=_BOARD_MIKROE_MIKROMEDIA_
+mikroe_mikromedia.board.define=-D_USE_USB_FOR_SERIAL_
+mikroe_mikromedia.ccflags=ffff
+mikroe_mikromedia.ldscript=chipKIT-application-32MX460F512.ld
+# end of new items
+
+mikroe_mikromedia.upload.protocol=stk500v2
+mikroe_mikromedia.upload.maximum_size=520192
+mikroe_mikromedia.upload.speed=115200
+
+mikroe_mikromedia.bootloader.low_fuses=0xff
+mikroe_mikromedia.bootloader.high_fuses=0xdd
+mikroe_mikromedia.bootloader.extended_fuses=0x00
+mikroe_mikromedia.bootloader.path=not-supported
+mikroe_mikromedia.bootloader.file=not-supported
+mikroe_mikromedia.bootloader.unlock_bits=0x3F
+mikroe_mikromedia.bootloader.lock_bits=0x0F
+
+mikroe_mikromedia.build.mcu=32MX460F512L
+mikroe_mikromedia.build.f_cpu=80000000L
+mikroe_mikromedia.build.core=pic32
+mikroe_mikromedia.build.variant=Default_100
+#mikroe_mikromedia.upload.using=
+
+############################################################
