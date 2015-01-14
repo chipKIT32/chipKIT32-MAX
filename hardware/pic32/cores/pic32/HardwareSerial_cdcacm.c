@@ -377,6 +377,10 @@ static uint8 line_coding[7] =
 	FILL_LINE_CODING(115200, 0, 0, 8) /* Default is 115200 BPS and 8N1 format. */
 };
 
+uint8_t *cdcacm_get_line_coding() {
+    return line_coding;
+}
+
 //************************************************************************
 // this function implements the CDCACM usb setup control transfer.
 //************************************************************************

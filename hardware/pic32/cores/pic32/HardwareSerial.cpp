@@ -663,6 +663,14 @@ void USBSerial::end()
 }
 
 //*******************************************************************************************
+extern "C" uint8_t *cdcacm_get_line_coding();
+unsigned long USBSerial::getBaudRate() {
+    uint8_t *line_coding = cdcacm_get_line_coding();
+    uint32_t br = line_coding[0] | (line_coding[1] << 8) | (line_coding[2] << 16) | (line_coding[3] << 24);
+    return br;
+}
+
+//*******************************************************************************************
 int USBSerial::available(void)
 {
 	return (RX_BUFFER_SIZE + _rx_buffer->head - _rx_buffer->tail) % RX_BUFFER_SIZE;
