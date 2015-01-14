@@ -154,6 +154,7 @@ class USBSerial : public Stream
 		virtual void	write(const char *str);
 		virtual void	write(const uint8_t *buffer, size_t size);
         operator        int();
+        virtual unsigned long getBaudRate();
 
 		using	Print::write; // pull in write(str) and write(buf, size) from Print
 };
