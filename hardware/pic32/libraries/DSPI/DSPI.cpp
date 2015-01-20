@@ -45,6 +45,12 @@
 #include	<sys/attribs.h>
 #include	<DSPI.h>
 
+#if defined(_SPI1CON_ENHBUF_POSITION)
+#define ENH_BUFFER _SPI1CON_ENHBUF_POSITION
+#elif defined(_SPI1ACON_ENHBUF_POSITION)
+#define ENH_BUFFER _SPI1ACON_ENHBUF_POSITION
+#endif
+
 /* ------------------------------------------------------------ */
 /*				Forward references to int handlers              */
 /* ------------------------------------------------------------ */
@@ -595,8 +601,8 @@ DSPI::transfer(uint16_t cbReq, uint8_t * pbSnd, uint8_t * pbRcv) {
 // are the same.  We'll just use SPI1A's macros for all the ports
 // as it makes no difference.
 
-#ifdef _SPI1ACON_ENHBUF_POSITION
-    pspi->sxCon.set = 1<<_SPI1ACON_ENHBUF_POSITION;
+#if ENH_BUFFER
+    pspi->sxCon.set = 1<<ENH_BUFFER;
     uint16_t toWrite = cbReq;
     uint16_t toRead = cbReq;
     uint16_t rPos = 0;
@@ -604,19 +610,19 @@ DSPI::transfer(uint16_t cbReq, uint8_t * pbSnd, uint8_t * pbRcv) {
 
     while (toWrite > 0 || toRead > 0) {
         if (toWrite > 0) {
-            if ((pspi->sxStat.reg & (1<<_SPI1ASTAT_SPITBF_POSITION)) == 0) {
+            if ((pspi->sxStat.reg & (1<<_SPISTAT_SPITBF)) == 0) {
                 pspi->sxBuf.reg = pbSnd[wPos++];
                 toWrite--;
             }
         }
         if (toRead > 0) {
-            if ((pspi->sxStat.reg & (1<<_SPI1ASTAT_SPIRBE_POSITION)) == 0) {
+            if ((pspi->sxStat.reg & (1<<_SPISTAT_SPIRBE)) == 0) {
                 pbRcv[rPos++] = pspi->sxBuf.reg;
                 toRead--;
             }
         }
     }
-    pspi->sxCon.clr = 1<<_SPI1ACON_ENHBUF_POSITION;
+    pspi->sxCon.clr = 1<<ENH_BUFFER;
 #else
     for (cbCur = cbReq; cbCur > 0; cbCur--) {
         *pbRcv++ = transfer(*pbSnd++);
@@ -645,27 +651,27 @@ DSPI::transfer(uint16_t cbReq, uint8_t * pbSnd, uint8_t * pbRcv) {
 
 void
 DSPI::transfer(uint16_t cbReq, uint8_t * pbSnd) {
-#ifdef _SPI1ACON_ENHBUF_POSITION
-    pspi->sxCon.set = 1<<_SPI1ACON_ENHBUF_POSITION;
+#ifdef ENH_BUFFER
+    pspi->sxCon.set = 1<<ENH_BUFFER;
     uint16_t toWrite = cbReq;
     uint16_t toRead = cbReq;
     uint16_t wPos = 0;
 
     while (toWrite > 0 || toRead > 0) {
         if (toWrite > 0) {
-            if ((pspi->sxStat.reg & (1<<_SPI1ASTAT_SPITBF_POSITION)) == 0) {
+            if ((pspi->sxStat.reg & (1<<_SPISTAT_SPITBF)) == 0) {
                 pspi->sxBuf.reg = pbSnd[wPos++];
                 toWrite--;
             }
         }
         if (toRead > 0) {
-            if ((pspi->sxStat.reg & (1<<_SPI1ASTAT_SPIRBE_POSITION)) == 0) {
+            if ((pspi->sxStat.reg & (1<<_SPISTAT_SPIRBE)) == 0) {
                 (void) pspi->sxBuf.reg;
                 toRead--;
             }
         }
     }
-    pspi->sxCon.clr = 1<<_SPI1ACON_ENHBUF_POSITION;
+    pspi->sxCon.clr = 1<<ENH_BUFFER;
 #else
 
     for (cbCur = cbReq; cbCur > 0; cbCur--) {
@@ -696,29 +702,29 @@ DSPI::transfer(uint16_t cbReq, uint8_t * pbSnd) {
 
 void
 DSPI::transfer(uint16_t cbReq, uint8_t bPad, uint8_t * pbRcv) {
-#ifdef _SPI1ACON_ENHBUF_POSITION
-    pspi->sxCon.set = 1<<_SPI1ACON_ENHBUF_POSITION;
+#ifdef ENH_BUFFER
+    pspi->sxCon.set = 1<<ENH_BUFFER;
     uint16_t toWrite = cbReq;
     uint16_t toRead = cbReq;
     uint16_t rPos = 0;
 
-    pspi->sxCon.clr = 1<<_SPI1ACON_MODE32_POSITION | 1<<_SPI1ACON_MODE16_POSITION;
+    pspi->sxCon.clr = 1<<_SPICON_MODE32 | 1<<_SPICON_MODE16;
 
     while (toWrite > 0 || toRead > 0) {
         if (toWrite > 0) {
-            if ((pspi->sxStat.reg & (1<<_SPI1ASTAT_SPITBF_POSITION)) == 0) {
+            if ((pspi->sxStat.reg & (1<<_SPISTAT_SPITBF)) == 0) {
                 pspi->sxBuf.reg = bPad;
                 toWrite--;
             }
         }
         if (toRead > 0) {
-            if ((pspi->sxStat.reg & (1<<_SPI1ASTAT_SPIRBE_POSITION)) == 0) {
+            if ((pspi->sxStat.reg & (1<<_SPISTAT_SPIRBE)) == 0) {
                 pbRcv[rPos++] = pspi->sxBuf.reg;
                 toRead--;
             }
         }
     }
-    pspi->sxCon.clr = 1<<_SPI1ACON_ENHBUF_POSITION;
+    pspi->sxCon.clr = 1<<ENH_BUFFER;
 #else
 
     for (cbCur = cbReq; cbCur > 0; cbCur--) {
