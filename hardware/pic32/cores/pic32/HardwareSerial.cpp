@@ -214,7 +214,8 @@ void HardwareSerial::begin(unsigned long baudRate)
         // MZ has 2 more vectors to worry about
 #if defined(__PIC32MZXX__)
 
-        static uint32_t * const pISROffset = ((uint32_t *) &OFF000);
+//  What is this supposed to be doing?
+//        static uint32_t * const pISROffset = ((uint32_t *) &OFF000);
 
         // the MZ part works off of offset tables
         // we must fill in the tx and rx VECs to point

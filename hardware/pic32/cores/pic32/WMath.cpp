@@ -37,7 +37,7 @@ extern "C" {
 #if defined(__PIC32MZ__)
 #include <p32xxxx.h>
 unsigned int prngmz() {
-    static unsigned int lastPRNGValue = 0;
+//    static unsigned int lastPRNGValue = 0;
 
     if (RNGCONbits.PRNGEN == 0) {
         // The TRNG doesn't work yet, but when it does it can be used

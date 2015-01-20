@@ -123,7 +123,7 @@ void initIntVector(void)
 */
 isrFunc getIntVector(int vec)
 {
-    uint32_t isrAddr = ((uint32_t *) &OFF000)[vec] + &_ebase_address;
+    uint32_t isrAddr = (uint32_t)(((uint32_t *) &OFF000)[vec] + &_ebase_address);
     return((isrFunc) isrAddr);
 }
 
