@@ -175,19 +175,7 @@
 /* The following are used to build tables used to map pin numbers for
 ** PPS input and output selection.
 */
-#if defined(__32MZ1024ECG064__) \
-    || defined(__32MZ1024ECH064__) \
-    || defined(__32MZ1024ECM064__) \
-    || defined(__32MZ2048ECG064__) \
-    || defined(__32MZ2048ECH064__) \
-    || defined(__32MZ2048ECM064__) \
-    || defined(__32MZ0512ECE064__) \
-    || defined(__32MZ0512ECF064__) \
-    || defined(__32MZ0512ECK064__) \
-    || defined(__32MZ1024ECE064__) \
-    || defined(__32MZ1024ECF064__) \
-    || defined(__32MZ1024ECK064__)
-
+#if (__PIC32_PINS__ == 64)
         #define	_RPOBASE	RPB0R		//base address of PPS output select registers
 #else
         #define	_RPOBASE	RPA14R		//base address of PPS output select registers
