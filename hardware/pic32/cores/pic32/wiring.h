@@ -156,7 +156,8 @@ void			delay(unsigned long);
 void			delayMicroseconds(unsigned int us);
 unsigned long	pulseIn(uint8_t pin, uint8_t state, unsigned long timeout);
 
-void			shiftOut(uint8_t dataPin, uint8_t clockPin, uint8_t bitOrder, byte val);
+void			s8hiftOut(uint8_t dataPin, uint8_t clockPin, uint8_t bitOrder, byte val);
+uint8_t         shiftIn(uint8_t dataPin, uint8_t clockPin, uint8_t bitOrder);
 
 void attachInterrupt(uint8_t, void (*)(void), int mode);
 void detachInterrupt(uint8_t);

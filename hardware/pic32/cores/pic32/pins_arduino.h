@@ -175,7 +175,11 @@
 /* The following are used to build tables used to map pin numbers for
 ** PPS input and output selection.
 */
-#define	_RPOBASE	RPA14R		//base address of PPS output select registers
+#if (__PIC32_PINS__ == 64)
+        #define	_RPOBASE	RPB0R		//base address of PPS output select registers
+#else
+        #define	_RPOBASE	RPA14R		//base address of PPS output select registers
+#endif
 #define	_RPIBASE	INT1R		//base address of PPS input select registers
 #define	_PPS_OUT(P) (P)
 #define _PPS_IN(P) (uint8_t)(((P) & 0x0F) | ((P) >> 4))

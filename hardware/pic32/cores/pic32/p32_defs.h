@@ -300,7 +300,9 @@ typedef struct {
 /*	SPIxSTAT - Define symbols in the SPI status port
 */
 #define	_SPISTAT_SPIROV	6
+#define _SPISTAT_SPIRBE 5
 #define	_SPISTAT_SPITBE	3
+#define _SPISTAT_SPITBF 1
 #define _SPISTAT_SPIRBF	0
 
 /* This structure defines the registers for a PIC32 I2C port.
@@ -1033,10 +1035,10 @@ typedef enum {
 
     PPS_OUT_U3TX        = (1 + _PPS_SET_A),
     PPS_OUT_U4RTS       = (2 + _PPS_SET_A),
-    PPS_OUT_SDO1        = (5 + _PPS_SET_A | _PPS_SET_B),
-    PPS_OUT_SDO2        = (6 + _PPS_SET_A | _PPS_SET_B),
-    PPS_OUT_SDO3        = (7 + _PPS_SET_A | _PPS_SET_B),
-    PPS_OUT_SDO5        = (9 + _PPS_SET_A | _PPS_SET_B),
+    PPS_OUT_SDO1        = (5 + (_PPS_SET_A | _PPS_SET_B)),
+    PPS_OUT_SDO2        = (6 + (_PPS_SET_A | _PPS_SET_B)),
+    PPS_OUT_SDO3        = (7 + (_PPS_SET_A | _PPS_SET_B)),
+    PPS_OUT_SDO5        = (9 + (_PPS_SET_A | _PPS_SET_B)),
     PPS_OUT_SS6         = (10 + _PPS_SET_A),
     PPS_OUT_OC3         = (11 + _PPS_SET_A),
     PPS_OUT_OC6         = (12 + _PPS_SET_A),
@@ -1048,19 +1050,19 @@ typedef enum {
     PPS_OUT_U2RTS       = (2 + _PPS_SET_B),
     PPS_OUT_U5TX        = (3 + _PPS_SET_B),
     PPS_OUT_U6RTS       = (4 + _PPS_SET_B),
-    PPS_OUT_SDO4        = (8 + _PPS_SET_B | _PPS_SET_D),
+    PPS_OUT_SDO4        = (8 + (_PPS_SET_B | _PPS_SET_D)),
     PPS_OUT_OC4         = (11 + _PPS_SET_B),
     PPS_OUT_OC7         = (12 + _PPS_SET_B),
     PPS_OUT_REFCLK1     = (15 + _PPS_SET_B),
 
     PPS_OUT_U3RTS       = (1 + _PPS_SET_C),
     PPS_OUT_U4TX        = (2 + _PPS_SET_C),
-    PPS_OUT_U6TX        = (4 + _PPS_SET_C | _PPS_SET_D),
+    PPS_OUT_U6TX        = (4 + (_PPS_SET_C | _PPS_SET_D)),
     PPS_OUT_SS1         = (5 + _PPS_SET_C),
     PPS_OUT_SS3         = (7 + _PPS_SET_C),
     PPS_OUT_SS4         = (8 + _PPS_SET_C),
     PPS_OUT_SS5         = (9 + _PPS_SET_C),
-    PPS_OUT_SDO6        = (10 + _PPS_SET_C | _PPS_SET_D),
+    PPS_OUT_SDO6        = (10 + (_PPS_SET_C | _PPS_SET_D)),
     PPS_OUT_OC5         = (11 + _PPS_SET_C),
     PPS_OUT_OC8         = (12 + _PPS_SET_C),
     PPS_OUT_C1OUT       = (14 + _PPS_SET_C),
@@ -1150,6 +1152,116 @@ typedef enum {
 /* Data type for PPS input select register.
 */
 typedef uint32_t p32_ppsin;
+
+#if (__PIC32_PINS__ == 64)
+/* These symbols define the indices of the output pin mapping
+** registers.
+*/
+
+#define	_PPS_RPB0R		0
+#define	_PPS_RPB1R		1
+#define	_PPS_RPB2R		2
+#define	_PPS_RPB3R		3
+// #define	_PPS_RPB4R		4
+#define	_PPS_RPB5R		5
+#define	_PPS_RPB6R		6
+#define	_PPS_RPB7R		7
+#define	_PPS_RPB8R		8
+#define	_PPS_RPB9R		9
+#define	_PPS_RPB10R		10
+// #define	_PPS_RPB11R		11
+// #define	_PPS_RPB12R		12
+// #define	_PPS_RPB13R		13
+#define	_PPS_RPB14R		14
+#define	_PPS_RPB15R		15
+
+//#define	_PPS_RPC0R		16
+#define	_PPS_RPC1R		17
+#define	_PPS_RPC2R		18
+#define	_PPS_RPC3R		19
+#define	_PPS_RPC4R		20
+//#define	_PPS_RPC5R		21
+//#define	_PPS_RPC6R		22
+//#define	_PPS_RPC7R		23
+//#define	_PPS_RPC8R		24
+//#define	_PPS_RPC9R		25
+//#define	_PPS_RPC10R		26
+//#define	_PPS_RPC11R		27
+//#define	_PPS_RPC12R		28
+#define	_PPS_RPC13R		29
+#define	_PPS_RPC14R		30
+//#define	_PPS_RPC15R		31
+
+#define	_PPS_RPD0R		32
+#define	_PPS_RPD1R		33
+#define	_PPS_RPD2R		34
+#define	_PPS_RPD3R		35
+#define	_PPS_RPD4R		36
+#define	_PPS_RPD5R		37
+#define	_PPS_RPD6R		38
+#define	_PPS_RPD7R		39
+//#define	_PPS_RPD8R		40
+#define	_PPS_RPD9R		41
+#define	_PPS_RPD10R		42
+#define	_PPS_RPD11R		43
+#define	_PPS_RPD12R		44
+//#define	_PPS_RPD13R		45
+#define	_PPS_RPD14R		46
+#define	_PPS_RPD15R		47
+
+//#define	_PPS_RPE0R		48
+//#define	_PPS_RPE1R		49
+//#define	_PPS_RPE2R		50
+#define	_PPS_RPE3R		51
+//#define	_PPS_RPE4R		52
+#define	_PPS_RPE5R		53
+//#define	_PPS_RPE6R		54
+//#define	_PPS_RPE7R		55
+#define	_PPS_RPE8R		56
+#define	_PPS_RPE9R		57
+//#define	_PPS_RPE10R		58
+//#define	_PPS_RPE11R		59
+//#define	_PPS_RPE12R		60
+//#define	_PPS_RPE13R		61
+//#define	_PPS_RPE14R		62
+//#define	_PPS_RPE15R		63
+
+#define	_PPS_RPF0R		64
+#define	_PPS_RPF1R		65
+#define	_PPS_RPF2R		66
+#define	_PPS_RPF3R		67
+#define	_PPS_RPF4R		68
+#define	_PPS_RPF5R		69
+//#define	_PPS_RPF6R		70
+//#define	_PPS_RPF7R		71
+#define	_PPS_RPF8R		72
+//#define	_PPS_RPF9R		73
+//#define	_PPS_RPF10R		74
+//#define	_PPS_RPF11R		75
+#define	_PPS_RPF12R		76
+#define	_PPS_RPF13R		77
+//#define	_PPS_RPF14R		78
+//#define	_PPS_RPF15R		79
+
+#define	_PPS_RPG0R		80
+#define	_PPS_RPG1R		81
+//#define	_PPS_RPG2R		82
+//#define	_PPS_RPG3R		83
+//#define	_PPS_RPG4R		84
+//#define	_PPS_RPG5R		85
+#define	_PPS_RPG6R		86
+#define	_PPS_RPG7R		87
+#define	_PPS_RPG8R		88
+#define	_PPS_RPG9R		89
+//#define	_PPS_RPG10R		90
+//#define	_PPS_RPG11R		91
+//#define	_PPS_RPG12R		92
+//#define	_PPS_RPG13R		93
+//#define	_PPS_RPG14R		94
+//#define	_PPS_RPG15R		95
+
+
+#else
 
 /* These symbols define the indices of the output pin mapping
 ** registers.
@@ -1259,6 +1371,7 @@ typedef uint32_t p32_ppsin;
 //#define	_PPS_RPG14R		96
 //#define	_PPS_RPG15R		97
 
+#endif
 
 /* These symbols define the values to load into a PPS input select register
 ** to assign the actual input pin. The PIC32 architecture divides these values 
