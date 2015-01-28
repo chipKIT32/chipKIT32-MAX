@@ -38,7 +38,6 @@
 //*	Jul 26, 2012 <GeneApperson> Added PPS support for PIC32MX1xx/MX2xx devices
 //* Feb  6, 2013 <GeneApperson> Added bit definitions for several peripherals
 //*	Feb 17, 2012	<KeithV> Added PPS support for MZ devices
-//* Jan 27, 2014 <Skyler Brandt> Added support for RS485 addressing
 //************************************************************************
 
 
