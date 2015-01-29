@@ -28,11 +28,14 @@ void loop()
 // this function is registered as an event, see setup()
 void receiveEvent(int howMany)
 {
-  while(1 < Wire.available()) // loop through all but the last
+  if(Wire.available() >= 6)
   {
-    char c = Wire.receive(); // receive byte as a character
-    Serial.print(c);         // print the character
+    while(1 < Wire.available()) // loop through all but the last
+    {
+      char c = Wire.receive(); // receive byte as a character
+      Serial.print(c);         // print the character
+    }
+    int x = Wire.receive();    // receive byte as an integer
+    Serial.println(x);         // print the integer
   }
-  int x = Wire.receive();    // receive byte as an integer
-  Serial.println(x);         // print the integer
 }
