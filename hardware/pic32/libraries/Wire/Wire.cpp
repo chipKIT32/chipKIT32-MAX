@@ -1,34 +1,55 @@
+/************************************************************************/
+/*                                                                      */
+/*    Wire.cpp                                                          */
+/*                                                                      */
+/*    I2C  implemenation                                                */
+/*                                                                      */
+/************************************************************************/
+/*    Author:     Keith Vogel                                           */
+/*    Copyright 2014, Digilent Inc.                                     */
+/************************************************************************/
 /*
-  TwoWire.cpp - TWI/I2C library for Wiring & Arduino
-  Copyright (c) 2006 Nicholas Zambetti.  All right reserved.
-
-  This library is free software; you can redistribute it and/or
-  modify it under the terms of the GNU Lesser General Public
-  License as published by the Free Software Foundation; either
-  version 2.1 of the License, or (at your option) any later version.
-
-  This library is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-  Lesser General Public License for more details.
-
-  You should have received a copy of the GNU Lesser General Public
-  License along with this library; if not, write to the Free Software
-  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+*
+* Copyright (c) 2013-2014, Digilent <www.digilentinc.com>
+* Contact Digilent for the latest version.
+*
+* This program is free software; distributed under the terms of 
+* BSD 3-clause license ("Revised BSD License", "New BSD License", or "Modified BSD License")
+*
+* Redistribution and use in source and binary forms, with or without modification,
+* are permitted provided that the following conditions are met:
+*
+* 1.    Redistributions of source code must retain the above copyright notice, this
+*        list of conditions and the following disclaimer.
+* 2.    Redistributions in binary form must reproduce the above copyright notice,
+*        this list of conditions and the following disclaimer in the documentation
+*        and/or other materials provided with the distribution.
+* 3.    Neither the name(s) of the above-listed copyright holder(s) nor the names
+*        of its contributors may be used to endorse or promote products derived
+*        from this software without specific prior written permission.
+*
+* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+* ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+* WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+* IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+* INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+* BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+* DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+* LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
+* OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+* OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-extern "C" {
-  #include <stdlib.h>
-  #include <string.h>
-  #include <inttypes.h>
-  #include "twi.h"
-}
+/************************************************************************/
+/*  Revision History:                                                   */
+/*    8/4/2014(KeithV): Created                                         */
+/************************************************************************/
+#include <DTWI.h>
+#define ENABLE_END
+#include <Wire.h>
 
-#define OPT_BOARD_INTERNAL
-#include <p32xxxx.h>
-#include <pins_arduino.h>
-#include <p32_defs.h>
-#include "Wire.h"
+DTWI0 di2c;
+TwoWire Wire;
 
 // Initialize Class Variables //////////////////////////////////////////////////
 
@@ -47,6 +68,48 @@ void (*TwoWire::user_onReceive)(int);
 
 uint32_t TwoWire::beginCount = 0;
 
+static void (*onReceiveServiceR) (uint8_t*, int) = NULL;
+static void (*onRequestServiceR)(void)           = NULL;
+static uint32_t iSessionCur                     = 0xFF;
+
+static void onI2C(int id, void * tptr)
+{
+    DTWI::I2C_STATUS status = di2c.getStatus();
+    uint8_t data;
+
+    if(status.fSlave)
+    {
+        if(status.fRead)
+        {
+            while(di2c.available() > 0)
+            {
+                onReceiveServiceR(NULL, di2c.available());
+            }
+        }
+
+        // on writing out, we only call once when the 
+        // new session starts
+        else if(status.fWrite && iSessionCur != status.iSession)
+        {
+            iSessionCur = status.iSession;
+            onRequestServiceR();
+        }
+    }
+}
+
+static bool beginSlave(void (*onReceiveService) (uint8_t*, int), void (*onRequestService)(void))
+{
+    if(getTaskId(onI2C) == -1)
+    {
+        createTask(onI2C, 0, TASK_ENABLE, NULL);
+    };
+    onReceiveServiceR = onReceiveService;
+    onRequestServiceR = onRequestService;
+    iSessionCur = 0xFF;
+
+    return(true);
+}
+
 // Constructors ////////////////////////////////////////////////////////////////
 
 TwoWire::TwoWire()
@@ -57,31 +120,24 @@ TwoWire::TwoWire()
 
 void TwoWire::begin(void)
 {
-    // This will protect the code from being called more than once.
-    // Not only will this work around the multiple twi_init bug, but
-    // it also protects the buffer index and length static variables
-    // from being reset by a subsequent call to Wire.begin().
+    if(beginCount == 0)
+    {
     beginCount++;
-    if (beginCount == 1) { // First init
-        rxBufferIndex = 0;
-        rxBufferLength = 0;
-
-        txBufferIndex = 0;
-        txBufferLength = 0;
-
-        twi_init((p32_i2c *)_TWI_BASE, _TWI_BUS_IRQ, _TWI_SLV_IRQ, _TWI_MST_IRQ, _TWI_VECTOR);
+        // there are no callback in Master mode
+        destroyTask(getTaskId(onI2C));
+        di2c.beginMaster();
     }
 }
 
 void TwoWire::begin(uint8_t address)
 {
-    begin();
-    // Likewise, in the other begin function, this will prevent
-    // the attach events being called more than once.
-    if (beginCount == 1) { // First init
-        twi_setAddress(address);
-        twi_attachSlaveTxEvent(onRequestService);
-        twi_attachSlaveRxEvent(onReceiveService);
+    if(beginCount == 0)
+    {
+        beginCount++;
+
+        // make sure we put the callback in the task manager
+        beginSlave(onReceiveService, onRequestService);
+        di2c.beginSlave(address);
     }
 }
 
@@ -93,16 +149,30 @@ void TwoWire::begin(uint8_t address)
 
 #ifdef ENABLE_END
 void TwoWire::end() {
-    if (beginCount == 0) {
+    DTWI::I2C_STATUS status = di2c.getStatus();
+
+    if(beginCount == 0)
+    {
         return;
     }
 
-    beginCount--;
-    if (beginCount == 0) {
-        // We need code in here to undo whatever begin() does.
-        // That's not something I can delve into right now.
+    destroyTask(getTaskId(onI2C));
+    beginCount = 0;
+
+    if(status.fMaster)
+    {
+        di2c.endMaster();
     }
-}
+    else if(status.fSlave)
+    {
+        // forcefully end the slave
+        di2c.endSlave(true);
+    }
+
+    // clean out the read / write buffer
+    di2c.abort();
+    di2c.discard();
+    }
 #endif
 
 void TwoWire::begin(int address)
@@ -112,17 +182,20 @@ void TwoWire::begin(int address)
 
 uint8_t TwoWire::requestFrom(uint8_t address, uint8_t quantity)
 {
-  // clamp to buffer length
-  if(quantity > BUFFER_LENGTH){
-    quantity = BUFFER_LENGTH;
-  }
-  // perform blocking read into buffer
-  uint8_t read = twi_readFrom(address, rxBuffer, quantity);
-  // set rx buffer iterator vars
-  rxBufferIndex = 0;
-  rxBufferLength = read;
+    DTWI::I2C_STATUS status;
 
-  return read;
+    // may have to wait for the last action to finish before
+    // a repeated start can occur
+    while(!di2c.startMasterRead(address, quantity));
+
+    do
+    {
+        status = di2c.getStatus();
+    } while(status.fMyBus && !status.fNacking);
+
+    while(!di2c.stopMaster());
+
+    return(di2c.available());
 }
 
 uint8_t TwoWire::requestFrom(int address, int quantity)
@@ -132,13 +205,7 @@ uint8_t TwoWire::requestFrom(int address, int quantity)
 
 void TwoWire::beginTransmission(uint8_t address)
 {
-  // indicate that we are transmitting
-  transmitting = 1;
-  // set address of targeted slave
-  txAddress = address;
-  // reset tx buffer iterator vars
-  txBufferIndex = 0;
-  txBufferLength = 0;
+    while(!di2c.startMasterWrite(address));
 }
 
 void TwoWire::beginTransmission(int address)
@@ -148,14 +215,7 @@ void TwoWire::beginTransmission(int address)
 
 uint8_t TwoWire::endTransmission(void)
 {
-  // transmit buffer (blocking)
-  int8_t ret = twi_writeTo(txAddress, txBuffer, txBufferLength, 1);
-  // reset tx buffer iterator vars
-  txBufferIndex = 0;
-  txBufferLength = 0;
-  // indicate that we are done transmitting
-  transmitting = 0;
-  return ret;
+    while(!di2c.stopMaster());
 }
 
 
@@ -164,23 +224,7 @@ uint8_t TwoWire::endTransmission(void)
 // or after beginTransmission(address)
 int TwoWire::write(uint8_t data)
 {
-    if(transmitting) {
-        // in master transmitter mode
-        // don't bother if buffer is full
-        if(txBufferLength >= BUFFER_LENGTH){
-            return 1;
-        }
-        // put byte in tx buffer
-        txBuffer[txBufferIndex] = data;
-        ++txBufferIndex;
-        // update amount in buffer   
-        txBufferLength = txBufferIndex;
-    } else {
-        // in slave send mode
-        // reply to master
-        twi_transmit(&data, 1);
-    }
-    return 1;
+    di2c.write((const byte *) &data, 1);
 }
 void TwoWire::send(uint8_t data) { write(data); }
 
@@ -189,16 +233,7 @@ void TwoWire::send(uint8_t data) { write(data); }
 // or after beginTransmission(address)
 int TwoWire::write(uint8_t* data, uint8_t quantity)
 {
-    if(transmitting){
-        // in master transmitter mode
-        for(uint8_t i = 0; i < quantity; ++i){
-            write(data[i]);
-        }
-    } else {
-        // in slave send mode
-        // reply to master
-        twi_transmit(data, quantity);
-    }
+    di2c.write((const byte *) data, quantity);
     return 1;
 }
 void TwoWire::send(uint8_t* data, uint8_t quantity) { write(data, quantity); }
@@ -226,7 +261,7 @@ void TwoWire::send(int data) { write(data); }
 // or after requestFrom(address, numBytes)
 uint8_t TwoWire::available(void)
 {
-  return rxBufferLength - rxBufferIndex;
+  return (di2c.available());
 }
 
 uint8_t TwoWire::receive(void) {
@@ -238,17 +273,14 @@ uint8_t TwoWire::receive(void) {
 // or after requestFrom(address, numBytes)
 uint8_t TwoWire::read(void)
 {
-  // default to returning null char
-  // for people using with char strings
-  uint8_t value = '\0';
+    byte    data;
   
-  // get each successive byte on each call
-  if(rxBufferIndex < rxBufferLength){
-    value = rxBuffer[rxBufferIndex];
-    ++rxBufferIndex;
+    if(di2c.read(&data, 1) == 1)
+    {
+        return((uint8_t) data);
   }
 
-  return value;
+	return('\0');
 }
 
 // behind the scenes function that is called when data is received
@@ -261,19 +293,7 @@ void TwoWire::onReceiveService(uint8_t* inBytes, int numBytes)
   // don't bother if rx buffer is in use by a master requestFrom() op
   // i know this drops data, but it allows for slight stupidity
   // meaning, they may not have read all the master requestFrom() data yet
-  if(rxBufferIndex < rxBufferLength){
-    return;
-  }
-  // copy twi rx buffer into local read buffer
-  // this enables new reads to happen in parallel
-  for(uint8_t i = 0; i < numBytes; ++i){
-    rxBuffer[i] = inBytes[i];    
-  }
-  // set rx iterator vars
-  rxBufferIndex = 0;
-  rxBufferLength = numBytes;
-  // alert user program
-  user_onReceive(numBytes);
+    user_onReceive(numBytes);
 }
 
 // behind the scenes function that is called when data is requested
@@ -283,10 +303,6 @@ void TwoWire::onRequestService(void)
   if(!user_onRequest){
     return;
   }
-  // reset tx buffer iterator vars
-  // !!! this will kill any pending pre-master sendTo() activity
-  txBufferIndex = 0;
-  txBufferLength = 0;
   // alert user program
   user_onRequest();
 }
@@ -303,7 +319,5 @@ void TwoWire::onRequest( void (*function)(void) )
   user_onRequest = function;
 }
 
-// Preinstantiate Objects //////////////////////////////////////////////////////
 
-TwoWire Wire = TwoWire();
 
