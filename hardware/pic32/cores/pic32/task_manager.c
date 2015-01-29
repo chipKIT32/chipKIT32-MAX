@@ -602,8 +602,20 @@ _scheduleTask() {
 
 			/* This task event has timed out. Update the event time for the
 			** next event on this task.
+            ** However, there is an issue, if the next has already passed
+            ** the current time, we need to put it at the current time otherwise
+            ** our delta time will go negative but with unsigned values will look
+            ** a large positive time. Since the time is past, running the task ass
+            ** soon as possible is the best we can do.
 			*/
-			rgtaskTable[id].tmsNext += rgtaskTable[id].tmsPeriod;
+            if(tmsCur - rgtaskTable[id].tmsNext >= rgtaskTable[id].tmsPeriod)
+            {
+                rgtaskTable[id].tmsNext = tmsCur;
+            }
+            else
+            {
+			    rgtaskTable[id].tmsNext += rgtaskTable[id].tmsPeriod;
+            }
 
 			/* Call the event function.
 			*/
