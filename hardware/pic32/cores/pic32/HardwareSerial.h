@@ -19,6 +19,8 @@
 //*	Nov  1,	2011	<MLS> Also fixed some other compatibilty issues
 //* Nov 12, 2001	<GeneApperson> Rewrite for board variant support
 //*	Jul 26, 2012	<GeneApperson> Added PPS support for PIC32MX1xx/MX2xx devices
+//* 
+//* Jan 27, 2014    <Skyler Brandt> Added support for RS485 addressing
 //************************************************************************
 /*
   HardwareSerial.h - Hardware serial library for Wiring
@@ -115,8 +117,12 @@ class HardwareSerial : public Stream
 
         void            attachInterrupt(void (*callback)(int));
         void            detachInterrupt();
+        
+        void            enableAddressDetection (void);
+        void            disableAddressDetection(void);
 
 		void			begin(unsigned long baudRate);
+        void            begin(unsigned long baudRate, uint8_t address);
 		void			end();
 		virtual int		available(void);
 		virtual int		peek();

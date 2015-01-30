@@ -61,6 +61,7 @@
 //*	Jul 26, 2012	<GeneApperson> Added PPS support for PIC32MX1xx/MX2xx devices 
 //* Nov 23, 2012    <BrianSchmalz> Auto-detect when to use BRGH = 1 (high baud rates)
 //*	Feb  6, 2013	<GeneApperson> Removed dependencies on the Microchip plib library
+//* Jan 27, 2014    <Skyler Brandt> Added support for RS485 addressing
 //************************************************************************
 #if !defined(__LANGUAGE_C__)
 #define __LANGUAGE_C__
@@ -252,6 +253,80 @@ void HardwareSerial::begin(unsigned long baudRate)
         uart->uxMode.reg = (1 << _UARTMODE_ON) | (1 << _UARTMODE_BRGH);  // enable UART module
     }
     uart->uxSta.reg  = (1 << _UARTSTA_UTXEN) + (1 << _UARTSTA_URXEN);    // enable transmitter and receiver
+}
+
+/* ------------------------------------------------------------ */
+/***	HardwareSerial::begin
+**
+**	Parameters:
+**		baudRate		- baud rate to use on port
+**      address         - address for RS485 communication
+**
+**	Return Value:
+**		none
+**
+**	Errors:
+**		none
+**
+**	Description:
+**		Initialize the UART for use, setting the baud rate to the
+**		requested value, data size of 9-bits, and no parity and 
+**      address detection mode
+*/
+
+void HardwareSerial::begin(unsigned long baudRate, uint8_t address) {
+    //	p32_regset *	ipc;	//interrupt priority control register set
+    //	int				irq_shift;
+
+    /* Initialize the receive buffer.
+    */
+    purge();
+
+#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
+    /* Map the UART TX to the appropriate pin.
+    */
+    mapPps(pinTx, ppsTx);
+
+    /* Map the UART RX to the appropriate pin.
+    */
+    mapPps(pinRx, ppsRx);
+#endif
+
+    setIntVector(vec, isr);
+
+    /* Set the interrupt privilege level and sub-privilege level
+    */
+    setIntPriority(vec, ipl, spl);
+    
+    /* Clear the interrupt flags, and set the interrupt enables for the
+    ** interrupts used by this UART.
+    */
+    ifs->clr = bit_rx + bit_tx + bit_err;	//clear all interrupt flags
+
+    iec->clr = bit_rx + bit_tx + bit_err;	//disable all interrupts
+    iec->set = bit_rx;						//enable rx interrupts
+
+    /* Initialize the UART itself.
+    **	http://www.chipkit.org/forum/viewtopic.php?f=7&t=213&p=948#p948
+    ** Use high baud rate divisor for bauds over LOW_HIGH_BAUD_SPLIT
+    */
+    uart->uxMode.reg = 0;
+    uart->uxSta.reg = 0;
+    if (baudRate < LOW_HIGH_BAUD_SPLIT) {
+        // calculate actual BAUD generate value.
+        uart->uxBrg.reg = ((__PIC32_pbClk / 16 / baudRate) - 1);  
+        // set to 9 data bits, no parity
+        uart->uxMode.set = 0b11 << _UARTMODE_PDSEL;                             
+    } else {
+        // calculate actual BAUD generate value.
+        uart->uxBrg.reg = ((__PIC32_pbClk / 4 / baudRate) - 1);
+        // set to 9 data bits, no parity
+        uart->uxMode.set =  (1 << _UARTMODE_BRGH) + (0b11 << _UARTMODE_PDSEL); 
+    }
+    // set address of RS485 slave, enable transmitter and receiver and auto address detection
+    uart->uxSta.set = (1 << _UARTSTA_ADM_EN) + (address << _UARTSTA_ADDR) + (1 << _UARTSTA_UTXEN) + (1 << _UARTSTA_URXEN);  
+    enableAddressDetection(); // enable auto address detection
+    uart->uxMode.set = 1 << _UARTMODE_ON; // enable UART module
 }
 
 /* ------------------------------------------------------------ */
@@ -537,6 +612,16 @@ void HardwareSerial::attachInterrupt(void (*callback)(int)) {
 /* Detatching the interrupt is as simple as setting the rxIntr to null. */
 void HardwareSerial::detachInterrupt() {
     rxIntr = NULL;
+}
+
+/* Sets the bit in the UART status register that enables address detection */
+void HardwareSerial::enableAddressDetection(void) {
+    uart->uxSta.set = 1 << _UARTSTA_ADDEN;
+}
+
+/* Clears the bit in the UART status register that enables address detection */
+void HardwareSerial::disableAddressDetection(void) {
+    uart->uxSta.clr = 1 << _UARTSTA_ADDEN;
 }
 
 /* ------------------------------------------------------------ */

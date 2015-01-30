@@ -262,13 +262,17 @@ typedef struct {
 */
 #define	_UARTMODE_ON	15
 #define _UARTMODE_BRGH  3
+#define _UARTMODE_PDSEL 1
 
 /* UxSTA - Define bits in UART status/control register
 */
+#define _UARTSTA_ADM_EN 24
+#define _UARTSTA_ADDR   16
 #define	_UARTSTA_URXEN	12
 #define	_UARTSTA_UTXEN	10
 #define _UARTSTA_UTXBF  9
 #define	_UARTSTA_TMRT	8
+#define _UARTSTA_ADDEN  5
 
 /* Structure for the registers of a PIC32 SPI controller
 */
