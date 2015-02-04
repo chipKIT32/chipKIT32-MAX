@@ -435,9 +435,17 @@ DSPI::setSpeed(uint32_t spd) {
 	** controller before writing to the baud register
 	*/
 	pspi->sxCon.clr = (1 << _SPICON_ON);	// disable SPI
+    storedBrg = pspi->sxBrg.reg;
 	pspi->sxBrg.reg = brg;
 	pspi->sxCon.set = (1 << _SPICON_ON);	// enable SPI
 
+}
+
+/* Undo the last setSpeed() call to restore the previous baud rate */
+void DSPI::unsetSpeed() { 
+	pspi->sxCon.clr = (1 << _SPICON_ON);	// disable SPI
+	pspi->sxBrg.reg = storedBrg;
+	pspi->sxCon.set = (1 << _SPICON_ON);	// enable SPI
 }
 
 /* ------------------------------------------------------------ */
@@ -467,6 +475,7 @@ DSPI::setMode(uint16_t mod) {
 		return;
 	}
 
+    storedMode = pspi->sxCon.reg & ((1 << _SPICON_CKP)|(1 << _SPICON_CKE));
 	pspi->sxCon.clr = (1 << _SPICON_ON);
 	pspi->sxCon.clr =((1 << _SPICON_CKP)|(1 << _SPICON_CKE));	// force both mode bits to 0
 
@@ -474,6 +483,16 @@ DSPI::setMode(uint16_t mod) {
 	pspi->sxCon.set = (1 << _SPICON_ON);
 	
 }
+
+/* Undo the last setMode call */
+void DSPI::unsetMode() {
+	pspi->sxCon.clr = (1 << _SPICON_ON);
+	pspi->sxCon.clr =((1 << _SPICON_CKP)|(1 << _SPICON_CKE));	// force both mode bits to 0
+
+	pspi->sxCon.set = storedMode;
+	pspi->sxCon.set = (1 << _SPICON_ON);
+} 
+
 
 /* ------------------------------------------------------------ */
 /***	DSPI::setPinSelect
