@@ -314,13 +314,11 @@
 	  <gunzip src="macosx/template.dmg.gz" dest="macosx/working.dmg" />
 		-->
     <mkdir dir="macosx/working_dir" />
-    <!--
 	  <copy todir="macosx/working_dir">
 		  <fileset dir="macosx/work">
 			  <exclude name="**/mpideTestSuite/**" />
 		  </fileset>
     </copy>
-    -->
 	  <copy file="macosx/dist/FTDIUSBSerialDriver_v2_2_18.dmg" todir="macosx/working_dir" />
 
 
