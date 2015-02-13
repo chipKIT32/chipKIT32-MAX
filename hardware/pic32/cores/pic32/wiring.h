@@ -37,7 +37,6 @@
 #define Wiring_h
 
 #include <inttypes.h>
-//#include <peripheral/timer.h>
 #include "binary.h"
 #include "avr/pgmspace.h"
 #include <p32xxxx.h>
