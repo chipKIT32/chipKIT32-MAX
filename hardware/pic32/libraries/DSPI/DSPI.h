@@ -109,6 +109,9 @@ private:
 	ppsFunctionType		ppsMOSI;		//PPS select for SPI MOSI
 #endif	
 
+    uint32_t            storedBrg;      // Previous baud rate before a setSpeed
+    uint32_t            storedMode;     // Previous mode before a setMode
+
 	void	doDspiInterrupt();
 
 protected:
@@ -138,7 +141,9 @@ void        begin(uint8_t miso, uint8_t mosi, uint8_t pin);
 #endif
 void		end();
 void		setSpeed(uint32_t spd);
+void        unsetSpeed();
 void		setMode(uint16_t  mod);
+void        unsetMode();
 void		setPinSelect(uint8_t pin);
 void		setTransferSize(uint8_t txsize);
 
