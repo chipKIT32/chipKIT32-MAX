@@ -168,8 +168,14 @@ static const byte cdcacm_configuration_descriptor[] = {
 
 static byte *cdcacm_string_descriptor;
 
-boolean gCdcacm_active;
-
+// Used to track if we think an application on the PC has our port open or not. True if 
+// it's OK to print up to host, false if we should just drop the data.
+// We start out false, but if the PC asks for any IN packets, sends us any OUT packets,
+// or touches any hardware handshaking line, we set it to true.
+// We set it to false when USB_CDC_INACTIVE_TIMEOUT_MS ms goes by without the PC asking for
+// OUT packets, or if the PC de-asserts DTR (indicating that the serial port has been
+// closed by the application.)
+boolean gCdcacm_active = false;
 
 //*	cbfn	=	Call Back FuNction (first letter 'g' means this variable is a global)
 static	cdcacm_reset_cbfn		gReset_cbfn;
@@ -177,8 +183,7 @@ static	cdcacm_storedata_cbfn	gStoredata_cbfn;
 
 static byte			gTXbuffer[PACKET_SIZE];	// packet from host
 
-//#define NRX	16
-#define NRX	4		//*	save on RAM, does not seem to slow it down any
+#define NRX	16
 
 // N.B. -1 forces short packets
 static byte			gRXbuffer[NRX][PACKET_SIZE-1]; // packets to host
@@ -277,10 +282,11 @@ void	cdcacm_print(const byte *buffer, int length)
     int buffersNeeded;
     int m;
     int previousInterrutLevel;
-		
+
 	// ASSERT(length);
 
-	if (! gCdcacm_attached || !gConnected || (length <= 0))
+	// This print call needs to do nothing if we have no data or nowhere to send it.
+	if (!gCdcacm_attached || !gCdcacm_active || (length <= 0))
 	{
 		return;
 	}
@@ -298,6 +304,7 @@ void	cdcacm_print(const byte *buffer, int length)
 		availableBuffers	=	(gRX_out + NRX-gRX_in) % NRX;
 		if (! availableBuffers)
 		{
+			// AvailableBuffers = 0 means we have NRX available buffers.
 			availableBuffers	=	NRX;
 		}
 
@@ -311,8 +318,13 @@ void	cdcacm_print(const byte *buffer, int length)
 		SPLX(previousInterrutLevel);
 
 		delay(1);
-		if (m++ > 1000)
+        // If we ever have to wait for free buffers for more than this timeout,
+		// it means that the PC is not consuming our data any longer, and so we
+		// should stop sending it anything until it gives us a sign that there's
+		// somebody up there able to read us. 
+		if (m++ > USB_CDC_INACTIVE_TIMEOUT_MS)
 		{
+            gCdcacm_active = false;
 			return;
 		}
 		previousInterrutLevel	=	SPLX(7);
@@ -424,7 +436,9 @@ static int	cdcacm_control_transfer(struct setup *setup, byte *buffer, int length
 			break;
 		case CDCRQ_SET_CONTROL_LINE_STATE:
 			assert(! (setup->requesttype & 0x80));
-            gConnected = (setup->value > 0); 
+            // Ideally, we only get here when a real application opens the com port,
+            // or closes it.
+            gCdcacm_active = (setup->value > 0);
 			length	=	0;
 			break;
 		case CDCRQ_SEND_BREAK:
@@ -467,10 +481,12 @@ void	cdcacm_command_ack(void)
 //************************************************************************
 static int	cdcacm_bulk_transfer(boolean in, byte *buffer, int length)
 {
+    // Any time we get any IN or OUT requests on the bulk endpoint, it means (we hope)
+    // that a real application is listening to us so it's OK to send data to the PC.
+    gCdcacm_active = true;
+
 	if (! in)
 	{
-		gCdcacm_active	=	true;
-		
 		// accumulate commands
 		if (gStoredata_cbfn(buffer, length))
 		{
@@ -516,6 +532,8 @@ static void	cdcacm_reset(void)
 {
 	int i;
 
+    gCdcacm_active = false;
+    
 	for (i=0; i < NRX; i++)
 	{
 		gRX_length[i]	=	0;
