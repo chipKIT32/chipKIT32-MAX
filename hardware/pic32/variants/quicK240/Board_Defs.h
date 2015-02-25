@@ -129,7 +129,7 @@
 
 #define C5IO0 78
 #define C5IO1 79
-#define C5IO2 36
+#define C5IO2 10
 #define C5IO3 20
 #define C5IO4 33
 
