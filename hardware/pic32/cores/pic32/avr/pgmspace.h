@@ -54,6 +54,21 @@ typedef uint32_t prog_uint32_t;
 #endif
 #define pgm_read_word_far(x)    (*((short *)x))
 
+#ifdef pgm_read_dword
+#undef pgm_read_dword
+#endif
+#define pgm_read_dword(x)        (*((int *)x))
+
+#ifdef pgm_read_dword_near
+#undef pgm_read_dword_near
+#endif
+#define pgm_read_dword_near(x)   (*((int *)x))
+
+#ifdef pgm_read_dword_far
+#undef pgm_read_dword_far
+#endif
+#define pgm_read_dword_far(x)    (*((int *)x))
+
 #ifdef pgm_read_float
 #undef pgm_read_float
 #endif
@@ -119,6 +134,16 @@ typedef uint32_t prog_uint32_t;
 #undef memcpy_P
 #endif
 #define memcpy_P(dest, src, num) memcpy((dest), (src), (num))
+
+#ifdef strcat_P
+#undef strcat_P
+#endif
+#define strcat_P(dest, src) strcat((dest), (src))
+
+#ifdef strcpy_P
+#undef strcpy_P
+#endif
+#define strcpy_P(dest, src) strcpy((dest), (src))
 
 
 #endif /* __PGMSPACE_H_ */
