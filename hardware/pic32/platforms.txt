@@ -41,6 +41,6 @@ pic32.library.core.path=./hardware/pic32/cores/pic32
 pic32.library.path=./hardware/pic32/libraries
 pic32.ldscript=chipKIT-BL-mega.ld
 pic32.ldcommon=chipKIT-application-COMMON.ld
-pic32.compiler.define=::-DMPIDEVER=16778000::-DMPIDE=150::
+pic32.compiler.define=::-DMPIDEVER=16778001::-DMPIDE=150::
 pic32.build.variant=Default_100
 pic32.core.header=WProgram.h
