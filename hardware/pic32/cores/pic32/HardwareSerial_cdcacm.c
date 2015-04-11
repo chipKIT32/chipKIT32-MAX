@@ -191,8 +191,6 @@ static int			gRX_length[NRX];
 static volatile byte			gRX_in;
 static volatile byte			gRX_out;
 
-boolean      gConnected = false;
-
 void setStrings(char *man, char *prod, char *ser) {
     int i;
     int pos = 0;

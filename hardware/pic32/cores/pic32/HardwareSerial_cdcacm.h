@@ -11,7 +11,6 @@
 #define     USB_CDC_INACTIVE_TIMEOUT_MS     50
 
 extern boolean gCdcacm_active;
-extern boolean gConnected;
 
 typedef void (*cdcacm_reset_cbfn)(void);
 typedef boolean (*cdcacm_storedata_cbfn)(const byte *buffer, int length);
