@@ -627,7 +627,7 @@ USBSerial::USBSerial(ring_buffer	*rx_buffer)
 }
 
 USBSerial::operator int() {
-    return gConnected ? 1 : 0;
+    return gCdcacm_active ? 1 : 0;
 }
 
 #ifdef _DEBUG_USB_VIA_SERIAL0_
