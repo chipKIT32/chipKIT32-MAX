@@ -197,6 +197,13 @@ void HardwareSerial::begin(unsigned long baudRate)
 	purge();
 
 #if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__) || defined(__PIC32MZXX__) || defined(__PIC32MX47X__)
+
+    // set the pins to digital, just in case they 
+    // are analog pins. The serial controller will not
+    // set these to digital.
+    pinMode(pinTx, INPUT); // let serial controller set as output, keep tri-stated for now.
+    pinMode(pinRx, INPUT);
+
 	/* Map the UART TX to the appropriate pin.
 	*/
     mapPps(pinTx, ppsTx);
@@ -204,6 +211,20 @@ void HardwareSerial::begin(unsigned long baudRate)
 	/* Map the UART RX to the appropriate pin.
 	*/
     mapPps(pinRx, ppsRx);
+
+// the only UART on a non-PPS MX that conflicts with an analog
+// pin is UART5 on MX 5,6,& 7 64 pin parts only.
+#elif __PIC32_PINS__ == 64 && (defined(__PIC32MX5XX__) || defined(__PIC32MX6XX__)  || defined(__PIC32MX7XX__))
+
+    // see if this is UART5
+    if(uart == ((p32_uart *) _UART5_BASE_ADDRESS))
+    {
+        // RB8 is AN8 & U5RX
+        // RB14 is AN14 & U5TX
+        // set as digital pins
+        AD1PCFGbits.PCFG8 = 1;
+        AD1PCFGbits.PCFG14 = 1;
+    }
 #endif
 
     setIntVector(vec, isr);
@@ -214,9 +235,6 @@ void HardwareSerial::begin(unsigned long baudRate)
 
         // MZ has 2 more vectors to worry about
 #if defined(__PIC32MZXX__)
-
-//  What is this supposed to be doing?
-//        static uint32_t * const pISROffset = ((uint32_t *) &OFF000);
 
         // the MZ part works off of offset tables
         // we must fill in the tx and rx VECs to point
@@ -275,29 +293,61 @@ void HardwareSerial::begin(unsigned long baudRate)
 */
 
 void HardwareSerial::begin(unsigned long baudRate, uint8_t address) {
-    //	p32_regset *	ipc;	//interrupt priority control register set
-    //	int				irq_shift;
+	/* Initialize the receive buffer.
+	*/
+	purge();
 
-    /* Initialize the receive buffer.
-    */
-    purge();
+#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__) || defined(__PIC32MZXX__) || defined(__PIC32MX47X__)
 
-#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__)
-    /* Map the UART TX to the appropriate pin.
-    */
+    // set the pins to digital, just in case they 
+    // are analog pins. The serial controller will not
+    // set these to digital.
+    pinMode(pinTx, INPUT); // let serial controller set as output, keep tri-stated for now.
+    pinMode(pinRx, INPUT);
+
+	/* Map the UART TX to the appropriate pin.
+	*/
     mapPps(pinTx, ppsTx);
 
-    /* Map the UART RX to the appropriate pin.
-    */
+	/* Map the UART RX to the appropriate pin.
+	*/
     mapPps(pinRx, ppsRx);
+
+// the only UART on a non-PPS MX that conflicts with an analog
+// pin is UART5 on MX 5,6,& 7 64 pin parts only.
+#elif __PIC32_PINS__ == 64 && (defined(__PIC32MX5XX__) || defined(__PIC32MX6XX__)  || defined(__PIC32MX7XX__))
+
+    // see if this is UART5
+    if(uart == ((p32_uart *) _UART5_BASE_ADDRESS))
+    {
+        // RB8 is AN8 & U5RX
+        // RB14 is AN14 & U5TX
+        // set as digital pins
+        AD1PCFGbits.PCFG8 = 1;
+        AD1PCFGbits.PCFG14 = 1;
+    }
 #endif
 
     setIntVector(vec, isr);
 
-    /* Set the interrupt privilege level and sub-privilege level
-    */
-    setIntPriority(vec, ipl, spl);
-    
+	/* Set the interrupt privilege level and sub-privilege level
+	*/
+	setIntPriority(vec, ipl, spl);
+
+        // MZ has 2 more vectors to worry about
+#if defined(__PIC32MZXX__)
+
+        // the MZ part works off of offset tables
+        // we must fill in the tx and rx VECs to point
+        // to the ERR VEC so all 3 VECs use the same ISR
+        setIntVector(vec+1, isr);
+        setIntVector(vec+2, isr);
+
+        // and set the priorities for the other 2 vectors.
+        setIntPriority(vec+1, ipl, spl);
+        setIntPriority(vec+2, ipl, spl);
+#endif
+
     /* Clear the interrupt flags, and set the interrupt enables for the
     ** interrupts used by this UART.
     */
