@@ -737,7 +737,7 @@ void __attribute__((nomips16)) writeCoreTimer(uint32_t tmr)
 void __attribute__ ((nomips16)) _configSystem(uint32_t clk)
 {
 	uint32_t	stInt;
-#ifdef _PCACHE
+#ifdef _CHECON_PREFEN_POSITION
 	uint32_t	stCache;
     uint32_t	wait;
 	register unsigned long tmp;
@@ -830,7 +830,7 @@ void __attribute__ ((nomips16)) _configSystem(uint32_t clk)
 	BMXCONCLR = (1 << _BMXCON_BMXWSDRM_POSITION);
 #endif
 
-#ifdef _PCACHE
+#if defined(_CHECON_PREFEN_POSITION)
 
 	stCache = CHECON;
 
@@ -859,6 +859,15 @@ void __attribute__ ((nomips16)) _configSystem(uint32_t clk)
 	stCache |= (wait << _CHECON_PFMWS_POSITION);
 
 	CHECON = stCache;
+
+#elif defined(_PRECON_PREFEN_POSITION)
+  // 
+  // Set wait states and enable prefetch buffer 
+  // 
+  PRECON = 0u 
+         | (2u << _PRECON_PFMWS_POSITION)  // 2 wait states 
+         | (3u << _PRECON_PREFEN_POSITION); // Enable prefetch for instructions + data 
+
 
 #endif
 
