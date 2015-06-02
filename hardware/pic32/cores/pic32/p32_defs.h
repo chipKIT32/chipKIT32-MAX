@@ -500,13 +500,17 @@ typedef struct {
 #define _BN_OCCON_OCTSEL	3
 #define	_BN_OCCON_OCM		0
 
+#ifndef OCCON_ON
 #define OCCON_ON			(1 << _BN_OCCON_ON)
+#endif
 #define OCCON_OFF			(0)
 #define	OCCON_IDLE_STOP		(1 << _BN_OCCON_SIDL)
 #define	OCCON_IDLE_RUN		(0)
 #define OCCON_MODE32		(1 << _BN_OCCON_OC32)
 #define OCCON_MODE16		(0)
+#ifndef OCCON_OCFLT
 #define	OCCON_OCFLT			(1 << _BN_OCCON_OCFLT)
+#endif
 #define	OCCON_SRC_TIMER3	(1 << _BN_OCCON_OCTSEL)
 #define	OCCON_SRC_TIMER2	(0)
 
