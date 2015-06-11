@@ -50,8 +50,6 @@
     #define  _OCMP1_BASE_ADDRESS ((uint32_t) &OC1CON)
     #define  _TIMER_1_IRQ _TIMER_1_VECTOR
 
-
-
 /* ------------------------------------------------------------ */
 /*				Public Board Declarations						*/
 /* ------------------------------------------------------------ */
@@ -500,10 +498,6 @@ extern const uint8_t	digital_pin_to_pps_in_PGM[];
 #define _DTWI1_SDA_PIN  4
 
 /* ------------------------------------------------------------ */
-/*					A/D Converter Declarations					*/
-/* ------------------------------------------------------------ */
-
-/* ------------------------------------------------------------ */
 /*  On MZ parts, ports are defined                              */
 /* ------------------------------------------------------------ */
 
@@ -525,6 +519,16 @@ extern const uint8_t	digital_pin_to_pps_in_PGM[];
 /* ------------------------------------------------------------ */
 
 #endif	// OPT_BOARD_INTERNAL
+
+/* ------------------------------------------------------------ */
+/*					A/D Converter Declarations					*/
+/* ------------------------------------------------------------ */
+#define ADCRANGE        4096ul              // analog read will return a max number of ADCRANGE-1
+#define ADCTADFREQ      25000000ul          // How fast to run the TAD ADC clock
+#define ADCTADSH        68ul                // How many TADs the Sample and Hold will charge
+#define __ALT_ADC_IMPL__
+extern void initADC(void);
+extern int convertADC(uint8_t channelNumber);
 
 /* ------------------------------------------------------------ */
 
