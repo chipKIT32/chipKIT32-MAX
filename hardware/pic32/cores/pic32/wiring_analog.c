@@ -51,6 +51,7 @@
 #define OPT_BOARD_INTERNAL	//pull in internal symbol definitons
 #include "p32_defs.h"
 #include "pins_arduino.h"
+#include "Board_Defs.h"
 
 #define	PWM_TIMER_PERIOD	((__PIC32_pbClk / 256) / 490)
 
@@ -209,8 +210,16 @@ int	tmp;
 #endif		// defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__) || defined(__PIC32MX47X__)
 
 #if defined(__PIC32MZXX__)
-    int i,k = 0;
-    uint8_t vcn = channelNumber;
+
+// If alternate ADC implementation
+#if defined(__ALT_ADC_IMPL__)
+    analogValue = convertADC(channelNumber);
+
+// EC MZ ADC code
+#elif defined(__PIC32MZECADC__)
+{ 
+    int i,k         = 0;
+    uint8_t vcn     = channelNumber;
 
     #define KVA_2_PA(v)             (((uint32_t) (v)) & 0x1fffffff)
     static uint16_t __attribute__((coherent)) ovsampValue;
@@ -302,6 +311,14 @@ int	tmp;
     {
         AD1IMOD &= ~(0b11 << ((vcn * 2) + 16));               // don't use alt
     }
+}
+
+#elif defined(__PIC32MZEFADC__)
+    #error EF ADC code not implemented yet
+
+#else
+    #error ADC code for this MZ must be added in WSystems.c and wiring_analog.c
+#endif
 
 #else
 	AD1CHS = (channelNumber & 0xFFFF) << 16;

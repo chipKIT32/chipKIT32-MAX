@@ -977,3 +977,7 @@ int    _board_analogWrite(uint8_t pin, int val) {
 #endif    // BOARD_DATA_C
 
 /************************************************************************/
+
+
+#include "EFADC.cpp"
+#include "ECADC.cpp"
