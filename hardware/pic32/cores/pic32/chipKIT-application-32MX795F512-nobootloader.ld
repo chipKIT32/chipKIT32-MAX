@@ -139,7 +139,7 @@ SECTIONS
     LONG(0xFF6ACD5B)
   } > config1
   .config_BFC02FFC : {
-    LONG(0x7FFFFFF7)
+    LONG(0x7FFFFFFE)
   } > config0
 }
 
