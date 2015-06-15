@@ -1,6 +1,6 @@
 /************************************************************************/
 /*                                                                      */
-/*  EFADC.h   ADC code take directly from the Microchip                 */
+/*  EFADC.h   ADC code taken directly from the Microchip                 */
 /*              <proc/p32mz2048efg100.h> Headers.                       */
 /*                                                                      */
 /*-------------------------------------------------------------------------
