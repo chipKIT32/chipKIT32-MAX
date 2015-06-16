@@ -12,7 +12,7 @@ chipkit_WiFire.ldscript=MZ-application-32MZ2048ECX.ld
 # end of new items
 
 chipkit_WiFire.upload.protocol=stk500v2
-chipkit_WiFire.upload.maximum_size=520192
+chipkit_WiFire.upload.maximum_size=2080768
 chipkit_WiFire.upload.speed=115200
 
 chipkit_WiFire.bootloader.low_fuses=0xff
@@ -45,7 +45,7 @@ chipkit_WiFire_80MHz.ldscript=MZ-application-32MZ2048ECX.ld
 # end of new items
 
 chipkit_WiFire_80MHz.upload.protocol=stk500v2
-chipkit_WiFire_80MHz.upload.maximum_size=520192
+chipkit_WiFire_80MHz.upload.maximum_size=2080768
 chipkit_WiFire_80MHz.upload.speed=115200
 
 chipkit_WiFire_80MHz.bootloader.low_fuses=0xff
