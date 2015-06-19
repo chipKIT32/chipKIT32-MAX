@@ -32,15 +32,13 @@
     * Re-wrote ISR and helper functions to utilize the new core timer
       attach() and detach() functions that Keith put into wiring.c
   02/07/2013 <GeneApperson>:
-	* Removed dependency on Microchip plib library.
-  12/21/2013 <BrianSchmalz>;
+    * Removed dependency on Microchip plib library.
+  12/21/2013 <BrianSchmalz>:
     * Fixed bug that caused glitches every 107 seconds.
+  06/19/2015 <BrianSchmalz>:
+    * Fixed bug that crashed library when non-existant pin was passed in (chipKIT32-MAX #572)
 */
 
-/* Note: plib.h must be included before WProgram.h. There is a fundamental
-** incompatibility between GenericTypedefs.h (included by plib.h) and Print.h
-** (included by WProgram.h) on the declaration of the symbol BYTE.
-*/
 
 #define OPT_BOARD_INTERNAL
 #include <WProgram.h>
@@ -157,6 +155,11 @@ int32_t SoftPWMServoUnload(void)
 // Enable SoftPWM functionality on a particular pin number
 int32_t SoftPWMServoPinEnable(uint32_t Pin, bool PinType)
 {
+    if (Pin >= SOFTPWMSERVO_MAX_PINS)
+    {
+        return SOFTPWMSERVO_ERROR;
+    }
+        
     // If user has not already enabled this pin for SoftPWM, then initialize it
     if (Chan[InactiveBuffer][Pin].SetPort == NULL)
     {
@@ -190,6 +193,12 @@ int32_t SoftPWMServoPinEnable(uint32_t Pin, bool PinType)
 int32_t SoftPWMServoPinDisable(uint32_t Pin)
 {
     int32_t intr;
+
+    if (Pin >= SOFTPWMSERVO_MAX_PINS)
+    {
+        return SOFTPWMSERVO_ERROR;
+    }
+
     intr = disableInterrupts();
     CopyBuffers();
     
@@ -212,6 +221,11 @@ int32_t SoftPWMServoRawWrite(uint32_t Pin, uint32_t Value, bool PinType)
 {
     int i;
     int32_t intr;
+
+    if (Pin >= SOFTPWMSERVO_MAX_PINS)
+    {
+        return SOFTPWMSERVO_ERROR;
+    }
 
     // Insert our ISR handler, if it's not already there
     if (!Initalized)
@@ -271,6 +285,11 @@ int32_t SoftPWMServoRawWrite(uint32_t Pin, uint32_t Value, bool PinType)
 // Return SOFTPWM_ERROR if pin not enabled
 int32_t SoftPWMServoRawRead(uint32_t Pin) 
 {
+    if (Pin >= SOFTPWMSERVO_MAX_PINS)
+    {
+        return SOFTPWMSERVO_ERROR;
+    }
+
     if (Chan[InactiveBuffer][Pin].SetPort == NULL)
     {
         return SOFTPWMSERVO_ERROR;
@@ -285,6 +304,11 @@ int32_t SoftPWMServoRawRead(uint32_t Pin)
 // Pin is the pin number being changed
 int32_t SoftPWMServoServoWrite(uint32_t Pin, float Value)
 {
+    if (Pin >= SOFTPWMSERVO_MAX_PINS)
+    {
+        return SOFTPWMSERVO_ERROR;
+    }
+
     SoftPWMServoRawWrite(Pin, usToTicks(Value), SOFTPWMSERVO_SERVO);
     
     return SOFTPWMSERVO_OK;
@@ -293,6 +317,11 @@ int32_t SoftPWMServoServoWrite(uint32_t Pin, float Value)
 // Convert from 8-bit percentage to absolute 40MHz tick units
 int32_t SoftPWMServoPWMWrite(uint32_t Pin, uint8_t Value)
 {
+    if (Pin >= SOFTPWMSERVO_MAX_PINS)
+    {
+        return SOFTPWMSERVO_ERROR;
+    }
+
     SoftPWMServoRawWrite(Pin, (((uint32_t)Value * FrameTime)/255), SOFTPWMSERVO_PWM);
 
     return SOFTPWMSERVO_OK;
@@ -301,12 +330,22 @@ int32_t SoftPWMServoPWMWrite(uint32_t Pin, uint8_t Value)
 // Read the current time, for this Pin, in us (as a float)
 float SoftPWMServoServoRead(uint32_t Pin)
 {
+    if (Pin >= SOFTPWMSERVO_MAX_PINS)
+    {
+        return (float)SOFTPWMSERVO_ERROR;
+    }
+
     return (ticksToUs(SoftPWMServoRawRead(Pin)));
 }
 
 // Return an 8-bit percentage based on PWMValue
 int8_t SoftPWMServoPWMRead(uint32_t Pin)
 {
+    if (Pin >= SOFTPWMSERVO_MAX_PINS)
+    {
+        return SOFTPWMSERVO_ERROR;
+    }
+
     return ((SoftPWMServoRawRead(Pin) * 255)/FrameTime);
 }
 
