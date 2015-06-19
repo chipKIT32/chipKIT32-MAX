@@ -51,8 +51,8 @@
 
 #include <inttypes.h>
 
-#define SOFTPWMSERVO_VERSION  1.1      // software version of this library
-#define SOFTPWMSERVO_MAX_PINS (86)     // Max number of pins the library can handle
+#define SOFTPWMSERVO_VERSION  1.2      // software version of this library
+#define SOFTPWMSERVO_MAX_PINS (NUM_DIGITAL_PINS) // Max number of pins the library can handle (from variant Board_Defs.h)
 #define SOFTPWMSERVO_ERROR    (-1)     // Returned when a function fails
 #define SOFTPWMSERVO_OK       (0)      // Returned when a function passes
 #define SOFTPWMSERVO_SERVO    (1)      // Used to enable a pin for servo operation
