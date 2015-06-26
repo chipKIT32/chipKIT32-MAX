@@ -1,11 +1,15 @@
-/* Boards.h - Hardware Abstraction Layer for Firmata library            */
-/* Revision: 08/18/2011 (Scott Hanson)                                  */ 
-/*            - chipKIT Uno32 and chipKIT Max32 support added           */
+/* Boards.h - Hardware Abstraction Layer for Firmata library */
 
 #ifndef Firmata_Boards_h
 #define Firmata_Boards_h
 
-#include <WProgram.h>	// for digitalRead, digitalWrite, etc
+#include <inttypes.h>
+
+#if defined(ARDUINO) && ARDUINO >= 100
+#include "Arduino.h"  // for digitalRead, digitalWrite, etc
+#else
+#include "WProgram.h"
+#endif
 
 // Normally Servo.h must be included before Firmata.h (which then includes
 // this file).  If Servo.h wasn't included, this allows the code to still
@@ -19,7 +23,7 @@
     Firmata Hardware Abstraction Layer
 
 Firmata is built on top of the hardware abstraction functions of Arduino,
-specifically digitalWrite, digitalRead, analogWrite, analogRead, and 
+specifically digitalWrite, digitalRead, analogWrite, analogRead, and
 pinMode.  While these functions offer simple integer pin numbers, Firmata
 needs more information than is provided by Arduino.  This file provides
 all other hardware specific details.  To make Firmata support a new board,
@@ -120,35 +124,60 @@ writePort(port, value, bitmask):  Write an 8 bit port.
  * Board Specific Configuration
  *============================================================================*/
 
+#ifndef digitalPinHasPWM
+#define digitalPinHasPWM(p)     IS_PIN_DIGITAL(p)
+#endif
+
 // Arduino Duemilanove, Diecimila, and NG
 #if defined(__AVR_ATmega168__) || defined(__AVR_ATmega328P__)
+#if defined(NUM_ANALOG_INPUTS) && NUM_ANALOG_INPUTS == 6
+#define TOTAL_ANALOG_PINS       6
+#define TOTAL_PINS              20 // 14 digital + 6 analog
+#else
 #define TOTAL_ANALOG_PINS       8
-#define TOTAL_PINS              24 // 14 digital + 2 unused + 8 analog
+#define TOTAL_PINS              22 // 14 digital + 8 analog
+#endif
 #define VERSION_BLINK_PIN       13
-#define IS_PIN_DIGITAL(p)       (((p) >= 2 && (p) <= 13) || ((p) >= 16 && (p) <= 21))
-#define IS_PIN_ANALOG(p)        ((p) >= 16 && (p) <= 23)
-#define IS_PIN_PWM(p)           IS_PIN_DIGITAL(p)
-#define IS_PIN_SERVO(p)         ((p) >= 2 && (p) <= 13 && (p) - 2 < MAX_SERVOS)
-#define IS_PIN_I2C(p)           (0)
-#define PIN_TO_DIGITAL(p)       (((p) < 16) ? (p) : (p) - 2)
-#define PIN_TO_ANALOG(p)        ((p) - 16)
+#define IS_PIN_DIGITAL(p)       ((p) >= 2 && (p) <= 19)
+#define IS_PIN_ANALOG(p)        ((p) >= 14 && (p) < 14 + TOTAL_ANALOG_PINS)
+#define IS_PIN_PWM(p)           digitalPinHasPWM(p)
+#define IS_PIN_SERVO(p)         (IS_PIN_DIGITAL(p) && (p) - 2 < MAX_SERVOS)
+#define IS_PIN_I2C(p)           ((p) == 18 || (p) == 19)
+#define IS_PIN_SPI(p)           ((p) == SS || (p) == MOSI || (p) == MISO || (p) == SCK)
+#define PIN_TO_DIGITAL(p)       (p)
+#define PIN_TO_ANALOG(p)        ((p) - 14)
 #define PIN_TO_PWM(p)           PIN_TO_DIGITAL(p)
 #define PIN_TO_SERVO(p)         ((p) - 2)
 #define ARDUINO_PINOUT_OPTIMIZE 1
 
 
+// Wiring (and board)
+#elif defined(WIRING)
+#define VERSION_BLINK_PIN       WLED
+#define IS_PIN_DIGITAL(p)       ((p) >= 0 && (p) < TOTAL_PINS)
+#define IS_PIN_ANALOG(p)        ((p) >= FIRST_ANALOG_PIN && (p) < (FIRST_ANALOG_PIN+TOTAL_ANALOG_PINS))
+#define IS_PIN_PWM(p)           digitalPinHasPWM(p)
+#define IS_PIN_SERVO(p)         ((p) >= 0 && (p) < MAX_SERVOS)
+#define IS_PIN_I2C(p)           ((p) == SDA || (p) == SCL)
+#define IS_PIN_SPI(p)           ((p) == SS || (p) == MOSI || (p) == MISO || (p) == SCK)
+#define PIN_TO_DIGITAL(p)       (p)
+#define PIN_TO_ANALOG(p)        ((p) - FIRST_ANALOG_PIN)
+#define PIN_TO_PWM(p)           PIN_TO_DIGITAL(p)
+#define PIN_TO_SERVO(p)         (p)
+
+
 // old Arduinos
 #elif defined(__AVR_ATmega8__)
 #define TOTAL_ANALOG_PINS       6
-#define TOTAL_PINS              22 // 14 digital + 2 unused + 6 analog
+#define TOTAL_PINS              20 // 14 digital + 6 analog
 #define VERSION_BLINK_PIN       13
-#define IS_PIN_DIGITAL(p)       (((p) >= 2 && (p) <= 13) || ((p) >= 16 && (p) <= 21))
-#define IS_PIN_ANALOG(p)        ((p) >= 16 && (p) <= 21)
-#define IS_PIN_PWM(p)           IS_PIN_DIGITAL(p)
-#define IS_PIN_SERVO(p)         ((p) >= 2 && (p) <= 13 && (p) - 2 < MAX_SERVOS)
-#define IS_PIN_I2C(p)           (0)
-#define PIN_TO_DIGITAL(p)       (((p) < 16) ? (p) : (p) - 2)
-#define PIN_TO_ANALOG(p)        ((p) - 16)
+#define IS_PIN_DIGITAL(p)       ((p) >= 2 && (p) <= 19)
+#define IS_PIN_ANALOG(p)        ((p) >= 14 && (p) <= 19)
+#define IS_PIN_PWM(p)           digitalPinHasPWM(p)
+#define IS_PIN_SERVO(p)         (IS_PIN_DIGITAL(p) && (p) - 2 < MAX_SERVOS)
+#define IS_PIN_I2C(p)           ((p) == 18 || (p) == 19)
+#define PIN_TO_DIGITAL(p)       (p)
+#define PIN_TO_ANALOG(p)        ((p) - 14)
 #define PIN_TO_PWM(p)           PIN_TO_DIGITAL(p)
 #define PIN_TO_SERVO(p)         ((p) - 2)
 #define ARDUINO_PINOUT_OPTIMIZE 1
@@ -161,21 +190,30 @@ writePort(port, value, bitmask):  Write an 8 bit port.
 #define VERSION_BLINK_PIN       13
 #define IS_PIN_DIGITAL(p)       ((p) >= 2 && (p) < TOTAL_PINS)
 #define IS_PIN_ANALOG(p)        ((p) >= 54 && (p) < TOTAL_PINS)
-#define IS_PIN_PWM(p)           IS_PIN_DIGITAL(p)
+#define IS_PIN_PWM(p)           digitalPinHasPWM(p)
 #define IS_PIN_SERVO(p)         ((p) >= 2 && (p) - 2 < MAX_SERVOS)
-#define IS_PIN_I2C(p)           (0)
+#define IS_PIN_I2C(p)           ((p) == 20 || (p) == 21)
+#define IS_PIN_SPI(p)           ((p) == SS || (p) == MOSI || (p) == MISO || (p) == SCK)
 #define PIN_TO_DIGITAL(p)       (p)
 #define PIN_TO_ANALOG(p)        ((p) - 54)
 #define PIN_TO_PWM(p)           PIN_TO_DIGITAL(p)
 #define PIN_TO_SERVO(p)         ((p) - 2)
 
 
-// Wiring
-#elif defined(__AVR_ATmega128__)
-#define TOTAL_ANALOG_PINS       8
-#define TOTAL_PINS              51
-#define VERSION_BLINK_PIN       48
-// TODO: hardware abstraction for wiring board
+// Arduino DUE
+#elif defined(__SAM3X8E__)
+#define TOTAL_ANALOG_PINS       12
+#define TOTAL_PINS              66 // 54 digital + 12 analog
+#define VERSION_BLINK_PIN       13
+#define IS_PIN_DIGITAL(p)       ((p) >= 2 && (p) < TOTAL_PINS)
+#define IS_PIN_ANALOG(p)        ((p) >= 54 && (p) < TOTAL_PINS)
+#define IS_PIN_PWM(p)           digitalPinHasPWM(p)
+#define IS_PIN_SERVO(p)         ((p) >= 2 && (p) - 2 < MAX_SERVOS)
+#define IS_PIN_I2C(p)           ((p) == 20 || (p) == 21) // 70 71
+#define PIN_TO_DIGITAL(p)       (p)
+#define PIN_TO_ANALOG(p)        ((p) - 54)
+#define PIN_TO_PWM(p)           PIN_TO_DIGITAL(p)
+#define PIN_TO_SERVO(p)         ((p) - 2)
 
 
 // Teensy 1.0
@@ -185,9 +223,10 @@ writePort(port, value, bitmask):  Write an 8 bit port.
 #define VERSION_BLINK_PIN       6
 #define IS_PIN_DIGITAL(p)       ((p) >= 0 && (p) < TOTAL_PINS)
 #define IS_PIN_ANALOG(p)        (0)
-#define IS_PIN_PWM(p)           IS_PIN_DIGITAL(p)
+#define IS_PIN_PWM(p)           digitalPinHasPWM(p)
 #define IS_PIN_SERVO(p)         ((p) >= 0 && (p) < MAX_SERVOS)
 #define IS_PIN_I2C(p)           (0)
+#define IS_PIN_SPI(p)           ((p) == SS || (p) == MOSI || (p) == MISO || (p) == SCK)
 #define PIN_TO_DIGITAL(p)       (p)
 #define PIN_TO_ANALOG(p)        (0)
 #define PIN_TO_PWM(p)           PIN_TO_DIGITAL(p)
@@ -195,17 +234,34 @@ writePort(port, value, bitmask):  Write an 8 bit port.
 
 
 // Teensy 2.0
-#elif defined(__AVR_ATmega32U4__)
+#elif defined(__AVR_ATmega32U4__) && defined(CORE_TEENSY)
 #define TOTAL_ANALOG_PINS       12
 #define TOTAL_PINS              25 // 11 digital + 12 analog
 #define VERSION_BLINK_PIN       11
 #define IS_PIN_DIGITAL(p)       ((p) >= 0 && (p) < TOTAL_PINS)
 #define IS_PIN_ANALOG(p)        ((p) >= 11 && (p) <= 22)
-#define IS_PIN_PWM(p)           IS_PIN_DIGITAL(p)
+#define IS_PIN_PWM(p)           digitalPinHasPWM(p)
 #define IS_PIN_SERVO(p)         ((p) >= 0 && (p) < MAX_SERVOS)
-#define IS_PIN_I2C(p)           (0)
+#define IS_PIN_I2C(p)           ((p) == 5 || (p) == 6)
+#define IS_PIN_SPI(p)           ((p) == SS || (p) == MOSI || (p) == MISO || (p) == SCK)
 #define PIN_TO_DIGITAL(p)       (p)
 #define PIN_TO_ANALOG(p)        (((p)<22)?21-(p):11)
+#define PIN_TO_PWM(p)           PIN_TO_DIGITAL(p)
+#define PIN_TO_SERVO(p)         (p)
+
+
+// Teensy 3.0
+#elif defined(__MK20DX128__)
+#define TOTAL_ANALOG_PINS       14
+#define TOTAL_PINS              38 // 24 digital + 10 analog-digital + 4 analog
+#define VERSION_BLINK_PIN       13
+#define IS_PIN_DIGITAL(p)       ((p) >= 0 && (p) <= 34)
+#define IS_PIN_ANALOG(p)        (((p) >= 14 && (p) <= 23) || ((p) >= 34 && (p) <= 38))
+#define IS_PIN_PWM(p)           digitalPinHasPWM(p)
+#define IS_PIN_SERVO(p)         ((p) >= 0 && (p) < MAX_SERVOS)
+#define IS_PIN_I2C(p)           ((p) == 18 || (p) == 19)
+#define PIN_TO_DIGITAL(p)       (p)
+#define PIN_TO_ANALOG(p)        (((p)<=23)?(p)-14:(p)-24)
 #define PIN_TO_PWM(p)           PIN_TO_DIGITAL(p)
 #define PIN_TO_SERVO(p)         (p)
 
@@ -217,13 +273,47 @@ writePort(port, value, bitmask):  Write an 8 bit port.
 #define VERSION_BLINK_PIN       6
 #define IS_PIN_DIGITAL(p)       ((p) >= 0 && (p) < TOTAL_PINS)
 #define IS_PIN_ANALOG(p)        ((p) >= 38 && (p) < TOTAL_PINS)
-#define IS_PIN_PWM(p)           IS_PIN_DIGITAL(p)
+#define IS_PIN_PWM(p)           digitalPinHasPWM(p)
 #define IS_PIN_SERVO(p)         ((p) >= 0 && (p) < MAX_SERVOS)
-#define IS_PIN_I2C(p)           (0)
+#define IS_PIN_I2C(p)           ((p) == 0 || (p) == 1)
+#define IS_PIN_SPI(p)           ((p) == SS || (p) == MOSI || (p) == MISO || (p) == SCK)
 #define PIN_TO_DIGITAL(p)       (p)
 #define PIN_TO_ANALOG(p)        ((p) - 38)
 #define PIN_TO_PWM(p)           PIN_TO_DIGITAL(p)
 #define PIN_TO_SERVO(p)         (p)
+
+
+// Leonardo
+#elif defined(__AVR_ATmega32U4__)
+#define TOTAL_ANALOG_PINS       12
+#define TOTAL_PINS              30 // 14 digital + 12 analog + 4 SPI (D14-D17 on ISP header)
+#define VERSION_BLINK_PIN       13
+#define IS_PIN_DIGITAL(p)       ((p) >= 0 && (p) < TOTAL_PINS)
+#define IS_PIN_ANALOG(p)        ((p) >= 18 && (p) < TOTAL_PINS)
+#define IS_PIN_PWM(p)           ((p) == 3 || (p) == 5 || (p) == 6 || (p) == 9 || (p) == 10 || (p) == 11 || (p) == 13)
+#define IS_PIN_SERVO(p)         ((p) >= 0 && (p) < MAX_SERVOS)
+#define IS_PIN_I2C(p)           ((p) == 2 || (p) == 3)
+#define IS_PIN_SPI(p)           ((p) == SS || (p) == MOSI || (p) == MISO || (p) == SCK)
+#define PIN_TO_DIGITAL(p)       (p)
+#define PIN_TO_ANALOG(p)        (p) - 18
+#define PIN_TO_PWM(p)           PIN_TO_DIGITAL(p)
+#define PIN_TO_SERVO(p)         (p)
+
+// Intel Galileo Board
+#elif defined(ARDUINO_LINUX)
+#define TOTAL_ANALOG_PINS       6
+#define TOTAL_PINS              20 // 14 digital + 6 analog
+#define VERSION_BLINK_PIN       13
+#define IS_PIN_DIGITAL(p)       ((p) >= 2 && (p) <= 19)
+#define IS_PIN_ANALOG(p)        ((p) >= 14 && (p) <= 19)
+#define IS_PIN_PWM(p)           digitalPinHasPWM(p)
+#define IS_PIN_SERVO(p)         (IS_PIN_DIGITAL(p) && (p) - 2 < MAX_SERVOS)
+#define IS_PIN_I2C(p)           ((p) == SDA || (p) == SCL)
+#define IS_PIN_SPI(p)           ((p) == SS || (p) == MOSI || (p) == MISO || (p) == SCK)
+#define PIN_TO_DIGITAL(p)       (p)
+#define PIN_TO_ANALOG(p)        ((p) - 14)
+#define PIN_TO_PWM(p)           PIN_TO_DIGITAL(p)
+#define PIN_TO_SERVO(p)         ((p) - 2)
 
 
 // Sanguino
@@ -233,9 +323,9 @@ writePort(port, value, bitmask):  Write an 8 bit port.
 #define VERSION_BLINK_PIN       0
 #define IS_PIN_DIGITAL(p)       ((p) >= 2 && (p) < TOTAL_PINS)
 #define IS_PIN_ANALOG(p)        ((p) >= 24 && (p) < TOTAL_PINS)
-#define IS_PIN_PWM(p)           IS_PIN_DIGITAL(p)
+#define IS_PIN_PWM(p)           digitalPinHasPWM(p)
 #define IS_PIN_SERVO(p)         ((p) >= 0 && (p) < MAX_SERVOS)
-#define IS_PIN_I2C(p)           (0)
+#define IS_PIN_I2C(p)           ((p) == 16 || (p) == 17)
 #define PIN_TO_DIGITAL(p)       (p)
 #define PIN_TO_ANALOG(p)        ((p) - 24)
 #define PIN_TO_PWM(p)           PIN_TO_DIGITAL(p)
@@ -249,48 +339,184 @@ writePort(port, value, bitmask):  Write an 8 bit port.
 #define VERSION_BLINK_PIN       13
 #define IS_PIN_DIGITAL(p)       ((p) >= 2 && (p) < TOTAL_PINS)
 #define IS_PIN_ANALOG(p)        ((p) >= 36 && (p) < TOTAL_PINS)
-#define IS_PIN_PWM(p)           IS_PIN_DIGITAL(p)
+#define IS_PIN_PWM(p)           digitalPinHasPWM(p)
 #define IS_PIN_SERVO(p)         ((p) >= 0 && (p) < MAX_SERVOS)
-#define IS_PIN_I2C(p)           (0)
+#define IS_PIN_I2C(p)           ((p) == 4 || (p) == 5)
 #define PIN_TO_DIGITAL(p)       (p)
 #define PIN_TO_ANALOG(p)        ((p) - 36)
 #define PIN_TO_PWM(p)           PIN_TO_DIGITAL(p)
 #define PIN_TO_SERVO(p)         ((p) - 2)
 
-#elif defined(_BOARD_MEGA_) 
-#define TOTAL_ANALOG_PINS       16
-#define TOTAL_PINS              85 //  69 digital + 16 analog
-#define VERSION_BLINK_PIN       13
-#define IS_PIN_DIGITAL(p)       (((p) >= 2 && (p) <= 23) || ((p) >= 28 && (p) <= 39) || ((p) >= 43 && (p) <= 84))
-#define IS_PIN_ANALOG(p)        ((p) >= 54 && (p) <= 69)
-#define IS_PIN_PWM(p)           IS_PIN_DIGITAL(p)
-#define IS_PIN_SERVO(p)         (((p) >= 2 && (p) <= 23 && (p) - 2 < MAX_SERVOS) || (((p) >= 28 && (p) <= 29 && (p) - 6 < MAX_SERVOS)))
-#define IS_PIN_I2C(p)           (0)
+
+// Pic32 chipKIT FubarinoSD
+#elif defined(_BOARD_FUBARINO_SD_)
+#define TOTAL_ANALOG_PINS       NUM_ANALOG_PINS  // 15
+#define TOTAL_PINS              NUM_DIGITAL_PINS // 45, All pins can be digital
+#define MAX_SERVOS              NUM_DIGITAL_PINS
+#define VERSION_BLINK_PIN       PIN_LED1
+#define IS_PIN_DIGITAL(p)       1
+#define IS_PIN_ANALOG(p)        ((p) >= 30 && (p) <= 44)
+#define IS_PIN_PWM(p)           1
+#define IS_PIN_SERVO(p)         1
+#define IS_PIN_I2C(p)           ((p) == 1 || (p) == 2)
+#define IS_PIN_SPI(p)           ((p) == SS || (p) == MOSI || (p) == MISO || (p) == SCK)
 #define PIN_TO_DIGITAL(p)       (p)
-#define PIN_TO_ANALOG(p)        ((p)-54)
-#define PIN_TO_PWM(p)           PIN_TO_DIGITAL(p)
-#define PIN_TO_SERVO(p)         (p)<=23 ? (p)-2 : (p)-6
-
-
-#elif defined(_BOARD_UNO_)
-#define TOTAL_ANALOG_PINS       12
-#define TOTAL_PINS              42 // 30 digital + 12 analog two digital are unuseable in firmata due to analog configuration (41 and 42)
-#define VERSION_BLINK_PIN       43
-#define IS_PIN_DIGITAL(p)       (((p) >= 2  && (p) <= 40)) //&& (p) <= 13) || ((p) >= 26
-#define IS_PIN_ANALOG(p)        ((p) >= 14 && (p) <= 25)
+#define PIN_TO_ANALOG(p)        (14 - (p - 30))
+#define PIN_TO_PWM(p)           (p)
+#define PIN_TO_SERVO(p)         (p)
+ 
+// Pic32 chipKIT FubarinoMini
+// Note, FubarinoMini analog pin 20 will not function in Firmata as analog input
+#elif defined(_BOARD_FUBARINO_MINI_)
+#define TOTAL_ANALOG_PINS       14 // We have to fake this because of the poor analog pin mapping planning in FubarinoMini
+#define TOTAL_PINS              NUM_DIGITAL_PINS // 33
+#define MAX_SERVOS              NUM_DIGITAL_PINS
+#define VERSION_BLINK_PIN       PIN_LED1
+#define IS_PIN_DIGITAL(p)       ((p) != 14 && (p) != 15 && (p) != 31 && (p) != 32)
+#define IS_PIN_ANALOG(p)        ((p) == 0 || ((p) >= 3 && (p) <= 13))
 #define IS_PIN_PWM(p)           IS_PIN_DIGITAL(p)
-#define IS_PIN_SERVO(p)         (((p) >= 2 && (p) <= 13 && (p) - 2 < MAX_SERVOS) || (((p) >= 26 && (p) <= 38 && (p) - 14 < MAX_SERVOS)))
-#define IS_PIN_I2C(p)           (0)
+#define IS_PIN_SERVO(p)         IS_PIN_DIGITAL(p)
+#define IS_PIN_I2C(p)           ((p) == 25 || (p) == 26)
+#define IS_PIN_SPI(p)           ((p) == SS || (p) == MOSI || (p) == MISO || (p) == SCK)
+#define PIN_TO_DIGITAL(p)       (p)
+#define PIN_TO_ANALOG(p)        (p)
+#define PIN_TO_PWM(p)           (p)
+#define PIN_TO_SERVO(p)         (p)
+
+
+// Pic32 chipKIT UNO32
+#elif defined(_BOARD_UNO_) && defined(__PIC32)  // NOTE: no _BOARD_UNO32_ to use
+#define TOTAL_ANALOG_PINS       NUM_ANALOG_PINS // 12
+#define TOTAL_PINS              NUM_DIGITAL_PINS // 47 All pins can be digital
+#define MAX_SERVOS              NUM_DIGITAL_PINS // All pins can be servo with SoftPWMservo
+#define VERSION_BLINK_PIN       PIN_LED1
+#define IS_PIN_DIGITAL(p)       1
+#define IS_PIN_ANALOG(p)        ((p) >= 14 && (p) <= 25)
+#define IS_PIN_PWM(p)           1
+#define IS_PIN_SERVO(p)         1
+#define IS_PIN_I2C(p)           ((p) == 45 || (p) == 46)
+#define IS_PIN_SPI(p)           ((p) == SS || (p) == MOSI || (p) == MISO || (p) == SCK)
 #define PIN_TO_DIGITAL(p)       (p)
 #define PIN_TO_ANALOG(p)        ((p) - 14)
-#define PIN_TO_PWM(p)           PIN_TO_DIGITAL(p)
-#define PIN_TO_SERVO(p)         (p)<=13 ? (p)-2 : (p)-14
+#define PIN_TO_PWM(p)           (p)
+#define PIN_TO_SERVO(p)         (p)
+
+
+// Pic32 chipKIT DP32
+#elif defined(_BOARD_DP32_)
+#define TOTAL_ANALOG_PINS       15  // Really only has 9, but have to override because of mistake in variant file
+#define TOTAL_PINS              NUM_DIGITAL_PINS // 19 All pins can be digital
+#define MAX_SERVOS              NUM_DIGITAL_PINS // All pins can be servo with SoftPWMservo
+#define VERSION_BLINK_PIN       PIN_LED1
+#define IS_PIN_DIGITAL(p)       1
+#define IS_PIN_ANALOG(p)        ((p) >= 6 && (p) <= 14)
+#define IS_PIN_PWM(p)           1
+#define IS_PIN_SERVO(p)         1
+#define IS_PIN_I2C(p)           ((p) == 45 || (p) == 46)
+#define IS_PIN_SPI(p)           ((p) == SS || (p) == MOSI || (p) == MISO || (p) == SCK)
+#define PIN_TO_DIGITAL(p)       (p)
+#define PIN_TO_ANALOG(p)        (p)
+#define PIN_TO_PWM(p)           (p)
+#define PIN_TO_SERVO(p)         (p)
+
+
+// Pic32 chipKIT uC32
+#elif defined(_BOARD_UC32_)
+#define TOTAL_ANALOG_PINS       NUM_ANALOG_PINS // 12
+#define TOTAL_PINS              NUM_DIGITAL_PINS // 47 All pins can be digital
+#define MAX_SERVOS              NUM_DIGITAL_PINS // All pins can be servo with SoftPWMservo
+#define VERSION_BLINK_PIN       PIN_LED1
+#define IS_PIN_DIGITAL(p)       1
+#define IS_PIN_ANALOG(p)        ((p) >= 14 && (p) <= 25)
+#define IS_PIN_PWM(p)           1
+#define IS_PIN_SERVO(p)         1
+#define IS_PIN_I2C(p)           ((p) == 45 || (p) == 46)
+#define IS_PIN_SPI(p)           ((p) == SS || (p) == MOSI || (p) == MISO || (p) == SCK)
+#define PIN_TO_DIGITAL(p)       (p)
+#define PIN_TO_ANALOG(p)        ((p) - 14)
+#define PIN_TO_PWM(p)           (p)
+#define PIN_TO_SERVO(p)         (p)
+
+
+// Pic32 chipKIT WF32
+#elif defined(_BOARD_WF32_)
+#define TOTAL_ANALOG_PINS       NUM_ANALOG_PINS
+#define TOTAL_PINS              NUM_DIGITAL_PINS // TODO: add the gaps for missing pins that can't be digital here
+#define MAX_SERVOS              NUM_DIGITAL_PINS
+#define VERSION_BLINK_PIN       PIN_LED1
+#define IS_PIN_DIGITAL(p)       ((p) >= 0 && (p) <= TOTAL_PINS)
+#define IS_PIN_ANALOG(p)        ((p) >= 14 && (p) <= 25)
+#define IS_PIN_PWM(p)           1
+#define IS_PIN_SERVO(p)         1
+#define IS_PIN_I2C(p)           ((p) == 34 || (p) == 35)
+#define IS_PIN_SPI(p)           ((p) == SS || (p) == MOSI || (p) == MISO || (p) == SCK)
+#define PIN_TO_DIGITAL(p)       (p)
+#define PIN_TO_ANALOG(p)        ((p) - 14)
+#define PIN_TO_PWM(p)           (p)
+#define PIN_TO_SERVO(p)         (p)
+
+
+// Pic32 chipKIT WiFire (not currently working)
+#elif defined(_BOARD_WIFIRE_)
+#define TOTAL_ANALOG_PINS       NUM_ANALOG_PINS // 14
+#define TOTAL_PINS              NUM_DIGITAL_PINS // 71
+#define MAX_SERVOS              NUM_DIGITAL_PINS
+#define VERSION_BLINK_PIN       PIN_LED1
+#define IS_PIN_DIGITAL(p)       ((p) >= 0 && (p) <= TOTAL_PINS)
+#define IS_PIN_ANALOG(p)        (((p) >= 14 && (p) <= 25) || (p) == 48 || (p) == 49)
+#define IS_PIN_PWM(p)           1
+#define IS_PIN_SERVO(p)         1
+#define IS_PIN_I2C(p)           ((p) == 34 || (p) == 35)
+#define IS_PIN_SPI(p)           ((p) == SS || (p) == MOSI || (p) == MISO || (p) == SCK)
+#define PIN_TO_DIGITAL(p)       (p)
+#define PIN_TO_ANALOG(p)        ((p) <= 25 ? ((p) - 14) : (p) - 36)
+#define PIN_TO_PWM(p)           (p)
+#define PIN_TO_SERVO(p)         (p)
+
+
+// Pic32 chipKIT MAX32
+#elif defined(_BOARD_MEGA_) && defined(__PIC32)  // NOTE: no _BOARD_MAX32_ to use
+#define TOTAL_ANALOG_PINS       NUM_ANALOG_PINS  // 16
+#define TOTAL_PINS              NUM_DIGITAL_PINS // 87 
+#define MAX_SERVOS              NUM_DIGITAL_PINS
+#define VERSION_BLINK_PIN       PIN_LED1
+#define IS_PIN_DIGITAL(p)       1
+#define IS_PIN_ANALOG(p)        ((p) >= 54 && (p) <= 69)
+#define IS_PIN_PWM(p)           1
+#define IS_PIN_SERVO(p)         1
+#define IS_PIN_I2C(p)           ((p) == 34 || (p) == 35)
+#define IS_PIN_SPI(p)           ((p) == SS || (p) == MOSI || (p) == MISO || (p) == SCK)
+#define PIN_TO_DIGITAL(p)       (p)
+#define PIN_TO_ANALOG(p)        ((p) - 54)
+#define PIN_TO_PWM(p)           (p)
+#define PIN_TO_SERVO(p)         (p)
+
+// Pic32 chipKIT Pi
+#elif defined(_BOARD_CHIPKIT_PI_) // Doesn't work
+#define TOTAL_ANALOG_PINS       4  // 4
+#define TOTAL_PINS              NUM_DIGITAL_PINS // 19
+#define MAX_SERVOS              NUM_DIGITAL_PINS
+#define VERSION_BLINK_PIN       PIN_LED1
+#define IS_PIN_DIGITAL(p)       1
+#define IS_PIN_ANALOG(p)        ((p) >= 14 && (p) <= 17)
+#define IS_PIN_PWM(p)           1
+#define IS_PIN_SERVO(p)         1
+#define IS_PIN_I2C(p)           ((p) == 34 || (p) == 35)
+#define IS_PIN_SPI(p)           ((p) == SS || (p) == MOSI || (p) == MISO || (p) == SCK)
+#define PIN_TO_DIGITAL(p)       (p)
+#define PIN_TO_ANALOG(p)        ((p) - 14)
+#define PIN_TO_PWM(p)           (p)
+#define PIN_TO_SERVO(p)         (p)
 
 // anything else
 #else
 #error "Please edit Boards.h with a hardware abstraction for this board"
 #endif
 
+// as long this is not defined for all boards:
+#ifndef IS_PIN_SPI
+#define IS_PIN_SPI(p)           0
+#endif
 
 /*==============================================================================
  * readPort() - Read an 8 bit port
@@ -300,21 +526,21 @@ static inline unsigned char readPort(byte, byte) __attribute__((always_inline, u
 static inline unsigned char readPort(byte port, byte bitmask)
 {
 #if defined(ARDUINO_PINOUT_OPTIMIZE)
-	if (port == 0) return PIND & B11111100 & bitmask; // ignore Rx/Tx 0/1
-	if (port == 1) return PINB & B00111111 & bitmask; // pins 8-13 (14,15 are disabled for the crystal)
-	if (port == 2) return PINC & bitmask;
-	return 0;
+  if (port == 0) return (PIND & 0xFC) & bitmask; // ignore Rx/Tx 0/1
+  if (port == 1) return ((PINB & 0x3F) | ((PINC & 0x03) << 6)) & bitmask;
+  if (port == 2) return ((PINC & 0x3C) >> 2) & bitmask;
+  return 0;
 #else
-	unsigned char out=0, pin=port*8;
-	if (IS_PIN_DIGITAL(pin+0) && (bitmask & 0x01) && digitalRead(PIN_TO_DIGITAL(pin+0))) out |= 0x01;
-	if (IS_PIN_DIGITAL(pin+1) && (bitmask & 0x02) && digitalRead(PIN_TO_DIGITAL(pin+1))) out |= 0x02;
-	if (IS_PIN_DIGITAL(pin+2) && (bitmask & 0x04) && digitalRead(PIN_TO_DIGITAL(pin+2))) out |= 0x04;
-	if (IS_PIN_DIGITAL(pin+3) && (bitmask & 0x08) && digitalRead(PIN_TO_DIGITAL(pin+3))) out |= 0x08;
-	if (IS_PIN_DIGITAL(pin+4) && (bitmask & 0x10) && digitalRead(PIN_TO_DIGITAL(pin+4))) out |= 0x10;
-	if (IS_PIN_DIGITAL(pin+5) && (bitmask & 0x20) && digitalRead(PIN_TO_DIGITAL(pin+5))) out |= 0x20;
-	if (IS_PIN_DIGITAL(pin+6) && (bitmask & 0x40) && digitalRead(PIN_TO_DIGITAL(pin+6))) out |= 0x40;
-	if (IS_PIN_DIGITAL(pin+7) && (bitmask & 0x80) && digitalRead(PIN_TO_DIGITAL(pin+7))) out |= 0x80;
-	return out;
+  unsigned char out = 0, pin = port * 8;
+  if (IS_PIN_DIGITAL(pin + 0) && (bitmask & 0x01) && digitalRead(PIN_TO_DIGITAL(pin + 0))) out |= 0x01;
+  if (IS_PIN_DIGITAL(pin + 1) && (bitmask & 0x02) && digitalRead(PIN_TO_DIGITAL(pin + 1))) out |= 0x02;
+  if (IS_PIN_DIGITAL(pin + 2) && (bitmask & 0x04) && digitalRead(PIN_TO_DIGITAL(pin + 2))) out |= 0x04;
+  if (IS_PIN_DIGITAL(pin + 3) && (bitmask & 0x08) && digitalRead(PIN_TO_DIGITAL(pin + 3))) out |= 0x08;
+  if (IS_PIN_DIGITAL(pin + 4) && (bitmask & 0x10) && digitalRead(PIN_TO_DIGITAL(pin + 4))) out |= 0x10;
+  if (IS_PIN_DIGITAL(pin + 5) && (bitmask & 0x20) && digitalRead(PIN_TO_DIGITAL(pin + 5))) out |= 0x20;
+  if (IS_PIN_DIGITAL(pin + 6) && (bitmask & 0x40) && digitalRead(PIN_TO_DIGITAL(pin + 6))) out |= 0x40;
+  if (IS_PIN_DIGITAL(pin + 7) && (bitmask & 0x80) && digitalRead(PIN_TO_DIGITAL(pin + 7))) out |= 0x80;
+  return out;
 #endif
 }
 
@@ -326,30 +552,42 @@ static inline unsigned char writePort(byte, byte, byte) __attribute__((always_in
 static inline unsigned char writePort(byte port, byte value, byte bitmask)
 {
 #if defined(ARDUINO_PINOUT_OPTIMIZE)
-	if (port == 0) {
-		bitmask = bitmask & 0xFC;  // Tx & Rx pins
-		cli();
-		PORTD = (PORTD & ~bitmask) | (bitmask & value);
-		sei();
-	} else if (port == 1) {
-		cli();
-		PORTB = (PORTB & ~bitmask) | (bitmask & value);
-		sei();
-	} else if (port == 2) {
-		cli();
-		PORTC = (PORTC & ~bitmask) | (bitmask & value);
-		sei();
-	}
+  if (port == 0) {
+    bitmask = bitmask & 0xFC;  // do not touch Tx & Rx pins
+    byte valD = value & bitmask;
+    byte maskD = ~bitmask;
+    cli();
+    PORTD = (PORTD & maskD) | valD;
+    sei();
+  } else if (port == 1) {
+    byte valB = (value & bitmask) & 0x3F;
+    byte valC = (value & bitmask) >> 6;
+    byte maskB = ~(bitmask & 0x3F);
+    byte maskC = ~((bitmask & 0xC0) >> 6);
+    cli();
+    PORTB = (PORTB & maskB) | valB;
+    PORTC = (PORTC & maskC) | valC;
+    sei();
+  } else if (port == 2) {
+    bitmask = bitmask & 0x0F;
+    byte valC = (value & bitmask) << 2;
+    byte maskC = ~(bitmask << 2);
+    cli();
+    PORTC = (PORTC & maskC) | valC;
+    sei();
+  }
+  return 1;
 #else
-	byte pin=port*8;
-	if ((bitmask & 0x01)) digitalWrite(PIN_TO_DIGITAL(pin+0), (value & 0x01));
-	if ((bitmask & 0x02)) digitalWrite(PIN_TO_DIGITAL(pin+1), (value & 0x02));
-	if ((bitmask & 0x04)) digitalWrite(PIN_TO_DIGITAL(pin+2), (value & 0x04));
-	if ((bitmask & 0x08)) digitalWrite(PIN_TO_DIGITAL(pin+3), (value & 0x08));
-	if ((bitmask & 0x10)) digitalWrite(PIN_TO_DIGITAL(pin+4), (value & 0x10));
-	if ((bitmask & 0x20)) digitalWrite(PIN_TO_DIGITAL(pin+5), (value & 0x20));
-	if ((bitmask & 0x40)) digitalWrite(PIN_TO_DIGITAL(pin+6), (value & 0x40));
-	if ((bitmask & 0x80)) digitalWrite(PIN_TO_DIGITAL(pin+7), (value & 0x80));
+  byte pin = port * 8;
+  if ((bitmask & 0x01)) digitalWrite(PIN_TO_DIGITAL(pin + 0), (value & 0x01));
+  if ((bitmask & 0x02)) digitalWrite(PIN_TO_DIGITAL(pin + 1), (value & 0x02));
+  if ((bitmask & 0x04)) digitalWrite(PIN_TO_DIGITAL(pin + 2), (value & 0x04));
+  if ((bitmask & 0x08)) digitalWrite(PIN_TO_DIGITAL(pin + 3), (value & 0x08));
+  if ((bitmask & 0x10)) digitalWrite(PIN_TO_DIGITAL(pin + 4), (value & 0x10));
+  if ((bitmask & 0x20)) digitalWrite(PIN_TO_DIGITAL(pin + 5), (value & 0x20));
+  if ((bitmask & 0x40)) digitalWrite(PIN_TO_DIGITAL(pin + 6), (value & 0x40));
+  if ((bitmask & 0x80)) digitalWrite(PIN_TO_DIGITAL(pin + 7), (value & 0x80));
+  return 1;
 #endif
 }
 
@@ -362,4 +600,3 @@ static inline unsigned char writePort(byte port, byte value, byte bitmask)
 
 
 #endif /* Firmata_Boards_h */
-
