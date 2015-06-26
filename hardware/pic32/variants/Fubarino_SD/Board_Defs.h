@@ -237,7 +237,7 @@ const static uint8_t SCK  = 102;		// PIC32 SCK2
 //#define	digitalPinToAnalog(P) ( (((P) > 15) && ((P) < 32)) ? (P)-16 : NOT_ANALOG_PIN )
 // This definition can be used for the non-default case where there
 // is a mapping table to go from digital pin to analog pin
-#define	digitalPinToAnalog(P) ( digital_pin_to_analog_PGM[P] )
+#define	digitalPinToAnalog(P) ( ((P) > 14 ) ? digital_pin_to_analog_PGM[P] : digital_pin_to_analog_PGM[(14 - P) + 30] )
 
 // This definition can be used for the default one-to-one mapping
 //#define analogInPinToChannel(P) ( P )

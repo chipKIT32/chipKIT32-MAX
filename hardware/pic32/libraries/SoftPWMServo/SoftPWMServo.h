@@ -42,8 +42,8 @@
       improvement
 */
 
-#ifndef SoftPWMServo_h
-#define SoftPWMServo_h
+#ifndef SOFT_PWM_SERVO_H
+#define SOFT_PWM_SERVO_H
 
 #ifndef WProgram_h
 	#include	"WProgram.h"
@@ -51,15 +51,19 @@
 
 #include <inttypes.h>
 
-#define SOFTPWMSERVO_VERSION  1.2      // software version of this library
+#define SOFTPWMSERVO_VERSION   2       // software version of this library
 #define SOFTPWMSERVO_MAX_PINS (NUM_DIGITAL_PINS) // Max number of pins the library can handle (from variant Board_Defs.h)
 #define SOFTPWMSERVO_ERROR    (-1)     // Returned when a function fails
 #define SOFTPWMSERVO_OK       (0)      // Returned when a function passes
 #define SOFTPWMSERVO_SERVO    (1)      // Used to enable a pin for servo operation
 #define SOFTPWMSERVO_PWM      (0)      // Used to enable a pin for PWM operation
 
+#define MIN_PULSE_WIDTH       544      // the shortest pulse sent to a servo (us)
+#define MAX_PULSE_WIDTH       2400     // the longest pulse sent to a servo (us)
+#define DEFAULT_PULSE_WIDTH   1500     // default pulse width when servo is attached (us)
+
 // Used in determining the default FrameTime. How many frames per second do you want?
-#define DEFAULT_FRAMES_PER_SECOND           (500)
+#define DEFAULT_FRAMES_PER_SECOND           (400)           // 2.5ms per frame
 // Number of 40MHz CoreTimer ticks of the default frame time
 #define SOFTPWMSERVO_DEFAULT_FRAME_TIME     (F_CPU / 2 / DEFAULT_FRAMES_PER_SECOND)
 // How many CoreTimer ticks are there per microsecond
@@ -231,4 +235,34 @@ int8_t SoftPWMServoPWMRead(uint32_t Pin);
  *
  */
 int32_t SoftPWMServoSetServoFrames(uint32_t NewFrameCount);
+
+/*
+ * SoftServo class
+ * 
+ * This class acts as a wrapper to translate normal "Arduino Servo"
+ * calls into SoftPWMServo calls, so that sketches that use the
+ * standard "Arduino Servo" library can easily use SoftPWMServo instead
+ * so that no hardware timers are used and an unlimited number of I/O
+ * pins can be used for servo output.
+ */
+class SoftServo
+{
+public:
+  SoftServo();
+  uint8_t attach(int pin);           // Not really used here because we don't have channels
+  uint8_t attach(int pin, int min, int max); // as above but also sets min and max values for writes. 
+  void detach();
+  void write(int value);             // if value is < 200 its treated as an angle, otherwise as pulse width in microseconds 
+  void writeMicroseconds(int value); // Write pulse width in microseconds 
+  int read();                        // returns current pulse width as an angle between 0 and 180 degrees
+  int readMicroseconds();            // returns current pulse width in microseconds for this servo (was read_us() in first release)
+  bool attached();                   // return true if this servo is attached, otherwise false 
+
+private:
+   uint8_t pin;                      // Arduino digital pin that this SoftServo is controlling
+   int32_t min;                      // minimum pulse width in microseconds  
+   int32_t max;                      // maximum pulse width in microseconds
+   bool isAttached;                  // Records the servo's "attached" status
+};
+
 #endif
