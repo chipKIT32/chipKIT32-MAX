@@ -37,6 +37,7 @@
     * Fixed bug that caused glitches every 107 seconds.
   06/19/2015 <BrianSchmalz>:
     * Fixed bug that crashed library when non-existant pin was passed in (chipKIT32-MAX #572)
+    * Changed default frame time from 2ms to 2.5ms to match Arduino servo better
 */
 
 
@@ -208,6 +209,7 @@ int32_t SoftPWMServoPinDisable(uint32_t Pin)
     // Mark it as unused
     Chan[InactiveBuffer][Pin].SetPort = NULL;
     Chan[InactiveBuffer][Pin].ClearPort = NULL;
+    Chan[InactiveBuffer][Pin].PWMValue = 0;
     restoreInterrupts(intr);    
 
     return SOFTPWMSERVO_OK;
@@ -238,17 +240,7 @@ int32_t SoftPWMServoRawWrite(uint32_t Pin, uint32_t Value, bool PinType)
     {
         Value = FrameTime;
     }
-    if (Pin > SOFTPWMSERVO_MAX_PINS)
-    {
-        return SOFTPWMSERVO_ERROR;
-    }
     
-    // And if this pin already has this PWM Value, then don't do anything.
-    if (Value == Chan[ActiveBuffer][Pin].PWMValue)
-    {
-        return SOFTPWMSERVO_OK;
-    }
-
     // The easy way to prevent the ISR from doing a buffer swap while
     // we're in the middle of this is to disable interrupts during 
     // the time that we're mucking with the list.
@@ -721,3 +713,141 @@ static void CopyBuffers(void)
     }
     InactiveBufferReady = true;
 }
+
+/*************************************************************************/
+/*           Public Servo class member functions                         */
+/*************************************************************************/
+
+/*
+ * Nothing to do in the constructor really
+ */
+SoftServo::SoftServo()
+{
+    // Initialize some values in case we get asked about them
+    this->pin = 255;
+    this->min = MIN_PULSE_WIDTH;
+    this->max = MAX_PULSE_WIDTH;
+    this->isAttached = false;
+}
+
+/*
+ * Set up this object with the pin, min and max pulse widths
+ */
+uint8_t SoftServo::attach(int pin)
+{
+    return this->attach(pin, MIN_PULSE_WIDTH, MAX_PULSE_WIDTH);
+}
+
+/*
+ * Record the pin, min and max pulse widths for this SoftServo object
+ * For some reason, some sketches think that sending in -1 for min or max
+ * will make them take on their 'default' values. Well, OK then.
+ */
+uint8_t SoftServo::attach(int pin, int min, int max)
+{
+    this->pin = pin;
+    if (min != -1)
+    {
+        this->min = min;
+    }
+    else
+    {
+        this->min = MIN_PULSE_WIDTH;
+    }
+    if (max != -1)
+    {
+        this->max = max;
+    }
+    else
+    {
+        this->max = MAX_PULSE_WIDTH;
+    }
+    // Always start out at the default pulse width and turn on the output
+    this->write(DEFAULT_PULSE_WIDTH);
+    this->isAttached = true;
+    return this->pin;
+}
+
+/*
+ * Turn off the SoftPWMServo for this pin
+ */
+void SoftServo::detach()
+{
+    SoftPWMServoPinDisable(this->pin);
+    this->isAttached = false;
+}
+
+/*
+ * Set the pin to a new pulse width (value).
+ * If value is less than MIN_PULSE_WIDTH, treat it as a angular measurement in degrees
+ * and scale it between min and max (from 0 to 179 degrees).
+ * Otherwise treat it as a microsecond value.
+ */
+void SoftServo::write(int value)
+{
+    if (value < MIN_PULSE_WIDTH)
+    {
+        // treat values less than 544 as angles in degrees (valid values in microseconds are handled as microseconds)
+        if (value < 0) value = 0;
+        if (value > 179) value = 179;
+        
+        value = map(value, 0, 179, this->min, this->max);
+    }
+    this->writeMicroseconds(value);
+}
+
+/*
+ * Write a new pulse width down to the SoftPWMServo code
+ * This will turn on (enable) a pin for Servo output if it's not already 
+ * turned on.
+ */
+void SoftServo::writeMicroseconds(int value)
+{
+    if ( value < this->min )          // ensure pulse width is valid
+        value = this->min;
+    else if ( value > this->max )
+        value = this->max;
+
+    SoftPWMServoServoWrite(this->pin, value);
+}
+
+/*
+ * Return the current pulse time as a valule of degrees from 0 to 180
+ */
+int SoftServo::read()
+{
+    return map( this->readMicroseconds() + 1, this->min, this->max, 0, 180);
+}
+
+/*
+ * Return the current pulse time in microseconds
+ */
+int SoftServo::readMicroseconds()
+{
+    unsigned int pulsewidth;
+    if (this->attached())
+    {
+        pulsewidth = SoftPWMServoServoRead(this->pin);
+    }
+    else 
+    {
+        pulsewidth = 0;
+    }
+    return pulsewidth;
+}
+
+/*
+ * Check with SoftPWMServo to see if this pin is being used or not
+ */
+bool SoftServo::attached()
+{   
+    if (this->isAttached)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
