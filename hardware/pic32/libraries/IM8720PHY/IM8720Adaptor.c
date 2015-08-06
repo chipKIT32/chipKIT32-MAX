@@ -49,7 +49,7 @@
 /*	8/9/2013(KeithV): Created                                           */
 /*                                                                      */
 /************************************************************************/
-#include "..\DEIPck\utility\deIP.h"
+#include "../DEIPcK/utility/deIP.h"
 #include "IM8720Adaptor.h"
 
 #define FOREVER             (0xFFFFFFFF)
