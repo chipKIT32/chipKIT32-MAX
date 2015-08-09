@@ -1,6 +1,6 @@
 /*
-  Firmata.cpp - Firmata library v2.4.0 - 2014-12-21
-  Copyright (C) 2006-2008 Hans-Christoph Steiner.  All rights reserved.
+  Firmata.cpp - Firmata library v2.4.3 - 2015-4-11
+  Copyright (c) 2006-2008 Hans-Christoph Steiner.  All rights reserved.
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -146,7 +146,7 @@ void FirmataClass::setFirmwareNameAndVersion(const char *name, byte major, byte 
   // in case anyone calls setFirmwareNameAndVersion more than once
   free(firmwareVersionVector);
 
-  firmwareVersionVector = (byte *) malloc(firmwareVersionCount+1);
+  firmwareVersionVector = (byte *) malloc(firmwareVersionCount + 1);
   firmwareVersionVector[firmwareVersionCount] = 0;
   firmwareVersionVector[0] = major;
   firmwareVersionVector[1] = minor;
