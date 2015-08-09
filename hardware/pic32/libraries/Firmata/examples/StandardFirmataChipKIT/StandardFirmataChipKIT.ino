@@ -11,8 +11,8 @@
   Copyright (C) 2006-2008 Hans-Christoph Steiner.  All rights reserved.
   Copyright (C) 2010-2011 Paul Stoffregen.  All rights reserved.
   Copyright (C) 2009 Shigeru Kobayashi.  All rights reserved.
-  Copyright (C) 2009-2014 Jeff Hoefs.  All rights reserved.
-  Copyright (C) 2014 Alan Yorinks. All rights reserved.
+  Copyright (C) 2009-2015 Jeff Hoefs.  All rights reserved.
+  Copyright (C) 2015 Brian Schmalz. All rights reserved.
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -21,21 +21,10 @@
 
   See file LICENSE.txt for further informations on licensing terms.
 
-  Last updated by Jeff Hoefs: April 11, 2015
- */
-
-/*
-  README
-
-  The Arduino Yun has both an Arduino (Atmega32u4) environment and a
-  Linux (Linino) environment.
-
-  StandardFirmataYun enables Firmata running on the Arduino environment
-  to communicate with a Firmata client application running on the Linux
-  environment.
+  Last updated by Brian Schmalz: August 9th, 2015
 */
 
-#include <Servo.h>
+#include <SoftPWMServo.h>  // Gives us PWM and Servo on every pin
 #include <Wire.h>
 #include <Firmata.h>
 
@@ -89,7 +78,7 @@ signed char queryIndex = -1;
 // default delay time between i2c read request and Wire.requestFrom()
 unsigned int i2cReadDelayTime = 0;
 
-Servo servos[MAX_SERVOS];
+SoftServo servos[MAX_SERVOS];
 byte servoPinMap[TOTAL_PINS];
 byte detachedServos[MAX_SERVOS];
 byte detachedServoCount = 0;
@@ -233,6 +222,16 @@ void checkDigitalInputs(void)
 }
 
 // -----------------------------------------------------------------------------
+/* Sets a pin that is in Servo mode to a particular output value
+ * (i.e. pulse width). Different boards may have different ways of
+ * setting servo values, so putting it in a function keeps things cleaner.
+ */
+void servoWrite(byte pin, int value)
+{
+  SoftPWMServoPWMWrite(PIN_TO_PWM(pin), value);
+}
+
+// -----------------------------------------------------------------------------
 /* sets the pin mode to the correct state and sets the relevant bits in the
  * two bit-arrays that track Digital I/O and PWM status
  */
@@ -289,7 +288,7 @@ void setPinModeCallback(byte pin, int mode)
     case PWM:
       if (IS_PIN_PWM(pin)) {
         pinMode(PIN_TO_PWM(pin), OUTPUT);
-        analogWrite(PIN_TO_PWM(pin), 0);
+        servoWrite(PIN_TO_PWM(pin), 0);
         pinConfig[pin] = PWM;
       }
       break;
@@ -327,7 +326,7 @@ void analogWriteCallback(byte pin, int value)
         break;
       case PWM:
         if (IS_PIN_PWM(pin))
-          analogWrite(PIN_TO_PWM(pin), value);
+          servoWrite(PIN_TO_PWM(pin), value);
         pinState[pin] = value;
         break;
     }
@@ -632,10 +631,8 @@ void disableI2CPins() {
 void systemResetCallback()
 {
   isResetting = true;
-
   // initialize a defalt state
   // TODO: option to load config from EEPROM instead of default
-
   if (isI2CEnabled) {
     disableI2CPins();
   }
@@ -679,18 +676,6 @@ void systemResetCallback()
 
 void setup()
 {
-  Serial1.begin(57600); // Set the baud.
-  while (!Serial1) {
-  }
-  // Wait for U-boot to finish startup.  Consume all bytes until we are done.
-  do {
-    while (Serial1.available() > 0) {
-      Serial1.read();
-    }
-    delay(1000);
-  }
-  while (Serial1.available() > 0);
-
   Firmata.setFirmwareVersion(FIRMATA_MAJOR_VERSION, FIRMATA_MINOR_VERSION);
 
   Firmata.attach(ANALOG_MESSAGE, analogWriteCallback);
@@ -701,7 +686,13 @@ void setup()
   Firmata.attach(START_SYSEX, sysexCallback);
   Firmata.attach(SYSTEM_RESET, systemResetCallback);
 
+  /* For chipKIT Pi board, we need to use Serial1. All others just use Serial. */
+#if defined(_BOARD_CHIPKIT_PI_)
+  Serial1.begin(57600);
   Firmata.begin(Serial1);
+#else
+  Firmata.begin(57600);
+#endif
   systemResetCallback();  // reset to default config
 }
 
