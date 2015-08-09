@@ -210,8 +210,10 @@ const static uint8_t SCK  = 13;
 ** These are mostly generic, but some of them may be board specific.
 ** These perform slightly better as macros compared to in-line functions
 */
+// This definition can be used for the non-default case where there
+// is a mapping table to go from digital pin to analog pin
 #undef digitalPinToAnalog
-#define	digitalPinToAnalog(P) ( digital_pin_to_analog_PGM[P] )
+#define	digitalPinToAnalog(P) ((((P) >= 14) && ((P) <= 17)) ? digital_pin_to_analog_PGM[P] : ((((P) == 0) || ((P) == 1)) ? digital_pin_to_analog_PGM[(P) + 14] : ((((P) == 4) || ((P) == 5)) ? digital_pin_to_analog_PGM[(P) + 12] : NOT_ANALOG_PIN)))
 
 #undef analogInPinToChannel
 #define analogInPinToChannel(P) ( analog_pin_to_channel_PGM[P]  )
