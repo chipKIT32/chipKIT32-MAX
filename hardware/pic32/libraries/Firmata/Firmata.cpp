@@ -1,5 +1,5 @@
 /*
-  Firmata.cpp - Firmata library v2.4.3 - 2015-4-11
+  Firmata.cpp - Firmata library v2.4.4 - 2015-8-9
   Copyright (c) 2006-2008 Hans-Christoph Steiner.  All rights reserved.
 
   This library is free software; you can redistribute it and/or
@@ -302,9 +302,7 @@ void FirmataClass::sendDigital(byte pin, int value)
    * track the last digital data sent so that it can be sure to change just
    * one bit in the packet.  This is complicated by the fact that the
    * numbering of the pins will probably differ on Arduino, Wiring, and
-   * other boards.  The DIGITAL_MESSAGE sends 14 bits at a time, but it is
-   * probably easier to send 8 bit ports for any board with more than 14
-   * digital pins.
+   * other boards.
    */
 
   // TODO: the digital message should not be sent on the serial port every
