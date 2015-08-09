@@ -4,7 +4,7 @@
   any host computer software package.
 
   To download a host software package, please clink on the following link
-  to open the download page in your default browser.
+  to open the list of Firmata client libraries your default browser.
 
   https://github.com/firmata/arduino#firmata-client-libraries
 
@@ -20,7 +20,7 @@
 
   See file LICENSE.txt for further informations on licensing terms.
 
-  Last updated by Jeff Hoefs: April 11, 2015
+  Last updated by Jeff Hoefs: August 9th, 2015
 */
 
 #include <Servo.h>
@@ -33,8 +33,8 @@
 #define I2C_STOP_READING            B00011000
 #define I2C_READ_WRITE_MODE_MASK    B00011000
 #define I2C_10BIT_ADDRESS_MODE_MASK B00100000
-#define MAX_QUERIES                 8
-#define REGISTER_NOT_SPECIFIED      -1
+#define I2C_MAX_QUERIES             8
+#define I2C_REGISTER_NOT_SPECIFIED  -1
 
 // the minimum interval for sampling analog input
 #define MINIMUM_SAMPLING_INTERVAL 10
@@ -69,7 +69,7 @@ struct i2c_device_info {
 };
 
 /* for i2c read continuous more */
-i2c_device_info query[MAX_QUERIES];
+i2c_device_info query[I2C_MAX_QUERIES];
 
 byte i2cRxData[32];
 boolean isI2CEnabled = false;
@@ -150,7 +150,7 @@ void readAndReportData(byte address, int theRegister, byte numBytes) {
   // allow I2C requests that don't require a register read
   // for example, some devices using an interrupt pin to signify new data available
   // do not always require the register read so upon interrupt you call Wire.requestFrom()
-  if (theRegister != REGISTER_NOT_SPECIFIED) {
+  if (theRegister != I2C_REGISTER_NOT_SPECIFIED) {
     Wire.beginTransmission(address);
     wireWrite((byte)theRegister);
     Wire.endTransmission();
@@ -430,13 +430,13 @@ void sysexCallback(byte command, byte argc, byte *argv)
           }
           else {
             // a slave register is NOT specified
-            slaveRegister = REGISTER_NOT_SPECIFIED;
+            slaveRegister = I2C_REGISTER_NOT_SPECIFIED;
             data = argv[2] + (argv[3] << 7);  // bytes to read
           }
           readAndReportData(slaveAddress, (int)slaveRegister, data);
           break;
         case I2C_READ_CONTINUOUSLY:
-          if ((queryIndex + 1) >= MAX_QUERIES) {
+          if ((queryIndex + 1) >= I2C_MAX_QUERIES) {
             // too many queries, just ignore
             Firmata.sendString("too many queries");
             break;
@@ -448,7 +448,7 @@ void sysexCallback(byte command, byte argc, byte *argv)
           }
           else {
             // a slave register is NOT specified
-            slaveRegister = (int)REGISTER_NOT_SPECIFIED;
+            slaveRegister = (int)I2C_REGISTER_NOT_SPECIFIED;
             data = argv[2] + (argv[3] << 7);  // bytes to read
           }
           queryIndex++;
@@ -474,7 +474,7 @@ void sysexCallback(byte command, byte argc, byte *argv)
             }
 
             for (byte i = queryIndexToSkip; i < queryIndex + 1; i++) {
-              if (i < MAX_QUERIES) {
+              if (i < I2C_MAX_QUERIES) {
                 query[i].addr = query[i + 1].addr;
                 query[i].reg = query[i + 1].reg;
                 query[i].bytes = query[i + 1].bytes;
@@ -677,7 +677,16 @@ void setup()
   Firmata.attach(START_SYSEX, sysexCallback);
   Firmata.attach(SYSTEM_RESET, systemResetCallback);
 
+  // to use a port other than Serial, such as Serial1 on an Arduino Leonardo or Mega,
+  // Call begin(baud) on the alternate serial port and pass it to Firmata to begin like this:
+  // Serial1.begin(57600);
+  // Firmata.begin(Serial1);
+  // then comment out or remove lines 701 - 704 below
+
   Firmata.begin(57600);
+  while (!Serial) {
+    ; // wait for serial port to connect. Only needed for ATmega32u4-based boards (Leonardo, etc).
+  }
   systemResetCallback();  // reset to default config
 }
 
