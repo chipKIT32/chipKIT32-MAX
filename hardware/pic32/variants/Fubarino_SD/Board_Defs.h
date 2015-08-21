@@ -154,15 +154,15 @@
 ** devices.
 */
 /// TODO: For Fubarino, do we need these?
-const static uint8_t SS   = 105;		// PIC32 SS2
-const static uint8_t MOSI =	104;		// PIC32 SDO2
-const static uint8_t MISO = 103;		// PIC32 SDI2
-const static uint8_t SCK  = 102;		// PIC32 SCK2
+const static uint8_t SS   = 27;		// PIC32 SS2
+const static uint8_t MOSI = 26;		// PIC32 SDO2
+const static uint8_t MISO = 25;		// PIC32 SDI2
+const static uint8_t SCK  = 24;		// PIC32 SCK2
 
 /* The Digilent DSPI library uses these ports.
 */
 /// TODO: For Fubarino, do we need these?
-#define	PIN_DSPI0_SS	105
+#define	PIN_DSPI0_SS	27
 #define PIN_DSPI1_SS    1
 
 /* ------------------------------------------------------------ */
