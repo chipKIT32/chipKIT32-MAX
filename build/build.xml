@@ -913,25 +913,9 @@ Description: chipKIT MPIDE Development environment
 
     <unzip dest="windows/work" src="windows/jre.zip" overwrite="false"/>
 
-    <!--
-    <zip basedir="windows/work"
-	 prefix="mpide-${version}"
-	 destfile="windows/mpide-${version}.zip" />
-    <zip basedir="windows/work"
-	 prefix="mpide-${version}"
-	 destfile="windows/mpide-${version}-expert.zip"
-	 excludes="java/**" />
-    -->
-
     <zip destfile="windows/mpide-${version}.zip">
       <zipfileset dir="windows/work"
 		  prefix="mpide-${version}" />
-    </zip>
-
-    <zip destfile="windows/mpide-${version}-expert.zip">
-      <zipfileset dir="windows/work"
-		  prefix="mpide-${version}"
-		  excludes="java/**" />
     </zip>
 
     <echo>
@@ -939,7 +923,6 @@ Description: chipKIT MPIDE Development environment
       mpide for Windows was built. Grab the archive from
 
       windows/mpide-${version}.zip
-      windows/mpide-${version}-expert.zip
       =======================================================
     </echo>
   </target>
