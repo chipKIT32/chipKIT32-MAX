@@ -18,33 +18,9 @@
  * <http://www.gnu.org/licenses/>.
  */
 #include <p32xxxx.h>
-//#include <plib.h>
-
-
 
 #include <WProgram.h>
 #include "Sd2Card.h"
-
-/*	SPIxCON
-*/
-#define bnOn	15
-#define bnSmp	9
-#define bnCkp	6
-#define bnMsten 5
-
-/*	SPIxSTAT
-*/
-#define bnTbe	3
-#define bnRbf	0
-
-/*	IEC0
-*/
-#define bnSPI2RXIE	7
-#define bnSPI2TXIE	6
-
-uint32_t	spi_state;
-uint8_t     fspi_state_saved = false;
-uint32_t    interrupt_state = 0;
 
 /** Soft SPI receive */
 uint8_t spiRec(void) {
@@ -62,7 +38,6 @@ uint8_t spiRec(void) {
     asm("nop");
 
     if (PORTReadBits(prtSDI,bnSDI)) data |= 1;
-
 
     PORTClearBits(prtSCK, bnSCK);
   }
@@ -160,26 +135,9 @@ uint32_t Sd2Card::cardSize(void) {
 //------------------------------------------------------------------------------
 void Sd2Card::chipSelectHigh(void) {
   digitalWrite(chipSelectPin_, HIGH);
-#if defined(_BOARD_MEGA_) || defined(_BOARD_UNO_) || defined(_BOARD_UC32_)
-  if(fspi_state_saved)
-  {
-    SPI2CON = spi_state;
-    fspi_state_saved = false;
-    restoreIntEnable(_EXTERNAL_1_IRQ, interrupt_state);
-  }
-#endif
 }
 //------------------------------------------------------------------------------
 void Sd2Card::chipSelectLow(void) {
-#if defined(_BOARD_MEGA_) || defined(_BOARD_UNO_) || defined(_BOARD_UC32_)
-    if(!fspi_state_saved)
-    {
-        interrupt_state = clearIntEnable(_EXTERNAL_1_IRQ);
-        spi_state = SPI2CON;
-        SPI2CONbits.ON = 0; 
-        fspi_state_saved = true;
-    }
-#endif
   digitalWrite(chipSelectPin_, LOW);
 }
 //------------------------------------------------------------------------------
@@ -250,24 +208,38 @@ uint8_t Sd2Card::init(uint8_t sckRateID, uint8_t chipSelectPin) {
   uint16_t t0 = (uint16_t)millis();
   uint32_t arg;
 
-  SPI2CON = 0;
-
-  // not needed done in init()
-  // DDPCONbits.JTAGEN = 0;
-
-#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__) || defined(__PIC32MZXX__)
-    PORTSetAsDigitalPin(prtSDO, bnSDO);
-    PORTSetAsDigitalPin(prtSDI, bnSDI);
-    PORTSetAsDigitalPin(prtSCK, bnSCK);
-    SD_SDO_PPS();
-    SD_SDI_PPS();
-    SD_SCK_PPS();
+#if defined(__PIC32_PPS__)
+  PORTSetAsDigitalPin(prtSDO, bnSDO);	// Turn off analog input for this pin
+  PORTSetAsDigitalPin(prtSDI, bnSDI);	// Turn off analog input for this pin
+  PORTSetAsDigitalPin(prtSCK, bnSCK);	// Turn off analog input for this pin
+  SD_SDO_PPS();	// Set this pin's PPS mapping to be "GPIO"
+  SD_SDI_PPS();	// Set this pin's PPS mapping to be "GPIO"
+  SD_SCK_PPS();	// Set this pin's PPS mapping to be "GPIO"
 #else
-    // this is bogus...! Just whacked all of your analog pins even if it is not used by the SD card
-    // TODO: got to fix this some day!
-    AD1PCFG = 0xFFFF;
+  // Goal here is to set any bit-banged SPI port pins to be digital I/O rather than analog inputs
+  // The non-PPS PIC32 devices have all of the analog capable pins on
+  // PORTB. If this is a PORTB pin, we have to set it to digital mode.	
+  // You have to set the bit in the AD1PCFG for an analog pin to be used as a 
+  // digital input. They come up after reset as analog input with the digital 
+  // input disabled. For the PORTB pins you switch between analog input and 
+  // digital input using AD1PCFG.
+  // Note that the chip select pin is handleled a bit further down in the pinMode() call.
+  #if (prtSDO == IOPORT_B)
+  {
+    AD1PCFGSET = bnSDO;
+  }
+  #endif
+  #if (prtSDI == IOPORT_B)
+  {
+    AD1PCFGSET = bnSDI;
+  }
+  #endif
+  #if (prtSCK == IOPORT_B)
+  {
+    AD1PCFGSET = bnSCK;
+  }
+  #endif
 #endif
-
 
   chipSelectPin_ = chipSelectPin;
 
@@ -326,11 +298,7 @@ uint8_t Sd2Card::init(uint8_t sckRateID, uint8_t chipSelectPin) {
   }
   chipSelectHigh();
 
-#ifndef SOFTWARE_SPI
-  return setSckRate(sckRateID);
-#else  // SOFTWARE_SPI
   return true;
-#endif  // SOFTWARE_SPI
 
  fail:
   chipSelectHigh();
@@ -452,35 +420,6 @@ uint8_t Sd2Card::readRegister(uint8_t cmd, void* buf) {
  fail:
   chipSelectHigh();
   return false;
-}
-//------------------------------------------------------------------------------
-/**
- * Set the SPI clock rate.
- *
- * \param[in] sckRateID A value in the range [0, 6].
- *
- * The SPI clock will be set to F_CPU/pow(2, 1 + sckRateID). The maximum
- * SPI rate is F_CPU/2 for \a sckRateID = 0 and the minimum rate is F_CPU/128
- * for \a scsRateID = 6.
- *
- * \return The value one, true, is returned for success and the value zero,
- * false, is returned for an invalid value of \a sckRateID.
- */
-uint8_t Sd2Card::setSckRate(uint8_t sckRateID) {
-  //if (sckRateID > 6) {
-  //  error(SD_CARD_ERROR_SCK_RATE);
-  //  return false;
-  //}
-  //// see avr processor datasheet for SPI register bit definitions
-  //if ((sckRateID & 1) || sckRateID == 6) {
-  //  SPSR &= ~(1 << SPI2X);
-  //} else {
-  //  SPSR |= (1 << SPI2X);
-  //}
-  //SPCR &= ~((1 <<SPR1) | (1 << SPR0));
-  //SPCR |= (sckRateID & 4 ? (1 << SPR1) : 0)
-  //  | (sckRateID & 2 ? (1 << SPR0) : 0);
-  return true;
 }
 //------------------------------------------------------------------------------
 // wait for card to go not busy

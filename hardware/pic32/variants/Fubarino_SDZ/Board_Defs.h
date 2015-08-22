@@ -54,7 +54,7 @@
 ** refer to periperhals on the board generically.
 */
 
-#define	_BOARD_NAME_	"chipKIT WiFire"
+#define	_BOARD_NAME_	"chipKIT Fubarino SDZ"
 
 /* Define the Microcontroller peripherals available on the board.
 */
