@@ -1,27 +1,27 @@
 /************************************************************************
  *	chipKIT-applicaiton-COMMON.ld
- *	
+ *
  *	This is the common part of the linker script shared
  *	across all chipKIT PIC32 processors / boards.
- *	
+ *
  ************************************************************************
  *	this code is based on code Copyright (c) 2005-2006 David A. Mellis
  * 	This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
  *	License as published by the Free Software Foundation; either
  *	version 2.1 of the License, or (at your option) any later version.
- *	
+ *
  *	This library is distributed in the hope that it will be useful,
  *	but WITHOUT ANY WARRANTY; without even the implied warranty of
  *	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.//*	See the GNU
  *	Lesser General Public License for more details.
- *	
+ *
  *	You should have received a copy of the GNU Lesser General
  *	Public License along with this library; if not, write to the
  *	Free Software Foundation, Inc., 59 Temple Place, Suite 330,
  *	Boston, MA	02111-1307	USA
- *	
- *	
+ *
+ *
  ************************************************************************
  *	Edit History
  ************************************************************************
@@ -38,7 +38,7 @@ PROVIDE(_vector_spacing = 0x00000001);
 INPUT("crtbegin.o")
 INPUT("crtend.o")
 INPUT("crtn.o")
-OPTIONAL("libmchp_peripheral.a") 
+OPTIONAL("libmchp_peripheral.a")
 
 /*************************************************************************
  * Start the layout of memory, the sections...
@@ -61,7 +61,7 @@ SECTIONS
 
  .image_ptr_table _IMAGE_PTR_TABLE :
   {
-    LONG(_ebase_address)	
+    LONG(_ebase_address)
     LONG(_image_header_info)
   } > exception_mem
 
@@ -570,7 +570,7 @@ SECTIONS
     LONG(_ebase_address)                       /* image base address           */
     LONG(_IMAGE_FLASH_SIZE)                    /* size of image flash used     */
     LONG(ORIGIN(kseg0_eeprom_mem))             /* eeprom location              */
-    LONG(LENGTH(kseg0_eeprom_mem))             /* eeprom size                  */   
+    LONG(LENGTH(kseg0_eeprom_mem))             /* eeprom size                  */
     LONG(ORIGIN(configsfrs))                   /* config bits location         */
     LONG(LENGTH(configsfrs))                   /* config bits size             */
     LONG(_ram_header_addr)                     /* ram header pointer           */
@@ -616,7 +616,7 @@ SECTIONS
   {
     . += (DEFINED (_DEBUGGER) ? 0x200 : 0x0);
   } >kseg1_data_mem
-  
+
   .ram_exchange_data (NOLOAD) :
   {
     _ram_header_addr = . ;
@@ -670,14 +670,13 @@ SECTIONS
    * can access them all, and initialized data all before uninitialized, so
    * we can shorten the on-disk segment size.
    */
-  .sdata ALIGN(4)   :
+  .sdata ALIGN(4) :
   {
     _sdata_begin = . ;
-    *(.gnu.linkonce.s.*)
+    *(.sdata .sdata.* .gnu.linkonce.s.*)
     . = ALIGN(4) ;
     _sdata_end = . ;
   } >kseg1_data_mem
-
   .lit8           :
   {
     *(.lit8)
@@ -687,13 +686,13 @@ SECTIONS
   .lit4           :
   {
     *(.lit4)
-  } >kseg1_data_mem 
+  } >kseg1_data_mem
 
   . = ALIGN (4) ;
   _data_end = . ;
   _bss_begin = . ;
 
-  .sbss ALIGN(4)   :
+  .sbss ALIGN(4) :
   {
     _sbss_begin = . ;
     *(.dynsbss)
@@ -736,7 +735,7 @@ SECTIONS
   _bmxdupba_address = LENGTH(kseg1_data_mem) ;
 
     /* The .pdr section belongs in the absolute section */
-    
+
     /DISCARD/ : { *(.pdr) }
     /* We don't load .reginfo onto the target, so don't locate it
      * in real memory
