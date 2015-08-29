@@ -160,8 +160,8 @@ const static uint8_t SCK  = 4;		// PIC32 SCK2
 
 /* The Digilent DSPI library uses these ports.
 */
-#define	PIN_DSPI0_SS	3
-#define	PIN_DSPI1_SS	4
+#define	PIN_DSPI0_SS	5   // These are kind of arbitrary as they're managed by the sketch as GPIO not by the library
+#define	PIN_DSPI1_SS	30  // These are kind of arbitrary as they're managed by the sketch as GPIO not by the library
 
 /* ------------------------------------------------------------ */
 /*					Analog Pins									*/
