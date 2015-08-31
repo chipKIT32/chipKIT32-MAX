@@ -193,25 +193,25 @@ const static uint8_t SCK  = 24;		// PIC32 SCK2
 /* These define the pin numbers for the various change notice
 ** pins.
 */
-#define	PIN_CN0		7
-#define	PIN_CN1		6
-#define	PIN_CN2		33
-#define	PIN_CN3		32
-#define	PIN_CN4		31
-#define	PIN_CN5		30
-#define	PIN_CN6		29
-#define	PIN_CN7		28
-#define	PIN_CN8		24
-#define	PIN_CN9		25
-#define	PIN_CN10	26
-#define	PIN_CN11	27
-#define	PIN_CN12	44
-#define	PIN_CN13	10
-#define	PIN_CN14	11
-#define	PIN_CN15	12
-#define	PIN_CN16	13
-#define	PIN_CN17	28
-#define	PIN_CN18	29
+#define	PIN_CN0		6       // RC14
+#define	PIN_CN1		5       // RC13
+#define	PIN_CN2		34      // RB0
+#define	PIN_CN3		33      // RB1
+#define	PIN_CN4		32      // RB2
+#define	PIN_CN5		31      // RB3
+#define	PIN_CN6		30      // RB4
+/* RB5 not brought out on Fubarino SD */ // #define	PIN_CN7		29 // RB5
+#define	PIN_CN8		24      // RG6
+#define	PIN_CN9		25      // RG7
+#define	PIN_CN10	26      // RG8
+#define	PIN_CN11	27      // RG9
+#define	PIN_CN12	44      // RB15
+#define	PIN_CN13	10      // RD4
+#define	PIN_CN14	11      // RD5
+#define	PIN_CN15	12      // RD6
+#define	PIN_CN16	13      // RD7
+#define	PIN_CN17	28      // RF4
+#define	PIN_CN18	29      // RF5
 
 /* ------------------------------------------------------------ */
 /*					Pin Mapping Macros							*/
