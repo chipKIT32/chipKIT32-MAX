@@ -40,9 +40,7 @@
 /************************************************************************/
 
 /// TODO list in priority order
-/// Set up Change Notice settings for different classes of PIC32 (MX1/2, MZ, etc.)
-/// Calibrate bit-time in terms of core timer tick fudge factor based on clock speed
-
+/// For PPC PIC32s, keep track of which CN INT vectors really need to be enabled
 /// Handle listen properly
 /// Comment all functions properly
 /// Allow initializer to specify receive buffer size (test)
@@ -61,14 +59,15 @@
  ******************************************************************************/
 
 #include "WConstants.h"
-#include "SoftwareSerial2.h"
+#include "SoftwareSerial.h"
 #include <stdint.h>
 #include <p32xxxx.h>
 #include <sys/attribs.h>
 
 
 /******* DEBUG ************/
-#define SSDEBUG
+// Uncomment next line to enablel debug I/O for logic analzyer timing analysis
+//#define SSDEBUG
 #if defined(SSDEBUG)
     #if defined(_BOARD_FUBARINO_SD_)
         #define DEBUG0_LOW  TRISDbits.TRISD8 = 0; LATDbits.LATD8 = 0;
@@ -143,17 +142,35 @@ SoftwareSerial *SoftwareSerial::CN_list_head = NULL;
 // Amount of CoreTimer ticks to subtract from 'ideal' bit time to compensate for
 // overhead code.
 #if (F_CPU < 80000000)      // Slower than 80MHz
-    #define EXTRA_RX_BIT_TIME       (-24)
-    #define EXTRA_RX_START_BIT_TIME (-24)
-    #define EXTRA_TX_BIT_TIME       (-18)
+    #if defined(SSDEBUG)
+        #define EXTRA_RX_BIT_TIME       (-24)
+        #define EXTRA_RX_START_BIT_TIME (-24)
+        #define EXTRA_TX_BIT_TIME       (-18)
+    #else
+        #define EXTRA_RX_BIT_TIME       (-12)
+        #define EXTRA_RX_START_BIT_TIME (-12)
+        #define EXTRA_TX_BIT_TIME       (-11)
+    #endif
  #elif (F_CPU > 80000000)    // Faster than 80MHz
-    #define EXTRA_RX_BIT_TIME       (-30)
-    #define EXTRA_RX_START_BIT_TIME (-32)
-    #define EXTRA_TX_BIT_TIME       (4)
+    #if defined(SSDEBUG)
+        #define EXTRA_RX_BIT_TIME       (-28)
+        #define EXTRA_RX_START_BIT_TIME (-32)
+        #define EXTRA_TX_BIT_TIME       (-20)
+    #else
+        #define EXTRA_RX_BIT_TIME       (-28)
+        #define EXTRA_RX_START_BIT_TIME (-32)
+        #define EXTRA_TX_BIT_TIME       (-20)
+    #endif
 #else                       // At 80MHz
-    #define EXTRA_RX_BIT_TIME       (-30)
-    #define EXTRA_RX_START_BIT_TIME (-32)
-    #define EXTRA_TX_BIT_TIME       (4)
+    #if defined(SSDEBUG)
+        #define EXTRA_RX_BIT_TIME       (-28)
+        #define EXTRA_RX_START_BIT_TIME (-32)
+        #define EXTRA_TX_BIT_TIME       (-20)
+    #else
+        #define EXTRA_RX_BIT_TIME       (-28)
+        #define EXTRA_RX_START_BIT_TIME (-32)
+        #define EXTRA_TX_BIT_TIME       (-20)
+    #endif
 #endif
 
 /******************************************************************************
@@ -162,35 +179,13 @@ SoftwareSerial *SoftwareSerial::CN_list_head = NULL;
 
 SoftwareSerial::SoftwareSerial(uint8_t receivePin, uint8_t transmitPin, bool inverted_logic /* = false */)
 {
-    DEBUG0_LOW
-    DEBUG1_LOW
-    DEBUG2_LOW
-    DEBUG3_LOW
-    DEBUG4_LOW
-    DEBUG5_LOW
-//    delay(100);
-    DEBUG0_HIGH
-    DEBUG1_HIGH
-    DEBUG2_HIGH
-    DEBUG3_HIGH
-    DEBUG4_HIGH
-    DEBUG5_HIGH
-//    delay(100);
-    DEBUG0_LOW
-    DEBUG1_LOW
-    DEBUG2_LOW
-    DEBUG3_LOW
-    DEBUG4_LOW
-    DEBUG5_LOW
-    
     // Detect if this pin is on a Change Notification or not and record it's CN number if so
 #if !defined(__PIC32_PPS__)
-    if (is_pin_a_CN(receivePin, &(this->_CN_bitmask))
+    if (is_pin_a_CN(receivePin, &(this->_CN_bitmask)))
 #else
     if (is_pin_a_CN(receivePin, NULL))
 #endif    
     {
-        DEBUG2_HIGH
         _on_CN_pin = true;
         addCN();
     }
@@ -204,7 +199,6 @@ SoftwareSerial::SoftwareSerial(uint8_t receivePin, uint8_t transmitPin, bool inv
     _baudRate = 0;
     _have_start_bit_time = false;
     active_object = this;
-    DEBUG2_LOW
 }
 
 SoftwareSerial::~SoftwareSerial()
@@ -246,11 +240,11 @@ bool SoftwareSerial::ReadBit(SoftwareSerial* obj)
     }
     if (retval)
     {
-        DEBUG3_HIGH
+DEBUG3_HIGH
     }
     else
     {
-        DEBUG3_LOW
+DEBUG3_LOW
     }
     return retval;
 }
@@ -353,18 +347,76 @@ DEBUG4_LOW
             // For PPC CPUs, we need to clear the CN interrupt flag. But how to know
             // which one to clear? Look to see what port our RX bit is on.
 #if defined(__PIC32_PPS__)
+    #if defined(_PORTA)
             if ((volatile unsigned int *)serial_obj->_rxPort == &ANSELA)
             {
-                IFS1bits.CNAIF = 0;
-            }
-            else if ((volatile unsigned int *)serial_obj->_rxPort == &ANSELB)
+        #if !defined(__PIC32MZXX__)
+                clearIntFlag(_CHANGE_NOTICE_A_IRQ);
+        #else
+                clearIntFlag(_CHANGE_NOTICE_A_VECTOR);
+        #endif
+                }
+    #endif
+    #if defined(_PORTB)
+            if ((volatile unsigned int *)serial_obj->_rxPort == &ANSELB)
             {
-                IFS1bits.CNBIF = 0;
+        #if !defined(__PIC32MZXX__)
+                clearIntFlag(_CHANGE_NOTICE_B_IRQ);
+        #else
+                clearIntFlag(_CHANGE_NOTICE_B_VECTOR);
+        #endif
             }
-            else if ((volatile unsigned int *)serial_obj->_rxPort == &ANSELC)
+    #endif
+    #if defined(_PORTC)
+            if ((volatile unsigned int *)serial_obj->_rxPort == &ANSELC)
             {
-                IFS1bits.CNCIF = 0;
+        #if !defined(__PIC32MZXX__)
+                clearIntFlag(_CHANGE_NOTICE_C_IRQ);
+        #else
+                clearIntFlag(_CHANGE_NOTICE_C_VECTOR);
+        #endif
             }
+    #endif
+    #if defined(_PORTD)
+            if ((volatile unsigned int *)serial_obj->_rxPort == &ANSELD)
+            {
+        #if !defined(__PIC32MZXX__)
+                clearIntFlag(_CHANGE_NOTICE_D_IRQ);
+        #else
+                clearIntFlag(_CHANGE_NOTICE_D_VECTOR);
+        #endif
+            }
+    #endif
+    #if defined(_PORTE)
+            if ((volatile unsigned int *)serial_obj->_rxPort == &ANSELE)
+            {
+        #if !defined(__PIC32MZXX__)
+                clearIntFlag(_CHANGE_NOTICE_E_IRQ);
+        #else
+                clearIntFlag(_CHANGE_NOTICE_E_VECTOR);
+        #endif
+            }
+    #endif
+    #if defined(_PORTF)
+            if ((volatile unsigned int *)serial_obj->_rxPort == &ANSELF)
+            {
+        #if !defined(__PIC32MZXX__)
+                clearIntFlag(_CHANGE_NOTICE_F_IRQ);
+        #else
+                clearIntFlag(_CHANGE_NOTICE_F_VECTOR);
+        #endif
+            }
+    #endif
+    #if defined(_PORTG)
+            if ((volatile unsigned int *)serial_obj->_rxPort == &ANSELG)
+            {
+        #if !defined(__PIC32MZXX__)
+                clearIntFlag(_CHANGE_NOTICE_G_IRQ);
+        #else
+                clearIntFlag(_CHANGE_NOTICE_G_VECTOR);
+        #endif
+            }
+    #endif
 #endif
         }
         
@@ -622,12 +674,49 @@ void SoftwareSerial::begin(long speed, uint32_t RX_buffer_size)
         // Enable the change notification bit (this was set in contstructor)
         CNENSET = _CN_bitmask;
 #else
+    #if defined(_PORTA)
         CNCONAbits.ON = 1;
+    #endif
+    #if defined(_PORTB)
         CNCONBbits.ON = 1;
+    #endif
+    #if defined(_PORTC)
         CNCONCbits.ON = 1;
+    #endif
+    #if defined(_PORTD)
+        CNCONDbits.ON = 1;
+    #endif
+    #if defined(_PORTE)
+        CNCONEbits.ON = 1;
+    #endif
+    #if defined(_PORTF)
+        CNCONFbits.ON = 1;
+    #endif
+    #if defined(_PORTG)
+        CNCONGbits.ON = 1;
+    #endif
+
+    #if defined(_PORTA)
         CNCONAbits.SIDL = 0;
+    #endif
+    #if defined(_PORTB)
         CNCONBbits.SIDL = 0;
+    #endif
+    #if defined(_PORTC)
         CNCONCbits.SIDL = 0;
+    #endif
+    #if defined(_PORTD)
+        CNCONDbits.SIDL = 0;
+    #endif
+    #if defined(_PORTE)
+        CNCONEbits.SIDL = 0;
+    #endif
+    #if defined(_PORTF)
+        CNCONFbits.SIDL = 0;
+    #endif
+    #if defined(_PORTG)
+        CNCONGbits.SIDL = 0;
+    #endif
 
         // On PPS PIC32s, we just set the proper bit in the proper I/O port's CNEN
         _rxPort->cnen.set = _rxBit;
@@ -642,26 +731,159 @@ void SoftwareSerial::begin(long speed, uint32_t RX_buffer_size)
 
         if (!SoftwareSerial::_CN_ISR_hooked)
         {
-DEBUG0_HIGH
-DEBUG1_HIGH
+#if !defined(__PIC32MZXX__)     // MX parts only have one CN vector
             // Configure the change notification interrupt vector
             setIntVector(_CHANGE_NOTICE_VECTOR, ChangeNotificationISR);
             // Configure the change notification priority and sub-priority
             setIntPriority(_CHANGE_NOTICE_VECTOR, 4, 0);
-#if !defined(__PIC32_PPS__)
+#else                           // MZ parts have one vector for each CN port
+            // Configure the change notification interrupt vector
+        #if defined(_PORTA)
+            setIntVector(_CHANGE_NOTICE_A_VECTOR, ChangeNotificationISR);
+        #endif
+        #if defined(_PORTB)
+            setIntVector(_CHANGE_NOTICE_B_VECTOR, ChangeNotificationISR);
+        #endif
+        #if defined(_PORTC)
+            setIntVector(_CHANGE_NOTICE_C_VECTOR, ChangeNotificationISR);
+        #endif
+        #if defined(_PORTD)
+            setIntVector(_CHANGE_NOTICE_D_VECTOR, ChangeNotificationISR);
+        #endif
+        #if defined(_PORTE)
+            setIntVector(_CHANGE_NOTICE_E_VECTOR, ChangeNotificationISR);
+        #endif
+        #if defined(_PORTF)
+            setIntVector(_CHANGE_NOTICE_F_VECTOR, ChangeNotificationISR);
+        #endif
+        #if defined(_PORTG)
+            setIntVector(_CHANGE_NOTICE_G_VECTOR, ChangeNotificationISR);
+        #endif
+
+            // Configure the change notification priority and sub-priority
+        #if defined(_PORTA)
+            setIntPriority(_CHANGE_NOTICE_A_VECTOR, 4, 0);
+        #endif
+        #if defined(_PORTB)
+            setIntPriority(_CHANGE_NOTICE_B_VECTOR, 4, 0);
+        #endif
+        #if defined(_PORTC)
+            setIntPriority(_CHANGE_NOTICE_C_VECTOR, 4, 0);
+        #endif
+        #if defined(_PORTD)
+            setIntPriority(_CHANGE_NOTICE_D_VECTOR, 4, 0);
+        #endif
+        #if defined(_PORTE)
+            setIntPriority(_CHANGE_NOTICE_E_VECTOR, 4, 0);
+        #endif
+        #if defined(_PORTF)
+            setIntPriority(_CHANGE_NOTICE_F_VECTOR, 4, 0);
+        #endif
+        #if defined(_PORTG)
+            setIntPriority(_CHANGE_NOTICE_G_VECTOR, 4, 0);
+        #endif
+#endif
+            
+            
+#if !defined(__PIC32_PPS__)     // Non-PPS MX parts
             // Clear the change notification interrupt flag
             clearIntFlag(_CHANGE_NOTICE_IRQ);
             // And finally enable the change notification interrupt
             setIntEnable(_CHANGE_NOTICE_IRQ);
 #else
+    #if !defined(__PIC32MZXX__) // PPS MX parts
             // Clear the change notification interrupt flag
+        #if defined(_PORTA)
             clearIntFlag(_CHANGE_NOTICE_A_IRQ);
+        #endif
+        #if defined(_PORTB)
             clearIntFlag(_CHANGE_NOTICE_B_IRQ);
+        #endif
+        #if defined(_PORTC)
             clearIntFlag(_CHANGE_NOTICE_C_IRQ);
+        #endif
+        #if defined(_PORTD)
+            clearIntFlag(_CHANGE_NOTICE_D_IRQ);
+        #endif
+        #if defined(_PORTE)
+            clearIntFlag(_CHANGE_NOTICE_E_IRQ);
+        #endif
+        #if defined(_PORTF)
+            clearIntFlag(_CHANGE_NOTICE_F_IRQ);
+        #endif
+        #if defined(_PORTG)
+            clearIntFlag(_CHANGE_NOTICE_G_IRQ);
+        #endif
+
             // And finally enable the change notification interrupt
+        #if defined(_PORTA)
             setIntEnable(_CHANGE_NOTICE_A_IRQ);
+        #endif
+        #if defined(_PORTB)        
             setIntEnable(_CHANGE_NOTICE_B_IRQ);
+        #endif
+        #if defined(_PORTC)
             setIntEnable(_CHANGE_NOTICE_C_IRQ);
+        #endif
+        #if defined(_PORTD)
+            setIntEnable(_CHANGE_NOTICE_D_IRQ);
+        #endif
+        #if defined(_PORTE)
+            setIntEnable(_CHANGE_NOTICE_E_IRQ);
+        #endif
+        #if defined(_PORTF)
+            setIntEnable(_CHANGE_NOTICE_F_IRQ);
+        #endif
+        #if defined(_PORTG)
+            setIntEnable(_CHANGE_NOTICE_G_IRQ);
+        #endif
+    #else                       // MZ parts
+            // Clear the change notification interrupt flag
+        #if defined(_PORTA)
+            clearIntFlag(_CHANGE_NOTICE_A_VECTOR);
+        #endif
+        #if defined(_PORTB)
+            clearIntFlag(_CHANGE_NOTICE_B_VECTOR);
+        #endif
+        #if defined(_PORTC)
+            clearIntFlag(_CHANGE_NOTICE_C_VECTOR);
+        #endif
+        #if defined(_PORTD)
+            clearIntFlag(_CHANGE_NOTICE_D_VECTOR);
+        #endif
+        #if defined(_PORTE)
+            clearIntFlag(_CHANGE_NOTICE_E_VECTOR);
+        #endif
+        #if defined(_PORTF)
+            clearIntFlag(_CHANGE_NOTICE_F_VECTOR);
+        #endif
+        #if defined(_PORTG)
+            clearIntFlag(_CHANGE_NOTICE_G_VECTOR);
+        #endif
+
+            // And finally enable the change notification interrupt
+        #if defined(_PORTA)
+            setIntEnable(_CHANGE_NOTICE_A_VECTOR);
+        #endif
+        #if defined(_PORTB)
+            setIntEnable(_CHANGE_NOTICE_B_VECTOR);
+        #endif
+        #if defined(_PORTC)
+            setIntEnable(_CHANGE_NOTICE_C_VECTOR);
+        #endif
+        #if defined(_PORTD)
+            setIntEnable(_CHANGE_NOTICE_D_VECTOR);
+        #endif
+        #if defined(_PORTE)
+            setIntEnable(_CHANGE_NOTICE_E_VECTOR);
+        #endif
+        #if defined(_PORTF)
+            setIntEnable(_CHANGE_NOTICE_F_VECTOR);
+        #endif
+        #if defined(_PORTG)
+            setIntEnable(_CHANGE_NOTICE_G_VECTOR);
+        #endif
+    #endif
 #endif
             
 #if !defined(__PIC32_PPS__)
@@ -672,9 +894,7 @@ DEBUG1_HIGH
 #endif            
             // Mark the ISR as set up so that we don't try to do it again
             SoftwareSerial::_CN_ISR_hooked = true;
-DEBUG1_LOW
-DEBUG0_LOW
-            }
+        }
     }
 
     listen();
@@ -781,7 +1001,7 @@ size_t SoftwareSerial::write(uint8_t b)
     uint32_t    st;
     uint32_t    bit_end_time;
 #if defined(__PIC32_PPS__)
-    uint32_t    IntEnableA, IntEnableB, IntEnableC;
+    uint32_t    IntEnableA, IntEnableB, IntEnableC, IntEnableD, IntEnableE, IntEnableF, IntEnableG;
 #endif
 
 DEBUG0_HIGH
@@ -790,6 +1010,7 @@ DEBUG0_HIGH
 
     if (_baudRate == 0)
     {
+DEBUG0_LOW
         return 0;
     }
   
@@ -803,9 +1024,51 @@ DEBUG0_HIGH
 #else
         // The right thing is to only disable those CNxIE bits that we're actually using
         // Then remember that and restore them when we're done.
+    #if !defined(__PIC32MZXX__)
+        #if defined(_PORTA)
         IntEnableA = clearIntEnable(_CHANGE_NOTICE_A_IRQ);
+        #endif
+        #if defined(_PORTB)
         IntEnableB = clearIntEnable(_CHANGE_NOTICE_B_IRQ);
+        #endif
+        #if defined(_PORTC)
         IntEnableC = clearIntEnable(_CHANGE_NOTICE_C_IRQ);
+        #endif
+        #if defined(_PORTD)
+        IntEnableD = clearIntEnable(_CHANGE_NOTICE_D_IRQ);
+        #endif
+        #if defined(_PORTE)
+        IntEnableE = clearIntEnable(_CHANGE_NOTICE_E_IRQ);
+        #endif
+        #if defined(_PORTF)
+        IntEnableF = clearIntEnable(_CHANGE_NOTICE_F_IRQ);
+        #endif
+        #if defined(_PORTG)
+        IntEnableG = clearIntEnable(_CHANGE_NOTICE_G_IRQ);
+        #endif
+    #else
+        #if defined(_PORTA)
+        IntEnableA = clearIntEnable(_CHANGE_NOTICE_A_VECTOR);
+        #endif
+        #if defined(_PORTB)
+        IntEnableB = clearIntEnable(_CHANGE_NOTICE_B_VECTOR);
+        #endif
+        #if defined(_PORTC)
+        IntEnableC = clearIntEnable(_CHANGE_NOTICE_C_VECTOR);
+        #endif
+        #if defined(_PORTD)
+        IntEnableD = clearIntEnable(_CHANGE_NOTICE_D_VECTOR);
+        #endif
+        #if defined(_PORTE)
+        IntEnableE = clearIntEnable(_CHANGE_NOTICE_E_VECTOR);
+        #endif
+        #if defined(_PORTF)
+        IntEnableF = clearIntEnable(_CHANGE_NOTICE_F_VECTOR);
+        #endif
+        #if defined(_PORTG)
+        IntEnableG = clearIntEnable(_CHANGE_NOTICE_G_VECTOR);
+        #endif
+    #endif
 #endif
     }
 
@@ -858,12 +1121,55 @@ DEBUG1_HIGH
 #else
         // The right thing is to only disable those CNxIE bits that we're actually using
         // Then remember that and restore them when we're done.
+    #if !defined(__PIC32MZXX__)
+        #if defined(_PORTA)
         restoreIntEnable(_CHANGE_NOTICE_A_IRQ, IntEnableA);
+        #endif
+        #if defined(_PORTB)
         restoreIntEnable(_CHANGE_NOTICE_B_IRQ, IntEnableB);
+        #endif
+        #if defined(_PORTC)
         restoreIntEnable(_CHANGE_NOTICE_C_IRQ, IntEnableC);
+        #endif
+        #if defined(_PORTD)
+        restoreIntEnable(_CHANGE_NOTICE_D_IRQ, IntEnableD);
+        #endif
+        #if defined(_PORTE)
+        restoreIntEnable(_CHANGE_NOTICE_E_IRQ, IntEnableE);
+        #endif
+        #if defined(_PORTF)
+        restoreIntEnable(_CHANGE_NOTICE_F_IRQ, IntEnableF);
+        #endif
+        #if defined(_PORTG)
+        restoreIntEnable(_CHANGE_NOTICE_G_IRQ, IntEnableG);
+        #endif
+    #else
+        #if defined(_PORTA)
+        restoreIntEnable(_CHANGE_NOTICE_A_VECTOR, IntEnableA);
+        #endif
+        #if defined(_PORTB)
+        restoreIntEnable(_CHANGE_NOTICE_B_VECTOR, IntEnableB);
+        #endif
+        #if defined(_PORTC)
+        restoreIntEnable(_CHANGE_NOTICE_C_VECTOR, IntEnableC);
+        #endif
+        #if defined(_PORTD)
+        restoreIntEnable(_CHANGE_NOTICE_D_VECTOR, IntEnableD);
+        #endif
+        #if defined(_PORTE)
+        restoreIntEnable(_CHANGE_NOTICE_E_VECTOR, IntEnableE);
+        #endif
+        #if defined(_PORTF)
+        restoreIntEnable(_CHANGE_NOTICE_F_VECTOR, IntEnableF);
+        #endif
+        #if defined(_PORTG)
+        restoreIntEnable(_CHANGE_NOTICE_G_VECTOR, IntEnableG);
+        #endif
+    #endif
 #endif
     }
-    
+DEBUG1_LOW
+DEBUG0_LOW    
     return 1;
 }
 
