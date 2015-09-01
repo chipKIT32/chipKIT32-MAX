@@ -48,7 +48,7 @@
         #define _CPU_NAME_      "32MX110F016B"
         #define FLASHEND        (((16 - 4) * 1024L) - 1)
         #define RAMEND          ((4 * 1024L) - 1)
-		#define __PIC32_PPS__
+        #define __PIC32_PPS__
         #define __PIC32_PINS__  28
         #define __PIC32MX1XX__
 
@@ -56,7 +56,7 @@
         #define _CPU_NAME_      "32MX110F016C"
         #define FLASHEND        (((16 - 4) * 1024L) - 1)
         #define RAMEND          ((4 * 1024L) - 1)
-		#define __PIC32_PPS__
+        #define __PIC32_PPS__
         #define __PIC32_PINS__  36
         #define __PIC32MX1XX__
 
@@ -64,7 +64,7 @@
         #define _CPU_NAME_      "32MX110F016D"
         #define FLASHEND        (((16 - 4) * 1024L) - 1)
         #define RAMEND          ((4 * 1024L) - 1)
-		#define __PIC32_PPS__
+        #define __PIC32_PPS__
         #define __PIC32_PINS__  44
         #define __PIC32MX1XX__
 
@@ -72,7 +72,7 @@
         #define _CPU_NAME_      "32MX120F032B"
         #define FLASHEND        (((32 - 4) * 1024L) - 1)
         #define RAMEND          ((8 * 1024L) - 1)
-		#define __PIC32_PPS__
+        #define __PIC32_PPS__
         #define __PIC32_PINS__  28
         #define __PIC32MX1XX__
 
@@ -80,7 +80,7 @@
         #define _CPU_NAME_      "32MX120F032C"
         #define FLASHEND        (((32 - 4) * 1024L) - 1)
         #define RAMEND          ((8 * 1024L) - 1)
-		#define __PIC32_PPS__
+        #define __PIC32_PPS__
         #define __PIC32_PINS__  36
         #define __PIC32MX1XX__
 
@@ -88,7 +88,7 @@
         #define _CPU_NAME_      "32MX120F032D"
         #define FLASHEND        (((32 - 4) * 1024L) - 1)
         #define RAMEND          ((8 * 1024L) - 1)
-		#define __PIC32_PPS__
+        #define __PIC32_PPS__
         #define __PIC32_PINS__  44
         #define __PIC32MX1XX__
 
@@ -96,7 +96,7 @@
         #define _CPU_NAME_      "32MX130F064B"
         #define FLASHEND        (((64 - 4) * 1024L) - 1)
         #define RAMEND          ((16 * 1024L) - 1)
-		#define __PIC32_PPS__
+        #define __PIC32_PPS__
         #define __PIC32_PINS__  28
         #define __PIC32MX1XX__
 
@@ -104,7 +104,7 @@
         #define _CPU_NAME_      "32MX130F064C"
         #define FLASHEND        (((64 - 4) * 1024L) - 1)
         #define RAMEND          ((16 * 1024L) - 1)
-		#define __PIC32_PPS__
+        #define __PIC32_PPS__
         #define __PIC32_PINS__  36
         #define __PIC32MX1XX__
 
@@ -112,7 +112,7 @@
         #define _CPU_NAME_      "32MX130F064D"
         #define FLASHEND        (((64 - 4) * 1024L) - 1)
         #define RAMEND          ((16 * 1024L) - 1)
-		#define __PIC32_PPS__
+        #define __PIC32_PPS__
         #define __PIC32_PINS__  44
         #define __PIC32MX1XX__
 
@@ -120,7 +120,7 @@
         #define _CPU_NAME_      "32MX150F128B"
         #define FLASHEND        (((128 - 4) * 1024L) - 1)
         #define RAMEND          ((32 * 1024L) - 1)
-		#define __PIC32_PPS__
+        #define __PIC32_PPS__
         #define __PIC32_PINS__  28
         #define __PIC32MX1XX__
 
@@ -128,7 +128,7 @@
         #define _CPU_NAME_      "32MX150F128C"
         #define FLASHEND        (((128 - 4) * 1024L) - 1)
         #define RAMEND          ((32 * 1024L) - 1)
-		#define __PIC32_PPS__
+        #define __PIC32_PPS__
         #define __PIC32_PINS__  36
         #define __PIC32MX1XX__
 
@@ -136,7 +136,7 @@
         #define _CPU_NAME_      "32MX150F128D"
         #define FLASHEND        (((128 - 4) * 1024L) - 1)
         #define RAMEND          ((32 * 1024L) - 1)
-		#define __PIC32_PPS__
+        #define __PIC32_PPS__
         #define __PIC32_PINS__  44
         #define __PIC32MX1XX__
 
@@ -147,7 +147,7 @@
         #define _CPU_NAME_      "32MX210F016B"
         #define FLASHEND        (((16 - 4) * 1024L) - 1)
         #define RAMEND          ((4 * 1024L) - 1)
-		#define __PIC32_PPS__
+        #define __PIC32_PPS__
         #define __PIC32_PINS__  28
         #define __PIC32MX2XX__
 
@@ -155,7 +155,7 @@
         #define _CPU_NAME_      "32MX210F016C"
         #define FLASHEND        (((16 - 4) * 1024L) - 1)
         #define RAMEND          ((4 * 1024L) - 1)
-		#define __PIC32_PPS__
+        #define __PIC32_PPS__
         #define __PIC32_PINS__  36
         #define __PIC32MX2XX__
 
@@ -163,7 +163,7 @@
         #define _CPU_NAME_      "32MX210F016D"
         #define FLASHEND        (((16 - 4) * 1024L) - 1)
         #define RAMEND          ((4 * 1024L) - 1)
-		#define __PIC32_PPS__
+        #define __PIC32_PPS__
         #define __PIC32_PINS__  44
         #define __PIC32MX2XX__
 
@@ -171,7 +171,7 @@
         #define _CPU_NAME_      "32MX220F032B"
         #define FLASHEND        (((32 - 4) * 1024L) - 1)
         #define RAMEND          ((8 * 1024L) - 1)
-		#define __PIC32_PPS__
+        #define __PIC32_PPS__
         #define __PIC32_PINS__  28
         #define __PIC32MX2XX__
 
@@ -179,7 +179,7 @@
         #define _CPU_NAME_      "32MX220F032C"
         #define FLASHEND        (((32 - 4) * 1024L) - 1)
         #define RAMEND          ((8 * 1024L) - 1)
-		#define __PIC32_PPS__
+        #define __PIC32_PPS__
         #define __PIC32_PINS__  36
         #define __PIC32MX2XX__
 
@@ -187,7 +187,7 @@
         #define _CPU_NAME_      "32MX220F032D"
         #define FLASHEND        (((32 - 4) * 1024L) - 1)
         #define RAMEND          ((8 * 1024L) - 1)
-		#define __PIC32_PPS__
+        #define __PIC32_PPS__
         #define __PIC32_PINS__  44
         #define __PIC32MX2XX__
 
@@ -195,7 +195,7 @@
         #define _CPU_NAME_      "32MX230F064B"
         #define FLASHEND        (((64 - 4) * 1024L) - 1)
         #define RAMEND          ((16 * 1024L) - 1)
-		#define __PIC32_PPS__
+        #define __PIC32_PPS__
         #define __PIC32_PINS__  28
         #define __PIC32MX2XX__
 
@@ -203,7 +203,7 @@
         #define _CPU_NAME_      "32MX230F064C"
         #define FLASHEND        (((64 - 4) * 1024L) - 1)
         #define RAMEND          ((16 * 1024L) - 1)
-		#define __PIC32_PPS__
+        #define __PIC32_PPS__
         #define __PIC32_PINS__  36
         #define __PIC32MX2XX__
 
@@ -211,7 +211,7 @@
         #define _CPU_NAME_      "32MX230F064D"
         #define FLASHEND        (((64 - 4) * 1024L) - 1)
         #define RAMEND          ((16 * 1024L) - 1)
-		#define __PIC32_PPS__
+        #define __PIC32_PPS__
         #define __PIC32_PINS__  44
         #define __PIC32MX2XX__
 
@@ -219,7 +219,7 @@
         #define _CPU_NAME_      "32MX250F128B"
         #define FLASHEND        (((128 - 4) * 1024L) - 1)
         #define RAMEND          ((32 * 1024L) - 1)
-		#define __PIC32_PPS__
+        #define __PIC32_PPS__
         #define __PIC32_PINS__  28
         #define __PIC32MX2XX__
 
@@ -227,7 +227,7 @@
         #define _CPU_NAME_      "32MX250F128C"
         #define FLASHEND        (((128 - 4) * 1024L) - 1)
         #define RAMEND          ((32 * 1024L) - 1)
-		#define __PIC32_PPS__
+        #define __PIC32_PPS__
         #define __PIC32_PINS__  36
         #define __PIC32MX2XX__
 
@@ -235,7 +235,7 @@
         #define _CPU_NAME_      "32MX250F128D"
         #define FLASHEND        (((128 - 4) * 1024L) - 1)
         #define RAMEND          ((32 * 1024L) - 1)
-		#define __PIC32_PPS__
+        #define __PIC32_PPS__
         #define __PIC32_PINS__  44
         #define __PIC32MX2XX__
 
@@ -587,12 +587,12 @@
 
     //************************************************************************
     //*  MZ  EC series
-		
+        
     #elif defined(__32MZ1024ECG064__)
         #define _CPU_NAME_      "32MZ1024ECG064"
         #define FLASHEND        (((1024 - 4) * 1024L) - 1)
         #define RAMEND          ((512 * 1024L) - 1)
-		#define __PIC32_PPS__
+        #define __PIC32_PPS__
         #define __PIC32_PINS__  64
         #define __PIC32MZXX__
 
@@ -600,7 +600,7 @@
         #define _CPU_NAME_      "32MZ1024ECH064"
         #define FLASHEND        (((1024 - 4) * 1024L) - 1)
         #define RAMEND          ((512 * 1024L) - 1)
-		#define __PIC32_PPS__
+        #define __PIC32_PPS__
         #define __PIC32_PINS__  64
         #define __PIC32MZXX__
 
@@ -608,7 +608,7 @@
         #define _CPU_NAME_      "32MZ1024ECM064"
         #define FLASHEND        (((1024 - 4) * 1024L) - 1)
         #define RAMEND          ((512 * 1024L) - 1)
-		#define __PIC32_PPS__
+        #define __PIC32_PPS__
         #define __PIC32_PINS__  64
         #define __PIC32MZXX__
 
@@ -616,7 +616,7 @@
         #define _CPU_NAME_      "32MZ2048ECG064"
         #define FLASHEND        (((2048 - 4) * 1024L) - 1)
         #define RAMEND          ((512 * 1024L) - 1)
-		#define __PIC32_PPS__
+        #define __PIC32_PPS__
         #define __PIC32_PINS__  64
         #define __PIC32MZXX__
 
@@ -624,7 +624,7 @@
         #define _CPU_NAME_      "32MZ2048ECH064"
         #define FLASHEND        (((2048 - 4) * 1024L) - 1)
         #define RAMEND          ((512 * 1024L) - 1)
-		#define __PIC32_PPS__
+        #define __PIC32_PPS__
         #define __PIC32_PINS__  64
         #define __PIC32MZXX__
 
@@ -632,7 +632,7 @@
         #define _CPU_NAME_      "32MZ2048ECM064"
         #define FLASHEND        (((2048 - 4) * 1024L) - 1)
         #define RAMEND          ((512 * 1024L) - 1)
-		#define __PIC32_PPS__
+        #define __PIC32_PPS__
         #define __PIC32_PINS__  64
         #define __PIC32MZXX__
 
@@ -640,7 +640,7 @@
         #define _CPU_NAME_      "32MZ1024ECG100"
         #define FLASHEND        (((1024 - 4) * 1024L) - 1)
         #define RAMEND          ((512 * 1024L) - 1)
-		#define __PIC32_PPS__
+        #define __PIC32_PPS__
         #define __PIC32_PINS__  100
         #define __PIC32MZXX__
  
@@ -648,7 +648,7 @@
         #define _CPU_NAME_      "32MZ1024ECH100"
         #define FLASHEND        (((1024 - 4) * 1024L) - 1)
         #define RAMEND          ((512 * 1024L) - 1)
-		#define __PIC32_PPS__
+        #define __PIC32_PPS__
         #define __PIC32_PINS__  100
         #define __PIC32MZXX__
 
@@ -656,7 +656,7 @@
         #define _CPU_NAME_      "32MZ1024ECM100"
         #define FLASHEND        (((1024 - 4) * 1024L) - 1)
         #define RAMEND          ((512 * 1024L) - 1)
-		#define __PIC32_PPS__
+        #define __PIC32_PPS__
         #define __PIC32_PINS__  100
         #define __PIC32MZXX__
  
@@ -664,7 +664,7 @@
         #define _CPU_NAME_      "32MZ2048ECG100"
         #define FLASHEND        (((2048 - 4) * 1024L) - 1)
         #define RAMEND          ((512 * 1024L) - 1)
-		#define __PIC32_PPS__
+        #define __PIC32_PPS__
         #define __PIC32_PINS__  100
         #define __PIC32MZXX__
 
@@ -672,7 +672,7 @@
         #define _CPU_NAME_      "32MZ2048ECH100"
         #define FLASHEND        (((2048 - 4) * 1024L) - 1)
         #define RAMEND          ((512 * 1024L) - 1)
-		#define __PIC32_PPS__
+        #define __PIC32_PPS__
         #define __PIC32_PINS__  100
         #define __PIC32MZXX__
 
@@ -680,7 +680,7 @@
         #define _CPU_NAME_      "32MZ2048ECM100"
         #define FLASHEND        (((2048 - 4) * 1024L) - 1)
         #define RAMEND          ((512 * 1024L) - 1)
-		#define __PIC32_PPS__
+        #define __PIC32_PPS__
         #define __PIC32_PINS__  100
         #define __PIC32MZXX__
 
@@ -688,7 +688,7 @@
         #define _CPU_NAME_      "32MZ1024ECG124"
         #define FLASHEND        (((1024 - 4) * 1024L) - 1)
         #define RAMEND          ((512 * 1024L) - 1)
-		#define __PIC32_PPS__
+        #define __PIC32_PPS__
         #define __PIC32_PINS__  124
         #define __PIC32MZXX__
 
@@ -696,7 +696,7 @@
         #define _CPU_NAME_      "32MZ1024ECH124"
         #define FLASHEND        (((1024 - 4) * 1024L) - 1)
         #define RAMEND          ((512 * 1024L) - 1)
-		#define __PIC32_PPS__
+        #define __PIC32_PPS__
         #define __PIC32_PINS__  124
         #define __PIC32MZXX__
 
@@ -704,7 +704,7 @@
         #define _CPU_NAME_      "32MZ1024ECM124"
         #define FLASHEND        (((1024 - 4) * 1024L) - 1)
         #define RAMEND          ((512 * 1024L) - 1)
-		#define __PIC32_PPS__
+        #define __PIC32_PPS__
         #define __PIC32_PINS__  124
         #define __PIC32MZXX__
 
@@ -712,7 +712,7 @@
         #define _CPU_NAME_      "32MZ2048ECG124"
         #define FLASHEND        (((2048 - 4) * 1024L) - 1)
         #define RAMEND          ((512 * 1024L) - 1)
-		#define __PIC32_PPS__
+        #define __PIC32_PPS__
         #define __PIC32_PINS__  124
         #define __PIC32MZXX__
 
@@ -720,7 +720,7 @@
         #define _CPU_NAME_      "32MZ2048ECH124"
         #define FLASHEND        (((2048 - 4) * 1024L) - 1)
         #define RAMEND          ((512 * 1024L) - 1)
-		#define __PIC32_PPS__
+        #define __PIC32_PPS__
         #define __PIC32_PINS__  124
         #define __PIC32MZXX__
 
@@ -728,7 +728,7 @@
         #define _CPU_NAME_      "32MZ2048EC124"
         #define FLASHEND        (((2048 - 4) * 1024L) - 1)
         #define RAMEND          ((512 * 1024L) - 1)
-		#define __PIC32_PPS__
+        #define __PIC32_PPS__
         #define __PIC32_PINS__  124
         #define __PIC32MZXX__
 
@@ -736,7 +736,7 @@
         #define _CPU_NAME_      "32MZ1024ECG144"
         #define FLASHEND        (((1024 - 4) * 1024L) - 1)
         #define RAMEND          ((512 * 1024L) - 1)
-		#define __PIC32_PPS__
+        #define __PIC32_PPS__
         #define __PIC32_PINS__  144
         #define __PIC32MZXX__
  
@@ -744,7 +744,7 @@
         #define _CPU_NAME_      "32MZ1024ECH144"
         #define FLASHEND        (((1024 - 4) * 1024L) - 1)
         #define RAMEND          ((512 * 1024L) - 1)
-		#define __PIC32_PPS__
+        #define __PIC32_PPS__
         #define __PIC32_PINS__  144
         #define __PIC32MZXX__
 
@@ -752,7 +752,7 @@
         #define _CPU_NAME_      "32MZ1024ECM144"
         #define FLASHEND        (((1024 - 4) * 1024L) - 1)
         #define RAMEND          ((512 * 1024L) - 1)
-		#define __PIC32_PPS__
+        #define __PIC32_PPS__
         #define __PIC32_PINS__  144
         #define __PIC32MZXX__
  
@@ -760,7 +760,7 @@
         #define _CPU_NAME_      "32MZ2048ECG144"
         #define FLASHEND        (((2048 - 4) * 1024L) - 1)
         #define RAMEND          ((512 * 1024L) - 1)
-		#define __PIC32_PPS__
+        #define __PIC32_PPS__
         #define __PIC32_PINS__  144
         #define __PIC32MZXX__
 
@@ -768,7 +768,7 @@
         #define _CPU_NAME_      "32MZ2048ECH144"
         #define FLASHEND        (((2048 - 4) * 1024L) - 1)
         #define RAMEND          ((512 * 1024L) - 1)
-		#define __PIC32_PPS__
+        #define __PIC32_PPS__
         #define __PIC32_PINS__  144
         #define __PIC32MZXX__
 
@@ -776,7 +776,7 @@
         #define _CPU_NAME_      "32MZ2048ECM144"
         #define FLASHEND        (((2048 - 4) * 1024L) - 1)
         #define RAMEND          ((512 * 1024L) - 1)
-		#define __PIC32_PPS__
+        #define __PIC32_PPS__
         #define __PIC32_PINS__  144
         #define __PIC32MZXX__
  
@@ -784,7 +784,7 @@
         #define _CPU_NAME_      "32MZ0512ECE064"
         #define FLASHEND        (((512 - 4) * 1024L) - 1)
         #define RAMEND          ((128 * 1024L) - 1)
-		#define __PIC32_PPS__
+        #define __PIC32_PPS__
         #define __PIC32_PINS__  64
         #define __PIC32MZXX__
  
@@ -792,7 +792,7 @@
         #define _CPU_NAME_      "32MZ0512ECF064"
         #define FLASHEND        (((512 - 4) * 1024L) - 1)
         #define RAMEND          ((128 * 1024L) - 1)
-		#define __PIC32_PPS__
+        #define __PIC32_PPS__
         #define __PIC32_PINS__  64
         #define __PIC32MZXX__
 
@@ -800,7 +800,7 @@
         #define _CPU_NAME_      "32MZ0512ECK064"
         #define FLASHEND        (((512 - 4) * 1024L) - 1)
         #define RAMEND          ((128 * 1024L) - 1)
-		#define __PIC32_PPS__
+        #define __PIC32_PPS__
         #define __PIC32_PINS__  64
         #define __PIC32MZXX__
  
@@ -808,7 +808,7 @@
         #define _CPU_NAME_      "32MZ1024ECE064"
         #define FLASHEND        (((1024 - 4) * 1024L) - 1)
         #define RAMEND          ((256 * 1024L) - 1)
-		#define __PIC32_PPS__
+        #define __PIC32_PPS__
         #define __PIC32_PINS__  64
         #define __PIC32MZXX__
 
@@ -816,7 +816,7 @@
         #define _CPU_NAME_      "32MZ1024ECF064"
         #define FLASHEND        (((1024 - 4) * 1024L) - 1)
         #define RAMEND          ((256 * 1024L) - 1)
-		#define __PIC32_PPS__
+        #define __PIC32_PPS__
         #define __PIC32_PINS__  64
         #define __PIC32MZXX__
 
@@ -824,7 +824,7 @@
         #define _CPU_NAME_      "32MZ1024ECK064"
         #define FLASHEND        (((1024 - 4) * 1024L) - 1)
         #define RAMEND          ((256 * 1024L) - 1)
-		#define __PIC32_PPS__
+        #define __PIC32_PPS__
         #define __PIC32_PINS__  64
         #define __PIC32MZXX__
  
@@ -832,7 +832,7 @@
         #define _CPU_NAME_      "32MZ0512ECE100"
         #define FLASHEND        (((512 - 4) * 1024L) - 1)
         #define RAMEND          ((128 * 1024L) - 1)
-		#define __PIC32_PPS__
+        #define __PIC32_PPS__
         #define __PIC32_PINS__  100
         #define __PIC32MZXX__
 
@@ -840,7 +840,7 @@
         #define _CPU_NAME_      "32MZ0512ECF100"
         #define FLASHEND        (((512 - 4) * 1024L) - 1)
         #define RAMEND          ((128 * 1024L) - 1)
-		#define __PIC32_PPS__
+        #define __PIC32_PPS__
         #define __PIC32_PINS__  100
         #define __PIC32MZXX__
 
@@ -848,7 +848,7 @@
         #define _CPU_NAME_      "32MZ0512ECK100"
         #define FLASHEND        (((512 - 4) * 1024L) - 1)
         #define RAMEND          ((128 * 1024L) - 1)
-		#define __PIC32_PPS__
+        #define __PIC32_PPS__
         #define __PIC32_PINS__  100
         #define __PIC32MZXX__
 
@@ -856,7 +856,7 @@
         #define _CPU_NAME_      "32MZ1024ECE100"
         #define FLASHEND        (((1024 - 4) * 1024L) - 1)
         #define RAMEND          ((256 * 1024L) - 1)
-		#define __PIC32_PPS__
+        #define __PIC32_PPS__
         #define __PIC32_PINS__  100
         #define __PIC32MZXX__
 
@@ -864,7 +864,7 @@
         #define _CPU_NAME_      "32MZ1024ECF100"
         #define FLASHEND        (((1024 - 4) * 1024L) - 1)
         #define RAMEND          ((256 * 1024L) - 1)
-		#define __PIC32_PPS__
+        #define __PIC32_PPS__
         #define __PIC32_PINS__  100
         #define __PIC32MZXX__
 
@@ -872,7 +872,7 @@
         #define _CPU_NAME_      "32MZ1024ECK100"
         #define FLASHEND        (((1024 - 4) * 1024L) - 1)
         #define RAMEND          ((256 * 1024L) - 1)
-		#define __PIC32_PPS__
+        #define __PIC32_PPS__
         #define __PIC32_PINS__  100
         #define __PIC32MZXX__
  
@@ -880,7 +880,7 @@
         #define _CPU_NAME_      "32MZ0512ECE124"
         #define FLASHEND        (((512 - 4) * 1024L) - 1)
         #define RAMEND          ((128 * 1024L) - 1)
-		#define __PIC32_PPS__
+        #define __PIC32_PPS__
         #define __PIC32_PINS__  124
         #define __PIC32MZXX__
 
@@ -888,7 +888,7 @@
         #define _CPU_NAME_      "32MZ0512ECF124"
         #define FLASHEND        (((512 - 4) * 1024L) - 1)
         #define RAMEND          ((128 * 1024L) - 1)
-		#define __PIC32_PPS__
+        #define __PIC32_PPS__
         #define __PIC32_PINS__  124
         #define __PIC32MZXX__
  
@@ -896,7 +896,7 @@
         #define _CPU_NAME_      "32MZ0512ECK124"
         #define FLASHEND        (((512 - 4) * 1024L) - 1)
         #define RAMEND          ((128 * 1024L) - 1)
-		#define __PIC32_PPS__
+        #define __PIC32_PPS__
         #define __PIC32_PINS__  124
         #define __PIC32MZXX__
  
@@ -904,7 +904,7 @@
         #define _CPU_NAME_      "32MZ1024ECE124"
         #define FLASHEND        (((1024 - 4) * 1024L) - 1)
         #define RAMEND          ((256 * 1024L) - 1)
-		#define __PIC32_PPS__
+        #define __PIC32_PPS__
         #define __PIC32_PINS__  124
         #define __PIC32MZXX__
 
@@ -912,7 +912,7 @@
         #define _CPU_NAME_      "32MZ1024ECF124"
         #define FLASHEND        (((1024 - 4) * 1024L) - 1)
         #define RAMEND          ((256 * 1024L) - 1)
-		#define __PIC32_PPS__
+        #define __PIC32_PPS__
         #define __PIC32_PINS__  124
         #define __PIC32MZXX__
 
@@ -920,7 +920,7 @@
         #define _CPU_NAME_      "32MZ1024ECK124"
         #define FLASHEND        (((1024 - 4) * 1024L) - 1)
         #define RAMEND          ((256 * 1024L) - 1)
-		#define __PIC32_PPS__
+        #define __PIC32_PPS__
         #define __PIC32_PINS__  124
         #define __PIC32MZXX__
 
@@ -928,7 +928,7 @@
         #define _CPU_NAME_      "32MZ0512ECE144"
         #define FLASHEND        (((512 - 4) * 1024L) - 1)
         #define RAMEND          ((128 * 1024L) - 1)
-		#define __PIC32_PPS__
+        #define __PIC32_PPS__
         #define __PIC32_PINS__  144
         #define __PIC32MZXX__
 
@@ -936,7 +936,7 @@
         #define _CPU_NAME_      "32MZ0512ECF144"
         #define FLASHEND        (((512 - 4) * 1024L) - 1)
         #define RAMEND          ((128 * 1024L) - 1)
-		#define __PIC32_PPS__
+        #define __PIC32_PPS__
         #define __PIC32_PINS__  144
         #define __PIC32MZXX__
  
@@ -944,7 +944,7 @@
         #define _CPU_NAME_      "32MZ0512ECK144"
         #define FLASHEND        (((512 - 4) * 1024L) - 1)
         #define RAMEND          ((128 * 1024L) - 1)
-		#define __PIC32_PPS__
+        #define __PIC32_PPS__
         #define __PIC32_PINS__  144
         #define __PIC32MZXX__
 
@@ -952,7 +952,7 @@
         #define _CPU_NAME_      "32MZ1024ECE144"
         #define FLASHEND        (((1024 - 4) * 1024L) - 1)
         #define RAMEND          ((256 * 1024L) - 1)
-		#define __PIC32_PPS__
+        #define __PIC32_PPS__
         #define __PIC32_PINS__  144
         #define __PIC32MZXX__
 
@@ -960,7 +960,7 @@
         #define _CPU_NAME_      "32MZ1024ECF144"
         #define FLASHEND        (((1024 - 4) * 1024L) - 1)
         #define RAMEND          ((256 * 1024L) - 1)
-		#define __PIC32_PPS__
+        #define __PIC32_PPS__
         #define __PIC32_PINS__  144
         #define __PIC32MZXX__
 
@@ -968,18 +968,18 @@
         #define _CPU_NAME_      "32MZ1024ECK144"
         #define FLASHEND        (((1024 - 4) * 1024L) - 1)
         #define RAMEND          ((256 * 1024L) - 1)
-		#define __PIC32_PPS__
+        #define __PIC32_PPS__
         #define __PIC32_PINS__  144
         #define __PIC32MZXX__
 
-	//************************************************************************
+    //************************************************************************
     //*   MZ   EF series
 
     #elif defined(__32MZ2048EFG064__)
         #define _CPU_NAME_      "32MZ2048EFG064"
         #define FLASHEND        (((2048 - 4) * 1024L) - 1)
         #define RAMEND          ((512 * 1024L) - 1)
-		#define __PIC32_PPS__
+        #define __PIC32_PPS__
         #define __PIC32_PINS__  64
         #define __PIC32MZXX__
         #define __PIC32MZEFADC__
@@ -988,7 +988,7 @@
         #define _CPU_NAME_      "32MZ2048EFG100"
         #define FLASHEND        (((2048 - 4) * 1024L) - 1)
         #define RAMEND          ((512 * 1024L) - 1)
-		#define __PIC32_PPS__
+        #define __PIC32_PPS__
         #define __PIC32_PINS__  100
         #define __PIC32MZXX__
         #define __PIC32MZEFADC__
@@ -997,7 +997,7 @@
         #define _CPU_NAME_      "32MZ2048EFG124"
         #define FLASHEND        (((2048 - 4) * 1024L) - 1)
         #define RAMEND          ((512 * 1024L) - 1)
-		#define __PIC32_PPS__
+        #define __PIC32_PPS__
         #define __PIC32_PINS__  124
         #define __PIC32MZXX__
         #define __PIC32MZEFADC__
@@ -1006,7 +1006,7 @@
         #define _CPU_NAME_      "32MZ2048EFG144"
         #define FLASHEND        (((2048 - 4) * 1024L) - 1)
         #define RAMEND          ((512 * 1024L) - 1)
-		#define __PIC32_PPS__
+        #define __PIC32_PPS__
         #define __PIC32_PINS__  144
         #define __PIC32MZXX__
         #define __PIC32MZEFADC__
@@ -1015,7 +1015,7 @@
         #define _CPU_NAME_      "32MZ2048EFH064"
         #define FLASHEND        (((2048 - 4) * 1024L) - 1)
         #define RAMEND          ((512 * 1024L) - 1)
-		#define __PIC32_PPS__
+        #define __PIC32_PPS__
         #define __PIC32_PINS__  64
         #define __PIC32MZXX__
         #define __PIC32MZEFADC__
@@ -1024,7 +1024,7 @@
         #define _CPU_NAME_      "32MZ2048EFH100"
         #define FLASHEND        (((2048 - 4) * 1024L) - 1)
         #define RAMEND          ((512 * 1024L) - 1)
-		#define __PIC32_PPS__
+        #define __PIC32_PPS__
         #define __PIC32_PINS__  100
         #define __PIC32MZXX__
         #define __PIC32MZEFADC__
@@ -1033,7 +1033,7 @@
         #define _CPU_NAME_      "32MZ2048EFH124"
         #define FLASHEND        (((2048 - 4) * 1024L) - 1)
         #define RAMEND          ((512 * 1024L) - 1)
-		#define __PIC32_PPS__
+        #define __PIC32_PPS__
         #define __PIC32_PINS__  124
         #define __PIC32MZXX__
         #define __PIC32MZEFADC__
@@ -1042,7 +1042,7 @@
         #define _CPU_NAME_      "32MZ2048EFH144"
         #define FLASHEND        (((2048 - 4) * 1024L) - 1)
         #define RAMEND          ((512 * 1024L) - 1)
-		#define __PIC32_PPS__
+        #define __PIC32_PPS__
         #define __PIC32_PINS__  144
         #define __PIC32MZXX__
         #define __PIC32MZEFADC__
@@ -1051,7 +1051,7 @@
         #define _CPU_NAME_      "32MZ2048EFM064"
         #define FLASHEND        (((2048 - 4) * 1024L) - 1)
         #define RAMEND          ((512 * 1024L) - 1)
-		#define __PIC32_PPS__
+        #define __PIC32_PPS__
         #define __PIC32_PINS__  64
         #define __PIC32MZXX__
         #define __PIC32MZEFADC__
@@ -1060,7 +1060,7 @@
         #define _CPU_NAME_      "32MZ2048EFM100"
         #define FLASHEND        (((2048 - 4) * 1024L) - 1)
         #define RAMEND          ((512 * 1024L) - 1)
-		#define __PIC32_PPS__
+        #define __PIC32_PPS__
         #define __PIC32_PINS__  100
         #define __PIC32MZXX__
         #define __PIC32MZEFADC__
@@ -1069,7 +1069,7 @@
         #define _CPU_NAME_      "32MZ2048EFM124"
         #define FLASHEND        (((2048 - 4) * 1024L) - 1)
         #define RAMEND          ((512 * 1024L) - 1)
-		#define __PIC32_PPS__
+        #define __PIC32_PPS__
         #define __PIC32_PINS__  124
         #define __PIC32MZXX__
         #define __PIC32MZEFADC__
@@ -1078,7 +1078,7 @@
         #define _CPU_NAME_      "32MZ2048EFM144"
         #define FLASHEND        (((2048 - 4) * 1024L) - 1)
         #define RAMEND          ((512 * 1024L) - 1)
-		#define __PIC32_PPS__
+        #define __PIC32_PPS__
         #define __PIC32_PINS__  144
         #define __PIC32MZXX__
         #define __PIC32MZEFADC__
@@ -1088,12 +1088,12 @@
     #endif
 #endif //defined(__PIC32MX__) || defined(__PIC32MZ__)
 
-// Set up MZ ADC type	
+// Set up MZ ADC type   
 #if defined(__PIC32MZ__)
-	// do we have EF or EC ADCs
-	#ifndef __PIC32MZEFADC__
-		#define __PIC32MZECADC__
-	#endif
+    // do we have EF or EC ADCs
+    #ifndef __PIC32MZEFADC__
+        #define __PIC32MZECADC__
+    #endif
 #endif
 
 //************************************************************************
