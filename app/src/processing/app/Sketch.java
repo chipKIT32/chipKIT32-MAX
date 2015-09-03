@@ -53,9 +53,9 @@ import org.apache.log4j.Level;
  * Stores information about files in the current sketch
  */
 public class Sketch {
-	
+
   static Logger logger = Logger.getLogger(Base.class.getName());
-	
+
   static private File tempBuildFolder;
 
   private Editor editor;
@@ -105,7 +105,7 @@ public class Sketch {
    */
   private String libraryPath;
   /**
-   * List of library folders. 
+   * List of library folders.
    */
   private ArrayList<File> importedLibraries;
 
@@ -410,16 +410,16 @@ public class Sketch {
         return;
       }
     }
-    
+
     // In Arduino, don't allow a .cpp file with the same name as the sketch,
     // because the sketch is concatenated into a file with that name as part
-    // of the build process.  
+    // of the build process.
     if (newName.equals(getName() + ".cpp")) {
       Base.showMessage("Nope",
                        "You can't have a .cpp file with the same name as the sketch.");
       return;
     }
-    
+
     if (renamingCode && currentIndex == 0) {
       for (int i = 1; i < codeCount; i++) {
         if (sanitaryName.equalsIgnoreCase(code[i].getPrettyName()) &&
@@ -726,7 +726,7 @@ public class Sketch {
           return name.toLowerCase().endsWith(".pde");
         }
       });
-      
+
       if (pdeFiles != null && pdeFiles.length > 0) {/*
         if (Preferences.get("editor.update_extension") == null) {
           Object[] options = { "OK", "Cancel" };
@@ -744,12 +744,12 @@ public class Sketch {
                                                     null,
                                                     options,
                                                     options[0]);
-          
+
           if (result != JOptionPane.OK_OPTION) return false; // save cancelled
-          
+
           Preferences.setBoolean("editor.update_extension", true);
         }
-        
+
         if (Preferences.getBoolean("editor.update_extension")) {
           // Do rename of all .pde files to new .ino extension
           for (File pdeFile : pdeFiles)
@@ -922,7 +922,7 @@ public class Sketch {
     }
 
     // save the main tab with its new name
-    File newFile = new File(newFolder, newName + ".pde");
+    File newFile = new File(newFolder, newName + ".ino");
     code[0].saveAs(newFile);
 
     editor.handleOpenUnchecked(newFile.getPath(),
@@ -1234,8 +1234,8 @@ public class Sketch {
 
 
   /**
-   * When running from the editor, take care of preparations before running 
-   * the build. 
+   * When running from the editor, take care of preparations before running
+   * the build.
    */
   public void prepare() {
     // make sure the user didn't hide the sketch folder
@@ -1323,7 +1323,7 @@ public class Sketch {
     StringBuffer bigCode = new StringBuffer();
     int bigCount = 0;
     for (SketchCode sc : code) {
-     if (sc.isExtension("ino") || sc.isExtension("pde")) {      
+     if (sc.isExtension("ino") || sc.isExtension("pde")) {
         sc.setPreprocOffset(bigCount);
         bigCode.append(sc.getProgram());
         bigCode.append('\n');
@@ -1395,7 +1395,7 @@ public class Sketch {
 	logger.debug("preprocessor.getExtraImports()" + preprocessor.getExtraImports());
 	logger.debug("Base.importToLibraryTable: " + Base.importToLibraryTable);
     for (String item : preprocessor.getExtraImports()) {
-    	//Debug print library filename 
+    	//Debug print library filename
     	logger.debug("Library filename item: " + item);
     	logger.debug("Base.importToLibraryTable.get(item): " + Base.importToLibraryTable.get(item));
 
@@ -1441,7 +1441,7 @@ public class Sketch {
     return importedLibraries;
   }
 
-  
+
   /**
    * Map an error from a set of processed .java files back to its location
    * in the actual sketch.
@@ -1451,7 +1451,7 @@ public class Sketch {
    * @return A RunnerException to be sent to the editor, or null if it wasn't
    *         possible to place the exception to the sketch code.
    */
-//  public RunnerException placeExceptionAlt(String message, 
+//  public RunnerException placeExceptionAlt(String message,
 //                                        String filename, int line) {
 //    String appletJavaFile = appletClassName + ".java";
 //    SketchCode errorCode = null;
@@ -1483,14 +1483,14 @@ public class Sketch {
 //      line--;
 //
 //      // getMessage() will be what's shown in the editor
-//      RunnerException exception = 
+//      RunnerException exception =
 //        new RunnerException(message, codeIndex, line, -1);
 //      exception.hideStackTrace();
 //      return exception;
 //    }
 //    return null;
 //  }
-  
+
 
   /**
    * Map an error from a set of processed .java files back to its location
@@ -1501,8 +1501,8 @@ public class Sketch {
    * @return A RunnerException to be sent to the editor, or null if it wasn't
    *         possible to place the exception to the sketch code.
    */
-  public RunnerException placeException(String message, 
-                                        String dotJavaFilename, 
+  public RunnerException placeException(String message,
+                                        String dotJavaFilename,
                                         int dotJavaLine) {
     int codeIndex = 0; //-1;
     int codeLine = -1;
@@ -1545,7 +1545,7 @@ public class Sketch {
       }
     }
     // could not find a proper line number, so deal with this differently.
-    // but if it was in fact the .java file we're looking for, though, 
+    // but if it was in fact the .java file we're looking for, though,
     // send the error message through.
     // this is necessary because 'import' statements will be at a line
     // that has a lower number than the preproc offset, for instance.
@@ -1577,7 +1577,7 @@ public class Sketch {
    */
   public String build(String buildPath, boolean verbose)
     throws RunnerException {
-    
+
     // run the preprocessor
     editor.status.progressUpdate(20);
     String primaryClassName = preprocess(buildPath);
@@ -1591,8 +1591,8 @@ public class Sketch {
     }
     return null;
   }
-  
-  
+
+
   protected boolean exportApplet(boolean verbose) throws Exception {
     return exportApplet(tempBuildFolder.getAbsolutePath(), verbose);
   }
@@ -1603,7 +1603,7 @@ public class Sketch {
    */
   public boolean exportApplet(String appletPath, boolean verbose)
     throws RunnerException, IOException, SerialException {
-    
+
     // Make sure the user didn't hide the sketch folder
     ensureExistence();
 
@@ -1639,7 +1639,7 @@ public class Sketch {
 //    }
     editor.status.progressNotice("Uploading...");
     upload(appletFolder.getPath(), foundName, verbose);
-    editor.status.progressUpdate(100);    
+    editor.status.progressUpdate(100);
     return true;
   }
 
@@ -1659,7 +1659,7 @@ public class Sketch {
       try {
       size = sizer.computeSize();
       System.out.println("Binary sketch size: " + size + " bytes (of a " +
-        maxsize + " byte maximum)");      
+        maxsize + " byte maximum)");
     } catch (RunnerException e) {
       System.err.println("Couldn't determine program size: " + e.getMessage());
     }
@@ -1677,7 +1677,7 @@ public class Sketch {
 
     // download the program
     //
-    
+
    uploader = new AvrdudeUploader();
     boolean success = uploader.uploadUsingPreferences(buildPath,
                                                       suggestedClassName,
@@ -1742,9 +1742,9 @@ public class Sketch {
     return false;
   }
 
-  
+
   /**
-   * Export to application via GUI. 
+   * Export to application via GUI.
    */
   protected boolean exportApplication() throws IOException, RunnerException {
     return false;
@@ -1870,7 +1870,7 @@ public class Sketch {
    * Returns the default extension for this editor setup.
    */
   public String getDefaultExtension() {
-    return "pde";
+    return "ino";
   }
 
   static private List<String> hiddenExtensions = Arrays.asList("ino", "pde");

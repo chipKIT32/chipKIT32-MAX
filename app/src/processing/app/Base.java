@@ -548,8 +548,8 @@ public class Base {
     // Make the directory for the new sketch
     newbieDir.mkdirs();
 
-    // Make an empty pde file
-    File newbieFile = new File(newbieDir, newbieName + ".pde");
+    // Make an empty ino file
+    File newbieFile = new File(newbieDir, newbieName + ".ino");
     new FileOutputStream(newbieFile);  // create the file
     return newbieFile.getAbsolutePath();
   }
@@ -1185,11 +1185,11 @@ public class Base {
       if (!subfolder.isDirectory()) continue;
 
       File entry = new File(subfolder, list[i] + ".ino");
-      if (!entry.exists() && (new File(subfolder, list[i] + ".pde")).exists()) {
-      	entry = new File(subfolder, list[i] + ".pde");
+      if (!entry.exists() && (new File(subfolder, list[i] + ".ino")).exists()) {
+      	entry = new File(subfolder, list[i] + ".ino");
       }
 
-      // if a .pde file of the same prefix as the folder exists..
+      // if a .ino file of the same prefix as the folder exists..
       if (entry.exists()) {
         //String sanityCheck = sanitizedName(list[i]);
         //if (!sanityCheck.equals(list[i])) {

@@ -197,7 +197,7 @@ public class Preferences {
                          " and restart MPIDE.", ex);
         }
       }
-    }    
+    }
   }
 
 
@@ -310,11 +310,11 @@ public class Preferences {
     top += d.height + GUI_BETWEEN;
 
 
-    // [ ] Automatically associate .pde files with Processing
+    // [ ] Automatically associate .ino files with Processing
 
     if (Base.isWindows()) {
       autoAssociateBox =
-        new JCheckBox("Automatically associate .pde files with MPIDE");
+        new JCheckBox("Automatically associate .ino files with MPIDE");
       pain.add(autoAssociateBox);
       d = autoAssociateBox.getPreferredSize();
       autoAssociateBox.setBounds(left, top, d.width + 10, d.height);
@@ -339,7 +339,7 @@ public class Preferences {
         public void mousePressed(MouseEvent e) {
           Base.openFolder(Base.getSettingsFolder());
         }
-        
+
         public void mouseEntered(MouseEvent e) {
           clickable.setForeground(new Color(0, 0, 140));
         }
@@ -548,8 +548,8 @@ public class Preferences {
   static protected void load(InputStream input) throws IOException {
     load(input, table);
   }
-  
-  static public void load(InputStream input, Map table) throws IOException {  
+
+  static public void load(InputStream input, Map table) throws IOException {
     String[] lines = PApplet.loadStrings(input);  // Reads as UTF-8
     for (String line : lines) {
       if ((line.length() == 0) ||
@@ -602,7 +602,7 @@ public class Preferences {
   //static public String get(String attribute) {
   //return get(attribute, null);
   //}
-  
+
   static public String get(String attribute /*, String defaultValue */) {
     return (String) table.get(attribute);
     /*
@@ -735,7 +735,7 @@ public class Preferences {
     return font;
   }
 
-  
+
 // ROA: current getStyle: from Arduino 1.0
   static public SyntaxStyle getStyle(String what /*, String dflt*/) {
     String str = get("editor." + what + ".style"); //, dflt);
@@ -760,20 +760,20 @@ public class Preferences {
 
 
   //get a Map of the Preferences
-  static public Map<String, String> getMap() 
+  static public Map<String, String> getMap()
   {
   	Map globalpreferences = new LinkedHashMap();
     Enumeration e = table.keys();
 
-    while (e.hasMoreElements()) 
+    while (e.hasMoreElements())
     {
 		String key = (String) e.nextElement();
 		//System.out.println("Key: " + key + "Val: " + table.get(key));
 		String value = (String) table.get(key);
-        globalpreferences.put(key, value );              
+        globalpreferences.put(key, value );
     }
 
-	return globalpreferences;	
+	return globalpreferences;
   }
-  
+
 }

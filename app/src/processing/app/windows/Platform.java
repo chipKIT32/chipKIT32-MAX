@@ -57,7 +57,7 @@ public class Platform extends processing.app.Platform {
 
 
   /**
-   * Make sure that .pde files are associated with processing.exe.
+   * Make sure that .ino files are associated with processing.exe.
    */
   protected void checkAssociations() {
     try {
@@ -82,13 +82,13 @@ public class Platform extends processing.app.Platform {
 
 
   /**
-   * Associate .pde files with this version of Processing.
+   * Associate .ino files with this version of Processing.
    */
   protected void setAssociations() throws UnsupportedEncodingException {
     if (Registry.createKey(REGISTRY_ROOT_KEY.CLASSES_ROOT,
-                           "", ".pde") &&
+                           "", ".ino") &&
         Registry.setStringValue(REGISTRY_ROOT_KEY.CLASSES_ROOT,
-                                ".pde", "", DOC) &&
+                                ".ino", "", DOC) &&
 
         Registry.createKey(REGISTRY_ROOT_KEY.CLASSES_ROOT, "", DOC) &&
         Registry.setStringValue(REGISTRY_ROOT_KEY.CLASSES_ROOT, DOC, "",
@@ -136,8 +136,8 @@ public class Platform extends processing.app.Platform {
       e.printStackTrace();
     }
   }
-  
-  
+
+
   /**
    * Remove extra quotes, slashes, and garbage from the Windows PATH.
    */
