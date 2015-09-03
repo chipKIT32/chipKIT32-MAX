@@ -1,158 +1,331 @@
-/************************************************************************/
-/*                                                                      */
-/*  SPI.h	--	Interface Declarations for SPI.cpp                      */
-/*                                                                      */
-/************************************************************************/
-/*  Author: Oliver Jones                                                */
-/*  Copyright (c) 2011, Digilent. All rights reserved.                  */
-/*                                                                      */
-/*	Based on original work Copyright (c) 2010 by Cristian Maglie        */
-/************************************************************************/
-/*  File Description:													*/
-/*                                                                      */
-/*  This file contains declarations need to use the chipKIT standard    */
-/*  SPI library in SPI.CPP.                                             */
-/*                                                                      */
-/************************************************************************/
-/*  Revision History:													*/
-/*                                                                      */
-/*  08/20/2011(GeneApperson): revised to fix build problems introduced  */
-/*      by the initial port of the original Arduino library. Changed    */
-/*       all use of the types BYTE and WORD to uint8_t and uint16_t.    */
-/*	10/28/2011(GeneApperson): revised for new board variant scheme, and	*/
-/*		fixed bug in clock divider values so that they produce the same	*/
-/*		SPI clock frequency on PIC32 as they do on AVR.					*/
-/*	05/27/2013(ClaudiaGoga): added PPS support for PIC32MX1 and PIC32MX2*/
-/*                                                                      */
-/************************************************************************/
-/*  
-  This library is free software; you can redistribute it and/or
-  modify it under the terms of the GNU Lesser General Public
-  License as published by the Free Software Foundation; either
-  version 2.1 of the License, or (at your option) any later version.
+/*
+ * Copyright (c) 2010 by Cristian Maglie <c.maglie@bug.st>
+ * Copyright (c) 2014 by Paul Stoffregen <paul@pjrc.com> (Transaction API)
+ * Copyright (c) 2014 by Matthijs Kooijman <matthijs@stdin.nl> (SPISettings AVR)
+ * Copyright (c) 2014 by Andrew J. Kroll <xxxajk@gmail.com> (atomicity fixes)
+ * Copyright (c) 2015 by Majenko Technologies <matt@majenko.co.uk> (port to chipKIT)
+ * SPI Master library for arduino.
+ *
+ * This file is free software; you can redistribute it and/or modify
+ * it under the terms of either the GNU General Public License version 2
+ * or the GNU Lesser General Public License version 2.1, both as
+ * published by the Free Software Foundation.
+ */
 
-  This library is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-  Lesser General Public License for more details.
-
-  You should have received a copy of the GNU Lesser General Public
-  License along with this library; if not, write to the Free Software
-  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-
-*/
-/************************************************************************/
-
-
-#if !defined(_SPI_H_INCLUDED)
+#ifndef _SPI_H_INCLUDED
 #define _SPI_H_INCLUDED
 
-#define __LANGUAGE_C__
+#define OPT_BOARD_INTERNAL
 
-#include <stdio.h>
-#include <WProgram.h>
+#include <Arduino.h>
 
-#include <p32_defs.h>
+// SPI_HAS_TRANSACTION means SPI has beginTransaction(), endTransaction(),
+// usingInterrupt(), and SPISetting(clock, bitOrder, dataMode)
+#define SPI_HAS_TRANSACTION 1
 
-/*	SPIxCON
-*/
-#define _SPICON_ON		15
-#define _SPICON_SMP		9
-#define	_SPICON_CKE		8
-#define _SPICON_CKP		6
-#define _SPICON_MSTEN	5
+// SPI_HAS_NOTUSINGINTERRUPT means that SPI has notUsingInterrupt() method
+#define SPI_HAS_NOTUSINGINTERRUPT 1
 
-/*	SPIxSTAT
-*/
-#define	_SPISTAT_SPIROV	6
-#define	_SPISTAT_SPITBE	3
-#define _SPISTAT_SPIRBF	0
+// SPI_ATOMIC_VERSION means that SPI has atomicity fixes and what version.
+// This way when there is a bug fix you can check this define to alert users
+// of your code if it uses better version of this library.
+// This also implies everything that SPI_HAS_TRANSACTION as documented above is
+// available too.
+#define SPI_ATOMIC_VERSION 1
 
-/********************************/
-/* The following values produce the same SPI clock rate that is
-** obtained on a 16Mhz AVR assuming that the PIC32 peripheral
-** bus clock is operating at 80Mhz
-*/
-#define SPI_CLOCK_DIV2		4		// 8 Mhz
-#define SPI_CLOCK_DIV4		9		// 4 Mhz
-#define SPI_CLOCK_DIV8		19		// 2 Mhz
-#define SPI_CLOCK_DIV16		39		// 1 Mhz
-#define SPI_CLOCK_DIV32		79		// 500 Khz
-#define SPI_CLOCK_DIV64		159		// 250 Khz
-#define SPI_CLOCK_DIV128	319		// 125 Khz
+// Uncomment this line to add detection of mismatched begin/end transactions.
+// A mismatch occurs if other libraries fail to use SPI.endTransaction() for
+// each SPI.beginTransaction().  Connect an LED to this pin.  The LED will turn
+// on if any mismatch is ever detected.
+//#define SPI_TRANSACTION_MISMATCH_LED 5
 
-/* The following produce an equivlalent operating mode as these
-** symbols specify on the AVR part in Arduino
-*/
-#define SPI_MODE0 0x100		// CKP = 0 CKE = 1
-#define SPI_MODE1 0x00		// CKP = 0 CKE = 0
-#define SPI_MODE2 0x140		// CKP = 1 CKE = 1 
-#define SPI_MODE3 0x40		// CKP = 1 CKE = 0
+#ifndef LSBFIRST
+#define LSBFIRST 0
+#endif
+#ifndef MSBFIRST
+#define MSBFIRST 1
+#endif
+
+#define SPI_CLOCK_DIV4 0x00
+#define SPI_CLOCK_DIV16 0x01
+#define SPI_CLOCK_DIV64 0x02
+#define SPI_CLOCK_DIV128 0x03
+#define SPI_CLOCK_DIV2 0x04
+#define SPI_CLOCK_DIV8 0x05
+#define SPI_CLOCK_DIV32 0x06
+
+#define SPI_MODE0 0x00
+#define SPI_MODE1 0x04
+#define SPI_MODE2 0x08
+#define SPI_MODE3 0x0C
+
+#define SPI_MODE_MASK 0x0C  // CPOL = bit 3, CPHA = bit 2 on SPCR
+#define SPI_CLOCK_MASK 0x03  // SPR1 = bit 1, SPR0 = bit 0 on SPCR
+#define SPI_2XCLOCK_MASK 0x01  // SPI2X = bit 0 on SPSR
+
+// define SPI_AVR_EIMSK for AVR boards with external interrupt pins
+#if defined(EIMSK)
+#define SPI_AVR_EIMSK  EIMSK
+#elif defined(GICR)
+#define SPI_AVR_EIMSK  GICR
+#elif defined(GIMSK)
+#define SPI_AVR_EIMSK  GIMSK
+#endif
+
+class SPISettings {
+public:
+    SPISettings(uint32_t clock, uint8_t bitOrder, uint8_t dataMode) {
+        if (__builtin_constant_p(clock)) {
+            init_AlwaysInline(clock, bitOrder, dataMode);
+        } else {
+            init_MightInline(clock, bitOrder, dataMode);
+        }
+    }
+    SPISettings() {
+        init_AlwaysInline(4000000, MSBFIRST, SPI_MODE0);
+    }
+private:
+    void init_MightInline(uint32_t clock, uint8_t bitOrder, uint8_t dataMode) {
+        init_AlwaysInline(clock, bitOrder, dataMode);
+    }
+    void init_AlwaysInline(uint32_t clock, uint8_t bitOrder, uint8_t dataMode)
+    __attribute__((__always_inline__)) {
+        /* Compute the baud rate divider for this frequency.
+        */
+        brg = (uint16_t)((__PIC32_pbClk / (2 * clock)) - 1);
+
+        /* That the baud rate value is in the correct range.
+        */
+        if (brg == 0xFFFF) {
+            /* The user tried to set a frequency that is too high to support.
+            ** Set it to the highest supported frequency.
+            */
+            brg = 0;
+        }
+
+        if (brg > 0x1FF) {
+            /* The user tried to set a frequency that is too low to support.
+            ** Set it to the lowest supported frequency.
+            */
+            brg = 0x1FF;
+        }
+
+        con = (1 << _SPICON_MSTEN);
+
+        switch (dataMode) {
+            case SPI_MODE0:
+                con |= ((0 << _SPICON_CKP) | (1 << _SPICON_CKE));
+                break;
+
+            case SPI_MODE1:
+                con |= ((0 << _SPICON_CKP) | (0 << _SPICON_CKE));
+                break;
+
+            case SPI_MODE2:
+                con |= ((1 << _SPICON_CKP) | (1 << _SPICON_CKE));
+                break;
+
+            case SPI_MODE3:
+                con |= ((1 << _SPICON_CKP) | (0 << _SPICON_CKE));
+                break;
+        }
+    }
+    uint8_t brg;
+    uint8_t con;
+    friend class SPIClass;
+};
+
 
 class SPIClass {
-private:
-	static p32_spi *	spi;
-	static p32_regset *	iec;
-	static p32_regset *	ifs;
-	static int			irq;
-	static int			vec;
-
-// Code for PPS support
-#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__) || defined(__PIC32MZXX__)
-	static uint8_t			pinMISO;		//digital pin number for MISO
-	static uint8_t			pinMOSI;		//digital pin number for MOSI
-	static ppsFunctionType	ppsMISO;		//PPS select for SPI MISO
-	static ppsFunctionType	ppsMOSI;		//PPS select for SPI MOSI
-#endif
-	
 public:
-// Code for PPS support
-#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__) || defined(__PIC32MZXX__)
-	SPIClass(p32_spi * spiP, int irgP, int vecP, int pinMI, int pinMO, ppsFunctionType ppsMI, ppsFunctionType ppsMO);
+
+#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__) || defined(__PIC32MZXX__) || defined(__PIC32MX47X__)
+    SPIClass(uint32_t base, int pinMI, int pinMO, ppsFunctionType ppsMI, ppsFunctionType ppsMO);
 #else
-	SPIClass(p32_spi * spiP, int irqP, int vecP);
+    SPIClass(uint32_t base);
 #endif
 
-  inline static uint8_t transfer(uint8_t _data);
+    // Initialize the SPI library
+    void begin();
 
-  // SPI Configuration methods
+    // If SPI is used from within an interrupt, this function registers
+    // that interrupt with the SPI library, so beginTransaction() can
+    // prevent conflicts.  The input interruptNumber is the number used
+    // with attachInterrupt.  If SPI is used from a different interrupt
+    // (eg, a timer), interruptNumber should be 255.
+    void usingInterrupt(uint8_t interruptNumber);
+    // And this does the opposite.
+    void notUsingInterrupt(uint8_t interruptNumber);
+    // Note: the usingInterrupt and notUsingInterrupt functions should
+    // not to be called from ISR context or inside a transaction.
+    // For details see:
+    // https://github.com/arduino/Arduino/pull/2381
+    // https://github.com/arduino/Arduino/pull/2449
 
-  inline static void attachInterrupt();
-  inline static void detachInterrupt(); // Default
+    // Before using SPI.transfer() or asserting chip select pins,
+    // this function is used to gain exclusive access to the SPI bus
+    // and configure the correct settings.
+    inline void beginTransaction(SPISettings settings) {
+        if (interruptMode > 0) {
+            int32_t sreg = disableInterrupts();
+            interruptSave = sreg;
+        }
 
-  static void begin();					// Default
-  static void end();
+#ifdef SPI_TRANSACTION_MISMATCH_LED
 
-  static void setBitOrder(uint8_t);
-  static void setDataMode(uint16_t);
-  static void setClockDivider(uint16_t);
+        if (inTransactionFlag) {
+            pinMode(SPI_TRANSACTION_MISMATCH_LED, OUTPUT);
+            digitalWrite(SPI_TRANSACTION_MISMATCH_LED, HIGH);
+        }
+
+        inTransactionFlag = 1;
+#endif
+        pspi->sxCon.clr = (1 << _SPICON_ON);
+        pspi->sxBrg.reg = settings.brg;
+        pspi->sxCon.reg = settings.con;
+        pspi->sxCon.set = (1 << _SPICON_ON);
+    }
+
+    // Write to the SPI bus (MOSI pin) and also receive (MISO pin)
+    inline uint8_t transfer(uint8_t data) {
+        while ((pspi->sxStat.reg & (1 << _SPISTAT_SPITBE)) == 0) {
+        }
+
+        pspi->sxBuf.reg = data;
+
+        while ((pspi->sxStat.reg & (1 << _SPISTAT_SPIRBF)) == 0) {
+        }
+
+        return pspi->sxBuf.reg;
+    }
+    inline uint16_t transfer16(uint16_t data) {
+        pspi->sxCon.set = 1 << _SPICON_MODE16;
+
+        while ((pspi->sxStat.reg & (1 << _SPISTAT_SPITBE)) == 0) {
+        }
+
+        pspi->sxBuf.reg = data;
+
+        while ((pspi->sxStat.reg & (1 << _SPISTAT_SPIRBF)) == 0) {
+        }
+
+        pspi->sxCon.clr = 1 << _SPICON_MODE16;
+        return pspi->sxBuf.reg;
+    }
+    inline void transfer(void *buf, size_t count) {
+        uint8_t *p = (uint8_t *)buf;
+        for (size_t i = 0; i < count; i++) {
+            p[i] = transfer(p[i]);
+        }
+    }
+    // After performing a group of transfers and releasing the chip select
+    // signal, this function allows others to access the SPI bus
+    inline void endTransaction(void) {
+#ifdef SPI_TRANSACTION_MISMATCH_LED
+
+        if (!inTransactionFlag) {
+            pinMode(SPI_TRANSACTION_MISMATCH_LED, OUTPUT);
+            digitalWrite(SPI_TRANSACTION_MISMATCH_LED, HIGH);
+        }
+
+        inTransactionFlag = 0;
+#endif
+
+        if (interruptMode > 0) {
+            restoreInterrupts(interruptSave);
+        }
+    }
+
+    // Disable the SPI bus
+    void end();
+
+    // This function is deprecated.  New applications should use
+    // beginTransaction() to configure SPI settings.
+    inline void setBitOrder(uint8_t bitOrder) {
+        // Not supported
+    }
+    // This function is deprecated.  New applications should use
+    // beginTransaction() to configure SPI settings.
+    inline void setDataMode(uint8_t dataMode) {
+        switch (dataMode) {
+            case SPI_MODE0:
+                pspi->sxCon.clr = 1 << _SPICON_CKP;
+                pspi->sxCon.set = 1 << _SPICON_CKE;
+                break;
+
+            case SPI_MODE1:
+                pspi->sxCon.clr = 1 << _SPICON_CKP;
+                pspi->sxCon.clr = 1 << _SPICON_CKE;
+                break;
+
+            case SPI_MODE2:
+                pspi->sxCon.set = 1 << _SPICON_CKP;
+                pspi->sxCon.set = 1 << _SPICON_CKE;
+                break;
+
+            case SPI_MODE3:
+                pspi->sxCon.set = 1 << _SPICON_CKP;
+                pspi->sxCon.clr = 1 << _SPICON_CKE;
+                break;
+        }
+    }
+    // This function is deprecated.  New applications should use
+    // beginTransaction() to configure SPI settings.
+    inline void setClockDivider(uint8_t clockDiv) {
+        switch (clockDiv) {
+            case SPI_CLOCK_DIV2:
+                pspi->sxBrg.reg = 1;
+                break;
+
+            case SPI_CLOCK_DIV4:
+                pspi->sxBrg.reg = 3;
+                break;
+
+            case SPI_CLOCK_DIV8:
+                pspi->sxBrg.reg = 7;
+                break;
+
+            case SPI_CLOCK_DIV16:
+                pspi->sxBrg.reg = 15;
+                break;
+
+            case SPI_CLOCK_DIV32:
+                pspi->sxBrg.reg = 31;
+                break;
+
+            case SPI_CLOCK_DIV64:
+                pspi->sxBrg.reg = 63;
+                break;
+
+            case SPI_CLOCK_DIV128:
+                pspi->sxBrg.reg = 127;
+                break;
+        }
+    }
+    // These undocumented functions should not be used.  SPI.transfer()
+    // polls the hardware flag which is automatically cleared as the
+    // AVR responds to SPI's interrupt
+    inline void attachInterrupt() { }
+    inline void detachInterrupt() { }
+
+private:
+    uint32_t initialized;
+    uint32_t interruptMode; // 0=none, 1=mask, 2=global
+    uint32_t interruptMask; // which interrupts to mask
+    uint32_t interruptSave; // temp storage, to restore state
+#ifdef SPI_TRANSACTION_MISMATCH_LED
+    uint32_t inTransactionFlag;
+#endif
+    p32_spi *pspi;
+#if defined(__PIC32MX1XX__) || defined(__PIC32MX2XX__) || defined(__PIC32MZXX__) || defined(__PIC32MX47X__)
+    uint8_t             pinMISO;        //digital pin number for MISO
+    uint8_t             pinMOSI;        //digital pin number for MOSI
+    ppsFunctionType     ppsMISO;        //PPS select for SPI MISO
+    ppsFunctionType     ppsMOSI;        //PPS select for SPI MOSI
+#endif
+
 };
 
 extern SPIClass SPI;
-
-/* SPIClass inline functions definitions
-*/
-uint8_t SPIClass::transfer(uint8_t _data)
-{
-	while ((spi->sxStat.reg & (1 << _SPISTAT_SPITBE)) == 0 );
-	spi->sxBuf.reg = _data;
-
-	while ((spi->sxStat.reg & (1 << _SPISTAT_SPIRBF)) == 0 );
-	return spi->sxBuf.reg;
-}
-
-void SPIClass::attachInterrupt()
-{
-	/* Enable transmit and receive interrupts
-	*/
-	iec->set = ((1 << ((irq+1) % 32)) | (1 << ((irq+2) % 32)));
-}
-
-void SPIClass::detachInterrupt()
-{
-	/* Disable transmit and receive interrupts
-	*/
-	iec->clr = ((1 << ((irq+1) % 32)) | (1 << ((irq+2) % 32)));
-}
 
 #endif

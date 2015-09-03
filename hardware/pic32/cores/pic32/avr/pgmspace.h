@@ -9,6 +9,10 @@
 #endif
 #define PROGMEM
 
+#ifndef PGM_P
+#define PGM_P const char *
+#endif
+
 #ifdef PSTR
 #undef PSTR
 #endif

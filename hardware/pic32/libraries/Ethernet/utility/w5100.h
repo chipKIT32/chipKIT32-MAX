@@ -6,14 +6,13 @@
  * or the GNU Lesser General Public License version 2.1, both as
  * published by the Free Software Foundation.
  */
-/*Updated  August/3/2011 by Lowell Scott Hanson to be compatable with chipKIT boards */
 
 #ifndef	W5100_H_INCLUDED
 #define	W5100_H_INCLUDED
 
-//#include <avr/pgmspace.h>
 #include <SPI.h>
-#include <inttypes.h>
+
+#define SPI_ETHERNET_SETTINGS SPISettings(4000000, MSBFIRST, SPI_MODE0)
 
 #define MAX_SOCK_NUM 4
 
@@ -140,10 +139,7 @@ public:
    * the data from Receive buffer. Here also take care of the condition while it exceed
    * the Rx memory uper-bound of socket.
    */
-  /* Removed unint8_t pointer cast in read_data (2 argument) due to pic32 pointer values are 32 bit and 
-  pic 32 compiler errors out due to data loss from cast from 32-bit pointer to a 16-bit int. These changes are 
-  made to this method in sockets.cpp where it is used -LSH */
-  void read_data(SOCKET s, uint16_t src, volatile uint8_t * dst, uint16_t len);
+  void read_data(SOCKET s, volatile uint16_t src, volatile uint8_t * dst, uint16_t len);
   
   /**
    * @brief	 This function is being called by send() and sendto() function also. 
@@ -151,7 +147,19 @@ public:
    * This function read the Tx write pointer register and after copy the data in buffer update the Tx write pointer
    * register. User should read upper byte first and lower byte later to get proper value.
    */
-  void send_data_processing(SOCKET s, uint8_t *data, uint16_t len);
+  void send_data_processing(SOCKET s, const uint8_t *data, uint16_t len);
+  /**
+   * @brief A copy of send_data_processing that uses the provided ptr for the
+   *        write offset.  Only needed for the "streaming" UDP API, where
+   *        a single UDP packet is built up over a number of calls to
+   *        send_data_processing_ptr, because TX_WR doesn't seem to get updated
+   *        correctly in those scenarios
+   * @param ptr value to use in place of TX_WR.  If 0, then the value is read
+   *        in from TX_WR
+   * @return New value for ptr, to be used in the next call
+   */
+// FIXME Update documentation
+  void send_data_processing_offset(SOCKET s, uint16_t data_offset, const uint8_t *data, uint16_t len);
 
   /**
    * @brief	This function is being called by recv() also.
@@ -161,9 +169,6 @@ public:
    * User should read upper byte first and lower byte later to get proper value.
    */
   void recv_data_processing(SOCKET s, uint8_t *data, uint16_t len, uint8_t peek = 0);
-
-
-
 
   inline void setGatewayIp(uint8_t *_addr);
   inline void getGatewayIp(uint8_t *_addr);
@@ -190,7 +195,7 @@ public:
   // ---------------
 private:
   static uint8_t write(uint16_t _addr, uint8_t _data);
-  static uint16_t write(uint16_t addr, uint8_t *buf, uint16_t len);
+  static uint16_t write(uint16_t addr, const uint8_t *buf, uint16_t len);
   static uint8_t read(uint16_t addr);
   static uint16_t read(uint16_t addr, uint8_t *buf, uint16_t len);
   
@@ -266,7 +271,10 @@ private:
   }                                                          \
   static uint16_t read##name(SOCKET _s) {                    \
     uint16_t res = readSn(_s, address);                      \
-    res = (res << 8) + readSn(_s, address + 1);              \
+    uint16_t res2 = readSn(_s,address + 1);                  \
+    res = res << 8;                                          \
+    res2 = res2 & 0xFF;                                      \
+    res = res | res2;                                        \
     return res;                                              \
   }
 #define __SOCKET_REGISTER_N(name, address, size)             \
@@ -316,28 +324,27 @@ private:
   uint16_t RBASE[SOCKETS]; // Rx buffer base address
 
 private:
-#if defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__)
+#if defined(__PIC32__)
+    inline static void initSS() { pinMode(SS, OUTPUT); };
+    inline static void setSS() { digitalWrite(SS, LOW); };
+    inline static void resetSS() { digitalWrite(SS, HIGH); };
+#elif defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__)
   inline static void initSS()    { DDRB  |=  _BV(4); };
   inline static void setSS()     { PORTB &= ~_BV(4); };
   inline static void resetSS()   { PORTB |=  _BV(4); };
-#elif defined(_BOARD_UNO_)  //chipKIT definitions for SS pin
-  //inline static void initSS()    { TRISGbits.TRISG9 =  0; }; // this code is for ues with jumper JP4 in the RG9 position -lsh
-  //inline static void setSS()     { LATGbits.LATG9	=  0; };
-  //inline static void resetSS()   { LATGbits.LATG9	=  1; };
-  inline static void initSS()  { TRISDbits.TRISD4 =  0; };
-  inline static void setSS()     { LATDbits.LATD4	=  0; };
-  inline static void resetSS()   { LATDbits.LATD4	=  1; };
-#elif defined (_BOARD_MEGA_)  //chipKIT definitions for SS pin
-	inline static void initSS()  { TRISDbits.TRISD4 =  0; };
-  inline static void setSS()     { LATDbits.LATD4	=  0; };
-  inline static void resetSS()   { LATDbits.LATD4	=  1; };
-  
+#elif defined(__AVR_ATmega32U4__)
+  inline static void initSS()    { DDRB  |=  _BV(6); };
+  inline static void setSS()     { PORTB &= ~_BV(6); };
+  inline static void resetSS()   { PORTB |=  _BV(6); }; 
+#elif defined(__AVR_AT90USB1286__) || defined(__AVR_AT90USB646__) || defined(__AVR_AT90USB162__)
+  inline static void initSS()    { DDRB  |=  _BV(0); };
+  inline static void setSS()     { PORTB &= ~_BV(0); };
+  inline static void resetSS()   { PORTB |=  _BV(0); }; 
 #else
   inline static void initSS()    { DDRB  |=  _BV(2); };
   inline static void setSS()     { PORTB &= ~_BV(2); };
   inline static void resetSS()   { PORTB |=  _BV(2); };
 #endif
-
 };
 
 extern W5100Class W5100;

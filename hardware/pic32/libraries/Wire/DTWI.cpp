@@ -43,6 +43,10 @@
 /*  Revision History:                                                   */
 /*    8/4/2014(KeithV): Created                                         */
 /************************************************************************/
+
+#define OPT_SYSTEM_INTERNAL
+#define OPT_BOARD_INTERNAL
+
 #include <DTWI.h>
 
 #define I2C_BUS_COLLISION_EVENT     0b001

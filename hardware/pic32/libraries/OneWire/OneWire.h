@@ -61,7 +61,7 @@
 #define DIRECT_WRITE_LOW(base, mask)    ((*(base+2)) &= ~(mask))
 #define DIRECT_WRITE_HIGH(base, mask)   ((*(base+2)) |= (mask))
 
-#elif defined(__PIC32MX__)
+#elif defined(__PIC32__)
 
 #define PIN_TO_BASEREG(pin)             (portModeRegister(digitalPinToPort(pin)))
 #define PIN_TO_BITMASK(pin)             (digitalPinToBitMask(pin))

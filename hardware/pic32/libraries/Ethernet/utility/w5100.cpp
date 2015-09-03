@@ -5,19 +5,13 @@
  * it under the terms of either the GNU General Public License version 2
  * or the GNU Lesser General Public License version 2.1, both as
  * published by the Free Software Foundation.
- * 
  */
-
-//* Edit History
-//*  Aug  3,  2011 <Lowell Scott Hanson> ported toh chipKIT boards
-//*  Sept 13, 2011	<Gene Apperson> change SPI clock divider from DIV8 to DIV32
 
 #include <stdio.h>
 #include <string.h>
 
-//#include <avr/interrupt.h>
-#include "w5100.h"
-#include "WProgram.h"
+#include "utility/w5100.h"
+
 // W5100 controller instance
 W5100Class W5100;
 
@@ -31,21 +25,14 @@ W5100Class W5100;
 void W5100Class::init(void)
 {
   delay(300);
-  
 
   SPI.begin();
-  //Set the SPI clock speed to 2.5Mhz. Setting it to 5Mhz (DIV16) may
-  //work for some hardware configurations.
-  SPI.setClockDivider(SPI_CLOCK_DIV32);
-  //The W5100 chip operates in SPI mode 0. Early versions of the chipKIT
-  //SPI library (prior to 20110907) set the modes incorrectly. To work
-  //with those early versions use SPI_MODE1.
-  SPI.setDataMode(SPI_MODE0);
-
   initSS();
+  SPI.beginTransaction(SPI_ETHERNET_SETTINGS);
   writeMR(1<<RST);
   writeTMSR(0x55);
   writeRMSR(0x55);
+  SPI.endTransaction();
 
   for (int i=0; i<MAX_SOCK_NUM; i++) {
     SBASE[i] = TXBUF_BASE + SSIZE * i;
@@ -78,13 +65,18 @@ uint16_t W5100Class::getRXReceivedSize(SOCKET s)
 }
 
 
-void W5100Class::send_data_processing(SOCKET s, uint8_t *data, uint16_t len)
+void W5100Class::send_data_processing(SOCKET s, const uint8_t *data, uint16_t len)
+{
+  // This is same as having no offset in a call to send_data_processing_offset
+  send_data_processing_offset(s, 0, data, len);
+}
+
+void W5100Class::send_data_processing_offset(SOCKET s, uint16_t data_offset, const uint8_t *data, uint16_t len)
 {
   uint16_t ptr = readSnTX_WR(s);
+  ptr += data_offset;
   uint16_t offset = ptr & SMASK;
   uint16_t dstAddr = offset + SBASE[s];
-
-digitalWrite(13,HIGH);
 
   if (offset + len > SSIZE) 
   {
@@ -106,9 +98,7 @@ void W5100Class::recv_data_processing(SOCKET s, uint8_t *data, uint16_t len, uin
 {
   uint16_t ptr;
   ptr = readSnRX_RD(s);
-  digitalWrite(13,LOW);
-/* removed unint8_t pointer cast in read_data due to pic32 pointer values are 32 bit and compiler errors out due to data loss from cast to 16-bit int -LSH */
-read_data(s, ptr, data, len);
+  read_data(s, ptr, data, len);
   if (!peek)
   {
     ptr += len;
@@ -116,14 +106,13 @@ read_data(s, ptr, data, len);
   }
 }
 
-/* removed unint8_t pointer cast in read_data due to pic32 pointer values are 32 bit and compiler errors out due to data loss from cast to 16-bit int -LSH */
-void W5100Class::read_data(SOCKET s,  uint16_t src, volatile uint8_t *dst, uint16_t len)
+void W5100Class::read_data(SOCKET s, volatile uint16_t src, volatile uint8_t *dst, uint16_t len)
 {
   uint16_t size;
   uint16_t src_mask;
   uint16_t src_ptr;
 
-  src_mask = src & RMASK;  
+  src_mask = src & RMASK;
   src_ptr = RBASE[s] + src_mask;
 
   if( (src_mask + len) > RSIZE ) 
@@ -140,18 +129,16 @@ void W5100Class::read_data(SOCKET s,  uint16_t src, volatile uint8_t *dst, uint1
 
 uint8_t W5100Class::write(uint16_t _addr, uint8_t _data)
 {
-
-  setSS();  
+  setSS();
   SPI.transfer(0xF0);
   SPI.transfer(_addr >> 8);
   SPI.transfer(_addr & 0xFF);
   SPI.transfer(_data);
-    
   resetSS();
   return 1;
 }
 
-uint16_t W5100Class::write(uint16_t _addr, uint8_t *_buf, uint16_t _len)
+uint16_t W5100Class::write(uint16_t _addr, const uint8_t *_buf, uint16_t _len)
 {
   for (uint16_t i=0; i<_len; i++)
   {
@@ -161,8 +148,7 @@ uint16_t W5100Class::write(uint16_t _addr, uint8_t *_buf, uint16_t _len)
     SPI.transfer(_addr & 0xFF);
     _addr++;
     SPI.transfer(_buf[i]);
-   
-	resetSS();
+    resetSS();
   }
   return _len;
 }

@@ -46,8 +46,6 @@
 #if !defined(_DTWI_H_)
 #define	_DTWI_H_
 
-#define OPT_SYSTEM_INTERNAL
-#define OPT_BOARD_INTERNAL
 #include	<WProgram.h>
 
 /* ------------------------------------------------------------ */
@@ -259,8 +257,7 @@ public:
     bool setNAK(uint32_t cbToNak);
     I2C_STATUS getStatus(void);
 };
-
-#ifdef _DTWI0_BASE
+#if (NUM_DTWI_PORTS > 0)
 class DTWI0 : public DTWI {
 
     // needed to get to pDTWI
@@ -274,7 +271,7 @@ public:
 };
 #endif
 
-#ifdef _DTWI1_BASE
+#if (NUM_DTWI_PORTS > 1)
 class DTWI1 : public DTWI {
 
     // needed to get to pDTWI
@@ -288,7 +285,7 @@ public:
 };
 #endif
 
-#ifdef _DTWI2_BASE
+#if (NUM_DTWI_PORTS > 2)
 class DTWI2 : public DTWI {
 
     // needed to get to pDTWI
@@ -302,7 +299,7 @@ public:
 };
 #endif
 
-#ifdef _DTWI3_BASE
+#if (NUM_DTWI_PORTS > 3)
 class DTWI3 : public DTWI {
 
     // needed to get to pDTWI
@@ -316,7 +313,7 @@ public:
 };
 #endif
 
-#ifdef _DTWI4_BASE
+#if (NUM_DTWI_PORTS > 4)
 class DTWI4 : public DTWI {
 
     // needed to get to pDTWI
