@@ -160,15 +160,19 @@ public class Compiler implements MessageConsumer {
 		}
 		//String corePath;
 
+        File systemFolder = null;
+
 		if (core.indexOf(':') == -1) {
 			Target t = Base.getTarget();
 			File coreFolder = new File(new File(t.getFolder(), "cores"), core);
 			this.corePath = coreFolder.getAbsolutePath();
+            systemFolder = new File(t.getFolder(), "system");
 		} else {
 			Target t = Base.targetsTable.get(core.substring(0, core.indexOf(':')));
 			File coresFolder = new File(t.getFolder(), "cores");
 			File coreFolder = new File(coresFolder, core.substring(core.indexOf(':') + 1));
 			this.corePath = coreFolder.getAbsolutePath();
+            systemFolder = new File(t.getFolder(), "system");
 		}
 
 		/*
@@ -222,6 +226,12 @@ public class Compiler implements MessageConsumer {
 		logger.debug("3. compileCore");
 		compileCore(avrBasePath, buildPath, corePath, variant, variantPath, configPreferences);
 		sketch.setCompilingProgress(50);
+
+        if (systemFolder != null && systemFolder.exists() && systemFolder.isDirectory()) {
+            logger.debug("3.5. compileSystemFolder");
+            compileSystemFolder(avrBasePath, buildPath, systemFolder.getAbsolutePath(), variant, variantPath, configPreferences);
+            sketch.setCompilingProgress(55);
+        }
 		
 
 		// 4. link it all together into the .elf file
@@ -645,8 +655,8 @@ public class Compiler implements MessageConsumer {
 	// 3. compile the core, outputting .o files to <buildPath> and then
 	// collecting them into the core.a library file.
 	void compileCore (String avrBasePath, String buildPath, String corePath, String variant, String variantPath,  HashMap<String, String> configPreferences) 
-			throws RunnerException 
-			{
+        throws RunnerException 
+        {
 		logger.debug("compileCore(...) start");
 
 		ArrayList<String>  includePaths =  new ArrayList();
@@ -683,12 +693,55 @@ public class Compiler implements MessageConsumer {
 			commandString = compileFormat.format(  Args );
 			execAsynchronously(commandString);
 		}
-			}
+    }
+
+	// 3.5. compile the system folder, outputting .o files to <buildPath> and then
+	// collecting them into the system.a library file.
+	void compileSystemFolder (String avrBasePath, String buildPath, String corePath, String variant, String variantPath,  HashMap<String, String> configPreferences) 
+        throws RunnerException 
+        {
+		logger.debug("compileSusyemFolder(...) start");
+
+		ArrayList<String>  includePaths =  new ArrayList();
+		includePaths.add(corePath); //include core path only
+	        if (variantPath != null) includePaths.add(variantPath);
+
+		String baseCommandString = configPreferences.get("recipe.ar.pattern");
+		String commandString = "";
+		MessageFormat compileFormat = new MessageFormat(baseCommandString);	
+
+		List<File> coreObjectFiles	 = compileFiles(
+				avrBasePath, 
+				buildPath,
+				includePaths, 
+				findFilesInPath(corePath, "S", true),
+				findFilesInPath(corePath, "c", true),
+				findFilesInPath(corePath, "cpp", true), 
+				configPreferences);
+
+		for (File file : coreObjectFiles) {
+			//List commandAR = new ArrayList(baseCommandAR);
+			//commandAR = commandAR +  file.getAbsolutePath();
+
+			Object[] Args = {
+					avrBasePath,
+					configPreferences.get("compiler.ar.cmd"),
+					configPreferences.get("compiler.ar.flags"),
+					//corePath,
+					buildPath + File.separator,
+					"system.a",
+					//objectName
+					file.getAbsolutePath()
+			};
+			commandString = compileFormat.format(  Args );
+			execAsynchronously(commandString);
+		}
+    }
 
 	// 4. link it all together into the .elf file
 	void compileLink(String avrBasePath, String buildPath, String corePath, ArrayList<String> includePaths, HashMap<String, String> configPreferences) 
-			throws RunnerException 
-			{	
+        throws RunnerException 
+    {	
 		logger.debug("compileLink: start");
 		String baseCommandString = configPreferences.get("recipe.c.combine.pattern");
 		String commandString = "";
@@ -739,26 +792,51 @@ public class Compiler implements MessageConsumer {
             foundPath = "";
         }
 
-		Object[] Args = {
-				avrBasePath,
-				configPreferences.get("compiler.c.elf.cmd"),
-				configPreferences.get("compiler.c.elf.flags"),
-				configPreferences.get("compiler.cpudef"),
-				configPreferences.get("build.mcu"),				
-				buildPath + File.separator,
-				primaryClassName,
-				objectFileList,
-				buildPath + File.separator + "core.a",
-				buildPath, 
-				foundPath,	
-				configPreferences.get("ldscript") != null ? configPreferences.get("ldscript")  : "",
-                corePath,
-				configPreferences.get("ldcommon") != null ? configPreferences.get("ldcommon")  : "",
-		};
-		commandString = compileFormat.format(  Args );
-        logger.debug("Link command: " + commandString);
-		execAsynchronously(commandString);
-			}
+        File systemArchive = new File(buildPath, "system.a");
+        if (systemArchive.exists()) {
+            Object[] Args = {
+                    avrBasePath,
+                    configPreferences.get("compiler.c.elf.cmd"),
+                    configPreferences.get("compiler.c.elf.flags"),
+                    configPreferences.get("compiler.cpudef"),
+                    configPreferences.get("build.mcu"),				
+                    buildPath + File.separator,
+                    primaryClassName,
+                    objectFileList,
+                    buildPath + File.separator + "core.a",
+                    systemArchive.getAbsolutePath(),
+                    buildPath, 
+                    foundPath,	
+                    configPreferences.get("ldscript") != null ? configPreferences.get("ldscript")  : "",
+                    corePath,
+                    configPreferences.get("ldcommon") != null ? configPreferences.get("ldcommon")  : "",
+            };
+            commandString = compileFormat.format(  Args );
+            logger.debug("Link command: " + commandString);
+            execAsynchronously(commandString);
+        } else {
+            Object[] Args = {
+                    avrBasePath,
+                    configPreferences.get("compiler.c.elf.cmd"),
+                    configPreferences.get("compiler.c.elf.flags"),
+                    configPreferences.get("compiler.cpudef"),
+                    configPreferences.get("build.mcu"),				
+                    buildPath + File.separator,
+                    primaryClassName,
+                    objectFileList,
+                    buildPath + File.separator + "core.a",
+                    "",
+                    buildPath, 
+                    foundPath,	
+                    configPreferences.get("ldscript") != null ? configPreferences.get("ldscript")  : "",
+                    corePath,
+                    configPreferences.get("ldcommon") != null ? configPreferences.get("ldcommon")  : "",
+            };
+            commandString = compileFormat.format(  Args );
+            logger.debug("Link command: " + commandString);
+            execAsynchronously(commandString);
+        }
+    }
 
 	// 5. extract EEPROM data (from EEMEM directive) to .eep file.
 	void compileEep (String avrBasePath, String buildPath, ArrayList<String> includePaths, HashMap<String, String> configPreferences) 
