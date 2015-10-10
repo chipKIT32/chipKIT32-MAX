@@ -725,7 +725,7 @@ void	USBresetRoutine(void)
 // Need to return FALSE if we need USB to hold off for awhile
 boolean	USBstoreDataRoutine(const byte *buffer, int length)
 {
-    unsigned int	i;
+    int	i;
 
     // If we have a receive callback defined then repeatedly
     // call it with each character.

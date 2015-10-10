@@ -58,6 +58,42 @@ unsigned long lastConnectionTime = 0;          // last time you connected to the
 boolean lastConnected = false;                 // state of the connection last time through the main loop
 const unsigned long postingInterval = 10*1000;  //delay between updates to xively.com
 
+// this method makes a HTTP connection to the server:
+void sendData(String &thisData) {
+  // if there's a successful connection:
+  if (client.connect(server, 80)) {
+    Serial.println("connecting...");
+    // send the HTTP PUT request:
+    client.print("PUT /v2/feeds/");
+    client.print(FEEDID);
+    client.println(".csv HTTP/1.1");
+    client.println("Host: api.xively.com");
+    client.print("X-xivelyApiKey: ");
+    client.println(APIKEY);
+    client.print("User-Agent: ");
+    client.println(USERAGENT);
+    client.print("Content-Length: ");
+    client.println(thisData.length());
+
+    // last pieces of the HTTP PUT request:
+    client.println("Content-Type: text/csv");
+    client.println("Connection: close");
+    client.println();
+
+    // here's the actual content of the PUT request:
+    client.println(thisData);
+  } 
+  else {
+    // if you couldn't make a connection:
+    Serial.println("connection failed");
+    Serial.println();
+    Serial.println("disconnecting.");
+    client.stop();
+  }
+  // note the time that the connection was made or attempted:
+  lastConnectionTime = millis();
+}
+
 void setup() {
  // Open serial communications and wait for port to open:
   Serial.begin(9600);
@@ -114,41 +150,5 @@ void loop() {
   // store the state of the connection for next time through
   // the loop:
   lastConnected = client.connected();
-}
-
-// this method makes a HTTP connection to the server:
-void sendData(String thisData) {
-  // if there's a successful connection:
-  if (client.connect(server, 80)) {
-    Serial.println("connecting...");
-    // send the HTTP PUT request:
-    client.print("PUT /v2/feeds/");
-    client.print(FEEDID);
-    client.println(".csv HTTP/1.1");
-    client.println("Host: api.xively.com");
-    client.print("X-xivelyApiKey: ");
-    client.println(APIKEY);
-    client.print("User-Agent: ");
-    client.println(USERAGENT);
-    client.print("Content-Length: ");
-    client.println(thisData.length());
-
-    // last pieces of the HTTP PUT request:
-    client.println("Content-Type: text/csv");
-    client.println("Connection: close");
-    client.println();
-
-    // here's the actual content of the PUT request:
-    client.println(thisData);
-  } 
-  else {
-    // if you couldn't make a connection:
-    Serial.println("connection failed");
-    Serial.println();
-    Serial.println("disconnecting.");
-    client.stop();
-  }
-  // note the time that the connection was made or attempted:
-  lastConnectionTime = millis();
 }
 

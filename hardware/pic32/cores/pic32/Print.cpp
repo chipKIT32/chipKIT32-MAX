@@ -243,3 +243,13 @@ size_t Print::printFloat(double number, uint8_t digits)
   
   return n;
 }
+
+extern int _doprnt (char const *fmt, va_list ap, Print *stream);
+
+size_t Print::printf(const char *fmt, ...) {
+    va_list args;
+    va_start(args, fmt);
+    size_t r = _doprnt(fmt, args, this);
+    va_end(args);
+    return r;
+}

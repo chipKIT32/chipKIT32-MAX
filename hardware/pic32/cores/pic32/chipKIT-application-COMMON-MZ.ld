@@ -805,8 +805,10 @@ SECTIONS
   .dbg_data (NOLOAD) :
   {
     . += (DEFINED (_DEBUGGER) ? 0x200 : 0x0);
-    /* Additional data memory required for DSPr2 registers */
+    /* Additional data memory required for DSPr2 (EC) registers */
     . += (DEFINED (_DEBUGGER) ? 0x80 : 0x0);
+    /* Additional data memory required for FPU (EF) registers */
+    . += (DEFINED (_DEBUGGER) ? 0x100 : 0x0);
   } >kseg0_data_mem
 
   .ram_exchange_data (NOLOAD) :
