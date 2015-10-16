@@ -249,7 +249,7 @@ static void	usb_device_default()
 	MCF_USB_OTG_CTL |= MCF_USB_OTG_CTL_ODD_RST;
 	MCF_USB_OTG_CTL &= ~MCF_USB_OTG_CTL_ODD_RST;
 
-	memset(bdts, 0, BDT_RAM_SIZE);
+	memset((void *)bdts, 0, BDT_RAM_SIZE);
 	memset(endpoints, 0, sizeof(endpoints));
 
 	assert(configuration_descriptor);
@@ -287,7 +287,7 @@ void	usb_device_enqueue(int endpoint, boolean tx, byte *buffer, int length)
 		odd	=	endpoints[endpoint].bdtodd[tx];
 
 		// initialize the bdt entry
-		bdt	=	MYBDT(endpoint, tx, odd);
+		bdt	=	(struct bdt *)MYBDT(endpoint, tx, odd);
 		bdt->buffer	=	(byte *)TF_LITTLE(KVA_TO_PA((int)buffer));
 		flags	=	TF_LITTLE(bdt->flags);
 		assert(! (flags & BD_FLAGS_OWN));

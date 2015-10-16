@@ -44,10 +44,14 @@
 /*    8/4/2014(KeithV): Created                                         */
 /************************************************************************/
 
+// The following include of DTWI.h must be in quotes as this
+// included from Wire.cpp and the DTWI directory may not be on 
+// include path, and we want the compiler to find DTWI.h in
+// the same directory as DTWI.cpp; which is directly included
+// from Wire.cpp This solves our library in library problem with MPIDE
 #define OPT_SYSTEM_INTERNAL
 #define OPT_BOARD_INTERNAL
-
-#include <DTWI.h>
+#include "DTWI.h"
 
 #define I2C_BUS_COLLISION_EVENT     0b001
 #define I2C_SLAVE_EVENT             0b010
@@ -57,8 +61,6 @@
 #define shiftSlave                  1
 #define shiftMaster                 2
 
-//#define read_ra(dest) __asm__ __volatile__("move %0,$ra" : "=r" (dest))
-//#define read_ra(dest) __asm__ __volatile__("LW %0,28($sp)" : "=r" (dest))
 #define read_count(dest) __asm__ __volatile__("mfc0 %0,$9" : "=r" (dest))
 #define CORETIMER_TICKS_PER_MICROSECOND		(F_CPU / 2 / 1000000UL)
 

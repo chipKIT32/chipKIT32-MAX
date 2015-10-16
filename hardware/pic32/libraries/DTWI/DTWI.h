@@ -46,7 +46,7 @@
 #if !defined(_DTWI_H_)
 #define	_DTWI_H_
 
-#include	<WProgram.h>
+#include	<Arduino.h>
 
 /* ------------------------------------------------------------ */
 /*					Miscellaneous Declarations					*/
@@ -257,7 +257,7 @@ public:
     bool setNAK(uint32_t cbToNak);
     I2C_STATUS getStatus(void);
 };
-#if (NUM_DTWI_PORTS > 0)
+
 class DTWI0 : public DTWI {
 
     // needed to get to pDTWI
@@ -269,9 +269,7 @@ private:
 public:
     DTWI0();
 };
-#endif
 
-#if (NUM_DTWI_PORTS > 1)
 class DTWI1 : public DTWI {
 
     // needed to get to pDTWI
@@ -283,9 +281,7 @@ private:
 public:
     DTWI1();
 };
-#endif
 
-#if (NUM_DTWI_PORTS > 2)
 class DTWI2 : public DTWI {
 
     // needed to get to pDTWI
@@ -297,9 +293,7 @@ private:
 public:
     DTWI2();
 };
-#endif
 
-#if (NUM_DTWI_PORTS > 3)
 class DTWI3 : public DTWI {
 
     // needed to get to pDTWI
@@ -311,9 +305,7 @@ private:
 public:
     DTWI3();
 };
-#endif
 
-#if (NUM_DTWI_PORTS > 4)
 class DTWI4 : public DTWI {
 
     // needed to get to pDTWI
@@ -325,7 +317,6 @@ private:
 public:
     DTWI4();
 };
-#endif
 #endif // C++
 
 /* ------------------------------------------------------------ */

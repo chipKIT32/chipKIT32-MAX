@@ -48,6 +48,7 @@
 /*      6/8/2011(KeithV): Created                                     */
 /*                                                                      */
 /************************************************************************/
+#include <Arduino.h>
 
 extern void initWiFIREadcEF(void);
 extern int convertWiFIREadcEF(uint8_t channelNumber);

@@ -22,31 +22,56 @@
 #include <WProgram.h>
 #include "Sd2Card.h"
 
+// core timer macro to run the SPI at a know safe freq
+// GPIO can typically run at 25 - 50MHz, keep it slower
+// plus we have to run slow enough for the SD card to keep up
+// NOTE: This is the delay for a half cycle; so your speed is half what is specified 
+#define SPI_DBL_SPEED              8000000UL   // runs clk at 4MHz; or less
+#define CORETIMER_TICKS_PER_HALF_SCK	(((F_CPU / 2) + SPI_DBL_SPEED - 1)  / SPI_DBL_SPEED)
+#define read_count(dest) __asm__ __volatile__("mfc0 %0,$9" : "=r" (dest))
+
+uint32_t	spi_state;
+uint8_t     fspi_state_saved = false;
+uint32_t    interrupt_state = 0;
+
 /** Soft SPI receive */
 uint8_t spiRec(void) {
   uint8_t data = 0;
+  uint32_t tStart = 0;
+  uint32_t tEnd = 0;
+
   // output pin high - like sending 0XFF
   PORTSetBits(prtSDO, bnSDO);
 
   for (uint8_t i = 0; i < 8; i++) {
+
 	PORTSetBits(prtSCK, bnSCK);
+
+    read_count(tStart);
+    do {
+        read_count(tEnd);
+    } while(tEnd - tStart < CORETIMER_TICKS_PER_HALF_SCK);
 
     data <<= 1;
 
 	// adjust so SCK is nice
-    asm("nop");
-    asm("nop");
-
     if (PORTReadBits(prtSDI,bnSDI)) data |= 1;
 
     PORTClearBits(prtSCK, bnSCK);
-  }
+
+    read_count(tStart);
+    do {
+        read_count(tEnd);
+    } while(tEnd - tStart < CORETIMER_TICKS_PER_HALF_SCK);
+ }
 
   return data;
 }
 //------------------------------------------------------------------------------
 /** Soft SPI send */
 void spiSend(uint8_t data) {
+    uint32_t tStart = 0;
+    uint32_t tEnd = 0;
 
   for (uint8_t i = 0; i < 8; i++) {
     
@@ -58,24 +83,22 @@ void spiSend(uint8_t data) {
 		PORTClearBits(prtSDO, bnSDO);
 	}
 
-	PORTClearBits(prtSCK, bnSCK);
-
-    asm("nop");
-	asm("nop");
-	asm("nop");
-
-    data <<= 1;
+    read_count(tStart);
+    do {
+        read_count(tEnd);
+    } while(tEnd - tStart < CORETIMER_TICKS_PER_HALF_SCK);
 
 	PORTSetBits(prtSCK, bnSCK);
 
-  }
-  // hold SCK high for a few ns
-   asm("nop");
-   asm("nop");
-   asm("nop");
-   asm("nop");
+    data <<= 1;
 
-  PORTClearBits(prtSCK, bnSCK);
+    read_count(tStart);
+    do {
+        read_count(tEnd);
+    } while(tEnd - tStart < (2 * CORETIMER_TICKS_PER_HALF_SCK));
+
+    PORTClearBits(prtSCK, bnSCK);
+  }
 }
 //------------------------------------------------------------------------------
 // send command and return error code.  Return zero for OK
@@ -135,9 +158,43 @@ uint32_t Sd2Card::cardSize(void) {
 //------------------------------------------------------------------------------
 void Sd2Card::chipSelectHigh(void) {
   digitalWrite(chipSelectPin_, HIGH);
+
+// On the WiFiShield it is possible for the MRF24 to get an interrupt that
+// the PIC32 needs to service the MRF24 while the SD card is selected.
+// If this happens the PIC32 MRF Universal Driver code provided by MCHP
+// will make an SPI call in the interrupt routine, enabling the CS to the MRF which is on the same
+// SPI pins as the SD card, thus causing bot the SD card and MRF24 to be enabled and thus
+// causing a SDI/SDO data conflict and hosing both the SD and MRF
+// The not so great, but working solution is to disable the MRF interrupt while
+// the SD card is selected so the Univerdriver will not also select the MRF
+#if defined(_BOARD_MEGA_) || defined(_BOARD_UNO_) || defined(_BOARD_UC32_)
+  if(fspi_state_saved)
+  {
+    SPI2CON = spi_state;
+    fspi_state_saved = false;
+    restoreIntEnable(_EXTERNAL_1_IRQ, interrupt_state);
+  }
+#endif
 }
 //------------------------------------------------------------------------------
 void Sd2Card::chipSelectLow(void) {
+// On the WiFiShield it is possible for the MRF24 to get an interrupt that
+// the PIC32 needs to service the MRF24 while the SD card is selected.
+// If this happens the PIC32 MRF Universal Driver code provided by MCHP
+// will make an SPI call in the interrupt routine, enabling the CS to the MRF which is on the same
+// SPI pins as the SD card, thus causing bot the SD card and MRF24 to be enabled and thus
+// causing a SDI/SDO data conflict and hosing both the SD and MRF
+// The not so great, but working solution is to disable the MRF interrupt while
+// the SD card is selected so the Univerdriver will not also select the MRF
+#if defined(_BOARD_MEGA_) || defined(_BOARD_UNO_) || defined(_BOARD_UC32_)
+    if(!fspi_state_saved)
+    {
+        interrupt_state = clearIntEnable(_EXTERNAL_1_IRQ);
+        spi_state = SPI2CON;
+        SPI2CONbits.ON = 0; 
+        fspi_state_saved = true;
+    }
+#endif
   digitalWrite(chipSelectPin_, LOW);
 }
 //------------------------------------------------------------------------------
@@ -240,6 +297,7 @@ uint8_t Sd2Card::init(uint8_t sckRateID, uint8_t chipSelectPin) {
   }
   #endif
 #endif
+
 
   chipSelectPin_ = chipSelectPin;
 

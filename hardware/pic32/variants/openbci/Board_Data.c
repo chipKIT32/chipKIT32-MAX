@@ -165,7 +165,7 @@ const uint16_t	digital_pin_to_bit_mask_PGM[] = {
 ** compare number, input capture number, and timer external clock
 ** input associated with that pin.
 */
-const uint16_t	digital_pin_to_timer_PGM[] = {
+const uint8_t	digital_pin_to_timer_PGM[] = {
     // Pins 0 through 18
     NOT_ON_TIMER,                           //  0   J4-1    RB5     USB                     TMS/RPB5/USBID/RB5
     NOT_ON_TIMER,                           //  1   J4-2    RB7     INT0                    TDI/RPB7/CTED3/PMD5/INT0/RB7   
@@ -315,7 +315,6 @@ const uint8_t analog_pin_to_channel_PGM[] = {
 */
 
 const uint8_t output_compare_to_digital_pin_PGM[] = {
-	NOT_PPS_PIN,		// There is no OC0, so this one needs to be blank
 	PIN_OC1,	        // A0, B3, B4, B15, B7  ; B15   RPB15R  = 5  	
 	PIN_OC2,	        // A1, B5, B1, B11, B8  ; B8    RPB8R   = 5
 	PIN_OC3,	        // A3, B14, B0, B10, B9 ; B9    RPB9R   = 5
@@ -339,6 +338,9 @@ const uint8_t external_int_to_digital_pin_PGM[] = {
 /* ------------------------------------------------------------ */
 /*		Include Files for Board Customization Functions			*/
 /* ------------------------------------------------------------ */
+#if	(OPT_BOARD_INIT != 0)
+#include <plib.h>
+#endif
 
 /* ------------------------------------------------------------ */
 /*				Board Customization Functions					*/

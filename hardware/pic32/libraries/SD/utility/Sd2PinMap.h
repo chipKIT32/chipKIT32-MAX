@@ -116,6 +116,23 @@
     #define bnSCK				BIT_14
     #define SD_SCK_PPS()                    RPB14R  = 0b0000    // Bit Banging SPI, set as GPIO
 
+#elif defined(_BOARD_OPENSCOPE_)
+
+    //uc Pin 54
+    #define prtSDO				IOPORT_D
+    #define	bnSDO				BIT_12
+    #define SD_SDO_PPS()        RPD12R  = 0b0000    // Bit Banging SPI, set as GPIO
+
+    //uc Pin 53
+    #define prtSDI				IOPORT_D
+    #define bnSDI				BIT_5
+    #define SD_SDI_PPS()        RPD5R  = 0b0000    // Bit Banging SPI, leave as nothing
+
+    //uc Pin 51
+    #define prtSCK				IOPORT_D
+    #define bnSCK				BIT_15
+    #define SD_SCK_PPS()        RPD15R  = 0b0000    // Bit Banging SPI, set as GPIO
+
 #elif defined(_BOARD_PONTECH_QUICK240_USB_)
 
     //uc Pin 72
