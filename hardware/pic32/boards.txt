@@ -75,8 +75,8 @@ cerebot_mx3ck.ldscript=chipKIT-application-32MX320F128.ld
 # Use a high -Gnum for devices that have less than 64K of data memory
 # For -G1024, objects 1024 bytes or smaller will be accessed by
 # gp-relative addressing
-cerebot_mx3ck.compiler.c.flags=-O2 -c -mno-smart-io -w -ffunction-sections -fdata-sections -G1024 -g -mdebugger -Wcast-align -fno-short-double
-cerebot_mx3ck.compiler.cpp.flags=-O2 -c -mno-smart-io -w -fno-exceptions -ffunction-sections -fdata-sections -G1024 -g -mdebugger -Wcast-align -fno-short-double
+cerebot_mx3ck.compiler.c.flags=-O2 -c -mno-smart-io -w -ffunction-sections -fdata-sections -G1024 -g -mdebugger -Wcast-align -fno-short-double -fframe-base-loclist -ftoplevel-reorder
+cerebot_mx3ck.compiler.cpp.flags=-O2 -c -mno-smart-io -w -fno-exceptions -ffunction-sections -fdata-sections -G1024 -g -mdebugger -Wcast-align -fno-short-double -fframe-base-loclist -ftoplevel-reorder
 
 cerebot_mx3ck.upload.protocol=stk500v2
 cerebot_mx3ck.upload.maximum_size=126976
@@ -111,8 +111,8 @@ chipkit_mx3.ldscript=chipKIT-application-32MX320F128.ld
 # Use a high -Gnum for devices that have less than 64K of data memory
 # For -G1024, objects 1024 bytes or smaller will be accessed by
 # gp-relative addressing
-chipkit_mx3.compiler.c.flags=-O2 -c -mno-smart-io -w -ffunction-sections -fdata-sections -G1024 -g -mdebugger -Wcast-align -fno-short-double
-chipkit_mx3.compiler.cpp.flags=-O2 -c -mno-smart-io -w -fno-exceptions -ffunction-sections -fdata-sections -G1024 -g -mdebugger -Wcast-align -fno-short-double
+chipkit_mx3.compiler.c.flags=-O2 -c -mno-smart-io -w -ffunction-sections -fdata-sections -G1024 -g -mdebugger -Wcast-align -fno-short-double -fframe-base-loclist -ftoplevel-reorder
+chipkit_mx3.compiler.cpp.flags=-O2 -c -mno-smart-io -w -fno-exceptions -ffunction-sections -fdata-sections -G1024 -g -mdebugger -Wcast-align -fno-short-double -fframe-base-loclist -ftoplevel-reorder
 
 chipkit_mx3.upload.protocol=stk500v2
 chipkit_mx3.upload.maximum_size=126976
@@ -148,8 +148,8 @@ cerebot_mx3ck_512.ldscript=chipKIT-application-32MX340F512.ld
 # Use a high -Gnum for devices that have less than 64K of data memory
 # For -G1024, objects 1024 bytes or smaller will be accessed by
 # gp-relative addressing
-cerebot_mx3ck_512.compiler.c.flags=-O2 -c -mno-smart-io -w -ffunction-sections -fdata-sections -G1024 -g -mdebugger -Wcast-align -fno-short-double
-cerebot_mx3ck_512.compiler.cpp.flags=-O2 -c -mno-smart-io -w -fno-exceptions -ffunction-sections -fdata-sections -G1024 -g -mdebugger -Wcast-align -fno-short-double
+cerebot_mx3ck_512.compiler.c.flags=-O2 -c -mno-smart-io -w -ffunction-sections -fdata-sections -G1024 -g -mdebugger -Wcast-align -fno-short-double -fframe-base-loclist -ftoplevel-reorder
+cerebot_mx3ck_512.compiler.cpp.flags=-O2 -c -mno-smart-io -w -fno-exceptions -ffunction-sections -fdata-sections -G1024 -g -mdebugger -Wcast-align -fno-short-double -fframe-base-loclist -ftoplevel-reorder
 
 cerebot_mx3ck_512.upload.protocol=stk500v2
 cerebot_mx3ck_512.upload.maximum_size=520192
@@ -307,8 +307,8 @@ chipkit_Pi.ldscript=chipKIT-application-32MX250F128.ld
 # Use a high -Gnum for devices that have less than 64K of data memory
 # For -G1024, objects 1024 bytes or smaller will be accessed by
 # gp-relative addressing
-chipkit_Pi.compiler.c.flags=-O2 -c -mno-smart-io -w -ffunction-sections -fdata-sections -G1024 -g -mdebugger -Wcast-align -fno-short-double
-chipkit_Pi.compiler.cpp.flags=-O2 -c -mno-smart-io -w -fno-exceptions -ffunction-sections -fdata-sections -G1024 -g -mdebugger -Wcast-align -fno-short-double
+chipkit_Pi.compiler.c.flags=-O2 -c -mno-smart-io -w -ffunction-sections -fdata-sections -G1024 -g -mdebugger -Wcast-align -fno-short-double -fframe-base-loclist -ftoplevel-reorder
+chipkit_Pi.compiler.cpp.flags=-O2 -c -mno-smart-io -w -fno-exceptions -ffunction-sections -fdata-sections -G1024 -g -mdebugger -Wcast-align -fno-short-double -fframe-base-loclist -ftoplevel-reorder
 
 chipkit_Pi.upload.protocol=stk500v2
 # 128KB - 4K for EEPROM - 4K for bootloader
@@ -344,8 +344,8 @@ chipkit_Pi_USB_Serial.ldscript=chipKIT-application-32MX250F128.ld
 # Use a high -Gnum for devices that have less than 64K of data memory
 # For -G1024, objects 1024 bytes or smaller will be accessed by
 # gp-relative addressing
-chipkit_Pi_USB_Serial.compiler.c.flags=-O2 -c -mno-smart-io -w -ffunction-sections -fdata-sections -G1024 -g -mdebugger -Wcast-align -fno-short-double
-chipkit_Pi_USB_Serial.compiler.cpp.flags=-O2 -c -mno-smart-io -w -fno-exceptions -ffunction-sections -fdata-sections -G1024 -g -mdebugger -Wcast-align -fno-short-double
+chipkit_Pi_USB_Serial.compiler.c.flags=-O2 -c -mno-smart-io -w -ffunction-sections -fdata-sections -G1024 -g -mdebugger -Wcast-align -fno-short-double -fframe-base-loclist -ftoplevel-reorder
+chipkit_Pi_USB_Serial.compiler.cpp.flags=-O2 -c -mno-smart-io -w -fno-exceptions -ffunction-sections -fdata-sections -G1024 -g -mdebugger -Wcast-align -fno-short-double -fframe-base-loclist -ftoplevel-reorder
 
 chipkit_Pi_USB_Serial.upload.protocol=stk500v2
 # 128KB - 4K for EEPROM - 4K for bootloader
@@ -381,8 +381,8 @@ cmod.ldscript=chipKIT-application-32MX150F128.ld
 # Use a high -Gnum for devices that have less than 64K of data memory
 # For -G1024, objects 1024 bytes or smaller will be accessed by
 # gp-relative addressing
-cmod.compiler.c.flags=-O2 -c -mno-smart-io -w -ffunction-sections -fdata-sections -G1024 -g -mdebugger -Wcast-align -fno-short-double
-cmod.compiler.cpp.flags=-O2 -c -mno-smart-io -w -fno-exceptions -ffunction-sections -fdata-sections -G1024 -g -mdebugger -Wcast-align -fno-short-double
+cmod.compiler.c.flags=-O2 -c -mno-smart-io -w -ffunction-sections -fdata-sections -G1024 -g -mdebugger -Wcast-align -fno-short-double -fframe-base-loclist -ftoplevel-reorder
+cmod.compiler.cpp.flags=-O2 -c -mno-smart-io -w -fno-exceptions -ffunction-sections -fdata-sections -G1024 -g -mdebugger -Wcast-align -fno-short-double -fframe-base-loclist -ftoplevel-reorder
 
 cmod.upload.protocol=stk500v2
 # 128KB - 4K for EEPROM
@@ -542,8 +542,8 @@ usbono_pic32.ldscript=chipKIT-application-32MX440F512.ld
 # Use a high -Gnum for devices that have less than 64K of data memory
 # For -G1024, objects 1024 bytes or smaller will be accessed by
 # gp-relative addressing
-#usbono_pic32.compiler.c.flags=-O2 -c -mno-smart-io -w -ffunction-sections -fdata-sections -G1024 -g -mdebugger -Wcast-align -fno-short-double
-#usbono_pic32.compiler.cpp.flags=-O2 -c -mno-smart-io -w -fno-exceptions -ffunction-sections -fdata-sections -G1024 -g -mdebugger -Wcast-align -fno-short-double
+#usbono_pic32.compiler.c.flags=-O2 -c -mno-smart-io -w -ffunction-sections -fdata-sections -G1024 -g -mdebugger -Wcast-align -fno-short-double -fframe-base-loclist -ftoplevel-reorder
+#usbono_pic32.compiler.cpp.flags=-O2 -c -mno-smart-io -w -fno-exceptions -ffunction-sections -fdata-sections -G1024 -g -mdebugger -Wcast-align -fno-short-double -fframe-base-loclist -ftoplevel-reorder
 
 usbono_pic32.upload.protocol=stk500v2
 usbono_pic32.upload.maximum_size=520192
@@ -580,8 +580,8 @@ chipkit_DP32.ldscript=chipKIT-application-32MX250F128.ld
 # Use a high -Gnum for devices that have less than 64K of data memory
 # For -G1024, objects 1024 bytes or smaller will be accessed by
 # gp-relative addressing
-chipkit_DP32.compiler.c.flags=-O2 -c -mno-smart-io -w -ffunction-sections -fdata-sections -G1024 -g -mdebugger -Wcast-align -fno-short-double
-chipkit_DP32.compiler.cpp.flags=-O2 -c -mno-smart-io -w -fno-exceptions -ffunction-sections -fdata-sections -G1024 -g -mdebugger -Wcast-align -fno-short-double
+chipkit_DP32.compiler.c.flags=-O2 -c -mno-smart-io -w -ffunction-sections -fdata-sections -G1024 -g -mdebugger -Wcast-align -fno-short-double -fframe-base-loclist -ftoplevel-reorder
+chipkit_DP32.compiler.cpp.flags=-O2 -c -mno-smart-io -w -fno-exceptions -ffunction-sections -fdata-sections -G1024 -g -mdebugger -Wcast-align -fno-short-double -fframe-base-loclist -ftoplevel-reorder
 
 chipkit_DP32.upload.protocol=stk500v2
 # 128KB - 4K for EEPROM - 4K for bootloader
@@ -615,8 +615,8 @@ fubarino_mini_dev.ldscript=chipKIT-application-32MX250F128.ld
 # Use a high -Gnum for devices that have less than 64K of data memory
 # For -G1024, objects 1024 bytes or smaller will be accessed by
 # gp-relative addressing
-fubarino_mini_dev.compiler.c.flags=-O2 -c -mno-smart-io -w -ffunction-sections -fdata-sections -G1024 -g -mdebugger -Wcast-align -fno-short-double
-fubarino_mini_dev.compiler.cpp.flags=-O2 -c -mno-smart-io -w -fno-exceptions -ffunction-sections -fdata-sections -G1024 -g -mdebugger -Wcast-align -fno-short-double
+fubarino_mini_dev.compiler.c.flags=-O2 -c -mno-smart-io -w -ffunction-sections -fdata-sections -G1024 -g -mdebugger -Wcast-align -fno-short-double -fframe-base-loclist -ftoplevel-reorder
+fubarino_mini_dev.compiler.cpp.flags=-O2 -c -mno-smart-io -w -fno-exceptions -ffunction-sections -fdata-sections -G1024 -g -mdebugger -Wcast-align -fno-short-double -fframe-base-loclist -ftoplevel-reorder
 
 fubarino_mini_dev.upload.protocol=stk500v2
 # 128KB - 4K for EEPROM - 4K for bootloader
@@ -649,8 +649,8 @@ fubarino_mini.ldscript=chipKIT-application-32MX250F128.ld
 # Use a high -Gnum for devices that have less than 64K of data memory
 # For -G1024, objects 1024 bytes or smaller will be accessed by
 # gp-relative addressing
-fubarino_mini.compiler.c.flags=-O2 -c -mno-smart-io -w -ffunction-sections -fdata-sections -G1024 -g -mdebugger -Wcast-align -fno-short-double
-fubarino_mini.compiler.cpp.flags=-O2 -c -mno-smart-io -w -fno-exceptions -ffunction-sections -fdata-sections -G1024 -g -mdebugger -Wcast-align -fno-short-double
+fubarino_mini.compiler.c.flags=-O2 -c -mno-smart-io -w -ffunction-sections -fdata-sections -G1024 -g -mdebugger -Wcast-align -fno-short-double -fframe-base-loclist -ftoplevel-reorder
+fubarino_mini.compiler.cpp.flags=-O2 -c -mno-smart-io -w -fno-exceptions -ffunction-sections -fdata-sections -G1024 -g -mdebugger -Wcast-align -fno-short-double -fframe-base-loclist -ftoplevel-reorder
 
 fubarino_mini.upload.protocol=stk500v2
 # 128KB - 4K for EEPROM - 4K for bootloader
@@ -684,8 +684,8 @@ fubarino_mini.build.variant=Fubarino_Mini
 ## Use a high -Gnum for devices that have less than 64K of data memory
 ## For -G1024, objects 1024 bytes or smaller will be accessed by
 ## gp-relative addressing
-#fubarino_mini_dbg.compiler.c.flags=-O0 -c -mno-smart-io -w -ffunction-sections -fdata-sections -G1024 -g -mdebugger -Wcast-align -fno-short-double
-#fubarino_mini_dbg.compiler.cpp.flags=-O0 -c -mno-smart-io -w -fno-exceptions -ffunction-sections -fdata-sections -G1024 -g -mdebugger -Wcast-align -fno-short-double
+#fubarino_mini_dbg.compiler.c.flags=-O0 -c -mno-smart-io -w -ffunction-sections -fdata-sections -G1024 -g -mdebugger -Wcast-align -fno-short-double -fframe-base-loclist -ftoplevel-reorder
+#fubarino_mini_dbg.compiler.cpp.flags=-O0 -c -mno-smart-io -w -fno-exceptions -ffunction-sections -fdata-sections -G1024 -g -mdebugger -Wcast-align -fno-short-double -fframe-base-loclist -ftoplevel-reorder
 #fubarino_mini_dbg.upload.protocol=stk500v2
 ## 128KB - 4K for EEPROM - 4K for bootloader
 #fubarino_mini_dbg.upload.maximum_size=122880
@@ -948,8 +948,8 @@ chipkit_uc32.ldscript=chipKIT-application-32MX340F512.ld
 # Use a high -Gnum for devices that have less than 64K of data memory
 # For -G1024, objects 1024 bytes or smaller will be accessed by
 # gp-relative addressing
-chipkit_uc32.compiler.c.flags=-O2 -c -mno-smart-io -w -ffunction-sections -fdata-sections -G1024 -g -mdebugger -Wcast-align -fno-short-double
-chipkit_uc32.compiler.cpp.flags=-O2 -c -mno-smart-io -w -fno-exceptions -ffunction-sections -fdata-sections -G1024 -g -mdebugger -Wcast-align -fno-short-double
+chipkit_uc32.compiler.c.flags=-O2 -c -mno-smart-io -w -ffunction-sections -fdata-sections -G1024 -g -mdebugger -Wcast-align -fno-short-double -fframe-base-loclist -ftoplevel-reorder
+chipkit_uc32.compiler.cpp.flags=-O2 -c -mno-smart-io -w -fno-exceptions -ffunction-sections -fdata-sections -G1024 -g -mdebugger -Wcast-align -fno-short-double -fframe-base-loclist -ftoplevel-reorder
 
 chipkit_uc32.upload.protocol=stk500v2
 chipkit_uc32.upload.maximum_size=520192
@@ -985,8 +985,8 @@ uc32_pmod.ldscript=chipKIT-application-32MX340F512.ld
 # Use a high -Gnum for devices that have less than 64K of data memory
 # For -G1024, objects 1024 bytes or smaller will be accessed by
 # gp-relative addressing
-uc32_pmod.compiler.c.flags=-O2 -c -mno-smart-io -w -ffunction-sections -fdata-sections -G1024 -g -mdebugger -Wcast-align -fno-short-double
-uc32_pmod.compiler.cpp.flags=-O2 -c -mno-smart-io -w -fno-exceptions -ffunction-sections -fdata-sections -G1024 -g -mdebugger -Wcast-align -fno-short-double
+uc32_pmod.compiler.c.flags=-O2 -c -mno-smart-io -w -ffunction-sections -fdata-sections -G1024 -g -mdebugger -Wcast-align -fno-short-double -fframe-base-loclist -ftoplevel-reorder
+uc32_pmod.compiler.cpp.flags=-O2 -c -mno-smart-io -w -fno-exceptions -ffunction-sections -fdata-sections -G1024 -g -mdebugger -Wcast-align -fno-short-double -fframe-base-loclist -ftoplevel-reorder
 
 uc32_pmod.upload.protocol=stk500v2
 uc32_pmod.upload.maximum_size=520192
@@ -1023,8 +1023,8 @@ uno_pic32.ldscript=chipKIT-application-32MX320F128.ld
 # Use a high -Gnum for devices that have less than 64K of data memory
 # For -G1024, objects 1024 bytes or smaller will be accessed by
 # gp-relative addressing
-uno_pic32.compiler.c.flags=-O2 -c -mno-smart-io -w -ffunction-sections -fdata-sections -G1024 -g -mdebugger -Wcast-align -fno-short-double
-uno_pic32.compiler.cpp.flags=-O2 -c -mno-smart-io -w -fno-exceptions -ffunction-sections -fdata-sections -G1024 -g -mdebugger -Wcast-align -fno-short-double
+uno_pic32.compiler.c.flags=-O2 -c -mno-smart-io -w -ffunction-sections -fdata-sections -G1024 -g -mdebugger -Wcast-align -fno-short-double -fframe-base-loclist -ftoplevel-reorder
+uno_pic32.compiler.cpp.flags=-O2 -c -mno-smart-io -w -fno-exceptions -ffunction-sections -fdata-sections -G1024 -g -mdebugger -Wcast-align -fno-short-double -fframe-base-loclist -ftoplevel-reorder
 
 #uno_pic32.upload.using=avrdude
 uno_pic32.upload.protocol=stk500v2
@@ -1062,8 +1062,8 @@ uno_pmod.ldscript=chipKIT-application-32MX320F128.ld
 # Use a high -Gnum for devices that have less than 64K of data memory
 # For -G1024, objects 1024 bytes or smaller will be accessed by
 # gp-relative addressing
-uno_pmod.compiler.c.flags=-O2 -c -mno-smart-io -w -ffunction-sections -fdata-sections -G1024 -g -mdebugger -Wcast-align -fno-short-double
-uno_pmod.compiler.cpp.flags=-O2 -c -mno-smart-io -w -fno-exceptions -ffunction-sections -fdata-sections -G1024 -g -mdebugger -Wcast-align -fno-short-double
+uno_pmod.compiler.c.flags=-O2 -c -mno-smart-io -w -ffunction-sections -fdata-sections -G1024 -g -mdebugger -Wcast-align -fno-short-double -fframe-base-loclist -ftoplevel-reorder
+uno_pmod.compiler.cpp.flags=-O2 -c -mno-smart-io -w -fno-exceptions -ffunction-sections -fdata-sections -G1024 -g -mdebugger -Wcast-align -fno-short-double -fframe-base-loclist -ftoplevel-reorder
 
 #uno_pic32.upload.using=avrdude
 uno_pmod.upload.protocol=stk500v2
@@ -1181,5 +1181,44 @@ chipkit_WiFire_80MHz.build.core=pic32
 chipkit_WiFire_80MHz.ldcommon=chipKIT-application-COMMON-MZ.ld
 chipkit_WiFire_80MHz.build.variant=WiFire
 #chipkit_WiFire_80MHz.upload.using=avrdude1
+chipkit_DP32.name=chipKIT DP32
+chipkit_DP32.group=chipKIT
+
+############################################################
+############################################################
+openbci.name=OpenBCI 32
+openbci.group=chipKIT
+
+# new items
+openbci.platform=pic32
+openbci.board=_BOARD_DP32_
+openbci.board.define=-D_USE_USB_FOR_SERIAL_
+openbci.ccflags=-Map="map.map"
+openbci.ldscript=chipKIT-application-32MX250F128.ld
+# end of new items
+
+# Use a high -Gnum for devices that have less than 64K of data memory
+# For -G1024, objects 1024 bytes or smaller will be accessed by
+# gp-relative addressing
+openbci.compiler.c.flags=-O2 -c -mno-smart-io -w -ffunction-sections -fdata-sections -G1024 -g -mdebugger -Wcast-align -fno-short-double -fframe-base-loclist -ftoplevel-reorder
+openbci.compiler.cpp.flags=-O2 -c -mno-smart-io -w -fno-exceptions -ffunction-sections -fdata-sections -G1024 -g -mdebugger -Wcast-align -fno-short-double -fframe-base-loclist -ftoplevel-reorder
+
+chipkit_DP32.upload.protocol=stk500v2
+# 128KB - 4K for EEPROM - 4K for bootloader
+openbci.upload.maximum_size=122880
+openbci.upload.speed=115200
+
+openbci.bootloader.low_fuses=0xff
+openbci.bootloader.high_fuses=0xdd
+openbci.bootloader.extended_fuses=0x00
+openbci.bootloader.path=not-supported
+openbci.bootloader.file=not-supported
+openbci.bootloader.unlock_bits=0x3F
+openbci.bootloader.lock_bits=0x0F
+
+openbci.build.mcu=32MX250F128B
+openbci.build.f_cpu=40000000L
+openbci.build.core=pic32
+openbci.build.variant=OpenBCI
 
 ############################################################
