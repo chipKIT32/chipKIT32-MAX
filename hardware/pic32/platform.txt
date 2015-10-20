@@ -3,11 +3,14 @@ name=chipKIT
 version=1.6.0
 compiler.c.cmd=pic32-gcc
 compiler.path={runtime.hardware.path}/pic32/compiler/pic32-tools/bin/
-compiler.c.flags=-O2 -c -mno-smart-io -w -ffunction-sections -fdata-sections -g3 -mdebugger -Wcast-align -fno-short-double -fframe-base-loclist -ftoplevel-reorder
-compiler.c.extra_flags=
+# Use a high -Gnum for devices that have less than 64K of data memory
+# For -G1024, objects 1024 bytes or smaller will be accessed by
+# gp-relative addressing
+compiler.c.flags=-O2 -c -mno-smart-io -w -ffunction-sections -fdata-sections -G1024 -g -mdebugger -Wcast-align -fno-short-double -ftoplevel-reorder
+compiler.c.extra_flags=-MMD
 compiler.cpp.cmd=pic32-g++
-compiler.cpp.flags=-O2 -c -mno-smart-io -w -fno-exceptions -ffunction-sections -fdata-sections -g3 -mdebugger -Wcast-align -fno-short-double -fframe-base-loclist -ftoplevel-reorder
-compiler.cpp.extra_flags=
+compiler.cpp.flags=-O2 -c -mno-smart-io -w -fno-exceptions -ffunction-sections -fdata-sections -G1024 -g -mdebugger -Wcast-align -fno-short-double -ftoplevel-reorder
+compiler.cpp.extra_flags=-MMD
 compiler.S.flags=-O2 -g1 -c -Wa,--gdwarf-2
 compiler.ar.cmd=pic32-ar
 compiler.ar.flags=rcs
@@ -19,7 +22,7 @@ compiler.elf2hex.cmd=pic32-bin2hex
 compiler.elf2hex.flags=-a
 compiler.elf2hex.extra_flags=
 compiler.c.elf.cmd=pic32-g++
-compiler.c.elf.flags=-Os -Wl,--gc-sections -mdebugger -mno-peripheral-libs -nostartfiles
+compiler.c.elf.flags=-Os -Wl,-M={build.path}/sketch.map --gc-sections -mdebugger -mno-peripheral-libs -nostartfiles
 compiler.c.elf.extra_flags=
 compiler.size.cmd=pic32-size
 compiler.cpudef=-mprocessor=
@@ -32,20 +35,21 @@ library.path=./hardware/pic32/libraries
 ldscript=chipKIT-BL-mega.ld
 ldcommon=chipKIT-application-COMMON.ld
 compiler.define= -DMPIDEVER=16777998 -DMPIDE=150 -DIDE=Arduino
+build.ldscript.path={build.core.path}
 build.variant=Default_100
 build.extra_flags=
 core.header=WProgram.h
 
 ##############################################################
-recipe.c.o.pattern="{compiler.path}{compiler.c.cmd}"  {compiler.c.flags} -mprocessor={build.mcu} -DF_CPU={build.f_cpu}  -DARDUINO={runtime.ide.version} -D_{build.board} {compiler.define} {compiler.c.extra_flags} {build.extra_flags} {includes} "{source_file}" -o "{object_file}"
-recipe.cpp.o.pattern="{compiler.path}{compiler.cpp.cmd}"  {compiler.cpp.flags} -mprocessor={build.mcu} -DF_CPU={build.f_cpu}  -DARDUINO={runtime.ide.version} -D_{build.board} {compiler.define} "{compiler.cpp.extra_flags}" {build.extra_flags} {includes} "{source_file}" -o "{object_file}"
+recipe.c.o.pattern="{compiler.path}{compiler.c.cmd}"  {compiler.c.flags} -I{build.path} -mprocessor={build.mcu} -DF_CPU={build.f_cpu}  -DARDUINO={runtime.ide.version} -D_{build.board} {compiler.define} {compiler.c.extra_flags} {build.extra_flags} {includes} "{source_file}" -o "{object_file}"
+recipe.cpp.o.pattern="{compiler.path}{compiler.cpp.cmd}"  {compiler.cpp.flags} -I{build.path} -mprocessor={build.mcu} -DF_CPU={build.f_cpu}  -DARDUINO={runtime.ide.version} -D_{build.board} {compiler.define} "{compiler.cpp.extra_flags}" {build.extra_flags} {includes} "{source_file}" -o "{object_file}"
 #recipe.cpp.o.pattern="{compiler.path}{compiler.cpp.cmd}" {compiler.cpp.flags} -mmcu={build.mcu} -DF_CPU={build.f_cpu} -DARDUINO={runtime.ide.version} -DARDUINO_{build.board} -DARDUINO_ARCH_{build.arch} {compiler.cpp.extra_flags} {build.extra_flags} {includes} "{source_file}" -o "{object_file}"
 recipe.S.o.pattern="{compiler.path}{compiler.cpp.cmd}" {compiler.S.flags} -mprocessor={build.mcu} -DF_CPU={build.f_cpu}  -DARDUINO={runtime.ide.version} -D_{build.board} {compiler.define} "{compiler.cpp.extra_flags}" {build.extra_flags} {includes} "{source_file}" -o "{object_file}"
 
 recipe.ar.pattern="{compiler.path}{compiler.ar.cmd}"  {compiler.ar.flags} {compiler.ar.extra_flags} "{build.path}/{archive_file}" "{object_file}"
 #recipe.ar.pattern="{compiler.path}{compiler.ar.cmd}" {compiler.ar.flags} {compiler.ar.extra_flags} "{build.path}/{archive_file}" "{object_file}"
 
-recipe.c.combine.pattern="{compiler.path}{compiler.c.elf.cmd}" {compiler.c.elf.flags} -mprocessor={build.mcu} {compiler.c.elf.extra_flags} -o "{build.path}/{build.project_name}.elf" {object_files} "{build.path}/{archive_file}" -L{build.path} -lm  -T "{build.core.path}/{ldscript}" -T "{build.core.path}/{ldcommon}"
+recipe.c.combine.pattern="{compiler.path}{compiler.c.elf.cmd}" {compiler.c.elf.flags} -mprocessor={build.mcu} {compiler.c.elf.extra_flags} -o "{build.path}/{build.project_name}.elf" {object_files} "{build.path}/{archive_file}" -L{build.path} -lm  -T "{build.ldscript.path}/{ldscript}" -T "{build.core.path}/{ldcommon}"
 #recipe.c.combine.pattern="{compiler.path}{compiler.c.elf.cmd}" {compiler.c.elf.flags} -mmcu={build.mcu} {compiler.c.elf.extra_flags} -o "{build.path}/{build.project_name}.elf" {object_files} "{build.path}/{archive_file}" "-L{build.path}" -lm
 
 recipe.objcopy.eep.pattern="{compiler.path}{compiler.objcopy.cmd}" {compiler.objcopy.eep.flags} {compiler.objcopy.eep.extra_flags} "{build.path}/{build.project_name}.elf" "{build.path}/{build.project_name}.eep"
@@ -59,41 +63,19 @@ recipe.objcopy.hex.pattern="{compiler.path}{compiler.elf2hex.cmd}" {compiler.elf
 #########
 ## Compute size
 recipe.size.pattern="{compiler.path}{compiler.size.cmd}" -A "{build.path}/{build.project_name}.elf"
-recipe.size.regex=^(?:\.text|\.data|\.bootloader)\s+([0-9]+).*
-recipe.size.regex.data=^(?:\.data|\.bss|\.noinit)\s+([0-9]+).*
-recipe.size.regex.eeprom=^(?:\.eeprom)\s+([0-9]+).*
-
-# AVR Uploader/Programmers tools
-# ------------------------------
-
-tools.avrdude.cmd.path={runtime.ide.path}/hardware/tools/avr/bin/avrdude
-tools.avrdude.config.path={runtime.hardware.path}/pic32/avrdude.conf
-
-tools.avrdude.upload.params.verbose=-v
-tools.avrdude.upload.params.quiet=-q -q
-tools.avrdude.upload.pattern="{cmd.path}" "-C{config.path}" {upload.verbose} -p{build.mcu} -c{upload.protocol} -P{serial.port} -b{upload.speed} -D "-Uflash:w:{build.path}/{build.project_name}.hex:i"
-
-tools.avrdude.program.params.verbose=-v
-tools.avrdude.program.params.quiet=-q -q
-tools.avrdude.program.pattern="{cmd.path}" "-C{config.path}" {program.verbose} -p{build.mcu} -c{protocol} {program.extra_params} "-Uflash:w:{build.path}/{build.project_name}.hex:i"
-
-tools.avrdude.erase.params.verbose=-v
-tools.avrdude.erase.params.quiet=-q -q
-tools.avrdude.erase.pattern="{cmd.path}" "-C{config.path}" {erase.verbose} -p{build.mcu} -c{protocol} {program.extra_params} -e -Ulock:w:{bootloader.unlock_bits}:m -Uefuse:w:{bootloader.extended_fuses}:m -Uhfuse:w:{bootloader.high_fuses}:m -Ulfuse:w:{bootloader.low_fuses}:m
-
-tools.avrdude.bootloader.params.verbose=-v
-tools.avrdude.bootloader.params.quiet=-q -q
-tools.avrdude.bootloader.pattern="{cmd.path}" "-C{config.path}" {bootloader.verbose} -p{build.mcu} -c{protocol} {program.extra_params} "-Uflash:w:{runtime.platform.path}/bootloaders/{bootloader.file}:i" -Ulock:w:{bootloader.lock_bits}:m
+recipe.size.regex=^(?:\.reset|\.image_ptr_table|\.app_excpt|\.vector\S*|\.startup|\.init|\.fini|\.ctors|\.dtors|\.header_info|\.dinit|\.text\S*|\.rodata\S*|\.data)\s+([0-9]+).*
+recipe.size.regex.data=^(?:\.ram_exchange_data|\.dbg_data|\.sdata|\.sbss|\.data\S*|\.stack|\.bss|\.comment.__use_force_isr_install|\.eh_frame|\.jcr)\s+([0-9]+).*
+#recipe.size.regex.eeprom=^(?:\.eeprom)\s+([0-9]+).*
 
 
 # pic32prog loader
 # https://code.google.com/p/pic32prog/
 # ----------
+upload.tool=pic32prog
+tools.pic32prog.cmd=pic32prog
+tools.pic32prog.cmd.windows=pic32prog.exe
+tools.pic32prog.path={runtime.hardware.path}/pic32/tools/bin
 
-#tools.pic32prog.cmd=pic32prog
-#tools.pic32prog.cmd.windows=pic32prog.exe
-#tools.pic32prog.path={runtime.ide.path}/hardware/pic32/tools
-
-#tools.pic32prog.upload.params.verbose=-i -d
-#tools.pic32prog.upload.params.quiet=
-#tools.pic32prog.upload.pattern="{path}/{cmd}" {upload.verbose} --port={serial.port.file} -U {upload.native_usb} -e -w -v -b "{build.path}/{build.project_name}.bin" -R
+tools.pic32prog.upload.params.verbose=
+tools.pic32prog.upload.params.quiet=
+tools.pic32prog.upload.pattern="{path}/{cmd}" {upload.verbose}  -d "{serial.port}"  -b {upload.speed}  "{build.path}/{build.project_name}.hex"
