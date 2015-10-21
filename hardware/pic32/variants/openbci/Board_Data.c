@@ -339,7 +339,6 @@ const uint8_t external_int_to_digital_pin_PGM[] = {
 /*		Include Files for Board Customization Functions			*/
 /* ------------------------------------------------------------ */
 #if	(OPT_BOARD_INIT != 0)
-#include <plib.h>
 #endif
 
 /* ------------------------------------------------------------ */

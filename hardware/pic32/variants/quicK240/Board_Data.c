@@ -402,9 +402,7 @@ const uint16_t digital_pin_to_timer_PGM[] = {
 /* ------------------------------------------------------------ */
 /*		Include Files for Board Customization Functions			*/
 /* ------------------------------------------------------------ */
-
 #if	(OPT_BOARD_INIT != 0)
-#include <plib.h>
 #endif
 
 /* ------------------------------------------------------------ */
