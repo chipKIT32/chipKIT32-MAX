@@ -13,8 +13,8 @@ cerebot_mx3ck.ldscript=chipKIT-application-32MX320F128.ld
 # Use a high -Gnum for devices that have less than 64K of data memory
 # For -G1024, objects 1024 bytes or smaller will be accessed by
 # gp-relative addressing
-cerebot_mx3ck.compiler.c.flags=-O2::-c::-mno-smart-io::-w::-ffunction-sections::-fdata-sections::-G1024::-g::-mdebugger::-Wcast-align::-fno-short-double
-cerebot_mx3ck.compiler.cpp.flags=-O2::-c::-mno-smart-io::-w::-fno-exceptions::-ffunction-sections::-fdata-sections::-G1024::-g::-mdebugger::-Wcast-align::-fno-short-double
+cerebot_mx3ck.compiler.c.flags=-O2 -c -mno-smart-io -w -ffunction-sections -fdata-sections -G1024 -g -mdebugger -Wcast-align -fno-short-double -fframe-base-loclist -ftoplevel-reorder
+cerebot_mx3ck.compiler.cpp.flags=-O2 -c -mno-smart-io -w -fno-exceptions -ffunction-sections -fdata-sections -G1024 -g -mdebugger -Wcast-align -fno-short-double -fframe-base-loclist -ftoplevel-reorder
 
 cerebot_mx3ck.upload.protocol=stk500v2
 cerebot_mx3ck.upload.maximum_size=126976
@@ -49,8 +49,8 @@ chipkit_mx3.ldscript=chipKIT-application-32MX320F128.ld
 # Use a high -Gnum for devices that have less than 64K of data memory
 # For -G1024, objects 1024 bytes or smaller will be accessed by
 # gp-relative addressing
-chipkit_mx3.compiler.c.flags=-O2::-c::-mno-smart-io::-w::-ffunction-sections::-fdata-sections::-G1024::-g::-mdebugger::-Wcast-align::-fno-short-double
-chipkit_mx3.compiler.cpp.flags=-O2::-c::-mno-smart-io::-w::-fno-exceptions::-ffunction-sections::-fdata-sections::-G1024::-g::-mdebugger::-Wcast-align::-fno-short-double
+chipkit_mx3.compiler.c.flags=-O2 -c -mno-smart-io -w -ffunction-sections -fdata-sections -G1024 -g -mdebugger -Wcast-align -fno-short-double -fframe-base-loclist -ftoplevel-reorder
+chipkit_mx3.compiler.cpp.flags=-O2 -c -mno-smart-io -w -fno-exceptions -ffunction-sections -fdata-sections -G1024 -g -mdebugger -Wcast-align -fno-short-double -fframe-base-loclist -ftoplevel-reorder
 
 chipkit_mx3.upload.protocol=stk500v2
 chipkit_mx3.upload.maximum_size=126976

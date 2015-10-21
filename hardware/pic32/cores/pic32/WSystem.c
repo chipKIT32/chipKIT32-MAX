@@ -1003,6 +1003,46 @@ void __attribute__((nomips16)) _initCoreTimer(uint32_t prd)
 }
 
 /* ------------------------------------------------------------ */
+/***	_disableSeconaryOscillator
+**
+**	Parameters: none
+**
+**	Return Value: none
+**
+**	Errors: none
+**
+**	Description: Several of our boards need to disable the seconday
+**               oscillator on _boart_init(). This function expands
+**               the macros from plib.h that previously did the 
+**               unlocking/locking of OSCCON writing.
+**
+*/
+void _disableSeconaryOscillator(void)
+{
+	//*	Turn Secondary oscillator off
+	//*	this is only needed on the mega board because the mega uses secondary
+	// ocsilator pins as general I/O
+	
+	unsigned int int_status;
+    
+    // Expanded mSYSTEMLock() and mSYSTEMUnLock() macros from plib.h
+    /// WARNING: According to the datasheet, this unlock sequence should also
+    /// turn off DMA before writing the SYSKEY values, and retore it at the
+    /// end. This is what the mSYSTEM macros did from plib.h. But since we
+    /// don't have that piece of plib.h implemneted in chipKIT yet, we're
+    /// going to leave that part out.
+    int_status = disableInterrupts();
+	SYSKEY = 0;
+    SYSKEY = 0xAA996655;
+    SYSKEY = 0x556699AA;
+
+	OSCCONCLR =	_OSCCON_SOSCEN_MASK;
+
+	SYSKEY = 0x33333333; 
+    restoreInterrupts(int_status);	
+}
+
+/* ------------------------------------------------------------ */
 /***	ProcName
 **
 **	Parameters:

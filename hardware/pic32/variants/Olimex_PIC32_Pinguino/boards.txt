@@ -8,6 +8,9 @@ Olimex_Pinguino32.board.define=-D_USE_USB_FOR_SERIAL_
 Olimex_Pinguino32.ccflags=ffff
 Olimex_Pinguino32.ldscript=chipKIT-application-32MX440F256.ld
 
+Olimex_Pinguino32.compiler.c.flags=-O2 -c -mno-smart-io -w -ffunction-sections -fdata-sections -G1024 -g -mdebugger -Wcast-align -fno-short-double -fframe-base-loclist -ftoplevel-reorder
+Olimex_Pinguino32.compiler.cpp.flags=-O2 -c -mno-smart-io -w -fno-exceptions -ffunction-sections -fdata-sections -G1024 -g -mdebugger -Wcast-align -fno-short-double -fframe-base-loclist -ftoplevel-reorder
+
 Olimex_Pinguino32.upload.protocol=stk500v2
 Olimex_Pinguino32.upload.maximum_size=258048
 Olimex_Pinguino32.upload.speed=115200
