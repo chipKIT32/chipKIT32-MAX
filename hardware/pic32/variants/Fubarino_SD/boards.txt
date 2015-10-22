@@ -12,6 +12,9 @@ fubarino_sd_seeed.upload.protocol=stk500v2
 fubarino_sd_seeed.upload.maximum_size=258048
 fubarino_sd_seeed.upload.speed=115200
 
+fubarino_sd_seeed.compiler.c.flags=-O2::-c::-mno-smart-io::-w::-ffunction-sections::-fdata-sections::-G1024::-g::-mdebugger::-Wcast-align::-fno-short-double::-fframe-base-loclist::-ftoplevel-reorder
+fubarino_sd_seeed.compiler.cpp.flags=-O2::-c::-mno-smart-io::-w::-fno-exceptions::-ffunction-sections::-fdata-sections::-G1024::-g::-mdebugger::-Wcast-align::-fno-short-double::-fframe-base-loclist::-ftoplevel-reorder
+
 fubarino_sd_seeed.bootloader.low_fuses=0xff
 fubarino_sd_seeed.bootloader.high_fuses=0xdd
 fubarino_sd_seeed.bootloader.extended_fuses=0x00

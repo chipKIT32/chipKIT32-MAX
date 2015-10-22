@@ -339,7 +339,6 @@ const uint8_t external_int_to_digital_pin_PGM[] = {
 /*		Include Files for Board Customization Functions			*/
 /* ------------------------------------------------------------ */
 #if	(OPT_BOARD_INIT != 0)
-#include <plib.h>
 #endif
 
 /* ------------------------------------------------------------ */
@@ -377,11 +376,8 @@ const uint8_t external_int_to_digital_pin_PGM[] = {
 #if	(OPT_BOARD_INIT != 0)
 
 void _board_init(void) {
-
-	//	Turn Secondary oscillator off as GPIO is needed
-	OSCCONCLR	=	_OSCCON_SOSCEN_MASK;
-	
-}
+    _disableSeconaryOscillator();
+}   
 
 #endif
 

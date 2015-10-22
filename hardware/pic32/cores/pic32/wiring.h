@@ -178,6 +178,7 @@ unsigned int executeSoftReset(uint32_t options);
 unsigned int attachCoreTimerService(uint32_t (*)(uint32_t count));
 unsigned int detachCoreTimerService(uint32_t (*)(uint32_t count));
 unsigned int callCoreTimerServiceNow(uint32_t (* service)(uint32_t));
+void _disableSeconaryOscillator(void);
 
 // if you are going to use setIntVector, then specify the interrupt routine as:
 // void __USER_ISR UserInterrupt(void) {}
