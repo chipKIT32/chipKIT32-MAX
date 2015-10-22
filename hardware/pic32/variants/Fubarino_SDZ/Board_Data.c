@@ -524,77 +524,51 @@ const uint8_t analog_pin_to_channel_PGM[] =
 ** to the register.
 */
 const uint8_t digital_pin_to_pps_out_PGM[] = {
-    _PPS_OUT(_PPS_RPF2R),       //  0   RF02    EBIRDY3/RPF2/SDA3/RF2 
-    _PPS_OUT(_PPS_RPF8R),       //  1   RF08    EBIRDY2/RPF8/SCL3/RF8
-    _PPS_OUT(_PPS_RPE8R),       //  2   RE08    AN25/AERXD0/RPE8/RE8
-    _PPS_OUT(_PPS_RPD0R),       //  3   RD00    EMDIO/AEMDIO/RPD0/RTCC/INT0/RD0
-    NOT_PPS_PIN,                //  4   RA03    EBIRDY1/SDA2/RA3
-    _PPS_OUT(_PPS_RPD1R),       //  5   RD01    RPD1/SCK1/RD1
-    _PPS_OUT(_PPS_RPD2R),       //  6   RD02    EBID14/ETXEN/RPD2/PMD14/RD2    
-    _PPS_OUT(_PPS_RPE9R),       //  7   RE09    AN26/AERXD1/RPE9/RE9  
-    _PPS_OUT(_PPS_RPA14R),      //  8   RA14    AETXCLK/RPA14/SCL1/RA14 
-    _PPS_OUT(_PPS_RPD3R),       //  9   RD03    EBID15/ETXCLK/RPD3/PMD15/RD3   
-    _PPS_OUT(_PPS_RPG9R),       //  10  RG09    EBIA2/AN11/C2INC/ERXCLK/EREFCLK/AERXCLK/AEREFCLK/RPG9/PMA2/RG9  
-    _PPS_OUT(_PPS_RPD11R),      //  11  RD11    EMDC/AEMDC/RPD11/RD11
-    _PPS_OUT(_PPS_RPF0R),       //  12  RF00    EBID11/ETXD1/RPF0/PMD11/RF0
-    _PPS_OUT(_PPS_RPG6R),       //  13  RG06    AN14/C1IND/ECOL/RPG6/SCK2/RG6                   (User LED1)
-    _PPS_OUT(_PPS_RPB5R),       //  14  RB05    AN45/C1INA/RPB5/RB5                             (AN0)   
-    _PPS_OUT(_PPS_RPB9R),       //  15  RB09    EBIA7/AN49/RPB9/PMA7/RB9                        (AIN1)  
-    _PPS_OUT(_PPS_RPC2R),       //  16  RC02    EBIA12/AN21/RPC2/PMA12/RC2                      (AIN2)  
-    _PPS_OUT(_PPS_RPB15R),      //  17  RB15    EBIA0/AN10/ERXD3/AETXD2/RPB15/OCFB/PMA0/RB15    (AIN3)  
-    _PPS_OUT(_PPS_RPG7R),       //  18  RG07    EBIA4/AN13/C1INC/ECRS/RPG7/SDA4/PMA4/RG7        (AIN4 / SDA)         
-    _PPS_OUT(_PPS_RPG8R),       //  19  RG08    EBIA3/AN12/C2IND/ERXDV/ECRSDV/AERXDV/AECRSDV/RPG8/SCL4/PMA3/RG8 (AIN5 / SCL)   
-    _PPS_OUT(_PPS_RPB3R),       //  20  RB03    AN3/C2INA/RPB3/RB3                              (AIN6)
-    _PPS_OUT(_PPS_RPB2R),       //  21  RB02    AN2/C2INB/RPB2/RB2                              (AIN7)  
-    NOT_PPS_PIN,                //  22  RB04    AN4/C1INB/RB4                                   (AIN8)  
-    _PPS_OUT(_PPS_RPB1R),       //  23  RB01    PGEC1/AN1/RPB1/RB1                              (AIN9)
-    _PPS_OUT(_PPS_RPB8R),       //  24  RB08    EBIA10/AN48/RPB8/PMA10/RB8                      (AIN10) 
-    _PPS_OUT(_PPS_RPB0R),       //  25  RB00    PGED1/AN0/RPB0/RB0                              (AIN11) 
-    NOT_PPS_PIN,                //  26  RE00    EBID0/PMD0/RE0
-    NOT_PPS_PIN,                //  27  RE01    EBID1/PMD1/RE1  
-    NOT_PPS_PIN,                //  28  RE02    EBID2/PMD2/RE2
-    _PPS_OUT(_PPS_RPE3R),       //  29  RE03    EBID3/RPE3/PMD3/RE3   
-    NOT_PPS_PIN,                //  30  RE04    EBID4/AN18/PMD4/RE4  
-    _PPS_OUT(_PPS_RPE5R),       //  31  RE05    EBID5/AN17/RPE5/PMD5/RE5
-    NOT_PPS_PIN,                //  32  RE06    EBID6/AN16/PMD6/RE6
-    NOT_PPS_PIN,                //  33  RE07    EBID7/AN15/PMD7/RE7 
-    _PPS_OUT(_PPS_RPD5R),       //  34  RD05    SQICS1/RPD5/RD5
-    _PPS_OUT(_PPS_RPC1R),       //  35  RC01    EBIA6/AN22/RPC1/PMA6/RC1
-    _PPS_OUT(_PPS_RPF1R),       //  36  RF01    EBID10/ETXD0/RPF1/PMD10/RF1
-    NOT_PPS_PIN,                //  37  RA02    EBICS0/SCL2/RA2
-    _PPS_OUT(_PPS_RPD12R),      //  38  RD12    EBID12/ETXD2/RPD12/PMD12/RD12
-    _PPS_OUT(_PPS_RPD14R),      //  39  RD14    AN32/AETXD0/RPD14/RD14
-    _PPS_OUT(_PPS_RPD15R),      //  40  RD15    AN33/AETXD1/RPD15/SCK6/RD15
-    NOT_PPS_PIN,                //  41  RA09    VREF-/CVREF-/AN27/AERXD2/RA9
-    NOT_PPS_PIN,                //  42  RA10    VREF+/CVREF+/AN28/AERXD3/RA10               (Pin A; VREF+)
-    _PPS_OUT(_PPS_RPD4R),       //  43  RD04    SQICS0/RPD4/RD4                             (User LED2)
-    NOT_PPS_PIN,                //  44  RB11    AN6/ERXERR/AETXERR/RB11                     (User LED3)
-    NOT_PPS_PIN,                //  45  RG15    AN23/AERXERR/RG15                           (User LED4)                       
-    NOT_PPS_PIN,                //  46  RA05    EBIA5/AN34/PMA5/RA5                         (BTN1)
-    NOT_PPS_PIN,                //  47  RA04    EBIA14/PMCS1/PMA14/RA4                      (BTN2)
-    NOT_PPS_PIN,                //  48  RB13    AN8/ERXD1/AECOL/RB13                        (AIN12 / POT)
-    NOT_PPS_PIN,                //  49  RB12    EBIA11/AN7/ERXD0/AECRS/PMA11/RB12           (AIN13 / Power Supply Monitor)
-    NOT_PPS_PIN,                //  50  RD13    EBID13/ETXD3/PMD13/RD13                     (5V Power Enable)
-    _PPS_OUT(_PPS_RPB14R),      //  51  RB14    EBIA1/AN9/ERXD2/AETXD3/RPB14/SCK3/PMA1/RB14 (SD SCK)
-    _PPS_OUT(_PPS_RPC3R),       //  52  RC03    EBIWE/AN20/RPC3/PMWR/RC3                    (SD SS)
-    _PPS_OUT(_PPS_RPB10R),      //  53  RB10    EBIA13/CVREFOUT/AN5/RPB10/PMA13/RB10        (SD SDI)
-    _PPS_OUT(_PPS_RPC4R),       //  54  RC04    EBIOE/AN19/RPC4/PMRD/RC4                    (SD SDO)
-    _PPS_OUT(_PPS_RPD10R),      //  55  RD10    RPD10/SCK4/RD10                             (MRF24 SCK)
-    _PPS_OUT(_PPS_RPD9R),       //  56  RD09    EBIA15/RPD9/PMCS2/PMA15/RD9                 (MRF24 SS)
-    _PPS_OUT(_PPS_RPF5R),       //  57  RF05    EBIA8/RPF5/SCL5/PMA8/RF5                    (MRF24 SDI)   
-    _PPS_OUT(_PPS_RPG0R),       //  58  RG00    EBID8/RPG0/PMD8/RG0                         (MRF24 SDO)  
-    _PPS_OUT(_PPS_RPA15R),      //  59  RA15    AETXEN/RPA15/SDA1/RA15                      (MRF24 INT)
-    _PPS_OUT(_PPS_RPG1R),       //  60  RG01    EBID9/ETXERR/RPG1/PMD9/RG1                  (MRF24 HIBERNATE)
-    _PPS_OUT(_PPS_RPF4R),       //  61  RF04    EBIA9/RPF4/SDA5/PMA9/RF4                    (MRF24 RESET)
-    NOT_PPS_PIN,                //  62  RA01    TCK/EBIA19/AN29/RA1                         (JTAG TCK)
-    NOT_PPS_PIN,                //  63  RA00    TMS/EBIA16/AN24/RA0                         (JTAG TMS)
-    _PPS_OUT(_PPS_RPF12R),      //  64  RF12    TDO/EBIA17/AN31/RPF12/RF12                  (JTAG TDO)
-    _PPS_OUT(_PPS_RPF13R),      //  65  RF13    TDI/EBIA18/AN30/RPF13/SCK5/RF13             (JTAG TDI)
-    NOT_PPS_PIN,                //  66  RA06    TRCLK/SQICLK/RA6                            (TRACE TRCLK)
-    NOT_PPS_PIN,                //  67  RG13    TRD0/SQID0/RG13                             (TRACE TRD0)
-    NOT_PPS_PIN,                //  68  RG12    TRD1/SQID1/RG12                             (TRACE TRD1)
-    NOT_PPS_PIN,                //  69  RG14    TRD2/SQID2/RG14                             (TRACE TRD2)
-    NOT_PPS_PIN,                //  70  RA07    TRD3/SQID3/RA7                              (TRACE TRD3)
+    _PPS_OUT(_PPS_RPB5R),       //  0   RB5    
+    _PPS_OUT(_PPS_RPD9R),       //  1   RD9    
+    _PPS_OUT(_PPS_RPD10R),      //  2   RD10   
+    _PPS_OUT(_PPS_RPD11R),      //  3   RD11   
+    _PPS_OUT(_PPS_RPD0R),       //  4   RD0    
+    _PPS_OUT(_PPS_RPC13R),      //  5   RC13   
+    _PPS_OUT(_PPS_RPC14R),      //  6   RC14   
+    _PPS_OUT(_PPS_RPD1R),       //  7   RD1    
+    _PPS_OUT(_PPS_RPD2R),       //  8   RD2    
+    _PPS_OUT(_PPS_RPD3R),       //  9   RD3    
+    _PPS_OUT(_PPS_RPD4R),       //  10  RD4    
+    _PPS_OUT(_PPS_RPD5R),       //  11  RD5    
+    NOT_PPS_PIN,                //  12  RC15   
+    _PPS_OUT(_PPS_RPF3R),       //  13  RF3    
+    _PPS_OUT(_PPS_RPF0R),       //  14  RF0    
+    _PPS_OUT(_PPS_RPF1R),       //  15  RF1    
+    NOT_PPS_PIN,                //  16  RE0    
+    NOT_PPS_PIN,                //  17  RE1    
+    NOT_PPS_PIN,                //  18  RE2    
+    _PPS_OUT(_PPS_RPE3R),       //  19  RE3    
+    NOT_PPS_PIN,                //  20  RE4    
+    _PPS_OUT(_PPS_RPE5R),       //  21  RE5    
+    NOT_PPS_PIN,                //  22  RE6    
+    NOT_PPS_PIN,                //  23  RE7    
+    _PPS_OUT(_PPS_RPG6R),       //  24  RG6    
+    _PPS_OUT(_PPS_RPG7R),       //  25  RG7    
+    _PPS_OUT(_PPS_RPG8R),       //  26  RG8    
+    _PPS_OUT(_PPS_RPG9R),       //  27  RG9    
+    _PPS_OUT(_PPS_RPF4R),       //  28  RF4    
+    _PPS_OUT(_PPS_RPF5R),       //  29  RF5    
+    NOT_PPS_PIN,                //  30  RB4    
+    _PPS_OUT(_PPS_RPB3R),       //  31  RB3    
+    _PPS_OUT(_PPS_RPB2R),       //  32  RB2    
+    _PPS_OUT(_PPS_RPB1R),       //  33  RB1    
+    _PPS_OUT(_PPS_RPB0R),       //  34  RB0    
+    _PPS_OUT(_PPS_RPB7R),       //  35  RB7    
+    _PPS_OUT(_PPS_RPB6R),       //  36  RB6    
+    _PPS_OUT(_PPS_RPB8R),       //  37  RB8    
+    _PPS_OUT(_PPS_RPB9R),       //  38  RB9    
+    _PPS_OUT(_PPS_RPB10R),      //  39  RB10   
+    NOT_PPS_PIN,                //  40  RB11   
+    NOT_PPS_PIN,                //  41  RB12   
+    NOT_PPS_PIN,                //  42  RB13   
+    NOT_PPS_PIN,                //  43  RB14   
+    _PPS_OUT(_PPS_RPB15R),      //  44  RB15   
  };
 
 /* ------------------------------------------------------------ */
@@ -609,77 +583,51 @@ const uint8_t digital_pin_to_pps_out_PGM[] = {
 ** access the table redefined as well.
 */
 const uint8_t digital_pin_to_pps_in_PGM[] = {
-    _PPS_IN(_PPS_RPF2),         //  0   RF02    EBIRDY3/RPF2/SDA3/RF2 
-    _PPS_IN(_PPS_RPF8),         //  1   RF08    EBIRDY2/RPF8/SCL3/RF8
-    _PPS_IN(_PPS_RPE8),         //  2   RE08    AN25/AERXD0/RPE8/RE8
-    _PPS_IN(_PPS_RPD0),         //  3   RD00    EMDIO/AEMDIO/RPD0/RTCC/INT0/RD0
-    NOT_PPS_PIN,                //  4   RA03    EBIRDY1/SDA2/RA3
-    _PPS_IN(_PPS_RPD1),         //  5   RD01    RPD1/SCK1/RD1
-    _PPS_IN(_PPS_RPD2),         //  6   RD02    EBID14/ETXEN/RPD2/PMD14/RD2    
-    _PPS_IN(_PPS_RPE9),         //  7   RE09    AN26/AERXD1/RPE9/RE9  
-    _PPS_IN(_PPS_RPA14),        //  8   RA14    AETXCLK/RPA14/SCL1/RA14 
-    _PPS_IN(_PPS_RPD3),         //  9   RD03    EBID15/ETXCLK/RPD3/PMD15/RD3   
-    _PPS_IN(_PPS_RPG9),         //  10  RG09    EBIA2/AN11/C2INC/ERXCLK/EREFCLK/AERXCLK/AEREFCLK/RPG9/PMA2/RG9  
-    _PPS_IN(_PPS_RPD11),        //  11  RD11    EMDC/AEMDC/RPD11/RD11
-    _PPS_IN(_PPS_RPF0),         //  12  RF00    EBID11/ETXD1/RPF0/PMD11/RF0
-    _PPS_IN(_PPS_RPG6),         //  13  RG06    AN14/C1IND/ECOL/RPG6/SCK2/RG6                   (User LED1)
-    _PPS_IN(_PPS_RPB5),         //  14  RB05    AN45/C1INA/RPB5/RB5                             (AN0)   
-    _PPS_IN(_PPS_RPB9),         //  15  RB09    EBIA7/AN49/RPB9/PMA7/RB9                        (AIN1)  
-    _PPS_IN(_PPS_RPC2),         //  16  RC02    EBIA12/AN21/RPC2/PMA12/RC2                      (AIN2)  
-    _PPS_IN(_PPS_RPB15),        //  17  RB15    EBIA0/AN10/ERXD3/AETXD2/RPB15/OCFB/PMA0/RB15    (AIN3)  
-    _PPS_IN(_PPS_RPG7),         //  18  RG07    EBIA4/AN13/C1INC/ECRS/RPG7/SDA4/PMA4/RG7        (AIN4 / SDA)         
-    _PPS_IN(_PPS_RPG8),         //  19  RG08    EBIA3/AN12/C2IND/ERXDV/ECRSDV/AERXDV/AECRSDV/RPG8/SCL4/PMA3/RG8 (AIN5 / SCL)   
-    _PPS_IN(_PPS_RPB3),         //  20  RB03    AN3/C2INA/RPB3/RB3                              (AIN6)
-    _PPS_IN(_PPS_RPB2),         //  21  RB02    AN2/C2INB/RPB2/RB2                              (AIN7)  
-    NOT_PPS_PIN,                //  22  RB04    AN4/C1INB/RB4                                   (AIN8)  
-    _PPS_IN(_PPS_RPB1),         //  23  RB01    PGEC1/AN1/RPB1/RB1                              (AIN9)
-    _PPS_IN(_PPS_RPB8),         //  24  RB08    EBIA10/AN48/RPB8/PMA10/RB8                      (AIN10) 
-    _PPS_IN(_PPS_RPB0),         //  25  RB00    PGED1/AN0/RPB0/RB0                              (AIN11) 
-    NOT_PPS_PIN,                //  26  RE00    EBID0/PMD0/RE0
-    NOT_PPS_PIN,                //  27  RE01    EBID1/PMD1/RE1  
-    NOT_PPS_PIN,                //  28  RE02    EBID2/PMD2/RE2
-    _PPS_IN(_PPS_RPE3),         //  29  RE03    EBID3/RPE3/PMD3/RE3   
-    NOT_PPS_PIN,                //  30  RE04    EBID4/AN18/PMD4/RE4  
-    _PPS_IN(_PPS_RPE5),         //  31  RE05    EBID5/AN17/RPE5/PMD5/RE5
-    NOT_PPS_PIN,                //  32  RE06    EBID6/AN16/PMD6/RE6
-    NOT_PPS_PIN,                //  33  RE07    EBID7/AN15/PMD7/RE7 
-    _PPS_IN(_PPS_RPD5),         //  34  RD05    SQICS1/RPD5/RD5
-    _PPS_IN(_PPS_RPC1),         //  35  RC01    EBIA6/AN22/RPC1/PMA6/RC1
-    _PPS_IN(_PPS_RPF1),         //  36  RF01    EBID10/ETXD0/RPF1/PMD10/RF1
-    NOT_PPS_PIN,                //  37  RA02    EBICS0/SCL2/RA2
-    _PPS_IN(_PPS_RPD12),        //  38  RD12    EBID12/ETXD2/RPD12/PMD12/RD12
-    _PPS_IN(_PPS_RPD14),        //  39  RD14    AN32/AETXD0/RPD14/RD14
-    _PPS_IN(_PPS_RPD15),        //  40  RD15    AN33/AETXD1/RPD15/SCK6/RD15
-    NOT_PPS_PIN,                //  41  RA09    VREF-/CVREF-/AN27/AERXD2/RA9
-    NOT_PPS_PIN,                //  42  RA10    VREF+/CVREF+/AN28/AERXD3/RA10               (Pin A; VREF+)
-    _PPS_IN(_PPS_RPD4),         //  43  RD04    SQICS0/RPD4/RD4                             (User LED2)
-    NOT_PPS_PIN,                //  44  RB11    AN6/ERXERR/AETXERR/RB11                     (User LED3)
-    NOT_PPS_PIN,                //  45  RG15    AN23/AERXERR/RG15                           (User LED4)                       
-    NOT_PPS_PIN,                //  46  RA05    EBIA5/AN34/PMA5/RA5                         (BTN1)
-    NOT_PPS_PIN,                //  47  RA04    EBIA14/PMCS1/PMA14/RA4                      (BTN2)
-    NOT_PPS_PIN,                //  48  RB13    AN8/ERXD1/AECOL/RB13                        (AIN12 / POT)
-    NOT_PPS_PIN,                //  49  RB12    EBIA11/AN7/ERXD0/AECRS/PMA11/RB12           (AIN13 / Power Supply Monitor)
-    NOT_PPS_PIN,                //  50  RD13    EBID13/ETXD3/PMD13/RD13                     (5V Power Enable)
-    _PPS_IN(_PPS_RPB14),        //  51  RB14    EBIA1/AN9/ERXD2/AETXD3/RPB14/SCK3/PMA1/RB14 (SD SCK)
-    _PPS_IN(_PPS_RPC3),         //  52  RC03    EBIWE/AN20/RPC3/PMWR/RC3                    (SD SS)
-    _PPS_IN(_PPS_RPB10),        //  53  RB10    EBIA13/CVREFIN/AN5/RPB10/PMA13/RB10        (SD SDI)
-    _PPS_IN(_PPS_RPC4),         //  54  RC04    EBIOE/AN19/RPC4/PMRD/RC4                    (SD SDO)
-    _PPS_IN(_PPS_RPD10),        //  55  RD10    RPD10/SCK4/RD10                             (MRF24 SCK)
-    _PPS_IN(_PPS_RPD9),         //  56  RD09    EBIA15/RPD9/PMCS2/PMA15/RD9                 (MRF24 SS)
-    _PPS_IN(_PPS_RPF5),         //  57  RF05    EBIA8/RPF5/SCL5/PMA8/RF5                    (MRF24 SDI)   
-    _PPS_IN(_PPS_RPG0),         //  58  RG00    EBID8/RPG0/PMD8/RG0                         (MRF24 SDO)  
-    _PPS_IN(_PPS_RPA15),        //  59  RA15    AETXEN/RPA15/SDA1/RA15                      (MRF24 INT)
-    _PPS_IN(_PPS_RPG1),         //  60  RG01    EBID9/ETXERR/RPG1/PMD9/RG1                  (MRF24 HIBERNATE)
-    _PPS_IN(_PPS_RPF4),         //  61  RF04    EBIA9/RPF4/SDA5/PMA9/RF4                    (MRF24 RESET)
-    NOT_PPS_PIN,                //  62  RA01    TCK/EBIA19/AN29/RA1                         (JTAG TCK)
-    NOT_PPS_PIN,                //  63  RA00    TMS/EBIA16/AN24/RA0                         (JTAG TMS)
-    _PPS_IN(_PPS_RPF12),        //  64  RF12    TDO/EBIA17/AN31/RPF12/RF12                  (JTAG TDO)
-    _PPS_IN(_PPS_RPF13),        //  65  RF13    TDI/EBIA18/AN30/RPF13/SCK5/RF13             (JTAG TDI)
-    NOT_PPS_PIN,                //  66  RA06    TRCLK/SQICLK/RA6                            (TRACE TRCLK)
-    NOT_PPS_PIN,                //  67  RG13    TRD0/SQID0/RG13                             (TRACE TRD0)
-    NOT_PPS_PIN,                //  68  RG12    TRD1/SQID1/RG12                             (TRACE TRD1)
-    NOT_PPS_PIN,                //  69  RG14    TRD2/SQID2/RG14                             (TRACE TRD2)
-    NOT_PPS_PIN,                //  70  RA07    TRD3/SQID3/RA7                              (TRACE TRD3)
+    _PPS_IN(_PPS_RPB5),       //  0   RB5    
+    _PPS_IN(_PPS_RPD9),       //  1   RD9    
+    _PPS_IN(_PPS_RPD10),      //  2   RD10   
+    _PPS_IN(_PPS_RPD11),      //  3   RD11   
+    _PPS_IN(_PPS_RPD0),       //  4   RD0    
+    _PPS_IN(_PPS_RPC13),      //  5   RC13   
+    _PPS_IN(_PPS_RPC14),      //  6   RC14   
+    _PPS_IN(_PPS_RPD1),       //  7   RD1    
+    _PPS_IN(_PPS_RPD2),       //  8   RD2    
+    _PPS_IN(_PPS_RPD3),       //  9   RD3    
+    _PPS_IN(_PPS_RPD4),       //  10  RD4    
+    _PPS_IN(_PPS_RPD5),       //  11  RD5    
+    NOT_PPS_PIN,              //  12  RC15   
+    _PPS_IN(_PPS_RPF3),       //  13  RF3    
+    _PPS_IN(_PPS_RPF0),       //  14  RF0    
+    _PPS_IN(_PPS_RPF1),       //  15  RF1    
+    NOT_PPS_PIN,              //  16  RE0    
+    NOT_PPS_PIN,              //  17  RE1    
+    NOT_PPS_PIN,              //  18  RE2    
+    _PPS_IN(_PPS_RPE3),       //  19  RE3    
+    NOT_PPS_PIN,              //  20  RE4    
+    _PPS_IN(_PPS_RPE5),       //  21  RE5    
+    NOT_PPS_PIN,              //  22  RE6    
+    NOT_PPS_PIN,              //  23  RE7    
+    _PPS_IN(_PPS_RPG6),       //  24  RG6    
+    _PPS_IN(_PPS_RPG7),       //  25  RG7    
+    _PPS_IN(_PPS_RPG8),       //  26  RG8    
+    _PPS_IN(_PPS_RPG9),       //  27  RG9    
+    _PPS_IN(_PPS_RPF4),       //  28  RF4    
+    _PPS_IN(_PPS_RPF5),       //  29  RF5    
+    NOT_PPS_PIN,              //  30  RB4    
+    _PPS_IN(_PPS_RPB3),       //  31  RB3    
+    _PPS_IN(_PPS_RPB2),       //  32  RB2    
+    _PPS_IN(_PPS_RPB1),       //  33  RB1    
+    _PPS_IN(_PPS_RPB0),       //  34  RB0    
+    _PPS_IN(_PPS_RPB7),       //  35  RB7    
+    _PPS_IN(_PPS_RPB6),       //  36  RB6    
+    _PPS_IN(_PPS_RPB8),       //  37  RB8    
+    _PPS_IN(_PPS_RPB9),       //  38  RB9    
+    _PPS_IN(_PPS_RPB10),      //  39  RB10   
+    NOT_PPS_PIN,              //  40  RB11   
+    NOT_PPS_PIN,              //  41  RB12   
+    NOT_PPS_PIN,              //  42  RB13   
+    NOT_PPS_PIN,             //  43  RB14   
+    _PPS_IN(_PPS_RPB15),      //  44  RB15   
 };
 
 /* ------------------------------------------------------------ */

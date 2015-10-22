@@ -332,31 +332,33 @@ extern const uint8_t	digital_pin_to_pps_in_PGM[];
 /* ------------------------------------------------------------ */
 
 /* Serial port 0 uses UART1
+ * TX on pin 29 (RF5), RX on pin 28 (RF4)
 */
-#define	_SER0_BASE      _UART4_BASE_ADDRESS
-#define	_SER0_IRQ       _UART4_FAULT_VECTOR
-#define	_SER0_VECTOR    _UART4_FAULT_VECTOR
+#define	_SER0_BASE      ((uint32_t) &U1MODE)
+#define	_SER0_IRQ       _UART1_FAULT_VECTOR
+#define	_SER0_VECTOR    _UART1_FAULT_VECTOR
 #define	_SER0_IPL_ISR   IPL2SRS
 #define	_SER0_IPL       2
 #define	_SER0_SPL       0
-#define _SER0_TX_OUT    PPS_OUT_U4TX     // (RPF8R = 0b0010)   RF8 -> U4TX   
-#define _SER0_TX_PIN    1                // REBIRDY2/RPF8/SCL3/RF8   
-#define _SER0_RX_IN     PPS_IN_U4RX      // (U4RXR = 0b1011)    RPF2 -> U4RX
-#define _SER0_RX_PIN    0                // EBIRDY3/RPF2/SDA3/RF2 
+#define _SER0_TX_OUT    PPS_OUT_U1TX
+#define _SER0_TX_PIN    29          
+#define _SER0_RX_IN     PPS_IN_U1RX 
+#define _SER0_RX_PIN    28          
+
 
 /* Serial port 1 uses UART1; this goes to pins 39&40
+ /// TODO: Update to match Fubarino SD
 */
-#define	_SER1_BASE		_UART1_BASE_ADDRESS
-#define	_SER1_IRQ		_UART1_FAULT_VECTOR
-#define	_SER1_VECTOR	_UART1_FAULT_VECTOR
+#define	_SER1_BASE		((uint32_t) &U2MODE)
+#define	_SER1_IRQ		_UART2_FAULT_VECTOR
+#define	_SER1_VECTOR	_UART2_FAULT_VECTOR
 #define	_SER1_IPL_ISR	IPL2SRS
 #define	_SER1_IPL		2
 #define	_SER1_SPL		0
-#define _SER1_TX_OUT    PPS_OUT_U1TX     // (RPF8R = 0b0010)   RF8 -> U4TX   
-#define _SER1_TX_PIN    40                // REBIRDY2/RPF8/SCL3/RF8   
-#define _SER1_RX_IN     PPS_IN_U1RX      // (U4RXR = 0b1011)    RPF2 -> U4RX
-#define _SER1_RX_PIN    39                // EBIRDY3/RPF2/SDA3/RF2 
-
+#define _SER1_TX_OUT    PPS_OUT_U2TX
+#define _SER1_TX_PIN    8          
+#define _SER1_RX_IN     PPS_IN_U2RX 
+#define _SER1_RX_PIN    9          
 
 /* ------------------------------------------------------------ */
 /*					SPI Port Declarations						*/
@@ -483,7 +485,6 @@ extern const uint8_t	digital_pin_to_pps_in_PGM[];
 /*  On MZ parts, ports are defined                              */
 /* ------------------------------------------------------------ */
 
-#define _PORTA
 #define _PORTB
 #define _PORTC
 #define _PORTD
