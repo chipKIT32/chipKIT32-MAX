@@ -9,8 +9,8 @@ cerebot_mx4ck.board.define=
 cerebot_mx4ck.ccflags=ffff
 cerebot_mx4ck.ldscript=chipKIT-application-32MX460F512.ld
 # end of new items
-cerebot_mx4ck.compiler.c.flags=-O2 -c -mno-smart-io -w -ffunction-sections -fdata-sections -G1024 -g -mdebugger -Wcast-align -fno-short-double -fframe-base-loclist -ftoplevel-reorder
-cerebot_mx4ck.compiler.cpp.flags=-O2 -c -mno-smart-io -w -fno-exceptions -ffunction-sections -fdata-sections -G1024 -g -mdebugger -Wcast-align -fno-short-double -fframe-base-loclist -ftoplevel-reorder
+cerebot_mx4ck.compiler.c.flags=-O2::-c::-mno-smart-io::-w::-ffunction-sections::-fdata-sections::-G1024::-g::-mdebugger::-Wcast-align::-fno-short-double::-fframe-base-loclist::-ftoplevel-reorder
+cerebot_mx4ck.compiler.cpp.flags=-O2::-c::-mno-smart-io::-w::-fno-exceptions::-ffunction-sections::-fdata-sections::-G1024::-g::-mdebugger::-Wcast-align::-fno-short-double::-fframe-base-loclist::-ftoplevel-reorder
 
 cerebot_mx4ck.upload.protocol=stk500v2
 cerebot_mx4ck.upload.maximum_size=520192
@@ -41,8 +41,8 @@ chipkit_pro_mx4.board.define=
 chipkit_pro_mx4.ccflags=ffff
 chipkit_pro_mx4.ldscript=chipKIT-application-32MX460F512.ld
 # end of new items
-chipkit_pro_mx4.compiler.c.flags=-O2 -c -mno-smart-io -w -ffunction-sections -fdata-sections -G1024 -g -mdebugger -Wcast-align -fno-short-double -fframe-base-loclist -ftoplevel-reorder
-chipkit_pro_mx4.compiler.cpp.flags=-O2 -c -mno-smart-io -w -fno-exceptions -ffunction-sections -fdata-sections -G1024 -g -mdebugger -Wcast-align -fno-short-double -fframe-base-loclist -ftoplevel-reorder
+chipkit_pro_mx4.compiler.c.flags=-O2::-c::-mno-smart-io::-w::-ffunction-sections::-fdata-sections::-G1024::-g::-mdebugger::-Wcast-align::-fno-short-double::-fframe-base-loclist::-ftoplevel-reorder
+chipkit_pro_mx4.compiler.cpp.flags=-O2::-c::-mno-smart-io::-w::-fno-exceptions::-ffunction-sections::-fdata-sections::-G1024::-g::-mdebugger::-Wcast-align::-fno-short-double::-fframe-base-loclist::-ftoplevel-reorder
 
 chipkit_pro_mx4.upload.protocol=stk500v2
 chipkit_pro_mx4.upload.maximum_size=520192

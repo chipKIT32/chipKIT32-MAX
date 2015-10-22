@@ -10,8 +10,8 @@ cui32.ccflags=ffff
 cui32.ldscript=chipKIT-application-32MX440F512.ld
 # end of new items
 
-cui32.compiler.c.flags=-O2 -c -mno-smart-io -w -ffunction-sections -fdata-sections -G1024 -g -mdebugger -Wcast-align -fno-short-double -fframe-base-loclist -ftoplevel-reorder
-cui32.compiler.cpp.flags=-O2 -c -mno-smart-io -w -fno-exceptions -ffunction-sections -fdata-sections -G1024 -g -mdebugger -Wcast-align -fno-short-double -fframe-base-loclist -ftoplevel-reorder
+cui32.compiler.c.flags=-O2::-c::-mno-smart-io::-w::-ffunction-sections::-fdata-sections::-G1024::-g::-mdebugger::-Wcast-align::-fno-short-double::-fframe-base-loclist::-ftoplevel-reorder
+cui32.compiler.cpp.flags=-O2::-c::-mno-smart-io::-w::-fno-exceptions::-ffunction-sections::-fdata-sections::-G1024::-g::-mdebugger::-Wcast-align::-fno-short-double::-fframe-base-loclist::-ftoplevel-reorder
 
 cui32.upload.protocol=stk500v2
 cui32.upload.maximum_size=520192
@@ -44,8 +44,8 @@ usbono_pic32.ldscript=chipKIT-application-32MX440F512.ld
 #chipKIT-UNO32-application-32MX320F128L.ld
 # end of new items
 
-usbono_pic32.compiler.c.flags=-O2 -c -mno-smart-io -w -ffunction-sections -fdata-sections -G1024 -g -mdebugger -Wcast-align -fno-short-double -fframe-base-loclist -ftoplevel-reorder
-usbono_pic32.compiler.cpp.flags=-O2 -c -mno-smart-io -w -fno-exceptions -ffunction-sections -fdata-sections -G1024 -g -mdebugger -Wcast-align -fno-short-double -fframe-base-loclist -ftoplevel-reorder
+usbono_pic32.compiler.c.flags=-O2::-c::-mno-smart-io::-w::-ffunction-sections::-fdata-sections::-G1024::-g::-mdebugger::-Wcast-align::-fno-short-double::-fframe-base-loclist::-ftoplevel-reorder
+usbono_pic32.compiler.cpp.flags=-O2::-c::-mno-smart-io::-w::-fno-exceptions::-ffunction-sections::-fdata-sections::-G1024::-g::-mdebugger::-Wcast-align::-fno-short-double::-fframe-base-loclist::-ftoplevel-reorder
 
 usbono_pic32.upload.protocol=stk500v2
 usbono_pic32.upload.maximum_size=520192

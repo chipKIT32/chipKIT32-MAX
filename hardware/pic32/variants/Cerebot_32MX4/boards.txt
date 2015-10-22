@@ -9,8 +9,8 @@ cerebot32mx4.board.define=
 cerebot32mx4.ccflags=ffff
 cerebot32mx4.ldscript=chipKIT-application-32MX460F512.ld
 # end of new items
-cerebot32mx4.compiler.c.flags=-O2 -c -mno-smart-io -w -ffunction-sections -fdata-sections -G1024 -g -mdebugger -Wcast-align -fno-short-double -fframe-base-loclist -ftoplevel-reorder
-cerebot32mx4.compiler.cpp.flags=-O2 -c -mno-smart-io -w -fno-exceptions -ffunction-sections -fdata-sections -G1024 -g -mdebugger -Wcast-align -fno-short-double -fframe-base-loclist -ftoplevel-reorder
+cerebot32mx4.compiler.c.flags=-O2::-c::-mno-smart-io::-w::-ffunction-sections::-fdata-sections::-G1024::-g::-mdebugger::-Wcast-align::-fno-short-double::-fframe-base-loclist::-ftoplevel-reorder
+cerebot32mx4.compiler.cpp.flags=-O2::-c::-mno-smart-io::-w::-fno-exceptions::-ffunction-sections::-fdata-sections::-G1024::-g::-mdebugger::-Wcast-align::-fno-short-double::-fframe-base-loclist::-ftoplevel-reorder
 
 cerebot32mx4.upload.protocol=stk500v2
 cerebot32mx4.upload.maximum_size=520192
