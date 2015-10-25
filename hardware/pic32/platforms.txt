@@ -2,7 +2,7 @@
 pic32.recipe.c.o.pattern={0}{1}::{2}::{3}{4}::-DF_CPU={5}::-D{6}::-D{7}::{8}::{9}::{10}::-o::{11}
 pic32.recipe.cpp.o.pattern={0}{1}::{2}::{3}{4}::-DF_CPU={5}::-D{6}::-D{7}::{8}::{9}::{10}::-o::{11}
 pic32.recipe.ar.pattern={0}{1}::{2}::{3}{4}::{5}
-pic32.recipe.c.combine.pattern={0}{1}::{2}::{3}{4}::-o::{5}{6}.elf::{7}::{8}::{9}::-L{10}::-lm::-T::{11}/{12}::-T{13}/{14}
+pic32.recipe.c.combine.pattern={0}{1}::{2}::{3}{4}::-o::{5}{6}.elf::{11}\cpp-startup.S::{7}::{8}::{9}::-L{10}::-lm::-T::{11}/{12}::-T{13}/{14}
 pic32.recipe.objcopy.eep.pattern={0}{1}::{2}::{3}.elf::{4}.eep
 pic32.recipe.objcopy.hex.pattern={0}{1}::{2}::{3}.elf
 

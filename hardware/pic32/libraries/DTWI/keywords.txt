@@ -1,0 +1,55 @@
+#######################################
+# Syntax Coloring Map For DTWI library
+#######################################
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+beginMaster	        KEYWORD2
+endMaster	        KEYWORD2
+startMasterWrite	KEYWORD2
+startMasterRead	    KEYWORD2
+stopMaster	        KEYWORD2
+beginSlave	        KEYWORD2
+endSlave	        KEYWORD2
+read	            KEYWORD2
+discard	            KEYWORD2
+available	        KEYWORD2
+write	            KEYWORD2
+abort	            KEYWORD2
+transmitting	    KEYWORD2
+DTWI	            KEYWORD2
+stopMaster	        KEYWORD2
+stopMaster	        KEYWORD2
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+I2C_STATUS_T	    KEYWORD1
+I2C_FREQ            KEYWORD1
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+addrGenCall         LITERAL1
+addrStartByte       LITERAL1
+addrCBUS0           LITERAL1
+addrCBUS1           LITERAL1
+addrDiffBusFormat0  LITERAL1
+addrDiffBusFormat1  LITERAL1
+addrResrv0          LITERAL1
+addrResrv1          LITERAL1
+SLAVEADDR           LITERAL1
+SESSION_ID          LITERAL1
+GEN_CALL            LITERAL1
+BUS_IN_USE          LITERAL1
+MY_BUS              LITERAL1
+MASTER_MODE         LITERAL1
+SLAVE_MODE          LITERAL1
+BUS_ERROR           LITERAL1
+NAKING              LITERAL1
+WRITE               LITERAL1
+READ                LITERAL1
+recvInfinite        LITERAL1
