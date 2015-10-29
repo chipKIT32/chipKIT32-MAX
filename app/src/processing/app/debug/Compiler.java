@@ -666,6 +666,16 @@ public class Compiler implements MessageConsumer {
 		includePaths.add(corePath); //include core path only
 	        if (variantPath != null) includePaths.add(variantPath);
 
+		if (variantPath != null) {
+			objectFiles.addAll(compileFiles(avrBasePath, buildPath, includePaths,
+						findFilesInPath(variantPath, "S", false),
+						findFilesInPath(variantPath, "c", false),
+						findFilesInPath(variantPath, "cpp", false),
+						systemFolder
+						));																		
+		}
+
+
 		String baseCommandString = configPreferences.get("recipe.ar.pattern");
 		String commandString = "";
 		MessageFormat compileFormat = new MessageFormat(baseCommandString);	
