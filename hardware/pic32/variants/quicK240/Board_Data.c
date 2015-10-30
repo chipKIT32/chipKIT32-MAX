@@ -1,6 +1,6 @@
 /************************************************************************/
 /*																		*/
-/*	Board_Data.c -- Board Customization Data for Digilent chipKIT Max32	*/
+/*	Board_Data.c -- Board Customization Data for PONTECH Quick240	*/
 /*																		*/
 /************************************************************************/
 /*	Author: Gene Apperson												*/
@@ -9,8 +9,8 @@
 /*  File Description:													*/
 /*																		*/
 /* This file contains the board specific declartions and data structure	*/
-/* to customize the chipKIT MPIDE for use with the Digilent chipKIT		*/
-/* Max32 board.															*/
+/* to customize the chipKIT MPIDE for use with the PONTECH Quick240		*/
+/* board.															*/
 /*																		*/
 /* This code is based on earlier work:									*/
 /*		Copyright (c) 2010, 2011 by Mark Sproul							*/

@@ -1,6 +1,6 @@
 /************************************************************************/
 /*																		*/
-/*	Board_Defs.h --	Board Customization for Digilent chipKIT Max32		*/
+/*	Board_Defs.h --	Board Customization for PONTECH Quick240		*/
 /*																		*/
 /************************************************************************/
 /*	Author: Gene Apperson												*/
@@ -9,8 +9,8 @@
 /*  File Description:													*/
 /*																		*/
 /* This file contains the board specific declartions and data structure	*/
-/* to customize the chipKIT MPIDE for use with the Digilent chipKIT		*/
-/* Max32 board.															*/
+/* to customize the chipKIT MPIDE for use with the PONTECH Quick240		*/
+/* board.															*/
 /*																		*/
 /* This code is based on earlier work:									*/
 /*		Copyright (c) 2010, 2011 by Mark Sproul							*/
@@ -54,7 +54,7 @@
 ** refer to periperhals on the board generically.
 */
 
-#define	_BOARD_NAME_	"chipKIT Max32"
+#define	_BOARD_NAME_	"PONTECH Quick240"
 
 #define VIRTUAL_PROGRAM_BUTTON_TRIS TRISGbits.TRISG15
 #define VIRTUAL_PROGRAM_BUTTON LATGbits.LATG15
