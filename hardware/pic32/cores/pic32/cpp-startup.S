@@ -1,4 +1,8 @@
 /*********************************************************************
+ *
+ *                  C Runtime Startup
+ *
+ *********************************************************************
  * Software License Agreement
  *
  * This software is developed by Microchip Technology Inc. and its
@@ -46,15 +50,6 @@
 # ifndef PIC32_SRS_SET_COUNT
 #  define PIC32_SRS_SET_COUNT 8
 # endif
-# ifndef INIT_L1_CACHE
-#  define INIT_L1_CACHE 1
-# endif
-# ifndef INIT_MMU_MZ_FIXED
-#  define INIT_MMU_MZ_FIXED 1
-# endif
-# ifndef INIT_DSPR2
-#  define INIT_DSPR2 1
-# endif
 # ifndef INIT_SSX
 #  define INIT_SSX 1
 # endif
@@ -69,18 +64,65 @@
 #if defined(USE_OLD_DOTSECTION)
         .section .reset,"ax",@progbits
 #else
-        .section .reset,code
+        .section .reset,code,keep
 #endif
-
+        .align 2
         .set noreorder
         .ent _reset
+############################
+# Begin ISA switching code #
+############################
+
+#if defined (__mips_micromips)
+        .set micromips
+#endif
+
+#if (defined(__PIC32_HAS_MICROMIPS)) && (defined(__PIC32_HAS_MIPS32R2))
 _reset:
-        la      k0, _startup
-        jr      k0                      # Jump to startup code
+        .word 0x10000003     /* MIPS32:    branch forward 0x10 bytes from here  */
+                             /* MicroMIPS: ADDI32 $0, $0, 0x0007 (nop)          */
+                             /* DO NOT change the relative branch               */
+
+        .word 0x00000000     /* NOP */
+__reset_micromips_isa:
+        .set    micromips
+        jal     _startup
         nop
-  
+
+        .align 2
+        /* Device not in proper ISA mode */
+        .set nomicromips
+__reset_switch_isa:
+        jal _startup
+        nop
+
+#else
+
+_reset:
+        jal _startup
+        nop
+
+#endif  /* __PIC32_HAS_MICROMIPS */
+
+        .align 2
         .end _reset
         .globl _reset
+        .size _reset, .-_reset
+
+        .section .reset.startup,code,keep
+        .align 2
+        .set noreorder
+
+#if defined (__mips_micromips)
+        .set micromips
+#else
+        .set nomicromips
+#endif
+
+############################
+# End ISA switching code   #
+############################
+
 
         ##################################################################
         # Startup code
@@ -90,7 +132,7 @@ _reset:
 #else
         .section .startup,code
 #endif
-
+        .align 2
         .set noreorder
         .ent _startup
 _startup:
@@ -176,6 +218,17 @@ _no_nmi:
         la      t0,_on_reset
         jalr    t0
         nop
+
+
+#if defined(__PIC32_HAS_L1_CACHE)
+        ##################################################################
+        # Initialize L1 cache register
+        ##################################################################
+        .extern __pic32_init_cache
+        la      t0,__pic32_init_cache
+        jalr    t0
+        nop
+#endif
 
         ##################################################################
         # Clear uninitialized data sections
@@ -355,9 +408,16 @@ _ramfunc_done:
         mtc0    t1,_CP0_EBASE
 
         ##################################################################
-        # Initialize IntCtl register
+        # Initialize IntCtl/INTCON.VS register with _vector_spacing
         ##################################################################
         la      t1,_vector_spacing
+#if defined(INIT_INTCONVS)
+        la      t0, INTCON
+        lw      t2, 0(t0)
+        li      t2, 0
+        ins     t2, t1, 16,7
+        sw      t2, 0(t0)
+#endif
         li      t2,0                    # Clear t2 and
         ins     t2,t1,5,5               # shift value to VS field
         mtc0    t2,_CP0_INTCTL
@@ -386,23 +446,37 @@ _ramfunc_done:
         # - Exception level is normal <EXL = 0>
         # - Interrupts are disabled <IE = 0>
         # - DSPr2 ASE is enabled for devices that support it <MX = 1>
+        # - FPU64 is enabled for devices that support it <CU1=1> & <FR=1>
         ##################################################################
         mfc0    t0,_CP0_CONFIG
         ext     t1,t0,22,1              # Extract UDI from Config register
         sll     t1,t1,17                # Move UDI to Status.CEE location
         mfc0    t0,_CP0_STATUS
         and     t0,t0,0x00580000        # Preserve SR, NMI, and BEV
-#if defined(INIT_DSPR2)
+#if defined(__PIC32_HAS_DSPR2)
         li      t2, 0x01000000          # Set the Status.MX bit to enable DSP
         or      t0,t2,t0
 #endif
+#if defined(__PIC32_HAS_FPU64)
+        li      t2, 0x24000000          # Set the Status.CU1 and Status.FR bits to
+        or      t0,t2,t0                # enable the FPU in FR64 mode
+#endif
+
         or      t0,t1,t0                # Include Status.CEE (from UDI)
         mtc0    t0,_CP0_STATUS
 
+#if defined(__PIC32_HAS_FPU64)
+                                        # FPU Control and Status
+        li      t2,0x1000000            # FCSR: RM=0, FS=1, FO=0, FN=0
+                                        # Enables: 0b00000 E=1, V=0, Z=0, O=0, U=0, I=0
+        ctc1    t2, $31                 # High perf on denormal operands & tiny results
+#endif
+        ehb
+	
         ##################################################################
         # Initialize CONFIG register
         ##################################################################
-#if defined(INIT_L1_CACHE)
+#if defined(__PIC32_HAS_L1_CACHE)
 	mfc0    t0,_CP0_CONFIG
 	li      t1,0x00000003
 	or      t0,t1,t0
@@ -446,9 +520,9 @@ _ramfunc_done:
 #if defined(USE_OLD_DOTSECTION)
         .section .bev_handler,"ax",@progbits
 #else
-        .section .bev_handler,code
+        .section .bev_handler,code,keep
 #endif
-
+        .align 2
         .set noreorder
         .ent _bev_exception
 _bev_exception:
@@ -479,7 +553,26 @@ _gen_exception:
         .end _gen_exception
 
 
-        .text
+
+#if defined(__PIC32_HAS_L1_CACHE)
+        ##################################################################
+        # Cache-Error Exception Vector Handler
+        # Jumps to _cache_err_exception_context
+        ##################################################################
+        .section .cache_err_vector,code,keep
+        .align 2
+        .set noreorder
+        .ent _cache_err_vector
+_cache_err_vector:
+        la      k0,_cache_err_exception_context
+        jr      k0
+        nop
+
+        .end _cache_err_vector
+#endif
+
+        .section .text.main_entry,code,keep
+        .align 2
         .ent _main_entry
 _main_entry:
 
