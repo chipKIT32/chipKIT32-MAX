@@ -223,7 +223,7 @@ Class=USB
 ClassGUID={36fc9e60-c465-11cf-8056-444553540000}
 Provider=%FTDI%
 CatalogFile=ftdibus.cat
-DriverVer=07/10/2015,2.12.06
+DriverVer=10/28/2015,2.12.10
 
 [SourceDisksNames]
 1=%DriversDisk%,,,
@@ -334,7 +334,15 @@ AddReg = FtdiBus.NT.EventLog_Inst.AddReg
 HKR,,EventMessageFile,0x00020000,"%%SystemRoot%%\System32\IoLogMsg.dll;%%SystemRoot%%\System32\drivers\ftdibus.sys"
 HKR,,TypesSupported,0x00010001,7
 
+[FtdiBus.NT.HW] 
+AddReg=FtdiBus.NT.HW.AddReg 
 
+[FtdiBus.NTamd64.HW] 
+AddReg=FtdiBus.NT.HW.AddReg 
+
+[FtdiBus.NT.HW.AddReg] 
+HKR,,"ConfigData",0x00010001,0x00000016 
+   
 [FtdiBus.NT.Copy]
 ftdibus.sys
 
